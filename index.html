@@ -1,1 +1,446 @@
-index html for git the long math
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Long Math - Home</title>
+
+  <!-- Apply theme immediately to prevent flash - MUST run before styles -->
+  <script>
+    (function(){
+      try {
+        const saved = localStorage.getItem("tlm_theme");
+        const theme = (saved && (saved === "dark" || saved === "light")) ? saved : "light";
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch(e) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
+  <style>
+    /* =========================
+       THEME TOKENS
+       ========================= */
+    :root{
+      --bg: #f6f4ee;
+      --text: #0b1b34;
+      --muted: rgba(11,27,52,.72);
+
+      --card: #ffffff;
+      --card2: #f1f4f8;
+
+      --surface: #f7f8fb;
+      --surface2: #eef2f7;
+
+      --border: rgba(11,27,52,.14);
+      --inputBorder: rgba(11,27,52,.18);
+
+      --accent: #c89a3a;
+      --accent2: #9a7728;
+      --accentSoft: rgba(200,154,58,.14);
+
+      --shadow: 0 10px 30px rgba(11,27,52,.08);
+      --inset: inset 0 1px 0 rgba(255,255,255,.5);
+    }
+    html[data-theme="dark"]{
+      --bg: #202a39;
+      --text: #eef2f7;
+      --muted: rgba(238,242,247,.72);
+
+      --card: #263246;
+      --card2: #1f2a3d;
+
+      --surface: #141c2b;
+      --surface2: #111827;
+
+      --border: rgba(238,242,247,.14);
+      --inputBorder: rgba(238,242,247,.12);
+
+      --accent: #d9b46a;
+      --accent2: #b99243;
+      --accentSoft: rgba(217,180,106,.14);
+
+      --shadow: 0 14px 40px rgba(0,0,0,.33);
+      --inset: inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.35;
+    }
+    .wrap{
+      max-width:980px;
+      margin:0 auto;
+      padding:24px 16px 48px;
+    }
+    header{ margin-bottom:18px; }
+
+    /* =========================
+       BRAND HEADER
+       ========================= */
+    .sitehead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:10px 0 16px;
+      border-bottom:1px solid var(--border);
+      margin-bottom:14px;
+    }
+    .brandstack{ display:flex; flex-direction:column; gap:6px; }
+    .brand{
+      font-size:34px;
+      font-weight:900;
+      letter-spacing:.4px;
+      line-height:1.05;
+    }
+    .sigil{
+      display:inline-block;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:18px;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid rgba(200,154,58,.45);
+      background: var(--accentSoft);
+      color: var(--text);
+      white-space:nowrap;
+    }
+    html[data-theme="dark"] .sigil{ border-color: rgba(217,180,106,.45); }
+
+    .themebox{ display:flex; align-items:center; gap:10px; user-select:none; }
+    .themebox .tlabel{ font-size:13px; color:var(--muted); white-space:nowrap; }
+    .switch{
+      position:relative; width:48px; height:28px; border-radius:999px;
+      background: var(--surface2);
+      border:1px solid var(--border);
+      cursor:pointer;
+    }
+    .switch input{ position:absolute; inset:0; opacity:0; cursor:pointer; }
+    .knob{
+      position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:999px;
+      background: var(--card);
+      border:1px solid var(--border);
+      box-shadow: 0 8px 18px rgba(0,0,0,.10);
+      transition: transform .18s ease;
+    }
+    .switch input:checked + .knob{ transform: translateX(20px); }
+
+    /* =========================
+       INTRO
+       ========================= */
+    h1{
+      margin:0 0 16px;
+      font-size:32px;
+      font-weight:700;
+      letter-spacing:.3px;
+    }
+    .lede{ 
+      margin:0 0 32px; 
+      max-width:860px; 
+      line-height:1.7; 
+    }
+    .lede p{ 
+      margin:0 0 20px; 
+    }
+    .lede p:last-child{ 
+      margin-bottom:0; 
+    }
+    .lede-intro{
+      font-size:18px;
+      color:var(--text);
+      font-weight:500;
+      line-height:1.65;
+    }
+    .lede-main{
+      font-size:16px;
+      color:var(--muted);
+      line-height:1.75;
+    }
+    .lede-tagline{
+      font-size:17px;
+      color:var(--text);
+      margin-top:24px;
+      padding-top:20px;
+      border-top:1px solid var(--border);
+    }
+    .lede-tagline strong{ 
+      color:var(--text); 
+      font-weight:700;
+      letter-spacing:0.2px;
+    }
+
+    /* =========================
+       HOMEPAGE CONTENT
+       ========================= */
+    .hero-card{
+      background:linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:32px;
+      box-shadow: var(--shadow), var(--inset);
+      margin-top:24px;
+      text-align:center;
+    }
+
+    .hero-card h2{
+      margin:0 0 16px;
+      font-size:24px;
+      font-weight:700;
+      color:var(--text);
+    }
+
+    .hero-card p{
+      margin:0 0 24px;
+      font-size:16px;
+      color:var(--muted);
+      line-height:1.6;
+      max-width:700px;
+      margin-left:auto;
+      margin-right:auto;
+    }
+
+    .cta-button{
+      display:inline-block;
+      padding:16px 32px;
+      font-size:16px;
+      font-weight:700;
+      color:var(--text);
+      background:linear-gradient(180deg, var(--accentSoft), rgba(200,154,58,.08));
+      border:2px solid rgba(200,154,58,.55);
+      border-radius:12px;
+      text-decoration:none;
+      cursor:pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+
+    html[data-theme="dark"] .cta-button{
+      background:linear-gradient(180deg, var(--accentSoft), rgba(217,180,106,.08));
+      border-color: rgba(217,180,106,.55);
+    }
+
+    .cta-button:hover{
+      transform:translateY(-2px);
+      box-shadow: 0 12px 35px rgba(11,27,52,.12);
+      border-color: rgba(200,154,58,.75);
+    }
+
+    html[data-theme="dark"] .cta-button:hover{
+      box-shadow: 0 16px 45px rgba(0,0,0,.4);
+      border-color: rgba(217,180,106,.75);
+    }
+
+    .features{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap:20px;
+      margin-top:32px;
+    }
+
+    .feature-card{
+      background:linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:24px;
+      box-shadow: var(--shadow), var(--inset);
+    }
+
+    .feature-card h3{
+      margin:0 0 12px;
+      font-size:18px;
+      font-weight:700;
+      color:var(--text);
+    }
+
+    .feature-card p{
+      margin:0;
+      font-size:14px;
+      color:var(--muted);
+      line-height:1.6;
+    }
+
+    .disclaimer{
+      margin-top:40px;
+      padding-top:24px;
+      border-top:1px solid var(--border);
+      font-size:12px;
+      color:var(--muted);
+      max-width:860px;
+    }
+    .disclaimer strong{
+      color:var(--text);
+      font-weight:700;
+    }
+
+    .site-footer{
+      margin-top:24px;
+      padding-top:24px;
+      border-top:1px solid var(--border);
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+    }
+    
+    .site-footer p{
+      margin:6px 0;
+    }
+
+    @media (max-width:860px){
+      .sitehead{flex-direction:column; align-items:flex-start;}
+      .sigil{white-space:normal;}
+      .hero-card{
+        padding:24px;
+      }
+      .hero-card h2{
+        font-size:20px;
+      }
+      .features{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="sitehead">
+        <div class="brandstack">
+          <div class="brand">The Long Math</div>
+          <div class="sigil">$ = P(1 + r/n)^{nt}</div>
+        </div>
+
+        <div class="themebox">
+          <div class="tlabel" id="theme_label">Light</div>
+          <label class="switch" aria-label="Toggle light/dark mode">
+            <input id="theme_toggle" type="checkbox" />
+            <span class="knob"></span>
+          </label>
+        </div>
+      </div>
+
+      <h1>Welcome to The Long Math</h1>
+      <div class="lede">
+        <p class="lede-intro">
+          The Long Math is a growing collection of calculators and explanations designed to make personal and small-business financial trade-offs visible.
+        </p>
+        <p class="lede-main">
+          Most financial decisions are presented as stories. This site focuses on math. It examines how fees, taxes, compounding, and incentives interact over decades, using transparent assumptions and explicit calculations that can be inspected and verified.
+        </p>
+        <p class="lede-tagline">
+          <strong>No opinions. No hidden assumptions. Just arithmetic.</strong>
+        </p>
+      </div>
+    </header>
+
+    <div class="hero-card">
+      <h2>Financial Advisor Cost Calculator</h2>
+      <p>
+        Our first tool helps you calculate the true long-term cost of using a financial advisor. This calculator 
+        accounts for both the fees you pay directly and the opportunity cost of lost compounding over time. 
+        <strong>More calculators and educational content coming soon.</strong>
+      </p>
+      <a href="calculator.html" class="cta-button">Open Calculator →</a>
+    </div>
+
+    <div class="features">
+      <div class="feature-card">
+        <h3>Investment & Financial Literacy</h3>
+        <p>
+          Educational content and calculators covering investment vehicles, asset classes, portfolio construction, 
+          and the long-term impact of financial decisions. Our primary focus is helping you build investment knowledge.
+        </p>
+      </div>
+      <div class="feature-card">
+        <h3>Tax Tools for Business & Personal</h3>
+        <p>
+          Calculators and resources for small business owners and individuals to better understand tax processes 
+          and optimize their tax strategy within legal frameworks.
+        </p>
+      </div>
+      <div class="feature-card">
+        <h3>Transparent, No-Nonsense Analysis</h3>
+        <p>
+          No hidden assumptions, no sales pitches—just clear arithmetic and educational resources to help you 
+          make informed decisions about your financial future.
+        </p>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> This website and its calculators are provided for educational purposes only and are not intended to constitute financial, tax, or legal advice.
+        Results are based on the assumptions entered by the user and simplified models.
+        You should perform your own due diligence and consider your personal circumstances before making financial decisions.
+      </p>
+    </div>
+
+    <footer class="site-footer">
+      <p>© <span id="year"></span> The Long Math.</p>
+      <p>
+        This site, including its text, layout, design, and calculator implementation,
+        is original work and the intellectual property of The Long Math.
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+
+  <!-- Theme toggle (standalone) -->
+  <script>
+    (function(){
+      const root = document.documentElement;
+      const toggle = document.getElementById("theme_toggle");
+      const label = document.getElementById("theme_label");
+
+      // Get saved theme preference
+      let saved;
+      try {
+        saved = localStorage.getItem("tlm_theme");
+      } catch(e) {
+        saved = null;
+      }
+      
+      const theme = (saved && (saved === "dark" || saved === "light")) ? saved : "light";
+      
+      // Apply theme to page
+      root.setAttribute("data-theme", theme);
+      
+      // Update toggle switch state
+      if (toggle) {
+        toggle.checked = (theme === "dark");
+      }
+      
+      // Update label
+      if (label) {
+        label.textContent = (theme === "dark") ? "Dark" : "Light";
+      }
+
+      // Set up toggle change handler
+      if (toggle) {
+        toggle.addEventListener("change", () => {
+          const next = toggle.checked ? "dark" : "light";
+          root.setAttribute("data-theme", next);
+          
+          try {
+            localStorage.setItem("tlm_theme", next);
+          } catch(e) {
+            console.warn("Could not save theme preference:", e);
+          }
+          
+          if (label) {
+            label.textContent = toggle.checked ? "Dark" : "Light";
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
