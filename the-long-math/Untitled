@@ -1,0 +1,5 @@
+MER is the Management Expense Ratio.  It is the fee charged by each individual mutual fund to cover trading fees, salaries and other expenses of their Fund Managers.  This is usually charged in addition to any fees your advisor would charge, causing further fee drag on an investment return.  MERs can vary significantly, usually between 2-6% for Mutual Funds but are much less expensive for ETFs, often <0.3%.  We have assumed 2%.  Please adjust accordingly based on your own investment portfolio.
+
+When this tab is enabled, the MER is applied to invested assets in addition to advisory fees.
+
+MER fees change the final output significantly.  Careful consideration is required to determine true calculated costs.

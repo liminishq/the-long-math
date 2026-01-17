@@ -1,0 +1,434 @@
+/* styles.css — The Long Math
+   Light (bank-style) + Dark (night) themes via: <html data-theme="light|dark">
+*/
+
+/* ---------- Theme tokens ---------- */
+:root{
+  /* default theme if no data-theme is set */
+  --bg: #f6f4ee;
+  --surface: #ffffff;
+  --surface-2: #f1f4f8;
+  --border: rgba(11, 27, 52, 0.12);
+
+  --text: #0b1b34;           /* navy ink */
+  --muted: rgba(11, 27, 52, 0.70);
+
+  --accent: #c89a3a;         /* amber */
+  --accent-2: #9a7728;       /* darker amber */
+  --accent-soft: rgba(200, 154, 58, 0.12);
+
+  --shadow: 0 10px 30px rgba(11, 27, 52, 0.08);
+
+  --focus: rgba(200, 154, 58, 0.45);
+}
+
+html[data-theme="dark"]{
+  --bg: #141a23;
+  --surface: #1b2432;
+  --surface-2: #162030;
+  --border: rgba(238, 242, 247, 0.12);
+
+  --text: #eef2f7;
+  --muted: rgba(238, 242, 247, 0.72);
+
+  --accent: #d9b46a;
+  --accent-2: #b99243;
+  --accent-soft: rgba(217, 180, 106, 0.12);
+
+  --shadow: 0 14px 40px rgba(0,0,0,0.35);
+
+  --focus: rgba(217, 180, 106, 0.50);
+}
+
+/* ---------- Base ---------- */
+*{ box-sizing:border-box; }
+html, body{ height:100%; }
+
+body{
+  margin:0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  line-height:1.35;
+}
+
+a{ color: inherit; }
+
+.container{
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 22px 18px 60px;
+}
+
+/* ---------- Header (The Long Math + sigil + toggle) ---------- */
+.sitehead{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  padding: 10px 0 18px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 18px;
+}
+
+.brandblock{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.brand{
+  font-size: 22px;
+  font-weight: 850;
+  letter-spacing: .3px;
+}
+
+.sigil{
+  display:inline-block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--accent-soft);
+  border: 1px solid rgba(200,154,58,0.35);
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  padding: 8px 10px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+/* Toggle container on the right */
+.theme-toggle{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  user-select:none;
+}
+
+.theme-toggle .toggle-label{
+  font-size: 13px;
+  color: var(--muted);
+  white-space:nowrap;
+}
+
+/* Switch */
+.switch{
+  position:relative;
+  width: 48px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.switch input{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  cursor:pointer;
+}
+
+.switch .knob{
+  position:absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+  transition: transform .18s ease;
+}
+
+html[data-theme="dark"] .switch{
+  background: rgba(255,255,255,0.08);
+}
+
+.switch input:checked + .knob{
+  transform: translateX(20px);
+}
+
+.switch:focus-within{
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+}
+
+/* ---------- Typography blocks ---------- */
+h1{
+  margin: 0 0 10px;
+  font-size: 32px;
+  line-height:1.1;
+  letter-spacing: -0.2px;
+}
+
+.lede{
+  color: var(--muted);
+  font-size: 15px;
+  margin: 0 0 14px;
+}
+
+.callout{
+  margin: 10px 0 0;
+  font-weight: 700;
+}
+
+.callout .emph{
+  color: var(--accent-2);
+}
+
+html[data-theme="dark"] .callout .emph{
+  color: var(--accent);
+}
+
+/* ---------- Layout cards ---------- */
+.grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+@media (max-width: 920px){
+  .grid{ grid-template-columns: 1fr; }
+  .sigil{ white-space: normal; }
+  .theme-toggle .toggle-label{ display:none; } /* optional: hide label on small screens */
+}
+
+.card{
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
+
+.card h2{
+  margin: 0 0 12px;
+  font-size: 14px;
+  letter-spacing: .9px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------- Inputs ---------- */
+.preset-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom: 10px;
+}
+
+button{
+  appearance:none;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 12px;
+  cursor:pointer;
+  font-weight: 650;
+  font-size: 13px;
+}
+
+button:hover{
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+}
+
+button:active{
+  transform: translateY(1px);
+}
+
+button.primary{
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+}
+
+.row{
+  display:grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 10px;
+  align-items:center;
+  margin: 10px 0;
+}
+
+label{
+  color: var(--text);
+  font-weight: 650;
+  font-size: 13px;
+}
+
+input[type="number"],
+input[type="text"]{
+  width:100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+}
+
+input[type="number"]:focus,
+input[type="text"]:focus{
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+}
+
+.small{
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.checkbox{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.checkbox input{
+  width: 18px;
+  height: 18px;
+}
+
+.warning{
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  color: var(--text);
+  font-size: 13px;
+}
+
+/* Slider row */
+.sliderbox{
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+
+.sliderhead{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap:10px;
+  margin-bottom: 8px;
+}
+
+.sliderhead .name{
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.sliderhead .val{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+input[type="range"]{
+  width:100%;
+}
+
+/* ---------- Results ---------- */
+.results-grid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.result{
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 14px;
+}
+
+.result .k{
+  font-size: 12px;
+  letter-spacing: .9px;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.result .v{
+  margin-top: 6px;
+  font-size: 20px;
+  font-weight: 850;
+  letter-spacing: -0.2px;
+}
+
+.result .sub{
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Prominent total cost block */
+.result.prominent{
+  border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 9%, var(--surface));
+}
+
+.result.prominent .k{
+  color: color-mix(in srgb, var(--accent) 85%, var(--muted));
+}
+
+.result.prominent .v{
+  font-size: 36px;
+  color: var(--text); /* keep the big number “clinical” */
+}
+
+/* ---------- Tables (fee schedule) ---------- */
+table{
+  width:100%;
+  border-collapse: collapse;
+  overflow:hidden;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+th, td{
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align:left;
+  font-size: 13px;
+}
+
+th{
+  background: var(--surface-2);
+  color: var(--muted);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  font-size: 12px;
+}
+
+tr:last-child td{ border-bottom:none; }
+
+/* ---------- Footer/meta ---------- */
+.meta{
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ---------- Small polish ---------- */
+hr{
+  border:none;
+  border-top: 1px solid var(--border);
+  margin: 14px 0;
+}
