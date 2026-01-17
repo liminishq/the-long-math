@@ -1,5 +1,5 @@
 {
-  "dependencies": {
-    "react-router-dom": "^7.12.0"
-  }
+  "name": "the-long-math",
+  "version": "1.0.0",
+  "description": "Static website for The Long Math financial calculators"
 }
