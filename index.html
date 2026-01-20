@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Long Math</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .lede-intro {
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      color: var(--text);
+      font-weight: 500;
+    }
+    .lede-main {
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 14px;
+      color: var(--muted);
+    }
+    .lede-tagline {
+      font-size: 16px;
+      line-height: 1.7;
+      margin-top: 20px;
+      color: var(--text);
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 24px;
+      box-shadow: var(--shadow);
+    }
+    .feature-card h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .feature-card p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .feature-card a {
+      display: inline-block;
+      padding: 12px 24px;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .feature-card a:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    .disclaimer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 860px;
+    }
+    .disclaimer strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+  </style>
+  
+  <script src="theme.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="sitehead">
+        <div class="brandblock">
+          <div class="brand">The Long Math</div>
+          <div class="sigil">$ = P(1 + r/n)^{nt}</div>
+        </div>
+
+        <div class="theme-toggle">
+          <div class="toggle-label" id="theme_label">Light</div>
+          <label class="switch" aria-label="Toggle light/dark mode">
+            <input id="theme_toggle" type="checkbox" />
+            <span class="knob"></span>
+          </label>
+        </div>
+      </div>
+
+      <h1>Welcome to The Long Math</h1>
+      <div class="lede">
+        <p class="lede-intro">
+          The Long Math is a growing collection of calculators and explanations designed to make personal and small-business financial trade-offs visible.
+        </p>
+        <p class="lede-main">
+          Most financial decisions are presented as stories. This site focuses on math. It examines how fees, taxes, compounding, and incentives interact over decades, using transparent assumptions and explicit calculations that can be inspected and verified.
+        </p>
+        <p class="lede-tagline">
+          <strong>No opinions. No hidden assumptions. Just arithmetic.</strong>
+        </p>
+      </div>
+    </header>
+
+    <div class="feature-card">
+      <h2>Financial Advisor Cost Calculator</h2>
+      <p>Calculate the true long-term cost of using a financial advisor, including both direct fees and the opportunity cost of lost compounding. See how percentage-based advisor fees impact your portfolio over decades.</p>
+      <a href="calculator.html">Use the Calculator →</a>
+    </div>
+
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> This website and its calculators are provided for educational purposes only and are not intended to constitute financial, tax, or legal advice. Results are based on user-entered assumptions and simplified models. You should perform your own due diligence and consider your personal circumstances before making financial decisions.
+      </p>
+    </div>
+  </div>
+
+  <script src="theme.js"></script>
+</body>
+</html>

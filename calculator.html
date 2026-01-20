@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Long Math — Advisor Cost Calculator</title>
+  <meta name="description" content="Transparent arithmetic for advisor fees and compounding drag." />
+  <script src="/theme.js"></script>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand"><a href="/index.html">The Long Math</a></div>
+      <div class="nav">
+        <a href="/index.html">Home</a>
+        <button id="themeToggle" class="btn secondary" type="button">Toggle theme</button>
+      </div>
+    </div>
+
+    <h1>Advisor Cost Calculator</h1>
+    <p class="small">All calculations are explicit and inspectable. No caps like 15% or 50% are applied to the math.</p>
+
+    <div class="card">
+      <h2>Inputs</h2>
+      <div class="row">
+        <div>
+          <label for="startingBalance">Starting balance</label>
+          <input id="startingBalance" inputmode="decimal" value="100000" />
+        </div>
+        <div>
+          <label for="monthlyContribution">Monthly contribution</label>
+          <input id="monthlyContribution" inputmode="decimal" value="5000" />
+        </div>
+        <div>
+          <label for="years">Horizon (years)</label>
+          <input id="years" inputmode="numeric" value="25" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <div>
+          <label for="annualReturnPct">Expected annual return (%)</label>
+          <input id="annualReturnPct" inputmode="decimal" value="7" />
+        </div>
+        <div>
+          <label for="advisorFeePct">Advisor fee (% of assets, annual)</label>
+          <input id="advisorFeePct" inputmode="decimal" value="1" />
+        </div>
+        <div>
+          <label for="merPct">MER (% annual, optional)</label>
+          <input id="merPct" inputmode="decimal" value="0" />
+        </div>
+      </div>
+
+      <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+        <button id="recalc" class="btn" type="button">Recalculate</button>
+        <button id="reset" class="btn secondary" type="button">Reset defaults</button>
+      </div>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <h2>Results (dollars)</h2>
+        <div class="grid">
+          <div class="kpi">
+            <div class="v" id="endNoAdvisor">$—</div>
+            <div class="l">Ending value (no advisor)</div>
+          </div>
+          <div class="kpi">
+            <div class="v" id="endWithAdvisor">$—</div>
+            <div class="l">Ending value (with advisor)</div>
+          </div>
+          <div class="kpi">
+            <div class="v" id="feesPaid">$—</div>
+            <div class="l">Advisor + MER fees paid (cumulative)</div>
+          </div>
+          <div class="kpi">
+            <div class="v" id="totalCost">$—</div>
+            <div class="l">Total cost vs no advisor (includes lost compounding)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Break-even advisor outperformance</h2>
+        <p class="small">
+          Extra annual return (percentage points) the advisor must add so that “with advisor” matches “no advisor.”
+          This value can exceed 50% if inputs imply it.
+        </p>
+        <div class="kpi">
+          <div class="v" id="breakevenPp">—</div>
+          <div class="l">Required outperformance (percentage points, annual)</div>
+        </div>
+        <hr />
+        <p class="small">
+          Note: the *percentage* break-even can be largely independent of starting balance when fees are modeled as % of assets.
+          But dollar outputs must still scale with starting balance.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Sanity outputs</h2>
+      <p class="small" id="sanity"></p>
+    </div>
+  </div>
+
+  <script src="/calculator.js"></script>
+  <script>
+    document.getElementById("themeToggle").addEventListener("click", () => window.TLM_THEME.toggle());
+  </script>
+</body>
+</html>
