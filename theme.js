@@ -1,35 +1,48 @@
+// theme.js — site-wide theme toggle (default: dark) + persistence
 (function () {
-  const KEY = "tlm_theme";
+  const STORAGE_KEY = "tlm_theme";
+  const root = document.documentElement;
 
-  function apply(theme) {
-    document.documentElement.setAttribute("data-theme", theme);
-  }
-
-  function getSaved() {
+  function getSavedTheme() {
     try {
-      const v = localStorage.getItem(KEY);
-      return (v === "dark" || v === "light") ? v : null;
-    } catch {
+      const v = localStorage.getItem(STORAGE_KEY);
+      return (v === "light" || v === "dark") ? v : null;
+    } catch (e) {
       return null;
     }
   }
 
-  function save(theme) {
-    try { localStorage.setItem(KEY, theme); } catch {}
+  function setSavedTheme(theme) {
+    try {
+      localStorage.setItem(STORAGE_KEY, theme);
+    } catch (e) {
+      // ignore
+    }
   }
 
-  // Apply early (prevents flash)
-  const initial = getSaved() || "light";
-  apply(initial);
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+  }
 
-  // Expose a tiny API for pages
-  window.TLM_THEME = {
-    get: () => document.documentElement.getAttribute("data-theme") || "light",
-    set: (t) => { apply(t); save(t); },
-    toggle: () => {
-      const next = (window.TLM_THEME.get() === "dark") ? "light" : "dark";
-      window.TLM_THEME.set(next);
-      return next;
-    }
-  };
+  // Default is dark if nothing saved.
+  const initial = getSavedTheme() || "dark";
+  applyTheme(initial);
+
+  // If this page has a toggle, wire it.
+  const toggle = document.getElementById("theme_toggle");
+  const label = document.getElementById("theme_label");
+
+  if (!toggle) return;
+
+  // Toggle checked means LIGHT (so user flips to light explicitly)
+  // But your UI label shows current theme; keep it literal.
+  toggle.checked = (initial === "light");
+  if (label) label.textContent = (initial === "dark") ? "Dark" : "Light";
+
+  toggle.addEventListener("change", () => {
+    const next = toggle.checked ? "light" : "dark";
+    applyTheme(next);
+    setSavedTheme(next);
+    if (label) label.textContent = (next === "dark") ? "Dark" : "Light";
+  });
 })();

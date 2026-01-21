@@ -1,78 +1,24 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Long Math</title>
-  <link rel="stylesheet" href="styles.css" />
-  <style>
-    .lede-intro {
-      font-size: 18px;
-      line-height: 1.6;
-      margin-bottom: 16px;
-      color: var(--text);
-      font-weight: 500;
-    }
-    .lede-main {
-      font-size: 16px;
-      line-height: 1.7;
-      margin-bottom: 14px;
-      color: var(--muted);
-    }
-    .lede-tagline {
-      font-size: 16px;
-      line-height: 1.7;
-      margin-top: 20px;
-      color: var(--text);
-    }
-    .feature-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 24px;
-      margin-top: 24px;
-      box-shadow: var(--shadow);
-    }
-    .feature-card h2 {
-      margin: 0 0 12px;
-      font-size: 20px;
-      font-weight: 700;
-    }
-    .feature-card p {
-      margin: 0 0 16px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-    .feature-card a {
-      display: inline-block;
-      padding: 12px 24px;
-      background: var(--accent-soft);
-      border: 1px solid var(--accent);
-      border-radius: 10px;
-      color: var(--text);
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.2s;
-    }
-    .feature-card a:hover {
-      background: var(--accent);
-      color: var(--bg);
-    }
-    .disclaimer {
-      margin-top: 40px;
-      padding-top: 20px;
-      border-top: 1px solid var(--border);
-      font-size: 13px;
-      color: var(--muted);
-      max-width: 860px;
-    }
-    .disclaimer strong {
-      color: var(--text);
-      font-weight: 700;
-    }
-  </style>
-  
-  <script src="theme.js"></script>
+
+  <!-- Apply theme immediately to prevent flash (default: dark) -->
+  <script>
+    (function () {
+      try {
+        const saved = localStorage.getItem("tlm_theme");
+        const theme = (saved === "light" || saved === "dark") ? saved : "dark";
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="./styles.css" />
 </head>
 
 <body>
@@ -85,7 +31,7 @@
         </div>
 
         <div class="theme-toggle">
-          <div class="toggle-label" id="theme_label">Light</div>
+          <div class="toggle-label" id="theme_label">Dark</div>
           <label class="switch" aria-label="Toggle light/dark mode">
             <input id="theme_toggle" type="checkbox" />
             <span class="knob"></span>
@@ -94,12 +40,13 @@
       </div>
 
       <h1>Welcome to The Long Math</h1>
-      <div class="lede">
+
+      <div class="lede-block">
         <p class="lede-intro">
           The Long Math is a growing collection of calculators and explanations designed to make personal and small-business financial trade-offs visible.
         </p>
         <p class="lede-main">
-          Most financial decisions are presented as stories. This site focuses on math. It examines how fees, taxes, compounding, and incentives interact over decades, using transparent assumptions and explicit calculations that can be inspected and verified.
+          Most financial decisions are presented as stories. This site focuses on arithmetic. It examines how fees, taxes, compounding, and incentives interact over decades, using transparent assumptions and explicit calculations that can be inspected and verified.
         </p>
         <p class="lede-tagline">
           <strong>No opinions. No hidden assumptions. Just arithmetic.</strong>
@@ -107,19 +54,61 @@
       </div>
     </header>
 
-    <div class="feature-card">
+    <section class="hero-card">
       <h2>Financial Advisor Cost Calculator</h2>
-      <p>Calculate the true long-term cost of using a financial advisor, including both direct fees and the opportunity cost of lost compounding. See how percentage-based advisor fees impact your portfolio over decades.</p>
-      <a href="calculator.html">Use the Calculator →</a>
-    </div>
+      <p>
+        Our first tool helps you calculate the true long-term cost of using a financial advisor.
+        This calculator accounts for both the fees you pay directly and the opportunity cost of lost compounding over time.
+        <strong>More calculators and educational content coming soon.</strong>
+      </p>
+      <a href="./calculator.html" class="cta-button">Open Calculator →</a>
+    </section>
+
+    <section class="features">
+      <div class="feature-card">
+        <h3>Investment & Financial Literacy</h3>
+        <p>
+          Educational content and calculators covering investment vehicles, asset classes, portfolio construction,
+          and the long-term impact of financial decisions. Primary focus: building investment knowledge.
+        </p>
+      </div>
+      <div class="feature-card">
+        <h3>Tax Tools for Business & Personal</h3>
+        <p>
+          Calculators and resources for small business owners and individuals to better understand tax processes
+          and optimize tax strategy within legal frameworks.
+        </p>
+      </div>
+      <div class="feature-card">
+        <h3>Transparent, No-Nonsense Analysis</h3>
+        <p>
+          No hidden assumptions, no sales pitches—just clear arithmetic and educational resources to help you
+          make informed decisions about your financial future.
+        </p>
+      </div>
+    </section>
 
     <div class="disclaimer">
       <p>
-        <strong>Disclaimer:</strong> This website and its calculators are provided for educational purposes only and are not intended to constitute financial, tax, or legal advice. Results are based on user-entered assumptions and simplified models. You should perform your own due diligence and consider your personal circumstances before making financial decisions.
+        <strong>Disclaimer:</strong> This website and its calculators are provided for educational purposes only and are not intended to constitute financial, tax, or legal advice.
+        Results are based on the assumptions entered by the user and simplified models.
+        You should perform your own due diligence and consider your personal circumstances before making financial decisions.
       </p>
     </div>
+
+    <footer class="site-footer">
+      <p>© <span id="year"></span> The Long Math.</p>
+      <p>
+        This site, including its text, layout, design, and calculator implementation,
+        is original work and the intellectual property of The Long Math.
+      </p>
+    </footer>
   </div>
 
-  <script src="theme.js"></script>
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+
+  <script src="./theme.js"></script>
 </body>
 </html>
