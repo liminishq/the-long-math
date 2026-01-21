@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Financial Advisor Cost Calculator – The Long Math</title>
+  <title>Financial Advisor Cost Calculator - The Long Math</title>
 
-  <!-- Apply DARK theme immediately -->
+  <!-- Apply theme immediately to prevent flash (DARK DEFAULT) -->
   <script>
     (function(){
       try {
@@ -18,19 +18,13 @@
     })();
   </script>
 
-  <!-- ===== EXACT CSS FROM FAILED VERSION (UNCHANGED) ===== -->
-  <!-- DO NOT EDIT – this preserves the layout -->
-  <!-- (CSS omitted here for brevity in explanation, but in your real file
-       you paste EXACTLY the CSS you pasted earlier, unchanged) -->
-
-  <!-- ⚠️ IMPORTANT:
-       Use the CSS exactly as you pasted earlier.
-       I am intentionally NOT “optimizing” it. -->
+  <!-- IMPORTANT: absolute paths so /calculator route can’t break asset loading -->
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 
 <body>
   <div class="wrap">
-    <a href="index.html" class="home-link">← Back to Home</a>
+    <a href="/index.html" class="home-link">← Back to Home</a>
 
     <header>
       <div class="sitehead">
@@ -41,7 +35,7 @@
 
         <div class="themebox">
           <div class="tlabel" id="theme_label">Dark</div>
-          <label class="switch">
+          <label class="switch" aria-label="Toggle light/dark mode">
             <input id="theme_toggle" type="checkbox" />
             <span class="knob"></span>
           </label>
@@ -54,56 +48,267 @@
         <p>Many financial advisors charge fees as a percentage of the assets they manage.</p>
 
         <p>
-          Advisors may also recommend or sell investment products (including mutual funds and ETFs)
-          that carry additional management expenses, which further reduce net investment returns over time.
+          Advisors may also recommend/sell you investment products (including mutual funds and ETFs) that carry additional management expenses,
+          which further reduce net investment returns over time.
         </p>
 
         <p>
-          Over long time horizons, the cost of this fee structure is not limited to the fees paid.
-          It also includes the opportunity cost of no longer being able to compound those fees over time.
+          Over long time horizons, the cost of this fee structure is not limited to the fees paid. It also includes the opportunity cost of no longer
+          being able to compound those fees over time.
         </p>
 
         <p>
-          This calculator accounts for <strong>both</strong> components — direct fees and lost compounding —
-          to estimate the true long-term cost of using an advisor with an AUM fee structure.
+          This calculator accounts for <strong>both</strong> components — direct fees and lost compounding — to estimate the true long-term cost of using an advisor with an AUM fee structure.
         </p>
 
         <p>
-          Rarely, advisors may charge hourly fees or flat annual management fees in lieu of AUM percentages.
-          The true calculated cost of this service is usually arithmetically superior for the investor.
-          A calculator outlining these costs is available <a href="#" style="color:var(--accent)">here</a>.
+          Rarely, advisors may charge hourly fees or flat annual management fees in lieu of AUM percentages. The true calculated cost of this service is usually arithmetically superior for the investor. A calculator outlining these costs is available <a class="inline-link" href="#">here</a>.
         </p>
 
         <p><strong>No opinions. No hidden assumptions. Just arithmetic.</strong></p>
       </div>
     </header>
 
-    <!-- ===== INPUTS + RESULTS LAYOUT (UNCHANGED) ===== -->
-    <!-- Keep EXACT structure you pasted -->
+    <!-- TOP HALF: 2-column layout -->
+    <div class="grid">
+      <!-- Inputs -->
+      <section class="card">
+        <h2 class="section-title">Inputs</h2>
 
+        <div class="btns">
+          <button id="preset-starting" type="button">Starting out</button>
+          <button id="preset-mid" type="button">Mid career</button>
+          <button id="preset-retire" type="button">Near retirement</button>
+        </div>
+
+        <p class="hint">Presets reflect common situations. Adjust any assumption below.</p>
+
+        <div class="row">
+          <label for="starting_balance">Starting balance ($)</label>
+          <input id="starting_balance" type="number" inputmode="numeric" />
+        </div>
+
+        <div class="row">
+          <label for="monthly_contribution">Monthly contribution ($/mo)</label>
+          <input id="monthly_contribution" type="number" inputmode="numeric" />
+        </div>
+
+        <div class="row">
+          <label for="horizon_years">Time horizon (years)</label>
+          <input id="horizon_years" type="number" inputmode="numeric" />
+        </div>
+
+        <div class="row" style="margin-bottom:8px;">
+          <label for="annual_return">Expected annual return (%)</label>
+          <input id="annual_return" type="text" inputmode="decimal" placeholder="e.g., 7 or 4.5" />
+        </div>
+
+        <div class="slider-block">
+          <div class="slider-top">
+            <div class="lbl">Expected annual return slider</div>
+            <div class="val" id="annual_return_label">–</div>
+          </div>
+          <input id="annual_return_slider" type="range" />
+        </div>
+
+        <!-- Advisor fee schedule vs custom -->
+        <div class="toggle">
+          <input id="use_default_fee" type="checkbox" checked />
+          <label for="use_default_fee">Use default advisor fee schedule</label>
+        </div>
+        <p class="helper">If unchecked, a flat annual advisor fee is applied instead.</p>
+
+        <div class="row">
+          <label for="custom_advisor_fee">Custom advisor fee (%/yr)</label>
+          <input id="custom_advisor_fee" type="text" inputmode="decimal" placeholder="e.g., 1.0" />
+        </div>
+
+        <!-- MER -->
+        <div class="toggle">
+          <input id="include_mer" type="checkbox" checked />
+          <label for="include_mer">Include fund/ETF MER</label>
+        </div>
+        <p class="helper">Typical mutual funds are often ~2%+, broad index ETFs often ≤0.3%.</p>
+
+        <div class="row">
+          <label for="mer_pct">Fund/ETF MER (%/yr)</label>
+          <input id="mer_pct" type="text" inputmode="decimal" placeholder="e.g., 2.0" />
+        </div>
+      </section>
+
+      <!-- Results -->
+      <section class="card">
+        <h2 class="section-title">Calculated Results</h2>
+
+        <div class="results">
+          <div class="result prominent">
+            <p class="k">Total calculated cost</p>
+            <p class="v" id="out_total_cost">$–</p>
+            <p class="subl">Fees paid + lost compounding (advisor fees + MER, if included)</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Break-even advisor performance</p>
+            <p class="v" id="out_breakeven">–</p>
+            <p class="subl">Required to match the outcome without an advisor, using the assumptions you selected.</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Ending value (with advisor)</p>
+            <p class="v" id="out_with">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Ending value (without advisor)</p>
+            <p class="v" id="out_without">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Fees paid</p>
+            <p class="v" id="out_fees">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Lost compounding</p>
+            <p class="v" id="out_lost">$–</p>
+          </div>
+        </div>
+
+        <p class="meta" id="out_meta">Calculated using the assumptions shown above.</p>
+      </section>
+    </div>
+
+    <!-- FULL-WIDTH METHODS SECTION -->
+    <section class="methods">
+      <div class="methods-card">
+        <h2>Method & assumptions</h2>
+
+        <div class="default-fee">
+          <div>
+            <h3>Advisor fee model (default)</h3>
+            <p>
+              Uses a tiered percentage-of-assets (AUM) fee schedule consistent with those used by large Canadian institutions
+              (Big Five–style) and similar platforms. Fees are applied to invested assets over time.
+            </p>
+            <p class="muted" style="margin:0; font-size:13px;">
+              Display only (your calculation uses this schedule when "Use default advisor fee schedule" is checked).
+            </p>
+          </div>
+
+          <div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Assets under management (CAD)</th>
+                  <th>Annual fee (%)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>$0 – $250,000</td><td>2.00%</td></tr>
+                <tr><td>$250,000 – $500,000</td><td>1.75%</td></tr>
+                <tr><td>$500,000 – $1,000,000</td><td>1.50%</td></tr>
+                <tr><td>$1,000,000 – $2,000,000</td><td>1.25%</td></tr>
+                <tr><td>Over $2,000,000</td><td>1.00%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="method-list">
+          <div class="method-item">
+            <strong>Advisor fee (user override)</strong>
+            <div>
+              If the default schedule is disabled, a single flat annual percentage of assets—entered by the user—is applied instead.
+            </div>
+          </div>
+
+          <div class="method-item">
+            <strong>Product costs (MER)</strong>
+            <div>
+              MER is the Management Expense Ratio. It is the fee charged by each individual mutual fund to cover trading fees,
+              salaries, and other expenses of their fund managers. When enabled, the MER is applied to invested assets in addition
+              to advisory fees.
+              <br><br>
+              MER is usually charged in addition to any fees your advisor would charge, causing further fee drag on investment
+              returns. Occasionally, your advisor's fee may be partially embedded within the MER of a product they sell you.
+              MERs can vary significantly—usually between 2–6% for mutual funds—but are much less expensive for ETFs, often
+              &lt;0.3%.
+              <br><br>
+              We assume 2% in this calculator by default. Please adjust accordingly based on your own investment portfolio.
+              <br><br>
+              <strong style="display:inline; font-weight:800;">Note:</strong> MER meaningfully changes outcomes. Careful consideration is required to determine true calculated costs in your specific case.
+            </div>
+          </div>
+
+          <div class="method-item">
+            <strong>Fees paid</strong>
+            <div>
+              The cumulative dollar amount deducted from the portfolio due to advisory fees (and MER, if included).
+            </div>
+          </div>
+
+          <div class="method-item">
+            <strong>Lost compounding</strong>
+            <div>
+              The reduction in ending value attributable to fees no longer remaining invested and compounding.
+            </div>
+          </div>
+
+          <div class="method-item">
+            <strong>Total calculated cost</strong>
+            <div>
+              Fees paid plus lost compounding, including both advisory fees and any included MER.
+            </div>
+          </div>
+
+          <div class="method-item">
+            <strong>Break-even advisor performance</strong>
+            <div>
+              The average annual return required for an advisor-managed portfolio to produce the same ending value as the non-advisor case,
+              using the assumptions you selected.
+              <br><br>
+              <strong style="display:inline; font-weight:800;">Example:</strong>
+              The "Starting out" scenario assumes a 7% return on your portfolio over time. If this same portfolio were managed by an advisor,
+              using the default fee schedule plus the assumed 2% MER, the advisor would need to obtain a 10.71% annual return to break even
+              with an unmanaged (and MER-free) portfolio returning 7% annually.
+              If you applied the default advisor fee schedule but de-selected MER (appropriate for a portfolio containing no mutual funds/ETFs/other managed products),
+              the portfolio must return 8.65% annually to break even with an identical unmanaged portfolio.
+            </div>
+          </div>
+
+          <div class="method-item">
+            <strong>Scope note</strong>
+            <div>
+              Trading commissions, taxes, and other account-specific costs are not included.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> This calculator is provided for educational purposes only and is not intended to constitute financial advice.
+        Results are based on the assumptions entered by the user and simplified models.
+        You should perform your own due diligence and consider your personal circumstances before making financial decisions.
+      </p>
+    </div>
+
+    <footer class="site-footer">
+      <p>© <span id="year"></span> The Long Math.</p>
+      <p>
+        This site, including its text, layout, design, and calculator implementation,
+        is original work and the intellectual property of The Long Math.
+      </p>
+    </footer>
   </div>
 
-  <script src="./calculator.browser.js"></script>
-  <script src="./app.js"></script>
-
-  <!-- Theme toggle -->
   <script>
-    (function(){
-      const root = document.documentElement;
-      const toggle = document.getElementById("theme_toggle");
-      const label = document.getElementById("theme_label");
-
-      const theme = root.getAttribute("data-theme");
-      toggle.checked = theme === "dark";
-      label.textContent = theme === "dark" ? "Dark" : "Light";
-
-      toggle.addEventListener("change", () => {
-        const next = toggle.checked ? "dark" : "light";
-        root.setAttribute("data-theme", next);
-        localStorage.setItem("tlm_theme", next);
-        label.textContent = next === "dark" ? "Dark" : "Light";
-      });
-    })();
+    document.getElementById("year").textContent = new Date().getFullYear();
   </script>
+
+  <script src="/calculator.browser.js"></script>
+  <script src="/app.js"></script>
+  <script src="/theme.js"></script>
 </body>
 </html>
