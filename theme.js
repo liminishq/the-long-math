@@ -1,30 +1,48 @@
-// theme.js — sitewide theme toggle (dark default)
-(function(){
+/* =========================================================
+   The Long Math — Theme Controller
+   Dark-first, persisted, pre-paint safe
+   ========================================================= */
+
+(function () {
+  const STORAGE_KEY = "tlm_theme";
   const root = document.documentElement;
-  const toggle = document.getElementById("theme_toggle");
-  const label = document.getElementById("theme_label");
 
-  function getTheme() {
-    try {
-      const saved = localStorage.getItem("tlm_theme");
-      return (saved === "light" || saved === "dark") ? saved : "dark";
-    } catch {
-      return "dark";
+  /* ---------- Determine initial theme ---------- */
+  let theme = "dark"; // default
+
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === "light" || saved === "dark") {
+      theme = saved;
     }
+  } catch (e) {
+    // ignore storage errors
   }
 
-  function setTheme(next) {
-    root.setAttribute("data-theme", next);
-    try { localStorage.setItem("tlm_theme", next); } catch {}
-    if (label) label.textContent = (next === "dark") ? "Dark" : "Light";
-    if (toggle) toggle.checked = (next === "dark");
-  }
+  // Apply immediately (prevents flash)
+  root.setAttribute("data-theme", theme);
 
-  setTheme(getTheme());
+  /* ---------- After DOM ready, wire toggle ---------- */
+  document.addEventListener("DOMContentLoaded", () => {
+    const toggle = document.getElementById("theme_toggle");
+    const label = document.getElementById("theme_label");
 
-  if (toggle) {
+    if (!toggle) return;
+
+    toggle.checked = theme === "light";
+    if (label) label.textContent = theme === "light" ? "Light" : "Dark";
+
     toggle.addEventListener("change", () => {
-      setTheme(toggle.checked ? "dark" : "light");
+      theme = toggle.checked ? "light" : "dark";
+      root.setAttribute("data-theme", theme);
+
+      if (label) label.textContent = toggle.checked ? "Light" : "Dark";
+
+      try {
+        localStorage.setItem(STORAGE_KEY, theme);
+      } catch (e) {
+        // ignore storage errors
+      }
     });
-  }
+  });
 })();
