@@ -194,6 +194,17 @@ h1{
   gap:16px;
   margin-top:18px;
 }
+/* Homepage: 3-up cards */
+.home-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:16px;
+  margin-top:18px;
+}
+
+@media (max-width: 980px){
+  .home-grid{ grid-template-columns:1fr; }
+}
 
 @media (max-width: 980px){
   .grid{ grid-template-columns:1fr; }
