@@ -5,22 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Financial Advisor Cost Calculator – The Long Math</title>
 
-  <!-- Force dark as default, allow toggle -->
-  <script>
-    (function () {
-      try {
-        const saved = localStorage.getItem("tlm_theme");
-        const theme = saved === "light" ? "light" : "dark";
-        document.documentElement.setAttribute("data-theme", theme);
-      } catch {
-        document.documentElement.setAttribute("data-theme", "dark");
-      }
-    })();
-  </script>
-
-  <!-- Site styles -->
-  <link rel="stylesheet" href="./styles.css" />
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
 </head>
+
 
 <body>
   <div class="wrap">
@@ -302,19 +291,12 @@
     <!-- Disclaimer -->
     <div class="disclaimer">
       <p>
-        <strong>Disclaimer:</strong> This calculator is provided for educational purposes only
-        and is not intended to constitute financial advice. Results are based on simplified
-        models and user-supplied assumptions.
+        <strong>Disclaimer:</strong> The calculators and tools at The Long Math are provided for educational purposes only
+        and are not intended to constitute financial or tax advice. Results are based on simplified
+        models and user-supplied assumptions.  Users are recommended to complete their own due diligence.
       </p>
     </div>
 
-    <footer class="site-footer">
-      <p>© <span id="year"></span> The Long Math.</p>
-      <p>
-        This site, including its text, layout, design, and calculator implementation,
-        is original work and the intellectual property of The Long Math.
-      </p>
-    </footer>
   </div>
 
   <script>
@@ -345,5 +327,7 @@
       });
     })();
   </script>
+<div id="footerMount"></div>
+
 </body>
 </html>
