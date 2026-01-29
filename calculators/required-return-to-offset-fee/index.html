@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Required return to offset a fee – The Long Math</title>
+
+  <!-- Site-wide theme + styles (same stack as advisor calculator) -->
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script defer src="/assets/js/site.js"></script>
+
+  <!-- Page-local layout only (keeps your global colors/fonts untouched) -->
+  <style>
+    /* Two-column blocks inside full-width cards */
+    .two-col{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:16px;
+      margin-top: 8px;
+    }
+    @media (max-width: 980px){
+      .two-col{ grid-template-columns: 1fr; }
+    }
+
+    /* Input field block: label above input (matches your screenshot style better than .row) */
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .field label{
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* Results grid: force two columns while preserving existing .result styling */
+    .results.two-col{
+      margin-top: 0; /* remove extra top margin from .two-col helper */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <!-- Back link -->
+    <a href="/" class="home-link">← Back to Home</a>
+
+    <!-- Canonical header -->
+    <header>
+      <div class="sitehead">
+        <div class="brandstack">
+          <div class="brand">The Long Math</div>
+          <div class="sigil">$ = P(1 + r/n)<sup>nt</sup></div>
+        </div>
+
+        <div class="themebox">
+          <div class="tlabel" id="theme_label">Dark</div>
+          <label class="switch" aria-label="Toggle light/dark mode">
+            <input id="theme_toggle" type="checkbox" />
+            <span class="knob"></span>
+          </label>
+        </div>
+      </div>
+
+      <h1>Required return to offset a fee</h1>
+
+      <div class="lede">
+        <p>
+          This calculator does not estimate skill or predict returns.
+          It shows the arithmetic required to cancel out a fee.
+        </p>
+      </div>
+    </header>
+
+    <!-- FULL-WIDTH EXPLANATION -->
+    <section class="card">
+      <h2 class="section-title">What this page shows</h2>
+
+      <p>In a simple model, net investment return equals gross return minus fees.</p>
+
+      <p>
+        The arithmetic is blunt: to fully offset a 1% annual fee, you must earn an additional 1% every year, indefinitely.
+      </p>
+
+      <p>
+        That statement is true — and useless on its own. It does not make the magnitude of the calculation explicit.
+      </p>
+
+      <p>
+        The real cost of a fee is the compound gap it creates: the ending value you never reach. This calculator makes
+        that gap concrete in dollars, showing the true long-term cost of the fee. It then presents the alternative
+        arithmetic — how much additional capital you would need to contribute each year just to overcome the fee and
+        arrive at the same outcome.
+      </p>
+
+      <p><strong>No opinions</strong> about whether the fee is justified.</p>
+      <p><strong>No assumptions</strong> about market outperformance or the availability of additional capital.</p>
+      <p><strong>Just arithmetic</strong> showing long-term fee drag in real dollars.</p>
+    </section>
+
+    <!-- INPUTS (full width, 2 columns) -->
+    <section class="card">
+      <h2 class="section-title">Inputs</h2>
+
+      <div class="two-col">
+        <div class="field">
+          <label for="starting_balance">Starting balance (CAD)</label>
+          <input id="starting_balance" type="number" inputmode="decimal" />
+        </div>
+
+        <div class="field">
+          <label for="horizon_years">Time horizon (years)</label>
+          <input id="horizon_years" type="number" inputmode="numeric" />
+        </div>
+
+        <div class="field">
+          <label for="annual_return">Gross return baseline (annual %)</label>
+          <input id="annual_return" type="text" placeholder="e.g. 7 or 4.5" />
+        </div>
+
+        <div class="field">
+          <label for="fee_pct">Annual fee (%)</label>
+          <input id="fee_pct" type="text" placeholder="e.g. 1.0" />
+        </div>
+
+        <div class="field">
+          <label for="annual_contribution">Annual contribution (CAD)</label>
+          <input id="annual_contribution" type="number" inputmode="decimal" />
+          <div class="helper">Added once per year (simple timing model).</div>
+        </div>
+
+        <!-- Empty spacer to keep the grid visually balanced when contribution helper wraps -->
+        <div class="field" aria-hidden="true"></div>
+      </div>
+
+      <p class="helper" style="margin-top: 10px;">
+        Gross return is used only to translate percentage differences into dollar outcomes.
+        The fee is treated as an annual drag on returns, compounding against you.
+      </p>
+    </section>
+
+    <!-- RESULTS (full width, 2 columns) -->
+    <section class="card">
+      <h2 class="section-title">Results</h2>
+
+      <div class="results two-col">
+        <div class="result">
+          <p class="k">Required excess return (alpha)</p>
+          <p class="v" id="out_required_excess">–%</p>
+        </div>
+
+        <div class="result">
+          <p class="k">Required gross return (baseline + alpha)</p>
+          <p class="v" id="out_required_gross">–%</p>
+        </div>
+
+        <div class="result">
+          <p class="k">Ending value (no fee)</p>
+          <p class="v" id="out_end_no_fee">$–</p>
+        </div>
+
+        <div class="result">
+          <p class="k">Ending value (with fee, no extra return)</p>
+          <p class="v" id="out_end_with_fee">$–</p>
+        </div>
+
+        <div class="result prominent">
+          <p class="k">Ending value lost to fees</p>
+          <p class="v" id="out_lost_to_fees">$–</p>
+          <p class="subl">No-fee ending value minus with-fee ending value</p>
+        </div>
+
+        <div class="result prominent">
+          <p class="k">Additional annual contribution required if excess return (ALPHA) is not achieved</p>
+          <p class="v" id="out_extra_contrib">$–</p>
+          <p class="meta">Extra capital required EACH YEAR to compensate for fees.</p>
+        </div>
+      </div>
+
+      <p class="meta" id="out_meta" style="margin-top: 12px;">
+        Calculated using the assumptions shown above.
+      </p>
+
+      <p class="meta" style="margin-top: 10px;">
+        Proof sketch: break-even requires r = (r + α − fee) ⇒ α = fee. (Specific to the “net = gross − fee” model.)
+      </p>
+    </section>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> The calculators and tools at The Long Math are provided for educational purposes only
+        and are not intended to constitute financial or tax advice. Results are based on simplified
+        models and user-supplied assumptions. Users are recommended to complete their own due diligence.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- Theme toggle (same pattern as advisor calculator) -->
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const toggle = document.getElementById("theme_toggle");
+      const label = document.getElementById("theme_label");
+
+      const theme = root.getAttribute("data-theme") || "dark";
+      toggle.checked = theme === "light";
+      label.textContent = theme === "light" ? "Light" : "Dark";
+
+      toggle.addEventListener("change", () => {
+        const next = toggle.checked ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem("tlm_theme", next);
+        label.textContent = next === "light" ? "Light" : "Dark";
+      });
+    })();
+  </script>
+
+  <div id="footerMount"></div>
+
+  <!-- Self-contained calculator logic (no slider) -->
+  <script>
+    (function () {
+      "use strict";
+
+      const els = {
+        starting: document.getElementById("starting_balance"),
+        contrib: document.getElementById("annual_contribution"),
+        years: document.getElementById("horizon_years"),
+        gross: document.getElementById("annual_return"),
+        fee: document.getElementById("fee_pct"),
+
+        outReq: document.getElementById("out_required_excess"),
+        outReqGross: document.getElementById("out_required_gross"),
+        outEnd0: document.getElementById("out_end_no_fee"),
+        outEndF: document.getElementById("out_end_with_fee"),
+        outLost: document.getElementById("out_lost_to_fees"),
+        outExtra: document.getElementById("out_extra_contrib"),
+        outMeta: document.getElementById("out_meta"),
+      };
+
+      function cleanNum(v) {
+        const s = String(v ?? "").trim().replace(/,/g, "");
+        if (!s) return NaN;
+        const n = Number(s);
+        return Number.isFinite(n) ? n : NaN;
+      }
+
+      function fmtCAD(n) {
+        if (!Number.isFinite(n)) return "$–";
+        return Math.round(n).toLocaleString("en-CA", {
+          style: "currency",
+          currency: "CAD",
+          maximumFractionDigits: 0
+        });
+      }
+
+      function fmtPct(n) {
+        if (!Number.isFinite(n)) return "–%";
+        return n.toLocaleString("en-CA", { maximumFractionDigits: 2 }) + "%";
+      }
+
+      // Annual compounding, end-of-year contribution.
+      function endingValue(start, annualContrib, years, grossRate, feeRate) {
+        let v = start;
+        const r = grossRate - feeRate;
+        for (let i = 0; i < years; i++) {
+          v = v * (1 + r);
+          v += annualContrib;
+        }
+        return v;
+      }
+
+      // Find x such that end(with fee, contrib + x) == end(no fee, contrib)
+      function solveExtraContribution(start, contrib, years, gross, fee) {
+        const target = endingValue(start, contrib, years, gross, 0);
+        if (!(fee > 0)) return 0;
+
+        let lo = 0;
+        let hi = Math.max(100, contrib);
+
+        while (endingValue(start, contrib + hi, years, gross, fee) < target && hi < 1e9) {
+          hi *= 2;
+        }
+
+        for (let i = 0; i < 80; i++) {
+          const mid = (lo + hi) / 2;
+          const val = endingValue(start, contrib + mid, years, gross, fee);
+          if (val >= target) hi = mid;
+          else lo = mid;
+        }
+        return hi;
+      }
+
+      function calculate() {
+        const start = cleanNum(els.starting.value);
+        const contrib = cleanNum(els.contrib.value);
+        const yearsRaw = cleanNum(els.years.value);
+        const years = Number.isFinite(yearsRaw) ? Math.max(0, Math.floor(yearsRaw)) : NaN;
+
+        const grossPct = cleanNum(els.gross.value);
+        const feePct = cleanNum(els.fee.value);
+
+        if (![start, contrib, years, grossPct, feePct].every(Number.isFinite)) {
+          els.outReq.textContent = "–%";
+          els.outReqGross.textContent = "–%";
+          els.outEnd0.textContent = "$–";
+          els.outEndF.textContent = "$–";
+          els.outLost.textContent = "$–";
+          els.outExtra.textContent = "$–";
+          els.outMeta.textContent = "Calculated using the assumptions shown above.";
+          return;
+        }
+
+        const gross = grossPct / 100;
+        const fee = feePct / 100;
+
+        const end0 = endingValue(start, contrib, years, gross, 0);
+        const endF = endingValue(start, contrib, years, gross, fee);
+
+        const lost = end0 - endF;
+        const extra = solveExtraContribution(start, contrib, years, gross, fee);
+
+        // Required excess return equals the fee in the net = gross - fee model
+        const requiredExcessPct = feePct;
+        const requiredGrossPct = grossPct + feePct;
+
+        els.outReq.textContent = fmtPct(requiredExcessPct);
+        els.outReqGross.textContent = fmtPct(requiredGrossPct);
+        els.outEnd0.textContent = fmtCAD(end0);
+        els.outEndF.textContent = fmtCAD(endF);
+        els.outLost.textContent = fmtCAD(lost);
+        els.outExtra.textContent = fmtCAD(extra);
+
+        els.outMeta.textContent = "Calculated using the assumptions shown above.";
+      }
+
+      function initDefaults() {
+        els.starting.value = "0";
+        els.years.value = "30";
+        els.gross.value = "6";
+        els.fee.value = "1.0";
+        els.contrib.value = "50000";
+        calculate();
+      }
+
+      ["starting_balance", "annual_contribution", "horizon_years", "annual_return", "fee_pct"].forEach(id => {
+        document.getElementById(id).addEventListener("input", calculate);
+      });
+
+      initDefaults();
+    })();
+  </script>
+</body>
+</html>
