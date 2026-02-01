@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Investment Fees — Common Long-Term Cost Questions | The Long Math</title>
+  <meta name="description" content="Four common fee questions, answered clearly with explicit default assumptions, with links to the full interactive calculators." />
+
+  <!-- Update to your final public URL when live -->
+  <link rel="canonical" href="https://thelongmath.com/fees/" />
+
+  <style>
+    :root{
+      --bg:#0b0f17; --panel:#111827; --panel2:#0f172a; --text:#e5e7eb; --muted:#a1a1aa;
+      --border:rgba(255,255,255,.10); --link:#93c5fd; --link2:#bfdbfe;
+      --shadow:0 10px 30px rgba(0,0,0,.35); --radius:14px; --maxw:980px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      background: radial-gradient(1200px 800px at 20% 0%, rgba(59,130,246,.12), transparent 55%),
+                  radial-gradient(1200px 800px at 90% 30%, rgba(16,185,129,.10), transparent 60%),
+                  var(--bg);
+      color:var(--text); line-height:1.55;
+    }
+    a{color:var(--link); text-decoration:none}
+    a:hover{color:var(--link2); text-decoration:underline}
+    .wrap{max-width:var(--maxw); margin:0 auto; padding:24px 18px 70px}
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:14px 16px;
+      background:rgba(17,24,39,.60);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+      position: sticky; top:14px; z-index:30;
+    }
+    .brand{display:flex; align-items:center; gap:12px; min-width:0}
+    .sigil{font-weight:800; letter-spacing:.02em; font-size:18px; white-space:nowrap}
+    .brand small{display:block; color:var(--muted); font-size:12px; margin-top:2px}
+    .brandtext{min-width:0}
+    .brandtext .title{
+      font-weight:700; font-size:14px; color:var(--text); opacity:.95;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .navlinks{display:flex; gap:16px; align-items:center}
+    .navlinks a{color:var(--text); opacity:.85; font-size:14px}
+    .navlinks a:hover{opacity:1; text-decoration:none}
+    .hamburger{
+      display:none;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.20);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+    }
+    .hamburger:focus{outline:2px solid rgba(147,197,253,.35); outline-offset:2px}
+    .mobileMenu{
+      display:none;
+      margin-top:10px;
+      padding:10px 12px;
+      background:rgba(17,24,39,.75);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+    }
+    .mobileMenu a{
+      display:block; padding:10px 8px; border-radius:10px;
+      color:var(--text); opacity:.9;
+    }
+    .mobileMenu a:hover{background:rgba(255,255,255,.06); opacity:1; text-decoration:none}
+
+    .crumb{margin:18px 2px 10px; color:var(--muted); font-size:13px}
+    header.hero{margin-top:14px; padding:18px 18px 6px}
+    h1{margin:0 0 8px; font-size:30px; letter-spacing:-.01em}
+    .lead{margin:0 0 12px; color:var(--muted); max-width:70ch}
+    .tagline{margin:10px 0 0; color:var(--text); opacity:.9; font-weight:600}
+
+    .grid{display:grid; grid-template-columns:1fr; gap:14px; margin-top:12px}
+    .card{
+      background:linear-gradient(180deg, rgba(17,24,39,.85), rgba(15,23,42,.85));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px 16px 14px;
+    }
+    .card h2{margin:0 0 10px; font-size:18px; letter-spacing:-.01em}
+    .q{margin:0 0 8px; font-size:15px; font-weight:700}
+    .answer{
+      margin:0 0 10px; padding:10px 12px;
+      border:1px solid rgba(147,197,253,.25);
+      background:rgba(147,197,253,.08);
+      border-radius:12px;
+    }
+    .answer .label{
+      display:block; font-size:12px; color:var(--muted);
+      margin-bottom:4px; letter-spacing:.02em; text-transform:uppercase;
+    }
+    .answer .text{margin:0; font-size:14px; font-weight:650}
+    .assump{margin:10px 0 12px; padding-left:18px; color:var(--muted); font-size:13px}
+    .assump li{margin:4px 0}
+    .ctaRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:8px}
+    .btn{
+      display:inline-block; padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      font-size:14px; font-weight:650;
+      text-decoration:none;
+    }
+    .btn:hover{background:rgba(255,255,255,.10); text-decoration:none}
+    .btnPrimary{border-color:rgba(147,197,253,.35); background:rgba(147,197,253,.12)}
+    .note{margin-top:14px; color:var(--muted); font-size:13px}
+    footer{
+      margin-top:22px; padding:18px 10px 0;
+      color:var(--muted); font-size:13px;
+      border-top:1px solid rgba(255,255,255,.10);
+    }
+    @media (max-width:720px){
+      .navlinks{display:none}
+      .hamburger{display:inline-flex}
+      .brandtext .title{max-width:190px}
+    }
+  </style>
+
+  <!-- AI/SEO-friendly: FAQ structured data -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {
+        "@type":"Question",
+        "name":"What is the long-term cost of a 1% investment fee?",
+        "acceptedAnswer":{"@type":"Answer","text":"Using default assumptions, a 1% annual fee reduces the ending value over 30 years versus no fee. Open the calculator to see the exact dollar impact and adjust inputs."}
+      },
+      {
+        "@type":"Question",
+        "name":"How much does a 0.5% fee reduce returns over 30 years?",
+        "acceptedAnswer":{"@type":"Answer","text":"Using default assumptions, a 0.5% annual fee reduces the ending value over 30 years versus no fee. Open the calculator to see the exact dollar impact and adjust inputs."}
+      },
+      {
+        "@type":"Question",
+        "name":"How much extra return is required to overcome a 1% annual fee?",
+        "acceptedAnswer":{"@type":"Answer","text":"The required extra return is near the fee as a first approximation; the exact break-even depends on compounding, contributions, and horizon. Open the calculator to compute it under your inputs."}
+      },
+      {
+        "@type":"Question",
+        "name":"At what fee level does active management stop outperforming passive investing?",
+        "acceptedAnswer":{"@type":"Answer","text":"Active management breaks even when the required excess return equals the fee difference after compounding. Open the calculator to compute the break-even alpha under your inputs."}
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <div class="topbar" role="banner" aria-label="Site header">
+      <div class="brand">
+        <div class="sigil" aria-label="The Long Math sigil">$ =</div>
+        <div class="brandtext">
+          <div class="title">The Long Math</div>
+          <small>No opinions. No hidden assumptions. Just arithmetic.</small>
+        </div>
+      </div>
+
+      <nav class="navlinks" aria-label="Primary navigation">
+        <a href="/" aria-label="Home">Home</a>
+        <a href="/about/" aria-label="About">About</a>
+        <a href="/calculators/" aria-label="Calculators">Calculators</a>
+        <a href="/calculator/" aria-label="Advisor fee calculator">Advisor Fee Tool</a>
+      </nav>
+
+      <button class="hamburger" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">☰</button>
+    </div>
+
+    <div class="mobileMenu" id="mobileMenu" aria-label="Mobile menu">
+      <a href="/">Home</a>
+      <a href="/about/">About</a>
+      <a href="/calculators/">Calculators</a>
+      <a href="/calculator/">Advisor Fee Tool</a>
+    </div>
+
+    <div class="crumb"><a href="/">Home</a> / Fees</div>
+
+    <header class="hero">
+      <h1>Investment fees: common long-term cost questions</h1>
+      <p class="lead">
+        This hub summarizes four fee questions with explicit default assumptions and short answers.
+        Each answer links to a dedicated calculator page where the full math is shown and inputs can be changed.
+      </p>
+      <p class="tagline">Clear questions. Clear answers. Inspectable arithmetic.</p>
+    </header>
+
+    <main class="grid" role="main">
+      <section class="card" aria-labelledby="q1">
+        <h2 id="q1">1) Cost of a 1% annual fee</h2>
+        <p class="q">Question: What is the long-term cost of a 1% investment fee?</p>
+        <div class="answer" role="note" aria-label="Short Answer">
+          <span class="label">Short answer</span>
+          <p class="text">Using default assumptions, a 1% annual fee reduces the ending value over 30 years versus no fee.</p>
+        </div>
+        <ul class="assump" aria-label="Default assumptions">
+          <li>Starting balance: <strong>$500,000</strong></li>
+          <li>Gross return (before fee): <strong>6%</strong></li>
+          <li>Horizon: <strong>30 years</strong></li>
+          <li>Annual contribution: <strong>$0</strong></li>
+        </ul>
+        <div class="ctaRow">
+          <a class="btn btnPrimary" href="/calculators/fee-cost-1percent/" aria-label="Open 1% fee cost calculator">Open the 1% fee cost calculator</a>
+          <a class="btn" href="/calculators/" aria-label="Browse calculators">Browse all calculators</a>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="q2">
+        <h2 id="q2">2) Cost of a 0.5% annual fee</h2>
+        <p class="q">Question: How much does a 0.5% fee reduce returns over 30 years?</p>
+        <div class="answer" role="note" aria-label="Short Answer">
+          <span class="label">Short answer</span>
+          <p class="text">Using default assumptions, a 0.5% annual fee reduces the ending value over 30 years versus no fee.</p>
+        </div>
+        <ul class="assump" aria-label="Default assumptions">
+          <li>Starting balance: <strong>$500,000</strong></li>
+          <li>Gross return (before fee): <strong>6%</strong></li>
+          <li>Horizon: <strong>30 years</strong></li>
+          <li>Annual contribution: <strong>$0</strong></li>
+        </ul>
+        <div class="ctaRow">
+          <a class="btn btnPrimary" href="/calculators/fee-cost-0-5percent/" aria-label="Open 0.5% fee cost calculator">Open the 0.5% fee cost calculator</a>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="q3">
+        <h2 id="q3">3) Required excess return to offset a fee</h2>
+        <p class="q">Question: How much extra return is required to overcome a 1% annual fee?</p>
+        <div class="answer" role="note" aria-label="Short Answer">
+          <span class="label">Short answer</span>
+          <p class="text">The required extra return is near the fee as a first approximation; the exact break-even depends on compounding, contributions, and horizon.</p>
+        </div>
+        <ul class="assump" aria-label="Default assumptions">
+          <li>Starting balance: <strong>$500,000</strong></li>
+          <li>Gross return baseline: <strong>6%</strong></li>
+          <li>Fee: <strong>1.0%</strong></li>
+          <li>Horizon: <strong>30 years</strong></li>
+          <li>Annual contribution: <strong>$0</strong></li>
+        </ul>
+        <div class="ctaRow">
+          <a class="btn btnPrimary" href="/calculators/required-return-to-offset-fee/" aria-label="Open required return calculator">Open the required-return calculator</a>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="q4">
+        <h2 id="q4">4) Break-even: active vs passive fees</h2>
+        <p class="q">Question: At what fee level does active management stop outperforming passive investing?</p>
+        <div class="answer" role="note" aria-label="Short Answer">
+          <span class="label">Short answer</span>
+          <p class="text">Active management breaks even when the required excess return equals the fee difference after compounding over the chosen horizon.</p>
+        </div>
+        <ul class="assump" aria-label="Default assumptions">
+          <li>Starting balance: <strong>$500,000</strong></li>
+          <li>Return baseline: <strong>6%</strong></li>
+          <li>Passive fee: <strong>0.10%</strong></li>
+          <li>Active fee: <strong>1.00%</strong></li>
+          <li>Horizon: <strong>30 years</strong></li>
+          <li>Annual contribution: <strong>$0</strong></li>
+        </ul>
+        <div class="ctaRow">
+          <a class="btn btnPrimary" href="/calculators/active-vs-passive-break-even/" aria-label="Open active vs passive break-even calculator">Open the break-even calculator</a>
+        </div>
+      </section>
+
+      <section class="card" aria-label="Notes">
+        <h2>Notes</h2>
+        <p class="note">
+          This hub is intentionally shallow: it provides clean questions, clean short answers, and links to canonical calculator pages where the math is shown and inputs can be changed.
+        </p>
+      </section>
+    </main>
+
+    <footer>© <span id="year"></span> The Long Math. All rights reserved.</footer>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+      var y = document.getElementById("year");
+      if (y) y.textContent = String(new Date().getFullYear());
+
+      var btn = document.getElementById("menuBtn");
+      var menu = document.getElementById("mobileMenu");
+      if (btn && menu) {
+        btn.addEventListener("click", function () {
+          var open = menu.style.display === "block";
+          menu.style.display = open ? "none" : "block";
+          btn.setAttribute("aria-expanded", open ? "false" : "true");
+        });
+        menu.addEventListener("click", function (e) {
+          var t = e.target;
+          if (t && t.tagName === "A") {
+            menu.style.display = "none";
+            btn.setAttribute("aria-expanded", "false");
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

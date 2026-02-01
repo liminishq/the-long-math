@@ -188,16 +188,19 @@ h1{
 /* =========================
    GRID (CRITICAL)
    ========================= */
+
+/* Default (calculators): 2-up */
 .grid{
   display:grid;
-  grid-template-columns:repeat(3, 1fr);
+  grid-template-columns:repeat(2, minmax(0, 1fr));
   gap:16px;
   margin-top:18px;
 }
-/* Homepage: 3-up cards */
+
+/* Homepage only: 3-up cards */
 .home-grid{
   display:grid;
-  grid-template-columns:repeat(3, 1fr);
+  grid-template-columns:repeat(3, minmax(0, 1fr));
   gap:16px;
   margin-top:18px;
 }

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calculators | The Long Math</title>
+  <meta name="description" content="Inspectable calculators for long-term financial trade-offs." />
+
+  <!-- Update to your final public URL when live -->
+  <link rel="canonical" href="https://thelongmath.com/calculators/" />
+
+  <style>
+    :root{
+      --bg:#0b0f17; --panel:#111827; --panel2:#0f172a; --text:#e5e7eb; --muted:#a1a1aa;
+      --border:rgba(255,255,255,.10); --link:#93c5fd;
+      --shadow:0 10px 30px rgba(0,0,0,.35); --radius:14px; --maxw:980px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.55;
+    }
+    a{color:var(--link); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:var(--maxw); margin:0 auto; padding:24px 18px 70px}
+    .card{
+      background:linear-gradient(180deg, rgba(17,24,39,.85), rgba(15,23,42,.85));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+    h1{margin:0 0 8px; font-size:30px}
+    .lead{margin:0 0 14px; color:var(--muted); max-width:70ch}
+
+    .list{display:grid; grid-template-columns:1fr; gap:12px; margin-top:14px}
+    .item{
+      padding:12px 12px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:rgba(255,255,255,.04);
+    }
+    .item h2{margin:0 0 6px; font-size:16px}
+    .item p{margin:0; color:var(--muted); font-size:13px}
+
+    .crumb{margin:0 0 10px; color:var(--muted); font-size:13px}
+    footer{
+      margin-top:18px;
+      color:var(--muted);
+      font-size:13px;
+      border-top:1px solid rgba(255,255,255,.10);
+      padding-top:14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="crumb"><a href="/">Home</a> / Calculators</div>
+
+      <h1>Calculators</h1>
+      <p class="lead">Arithmetic-first calculators with explicit assumptions and inspectable outputs.</p>
+
+      <div class="list" aria-label="Calculator list">
+        <div class="item">
+          <h2><a href="/calculator/">Cost of a financial advisor (existing tool)</a></h2>
+          <p>Your original calculator. Kept separate to avoid breaking changes.</p>
+        </div>
+
+        <div class="item">
+          <h2><a href="/calculators/fee-cost-1percent/">Fee cost — 1%</a></h2>
+          <p>Quantifies the long-term cost of a 1% annual fee versus no fee.</p>
+        </div>
+
+        <div class="item">
+          <h2><a href="/calculators/fee-cost-0-5percent/">Fee cost — 0.5%</a></h2>
+          <p>Same model with a 0.5% default fee.</p>
+        </div>
+
+        <div class="item">
+          <h2><a href="/calculators/required-return-to-offset-fee/">Required excess return to offset a fee</a></h2>
+          <p>Computes the extra return needed to break even after fees.</p>
+        </div>
+
+        <div class="item">
+          <h2><a href="/calculators/active-vs-passive-break-even/">Active vs passive break-even</a></h2>
+          <p>Computes the alpha required for an active fee to break even versus passive.</p>
+        </div>
+
+        <div class="item">
+          <h2><a href="/fees/">Fees hub</a></h2>
+          <p>Four fee questions with short answers and links to the canonical calculators.</p>
+        </div>
+      </div>
+
+      <footer>© <span id="year"></span> The Long Math. All rights reserved.</footer>
+    </div>
+  </div>
+
+  <script>
+    (function(){ "use strict";
+      var y=document.getElementById("year");
+      if(y) y.textContent=String(new Date().getFullYear());
+    })();
+  </script>
+</body>
+</html>

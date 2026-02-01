@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fee Cost — 1% Annual Fee | The Long Math</title>
+  <meta name="description" content="Compute the long-term cost of a 1% annual investment fee versus no fee, with explicit assumptions and inspectable math." />
+
+  <!-- Update to final public URL when live -->
+  <link rel="canonical" href="https://thelongmath.com/calculators/fee-cost-1percent/" />
+
+  <style>
+    :root{
+      --bg:#0b0f17; --panel:#111827; --text:#e5e7eb; --muted:#a1a1aa;
+      --border:rgba(255,255,255,.10); --link:#93c5fd;
+      --shadow:0 10px 30px rgba(0,0,0,.35); --radius:14px; --maxw:980px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.55;
+    }
+    a{color:var(--link); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:var(--maxw); margin:0 auto; padding:24px 18px 70px}
+    .card{
+      background:linear-gradient(180deg, rgba(17,24,39,.85), rgba(15,23,42,.85));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+    h1{margin:0 0 6px; font-size:28px}
+    .lead{margin:0 0 12px; color:var(--muted); max-width:75ch}
+
+    .crumb{margin-bottom:10px; font-size:13px; color:var(--muted)}
+
+    .answer{
+      margin:12px 0;
+      padding:10px 12px;
+      border:1px solid rgba(147,197,253,.25);
+      background:rgba(147,197,253,.08);
+      border-radius:12px;
+    }
+    .answer .label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.02em;
+      margin-bottom:4px;
+    }
+
+    .grid{display:grid; grid-template-columns:1fr; gap:14px; margin-top:12px}
+    .panel{
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:rgba(255,255,255,.04);
+      padding:12px;
+    }
+    h2{margin:0 0 8px; font-size:16px}
+
+    label{display:block; font-size:12px; color:var(--muted); margin:10px 0 6px}
+    input{
+      width:100%;
+      padding:10px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.18);
+      color:var(--text);
+      font-size:14px;
+    }
+
+    .row{display:grid; grid-template-columns:1fr; gap:10px}
+    @media(min-width:780px){ .row{grid-template-columns:1fr 1fr} }
+
+    .out{display:grid; grid-template-columns:1fr; gap:10px}
+    @media(min-width:780px){ .out{grid-template-columns:1fr 1fr} }
+
+    .kv{
+      padding:10px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:rgba(255,255,255,.03);
+    }
+    .k{font-size:12px; color:var(--muted)}
+    .v{font-size:16px; font-weight:750}
+
+    .math{margin-top:10px; font-size:13px; color:var(--muted)}
+    footer{
+      margin-top:16px;
+      padding-top:14px;
+      border-top:1px solid rgba(255,255,255,.10);
+      font-size:13px;
+      color:var(--muted);
+    }
+  </style>
+
+  <!-- AI-friendly structured data -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[{
+      "@type":"Question",
+      "name":"What is the long-term cost of a 1% investment fee?",
+      "acceptedAnswer":{
+        "@type":"Answer",
+        "text":"This calculator compares the ending value with no fee versus a 1% annual fee using explicit assumptions and arithmetic."
+      }
+    }]
+  }
+  </script>
+
+  <script defer src="/assets/js/fee-math.js"></script>
+  <script defer src="/assets/js/fee-ui.js"></script>
+</head>
+
+<body data-tool="fee-cost">
+  <div class="wrap">
+    <div class="card">
+
+      <div class="crumb">
+        <a href="/fees/">Fees</a> / <a href="/calculators/">Calculators</a>
+      </div>
+
+      <h1>Fee cost — 1% annual fee</h1>
+      <p class="lead">
+        This calculator compares the ending value with <strong>no fee</strong> versus a
+        <strong>1% annual investment fee</strong>.  
+        Model: net return = gross return − fee.
+      </p>
+
+      <div class="answer" role="note" aria-label="Short Answer">
+        <span class="label">Short answer</span>
+        A 1% annual fee reduces the ending value relative to no fee.  
+        The exact dollar impact depends on balance, return, and time horizon.
+      </div>
+
+      <div class="grid">
+        <section class="panel">
+          <h2>Inputs</h2>
+          <div class="row">
+            <div>
+              <label for="P">Starting balance (CAD)</label>
+              <input id="P" value="500000" />
+            </div>
+            <div>
+              <label for="years">Horizon (years)</label>
+              <input id="years" value="30" />
+            </div>
+            <div>
+              <label for="rGrossPct">Gross return (annual %)</label>
+              <input id="rGrossPct" value="6" />
+            </div>
+            <div>
+              <label for="feePct">Annual fee (%)</label>
+              <input id="feePct" value="1.0" />
+            </div>
+            <div>
+              <label for="contrib">Annual contribution (CAD)</label>
+              <input id="contrib" value="0" />
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Results</h2>
+          <div class="out">
+            <div class="kv">
+              <div class="k">Ending value (no fee)</div>
+              <div class="v" id="outNoFee">—</div>
+            </div>
+            <div class="kv">
+              <div class="k">Ending value (with 1% fee)</div>
+              <div class="v" id="outWithFee">—</div>
+            </div>
+            <div class="kv">
+              <div class="k">Dollar difference</div>
+              <div class="v" id="outDiff">—</div>
+            </div>
+            <div class="kv">
+              <div class="k">Percent reduction</div>
+              <div class="v" id="outPct">—</div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="math">
+        Formula: FV = P·(1+r)<sup>t</sup> + c·((1+r)<sup>t</sup> − 1)/r  
+        (computed once with r = gross return, once with r = gross − fee)
+      </div>
+
+      <footer>
+        © <span id="year"></span> The Long Math. All rights reserved.
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      var y=document.getElementById("year");
+      if(y) y.textContent=String(new Date().getFullYear());
+    })();
+  </script>
+</body>
+</html>
