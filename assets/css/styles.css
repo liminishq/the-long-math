@@ -27,6 +27,22 @@
 
   --shadow:0 14px 40px rgba(0,0,0,.33);
   --inset:inset 0 1px 0 rgba(255,255,255,.03);
+
+
+/* Calculator-only grid (fixed 2 columns) */
+.calc-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:16px;
+  margin-top:18px;
+  width:100%;
+}
+
+@media (max-width:980px){
+  .calc-grid{ grid-template-columns:1fr; }
+}
+
+
 }
 
 /* LIGHT (toggle only) */
