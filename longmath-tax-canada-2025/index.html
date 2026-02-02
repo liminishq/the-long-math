@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Canada Personal Income Tax Calculator 2025 – The Long Math</title>
+
+  <!-- Theme init (must run before CSS) -->
+  <script>
+    (function () {
+      try {
+        const saved = localStorage.getItem("tlm_theme");
+        const theme = saved === "light" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- Back link -->
+    <a href="https://thelongmath.com" class="home-link">← Back to Home</a>
+
+    <!-- Header -->
+    <header>
+      <div class="sitehead">
+        <div class="brandstack">
+          <div class="brand">The Long Math</div>
+          <div class="sigil">$ = P(1 + r/n)<sup>nt</sup></div>
+        </div>
+
+        <div class="themebox">
+          <div class="tlabel" id="theme_label">Dark</div>
+          <label class="switch" aria-label="Toggle light/dark mode">
+            <input id="theme_toggle" type="checkbox" />
+            <span class="knob"></span>
+          </label>
+        </div>
+      </div>
+
+      <h1>Canada Personal Income Tax Calculator</h1>
+
+      <div class="lede">
+        <p>2025 Tax Year</p>
+        <p><strong>Educational arithmetic. Not tax advice.</strong></p>
+      </div>
+    </header>
+
+    <!-- MAIN GRID (2 columns) -->
+    <div class="grid">
+
+      <!-- INPUTS -->
+      <section class="card">
+        <h2 class="section-title">Inputs</h2>
+
+        <div style="margin-bottom: 16px;">
+          <button id="resetButton" type="button" style="padding: 10px 16px; font-size: 13px;">Reset All Inputs</button>
+        </div>
+
+        <div class="field">
+          <label for="year">Tax Year</label>
+          <select id="year">
+            <option value="2025">2025</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="province">Province/Territory of Residence</label>
+          <select id="province">
+            <option value="">Select...</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="employmentIncome">Employment Income</label>
+          <input type="text" id="employmentIncome" placeholder="0" value="">
+        </div>
+
+        <div class="field">
+          <label for="selfEmploymentIncome">Self-Employment Income</label>
+          <input type="text" id="selfEmploymentIncome" placeholder="0" value="">
+        </div>
+
+        <div class="field">
+          <label for="otherIncome">Other Income</label>
+          <input type="text" id="otherIncome" placeholder="0" value="">
+        </div>
+
+        <div class="field">
+          <label for="eligibleDividends">Eligible Dividends</label>
+          <input type="text" id="eligibleDividends" placeholder="0" value="">
+        </div>
+
+        <div class="field">
+          <label for="nonEligibleDividends">Non-Eligible Dividends</label>
+          <input type="text" id="nonEligibleDividends" placeholder="0" value="">
+        </div>
+
+        <div class="field">
+          <label for="capitalGains">Capital Gains</label>
+          <input type="text" id="capitalGains" placeholder="0" value="">
+        </div>
+
+        <div class="field">
+          <label for="rrspDeduction">RRSP Deduction</label>
+          <input type="text" id="rrspDeduction" placeholder="0" value="">
+        </div>
+
+        <div class="field">
+          <label for="fhsaDeduction">FHSA Deduction</label>
+          <input type="text" id="fhsaDeduction" placeholder="0" value="">
+        </div>
+
+        <div class="field">
+          <label for="taxPaid">Income Tax Already Paid (Withheld)</label>
+          <input type="text" id="taxPaid" placeholder="0" value="">
+        </div>
+
+        <div style="margin-top: 20px; padding: 14px; border: 1px solid rgba(217,180,106,.35); border-radius: 12px; background: linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,.04));">
+          <p style="margin: 0; font-size: 13px; color: var(--text); font-weight: 600; margin-bottom: 8px;">Important Note:</p>
+          <p style="margin: 0 0 12px; font-size: 12px; color: var(--muted); line-height: 1.5;">
+            These calculations are <strong style="color: var(--text);">before</strong> individual deductions you may be eligible to claim, such as:
+            home office expenses, medical expenses, charitable donations, tuition and education credits, childcare expenses,
+            moving expenses, and other personal tax credits or deductions that may reduce your taxable income or tax payable.
+          </p>
+          <p style="margin: 0; font-size: 12px; color: var(--muted); line-height: 1.5;">
+            <strong style="color: var(--text);">This calculator cannot determine which deductions apply to you.</strong> If you have an estimate of your total deductions, you may include it below to see the impact on the results. Always confirm final numbers with your accountant.
+          </p>
+        </div>
+
+        <div class="field" style="margin-top: 16px;">
+          <label for="estimatedDeductions">Estimated Additional Deductions</label>
+          <input type="text" id="estimatedDeductions" placeholder="0" value="">
+          <div class="helper" style="margin-top: 6px;">Optional: Enter your estimated total of additional deductions (medical, home office, donations, etc.)</div>
+        </div>
+      </section>
+
+      <!-- RESULTS -->
+      <section class="card">
+        <h2 class="section-title">Results</h2>
+
+        <div class="results">
+          <div class="result">
+            <p class="k">Total Income</p>
+            <p class="v" id="totalIncome">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Taxable Income</p>
+            <p class="v" id="taxableIncome">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Federal Tax</p>
+            <p class="v" id="federalTax">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Provincial/Territorial Tax</p>
+            <p class="v" id="provTax">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">CPP (Employee)</p>
+            <p class="v" id="cpp">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">EI (Employee)</p>
+            <p class="v" id="ei">$–</p>
+          </div>
+
+          <div class="result prominent">
+            <p class="k">Total Burden</p>
+            <p class="v" id="totalBurden">$–</p>
+            <p class="subl">Income tax + CPP + EI</p>
+          </div>
+
+          <div class="result">
+            <p class="k">After-Tax Income</p>
+            <p class="v" id="afterTaxIncome">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Take-Home After Payroll</p>
+            <p class="v" id="takeHomeAfterPayroll">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Average Tax Rate</p>
+            <p class="v" id="avgRate">–%</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Marginal Tax Rate</p>
+            <p class="v" id="marginalRate">–%</p>
+          </div>
+
+          <div class="result" id="refundOrOwingResult">
+            <p class="k" id="refundOrOwingLabel">Refund / Balance Owing</p>
+            <p class="v" id="refundOrOwing">$–</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- SHOW THE MATH (full width) -->
+    <section class="methods">
+      <div class="methods-card">
+        <h2>Show the Math</h2>
+
+        <div class="method-list">
+          <details class="method-item">
+            <summary><strong>Federal Tax Calculation</strong></summary>
+            <div id="federalBrackets" class="breakdown-content"></div>
+          </details>
+
+          <details class="method-item">
+            <summary><strong>Provincial/Territorial Tax Calculation</strong></summary>
+            <div id="provincialBrackets" class="breakdown-content"></div>
+          </details>
+
+          <details class="method-item">
+            <summary><strong>Dividend Gross-Up and Tax Credits</strong></summary>
+            <div id="dividendsBreakdown" class="breakdown-content"></div>
+          </details>
+
+          <details class="method-item">
+            <summary><strong>Capital Gains Inclusion</strong></summary>
+            <div id="capitalGainsBreakdown" class="breakdown-content"></div>
+          </details>
+
+          <details class="method-item">
+            <summary><strong>CPP and EI Calculations</strong></summary>
+            <div id="payrollBreakdown" class="breakdown-content"></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> The calculators and tools at The Long Math are provided for educational purposes only
+        and are not intended to constitute financial or tax advice. Results are based on simplified
+        models and user-supplied assumptions. Users are recommended to complete their own due diligence.
+      </p>
+    </div>
+
+    <!-- Sitewide footer (copyright) -->
+    <footer class="site-footer">
+      <p>© 2026 The Long Math.</p>
+      <p>This site, including its text, layout, design, calculators and tools are original work and the intellectual property of The Long Math.</p>
+    </footer>
+
+  </div>
+
+  <!-- Theme toggle -->
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const toggle = document.getElementById("theme_toggle");
+      const label = document.getElementById("theme_label");
+
+      const theme = root.getAttribute("data-theme") || "dark";
+      toggle.checked = theme === "light";
+      label.textContent = theme === "light" ? "Light" : "Dark";
+
+      toggle.addEventListener("change", () => {
+        const next = toggle.checked ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem("tlm_theme", next);
+        label.textContent = next === "light" ? "Light" : "Dark";
+      });
+    })();
+  </script>
+
+  <script type="module">
+    import { initUI } from './js/tax.ui.js';
+    initUI();
+  </script>
+</body>
+</html>

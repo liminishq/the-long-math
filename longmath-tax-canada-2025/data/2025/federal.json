@@ -1,0 +1,24 @@
+{
+  "year": 2025,
+  "brackets": [
+    { "threshold": 0, "rate": 0.15 },
+    { "threshold": 55867, "rate": 0.205 },
+    { "threshold": 111733, "rate": 0.26 },
+    { "threshold": 173205, "rate": 0.29 },
+    { "threshold": 246752, "rate": 0.33 }
+  ],
+  "credits": {
+    "basicPersonalAmount": {
+      "amount": 15705,
+      "_note": "BPA credit = amount × lowest tax rate (15%)"
+    },
+    "canadaEmploymentAmount": {
+      "amount": 1500,
+      "_note": "Employment amount credit = amount × lowest tax rate (15%)"
+    },
+    "cppEiCredit": {
+      "rate": 0.15
+    }
+  },
+  "_note": "2025 federal brackets indexed. BPA $15,705 for 2025. BPA credit = BPA × 15% (lowest rate). Employment amount credit = $1,500 × 15%. Verify all values against canada.ca/en/revenue-agency for official 2025 data."
+}

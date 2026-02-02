@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tax Engine Tests</title>
+  <style>
+    body {
+      font-family: monospace;
+      background-color: #1a1a1a;
+      color: #e0e0e0;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #ffb84d;
+    }
+    #testSummary {
+      background-color: #2a2a2a;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border: 1px solid #444;
+    }
+    #console {
+      background-color: #1a1a1a;
+      border: 1px solid #444;
+      padding: 15px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9em;
+      max-height: 600px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    button {
+      background-color: #ffb84d;
+      color: #1a1a1a;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1em;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 10px 0;
+    }
+    button:hover {
+      background-color: #cc8f3d;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tax Engine Test Suite</h1>
+  <p>Run tests in the browser console. Results will appear below.</p>
+  
+  <button onclick="runAllTests()">Run All Tests</button>
+  
+  <div id="testSummary"></div>
+  
+  <h2>Console Output</h2>
+  <div id="console"></div>
+
+  <script type="module">
+    import { runTests } from './engine.test.js';
+
+    // Capture console output
+    const consoleDiv = document.getElementById('console');
+    const originalLog = console.log;
+    const originalError = console.error;
+
+    console.log = function(...args) {
+      originalLog.apply(console, args);
+      consoleDiv.textContent += args.join(' ') + '\n';
+      consoleDiv.scrollTop = consoleDiv.scrollHeight;
+    };
+
+    console.error = function(...args) {
+      originalError.apply(console, args);
+      consoleDiv.textContent += 'ERROR: ' + args.join(' ') + '\n';
+      consoleDiv.scrollTop = consoleDiv.scrollHeight;
+    };
+
+    // Make runAllTests available globally
+    window.runAllTests = async function() {
+      consoleDiv.textContent = '';
+      document.getElementById('testSummary').innerHTML = '<p>Running tests...</p>';
+      await runTests();
+    };
+
+    // Auto-run on load
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        runAllTests();
+      }, 500);
+    });
+  </script>
+</body>
+</html>
