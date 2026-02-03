@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CCPC Tax Calculator 2025 – The Long Math</title>
+
+  <!-- Site-wide theme + styles -->
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script defer src="/assets/js/site.js"></script>
+
+  <!-- Page-local layout only -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- Back link -->
+    <a href="https://thelongmath.com" class="home-link">← Back to Home</a>
+
+    <!-- Header -->
+    <header>
+      <div class="sitehead">
+        <div class="brandstack">
+          <div class="brand">The Long Math</div>
+          <div class="sigil">$ = P(1 + r/n)<sup>nt</sup></div>
+        </div>
+
+        <div class="themebox">
+          <div class="tlabel" id="theme_label">Dark</div>
+          <label class="switch" aria-label="Toggle light/dark mode">
+            <input id="theme_toggle" type="checkbox" />
+            <span class="knob"></span>
+          </label>
+        </div>
+      </div>
+
+      <h1>CCPC Tax Calculator</h1>
+
+      <div class="lede">
+        <p>2025 Tax Year</p>
+        <p><strong>Educational arithmetic. Not tax advice.</strong></p>
+        <p>This calculator estimates corporate and personal tax for Canadian Controlled Private Corporations (CCPCs), showing the combined tax burden of corporate income and distributions to shareholders.</p>
+      </div>
+    </header>
+
+    <!-- MAIN GRID (2 columns) -->
+    <div class="grid">
+
+      <!-- INPUTS -->
+      <section class="card">
+        <h2 class="section-title">Inputs</h2>
+
+        <div style="margin-bottom: 16px;">
+          <button id="resetButton" type="button" style="padding: 10px 16px; font-size: 13px;">Reset All Inputs</button>
+        </div>
+
+        <div class="field">
+          <label for="year">Tax Year</label>
+          <select id="year">
+            <option value="2025">2025</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="province">Province/Territory of Incorporation</label>
+          <select id="province">
+            <option value="">Select...</option>
+          </select>
+        </div>
+
+        <div id="provinceNote" style="display: none; margin-top: 8px; padding: 12px; border: 1px solid rgba(217,180,106,.35); border-radius: 10px; background: linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,.04)); font-size: 12px; color: var(--muted);">
+          <strong style="color: var(--text);">Note:</strong> Alberta and Quebec administer corporate tax separately from the CRA. Rates used in this calculator are based on official provincial sources and provided for arithmetic comparison only.
+        </div>
+
+        <div class="field">
+          <label for="grossRevenue">Gross Corporate Revenue</label>
+          <input type="text" id="grossRevenue" placeholder="0" value="">
+        </div>
+
+        <div class="field">
+          <label for="expenses">Total Business Expenses</label>
+          <input type="text" id="expenses" placeholder="0" value="">
+          <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Deductible business expenses (exclude personal expenses)</div>
+        </div>
+
+        <div class="field">
+          <label for="salary">Salary/Bonus Paid to Shareholder</label>
+          <input type="text" id="salary" placeholder="0" value="">
+        </div>
+
+        <div class="field">
+          <label for="eligibleDividends">Eligible Dividends Paid</label>
+          <input type="text" id="eligibleDividends" placeholder="0" value="">
+        </div>
+
+        <div class="field">
+          <label for="nonEligibleDividends">Non-Eligible Dividends Paid</label>
+          <input type="text" id="nonEligibleDividends" placeholder="0" value="">
+        </div>
+
+        <div class="field">
+          <label for="personalOtherIncome">Other Personal Income</label>
+          <input type="text" id="personalOtherIncome" placeholder="0" value="">
+          <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Personal income from sources other than the corporation</div>
+        </div>
+
+        <div class="field">
+          <label for="personalDeductions">Personal Deductions</label>
+          <input type="text" id="personalDeductions" placeholder="0" value="">
+          <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Estimated personal deductions (medical, donations, etc.)</div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 14px; border: 1px solid rgba(217,180,106,.35); border-radius: 12px; background: linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,.04));">
+          <p style="margin: 0; font-size: 13px; color: var(--text); font-weight: 600; margin-bottom: 8px;">Important Note:</p>
+          <p style="margin: 0; font-size: 12px; color: var(--muted); line-height: 1.5;">
+            This calculator provides estimates based on simplified assumptions. It does not account for all tax planning strategies, associated corporations, passive income rules, or other complexities. Always confirm final numbers with your accountant.
+          </p>
+        </div>
+      </section>
+
+      <!-- RESULTS -->
+      <section class="card">
+        <h2 class="section-title">Calculated Results</h2>
+
+        <div class="results">
+          <div class="result">
+            <p class="k">Corporate Taxable Income</p>
+            <p class="v" id="corporateTaxableIncome">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Corporate Tax</p>
+            <p class="v" id="corporateTax">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">After-Tax Corporate Cash</p>
+            <p class="v" id="afterTaxCorporateCash">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Retained Earnings</p>
+            <p class="v" id="retainedEarnings">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Personal Tax</p>
+            <p class="v" id="personalTax">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Net Personal Take-Home</p>
+            <p class="v" id="netPersonalTakeHome">$–</p>
+          </div>
+
+          <div class="result prominent">
+            <p class="k">Total Tax Burden (Corp + Personal)</p>
+            <p class="v" id="totalTaxBurden">$–</p>
+          </div>
+
+          <div class="result prominent">
+            <p class="k">Effective Overall Tax Rate</p>
+            <p class="v" id="effectiveTaxRate">–%</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Show the Math -->
+    <section class="methods" id="methods">
+      <div class="methods-card">
+        <h2>Show the Math</h2>
+        <div class="method-list">
+          <details class="method-item">
+            <summary><strong>Corporate Tax Calculation</strong></summary>
+            <div id="corporateBreakdown" class="breakdown-content"></div>
+          </details>
+
+          <details class="method-item">
+            <summary><strong>Personal Tax Calculation</strong></summary>
+            <div id="personalBreakdown" class="breakdown-content"></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> The calculators and tools at The Long Math are provided for educational purposes only
+        and are not intended to constitute financial or tax advice. Results are based on simplified
+        models and user-supplied assumptions. Users are recommended to complete their own due diligence.
+      </p>
+    </div>
+
+    <!-- Sitewide footer (copyright) -->
+    <footer class="site-footer">
+      <p>© 2026 The Long Math.</p>
+      <p>This site, including its text, layout, design, calculators and tools are original work and the intellectual property of The Long Math.</p>
+    </footer>
+
+  </div>
+
+  <!-- Theme toggle -->
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const toggle = document.getElementById("theme_toggle");
+      const label = document.getElementById("theme_label");
+
+      const theme = root.getAttribute("data-theme") || "dark";
+      toggle.checked = theme === "light";
+      label.textContent = theme === "light" ? "Light" : "Dark";
+
+      toggle.addEventListener("change", () => {
+        const next = toggle.checked ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem("tlm_theme", next);
+        label.textContent = next === "light" ? "Light" : "Dark";
+      });
+    })();
+  </script>
+
+  <script type="module" src="./js/ccpc.ui.js"></script>
+  <div id="footerMount"></div>
+</body>
+</html>

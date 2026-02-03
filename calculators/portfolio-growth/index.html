@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Portfolio Growth Simulator | The Long Math</title>
+  <meta name="description" content="Historical outcome simulator for multiple investment vehicles using public data sources. Compare cash, bonds, equities, and more over time." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/portfolio-growth/" />
+
+  <!-- Site-wide theme + styles -->
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script defer src="/assets/js/site.js"></script>
+
+  <style>
+    /* Calculator-specific styles */
+    .data-status {
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    .data-status.loading {
+      background: rgba(74, 144, 226, 0.15);
+      color: #4A90E2;
+      border: 1px solid rgba(74, 144, 226, 0.3);
+    }
+    .data-status.success {
+      background: rgba(80, 200, 120, 0.15);
+      color: #50C878;
+      border: 1px solid rgba(80, 200, 120, 0.3);
+    }
+    .data-status.warning {
+      background: rgba(255, 184, 77, 0.15);
+      color: #FFB84D;
+      border: 1px solid rgba(255, 184, 77, 0.3);
+    }
+    .data-status.error {
+      background: rgba(232, 93, 117, 0.15);
+      color: #E85D75;
+      border: 1px solid rgba(232, 93, 117, 0.3);
+    }
+
+    .chart-container {
+      width: 100%;
+      height: 400px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+      margin: 16px 0;
+      position: relative;
+    }
+
+    #chartCanvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 12px 0;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+    }
+
+    .legend-item input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .result-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      background: var(--surface);
+    }
+
+    .result-card h3 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent2);
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 8px 0;
+      font-size: 13px;
+    }
+
+    .result-label {
+      color: var(--muted);
+    }
+
+    .result-value {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .result-ending {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--accent);
+    }
+
+    .result-extra {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 8px;
+      display: none;
+    }
+
+    .methodology {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology-toggle {
+      background: none;
+      border: none;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 8px 0;
+      text-align: left;
+      width: 100%;
+    }
+
+    .methodology-toggle:hover {
+      text-decoration: underline;
+    }
+
+    .methodology-content {
+      display: none;
+      margin-top: 12px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .methodology-content.open {
+      display: block;
+    }
+
+    .methodology-content ul {
+      margin: 8px 0;
+      padding-left: 20px;
+    }
+
+    .methodology-content li {
+      margin: 4px 0;
+    }
+
+    .input-group {
+      margin-bottom: 14px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .input-group input,
+    .input-group select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid var(--inputBorder);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .toggle-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .toggle-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .toggle-group label {
+      font-size: 13px;
+      color: var(--text);
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <a href="/calculators/" class="home-link">← Back to Calculators</a>
+
+    <header>
+      <div class="sitehead">
+        <div class="brandstack">
+          <div class="brand">The Long Math</div>
+          <div class="sigil">$ = P(1 + r/n)<sup>nt</sup></div>
+        </div>
+
+        <div class="themebox">
+          <div class="tlabel" id="theme_label">Dark</div>
+          <label class="switch" aria-label="Toggle light/dark mode">
+            <input id="theme_toggle" type="checkbox" />
+            <span class="knob"></span>
+          </label>
+        </div>
+      </div>
+
+      <h1>Portfolio Growth Simulator</h1>
+
+      <div class="lede">
+        <p>Historical outcome simulator for multiple investment vehicles using public data sources (Bank of Canada, FRED, Yale/Shiller). Compare cash, bonds, equities, and more over time with monthly contributions.</p>
+      </div>
+    </header>
+
+    <!-- Data Status -->
+    <div id="dataStatus" class="data-status loading">Loading data...</div>
+
+    <!-- Main Card -->
+    <section class="card">
+      <div class="section-title">Inputs</div>
+
+      <div class="grid">
+        <div>
+          <div class="input-group">
+            <label for="startMonth">Start Month</label>
+            <input type="month" id="startMonth" value="2000-01" />
+          </div>
+
+          <div class="input-group">
+            <label for="startingAmount">Starting Amount (CAD)</label>
+            <input type="number" id="startingAmount" value="0" min="0" step="1000" />
+          </div>
+
+          <div class="input-group">
+            <label for="contributionAmount">Contribution Amount (CAD)</label>
+            <input type="number" id="contributionAmount" value="500" min="0" step="100" />
+          </div>
+        </div>
+
+        <div>
+          <div class="input-group">
+            <label for="contributionFreq">Contribution Frequency</label>
+            <select id="contributionFreq">
+              <option value="monthly">Monthly</option>
+              <option value="quarterly">Quarterly</option>
+              <option value="annually">Annually</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="horizonYears">Horizon (Years)</label>
+            <input type="number" id="horizonYears" value="30" min="1" max="60" step="1" />
+          </div>
+
+          <div class="toggle-group">
+            <input type="checkbox" id="showReal" />
+            <label for="showReal">Show real (inflation-adjusted) values</label>
+          </div>
+
+          <div style="margin-top: 12px;">
+            <button id="refreshData" class="btns" style="margin: 0;">Refresh Data</button>
+            <button id="calculateBtn" class="btns" style="margin: 0;">Calculate</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chart -->
+    <section class="card" style="margin-top: 16px;">
+      <div class="section-title">Portfolio Value Over Time</div>
+      
+      <div class="legend">
+        <div class="legend-item">
+          <input type="checkbox" id="legend-cash" value="cash" checked />
+          <span class="legend-color" style="background: #888888;"></span>
+          <label for="legend-cash">Cash (0%)</label>
+        </div>
+        <div class="legend-item">
+          <input type="checkbox" id="legend-tBill" value="tBill" checked />
+          <span class="legend-color" style="background: #4A90E2;"></span>
+          <label for="legend-tBill">Canada T-bills</label>
+        </div>
+        <div class="legend-item">
+          <input type="checkbox" id="legend-bond" value="bond" checked />
+          <span class="legend-color" style="background: #50C878;"></span>
+          <label for="legend-bond">Canada Bonds</label>
+        </div>
+        <div class="legend-item">
+          <input type="checkbox" id="legend-gic" value="gic" checked />
+          <span class="legend-color" style="background: #FFB84D;"></span>
+          <label for="legend-gic">Canada 5-year GIC</label>
+        </div>
+        <div class="legend-item">
+          <input type="checkbox" id="legend-equities" value="equities" checked />
+          <span class="legend-color" style="background: #D9B46A;"></span>
+          <label for="legend-equities">US Equities</label>
+        </div>
+        <div class="legend-item">
+          <input type="checkbox" id="legend-activeFund" value="activeFund" checked />
+          <span class="legend-color" style="background: #E85D75;"></span>
+          <label for="legend-activeFund">Typical Active Fund</label>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="chartCanvas"></canvas>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section class="card" style="margin-top: 16px;">
+      <div class="section-title">Results</div>
+
+      <div class="results-grid">
+        <div class="result-card" id="result-cash">
+          <h3>Cash (0%)</h3>
+          <div class="result-row">
+            <span class="result-label">Ending Value</span>
+            <span class="result-value result-ending">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">CAGR</span>
+            <span class="result-value result-cagr">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Total Contributions</span>
+            <span class="result-value result-contributions">—</span>
+          </div>
+        </div>
+
+        <div class="result-card" id="result-tBill">
+          <h3>Canada T-bills</h3>
+          <div class="result-row">
+            <span class="result-label">Ending Value</span>
+            <span class="result-value result-ending">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">CAGR</span>
+            <span class="result-value result-cagr">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Total Contributions</span>
+            <span class="result-value result-contributions">—</span>
+          </div>
+        </div>
+
+        <div class="result-card" id="result-bond">
+          <h3>Canada Bonds</h3>
+          <div class="result-row">
+            <span class="result-label">Ending Value</span>
+            <span class="result-value result-ending">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">CAGR</span>
+            <span class="result-value result-cagr">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Total Contributions</span>
+            <span class="result-value result-contributions">—</span>
+          </div>
+        </div>
+
+        <div class="result-card" id="result-gic">
+          <h3>Canada 5-year GIC</h3>
+          <div class="result-row">
+            <span class="result-label">Ending Value</span>
+            <span class="result-value result-ending">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">CAGR</span>
+            <span class="result-value result-cagr">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Total Contributions</span>
+            <span class="result-value result-contributions">—</span>
+          </div>
+          <div class="result-extra"></div>
+        </div>
+
+        <div class="result-card" id="result-equities">
+          <h3>US Equities</h3>
+          <div class="result-row">
+            <span class="result-label">Ending Value</span>
+            <span class="result-value result-ending">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">CAGR</span>
+            <span class="result-value result-cagr">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Total Contributions</span>
+            <span class="result-value result-contributions">—</span>
+          </div>
+        </div>
+
+        <div class="result-card" id="result-activeFund">
+          <h3>Typical Active Fund</h3>
+          <div class="result-row">
+            <span class="result-label">Ending Value</span>
+            <span class="result-value result-ending">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">CAGR</span>
+            <span class="result-value result-cagr">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Total Contributions</span>
+            <span class="result-value result-contributions">—</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Methodology -->
+    <section class="methodology">
+      <button class="methodology-toggle" id="methodologyToggle">
+        ▼ Methodology & Disclosures
+      </button>
+      <div class="methodology-content" id="methodologyContent">
+        <p><strong>Data Sources</strong></p>
+        <ul>
+          <li>Bank of Canada Valet API: USD/CAD exchange rates, Canadian CPI, Canadian T-bill yields, Canadian bond yields, posted 5-year GIC rates</li>
+          <li>Yale/Shiller academic dataset: US equities (price + dividends)</li>
+          <li>All series converted to monthly format (YYYY-MM)</li>
+        </ul>
+
+        <p><strong>Investment Vehicles</strong></p>
+        <ul>
+          <li><strong>Cash:</strong> 0% nominal return</li>
+          <li><strong>Canada T-bills:</strong> 3-month yield converted to monthly return using (1 + y/100)^(1/12) - 1</li>
+          <li><strong>Canada Bonds:</strong> 5-10 year average yield converted to monthly return</li>
+          <li><strong>Canada 5-year GIC:</strong> Historical average posted 5-year GIC rate (computed from available data window) applied as constant nominal return</li>
+          <li><strong>US Equities:</strong> Monthly total return from Shiller data (price + dividends), converted to CAD using USD/CAD exchange rate</li>
+          <li><strong>Typical Active Fund:</strong> US equities total return minus 1.25% annual fee drag (multiplicative monthly drag), converted to CAD</li>
+        </ul>
+
+        <p><strong>Simulation Details</strong></p>
+        <ul>
+          <li>Monthly simulation engine</li>
+          <li>Contributions applied at end of month</li>
+          <li>All returns converted to monthly compounding</li>
+          <li>FX conversion: (1 + r_cad) = (1 + r_usd) * (1 + r_fx)</li>
+          <li>Inflation adjustment uses Canada CPI: V_real(t) = V_nominal(t) * CPI(t0)/CPI(t)</li>
+          <li>CAGR calculated as: (end/start)^(1/years) - 1</li>
+        </ul>
+
+        <p><strong>Important Disclosures</strong></p>
+        <ul>
+          <li>This calculator uses government and academic data sources only. No proprietary index data, ETFs, mutual fund data, or scraped market data.</li>
+          <li>Bond and cash returns are yield-based models, not bond index total returns.</li>
+          <li>GIC rate is based on average posted rates over a disclosed window and applied as constant for illustration purposes.</li>
+          <li>FX uses Bank of Canada exchange rates with monthly averaging.</li>
+          <li>This tool is for educational purposes only and does not constitute financial advice.</li>
+          <li>Exclusions: taxes, account rules, trading costs, product fees beyond stated fee-drag, tracking error, cash drag, leverage, etc.</li>
+          <li>Contribution timing assumption: end-of-month.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> The calculators and tools at The Long Math are provided for educational purposes only
+        and are not intended to constitute financial or tax advice. Results are based on simplified
+        models and user-supplied assumptions. Users are recommended to complete their own due diligence.
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <p>© <span id="year"></span> The Long Math.</p>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/calculators/portfolio-growth/js/data.js"></script>
+  <script src="/calculators/portfolio-growth/js/engine.js"></script>
+  <script src="/calculators/portfolio-growth/js/chart.js"></script>
+  <script src="/calculators/portfolio-growth/js/ui.js"></script>
+
+  <!-- Theme toggle -->
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const toggle = document.getElementById("theme_toggle");
+      const label = document.getElementById("theme_label");
+
+      const theme = root.getAttribute("data-theme") || "dark";
+      toggle.checked = theme === "light";
+      label.textContent = theme === "light" ? "Light" : "Dark";
+
+      toggle.addEventListener("change", () => {
+        const next = toggle.checked ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem("tlm_theme", next);
+        label.textContent = next === "light" ? "Light" : "Dark";
+      });
+    })();
+  </script>
+
+  <!-- Methodology toggle -->
+  <script>
+    (function() {
+      const toggle = document.getElementById('methodologyToggle');
+      const content = document.getElementById('methodologyContent');
+      
+      if (toggle && content) {
+        toggle.addEventListener('click', () => {
+          const isOpen = content.classList.contains('open');
+          content.classList.toggle('open');
+          toggle.textContent = isOpen ? '▼ Methodology & Disclosures' : '▲ Methodology & Disclosures';
+        });
+      }
+    })();
+  </script>
+
+  <!-- Year -->
+  <script>
+    (function(){
+      var y=document.getElementById("year");
+      if(y) y.textContent=String(new Date().getFullYear());
+    })();
+  </script>
+</body>
+</html>

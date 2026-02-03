@@ -1,0 +1,20 @@
+{
+  "year": 2025,
+  "cpp": {
+    "rate": 0.0595,
+    "basicExemption": 3500,
+    "maxPensionableEarnings": 71300,
+    "maxContribution": 4034.10
+  },
+  "cpp2": {
+    "rate": 0.04,
+    "maxAdditionalEarnings": 73000,
+    "maxAdditionalContribution": 396.00,
+    "_note": "CPP2 applies to earnings above YMPE (71,300) up to YAMPE (144,300 = 71,300 + 73,000)"
+  },
+  "ei": {
+    "rate": 0.0164,
+    "maxInsurableEarnings": 65700,
+    "maxPremium": 1077.48
+  }
+}

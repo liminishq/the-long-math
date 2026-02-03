@@ -1,0 +1,180 @@
+{
+  "AB": {
+    "name": "Alberta",
+    "sbd": {
+      "rate": 0.02,
+      "limit": 500000,
+      "_note": "Alberta small business rate: 2% on first $500,000 (effective July 1, 2020). The small business deduction is 6%, resulting in a net small business rate of 2%."
+    },
+    "general": {
+      "rate": 0.08,
+      "_note": "Alberta general corporate rate: 8% (effective July 1, 2020)"
+    },
+    "_source": "https://www.alberta.ca/about-tax-levy-rates-prescribed-interest-rates#corporate",
+    "_lastVerified": "2025-01-28",
+    "_note": "Alberta administers corporate tax separately from CRA. Rates verified from official Alberta.ca source. Small business threshold is $500,000."
+  },
+  "BC": {
+    "name": "British Columbia",
+    "sbd": {
+      "rate": 0.02,
+      "limit": 500000,
+      "_note": "BC SBD: 2% on first $500,000 (uses federal limit)"
+    },
+    "general": {
+      "rate": 0.12,
+      "_note": "BC general corporate rate: 12%"
+    },
+    "_source": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/corporation-tax-rates.html"
+  },
+  "MB": {
+    "name": "Manitoba",
+    "sbd": {
+      "rate": 0.00,
+      "limit": 500000,
+      "_note": "Manitoba SBD: 0% (nil) on first $500,000 (uses federal limit)"
+    },
+    "general": {
+      "rate": 0.12,
+      "_note": "Manitoba general corporate rate: 12%"
+    },
+    "_source": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/corporation-tax-rates.html"
+  },
+  "NB": {
+    "name": "New Brunswick",
+    "sbd": {
+      "rate": 0.025,
+      "limit": 500000,
+      "_note": "NB SBD: 2.5% on first $500,000 (uses federal limit)"
+    },
+    "general": {
+      "rate": 0.14,
+      "_note": "NB general corporate rate: 14%"
+    },
+    "_source": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/corporation-tax-rates.html"
+  },
+  "NL": {
+    "name": "Newfoundland and Labrador",
+    "sbd": {
+      "rate": 0.025,
+      "limit": 500000,
+      "_note": "NL SBD: 2.5% on first $500,000 (reduced from 3% effective January 1, 2024, uses federal limit)"
+    },
+    "general": {
+      "rate": 0.15,
+      "_note": "NL general corporate rate: 15%"
+    },
+    "_source": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/corporation-tax-rates.html"
+  },
+  "NS": {
+    "name": "Nova Scotia",
+    "sbd": {
+      "rate": 0.015,
+      "limit": 700000,
+      "_note": "NS SBD: 1.5% on first $700,000 (reduced from 2.5% effective April 1, 2025, limit increased from $500,000 effective April 1, 2025)"
+    },
+    "general": {
+      "rate": 0.14,
+      "_note": "NS general corporate rate: 14%"
+    },
+    "_source": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/corporation-tax-rates.html",
+    "_note": "Nova Scotia has rate and limit changes effective April 1, 2025. For full 2025 tax year, using post-April 1 rates."
+  },
+  "NT": {
+    "name": "Northwest Territories",
+    "sbd": {
+      "rate": 0.02,
+      "limit": 500000,
+      "_note": "NT SBD: 2% on first $500,000 (uses federal limit)"
+    },
+    "general": {
+      "rate": 0.115,
+      "_note": "NT general corporate rate: 11.5%"
+    },
+    "_source": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/corporation-tax-rates.html"
+  },
+  "NU": {
+    "name": "Nunavut",
+    "sbd": {
+      "rate": 0.03,
+      "limit": 500000,
+      "_note": "NU SBD: 3% on first $500,000 (uses federal limit)"
+    },
+    "general": {
+      "rate": 0.12,
+      "_note": "Nunavut general corporate rate: 12%"
+    },
+    "_source": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/corporation-tax-rates.html"
+  },
+  "ON": {
+    "name": "Ontario",
+    "sbd": {
+      "rate": 0.032,
+      "limit": 500000,
+      "_note": "Ontario SBD: 3.2% on first $500,000 (uses federal limit)"
+    },
+    "general": {
+      "rate": 0.115,
+      "_note": "Ontario general corporate rate: 11.5%"
+    },
+    "_source": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/corporation-tax-rates.html"
+  },
+  "PE": {
+    "name": "Prince Edward Island",
+    "sbd": {
+      "rate": 0.01,
+      "limit": 600000,
+      "_note": "PE SBD: 1% on first $600,000 (limit increased from $500,000 effective July 1, 2025)"
+    },
+    "general": {
+      "rate": 0.15,
+      "_note": "PE general corporate rate: 15% (reduced from 16% effective July 1, 2025)"
+    },
+    "_source": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/corporation-tax-rates.html",
+    "_note": "PEI has rate and limit changes effective July 1, 2025. For full 2025 tax year, using post-July 1 rates."
+  },
+  "SK": {
+    "name": "Saskatchewan",
+    "sbd": {
+      "rate": 0.01,
+      "limit": 600000,
+      "_note": "Saskatchewan SBD: 1% on first $600,000 (provincial limit differs from federal)"
+    },
+    "general": {
+      "rate": 0.12,
+      "_note": "Saskatchewan general corporate rate: 12%"
+    },
+    "_source": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/corporation-tax-rates.html"
+  },
+  "QC": {
+    "name": "Quebec",
+    "sbd": {
+      "rate": 0.032,
+      "limit": 500000,
+      "_note": "Quebec small business rate: 3.20% on first $500,000 (2025). Combined with federal 9% SBD rate = approximately 12.20% total."
+    },
+    "general": {
+      "rate": 0.115,
+      "_note": "Quebec general corporate rate: 11.50% (2025). Combined with federal 15% general rate = approximately 26.50% total."
+    },
+    "_source": "Invest Quebec - Taxation in Quebec 2025 publication",
+    "_lastVerified": "2025-01-28",
+    "_note": "Quebec administers corporate tax separately from CRA. Rates verified from Invest Quebec official publication. Quebec SBD threshold is $500,000 (same as federal) for 2025."
+  },
+  "YT": {
+    "name": "Yukon",
+    "sbd": {
+      "rate": 0.00,
+      "limit": 500000,
+      "_note": "Yukon SBD: 0% on first $500,000 (uses federal limit)"
+    },
+    "general": {
+      "rate": 0.12,
+      "_note": "Yukon general corporate rate: 12%"
+    },
+    "_source": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/corporation-tax-rates.html"
+  },
+  "_source": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/corporation-tax-rates.html",
+  "_lastVerified": "2025-01-28",
+  "_note": "2025 provincial corporate tax rates from official sources. Federal and most provinces: CRA source. Alberta: verified from Alberta.ca official tax rates page. Quebec: verified from Invest Quebec official publication. Some provinces have different SBD limits than federal ($500,000): Nova Scotia ($700,000), PEI ($600,000), Saskatchewan ($600,000). Some rates changed during 2025: Nova Scotia (April 1), PEI (July 1). For full 2025 tax year calculations, using post-change rates."
+}

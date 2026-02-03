@@ -1,0 +1,251 @@
+{
+  "AB": {
+    "name": "Alberta",
+    "brackets": [
+      { "threshold": 0, "rate": 0.10 },
+      { "threshold": 148001, "rate": 0.12 },
+      { "threshold": 177601, "rate": 0.13 },
+      { "threshold": 237601, "rate": 0.14 },
+      { "threshold": 355813, "rate": 0.15 }
+    ],
+    "credits": {
+      "basicPersonalAmount": {
+        "amount": 21385,
+        "rate": 0.10
+      }
+    },
+    "surtaxes": [],
+    "premiums": []
+  },
+  "BC": {
+    "name": "British Columbia",
+    "brackets": [
+      { "threshold": 0, "rate": 0.0506 },
+      { "threshold": 47937, "rate": 0.077 },
+      { "threshold": 95875, "rate": 0.105 },
+      { "threshold": 110076, "rate": 0.1229 },
+      { "threshold": 133664, "rate": 0.147 },
+      { "threshold": 181232, "rate": 0.168 },
+      { "threshold": 252752, "rate": 0.205 }
+    ],
+    "credits": {
+      "basicPersonalAmount": {
+        "amount": 12580,
+        "rate": 0.0506
+      }
+    },
+    "surtaxes": [],
+    "premiums": []
+  },
+  "MB": {
+    "name": "Manitoba",
+    "brackets": [
+      { "threshold": 0, "rate": 0.108 },
+      { "threshold": 47000, "rate": 0.1275 },
+      { "threshold": 100000, "rate": 0.174 }
+    ],
+    "credits": {
+      "basicPersonalAmount": {
+        "amount": 15000,
+        "rate": 0.108
+      }
+    },
+    "surtaxes": [],
+    "premiums": []
+  },
+  "NB": {
+    "name": "New Brunswick",
+    "brackets": [
+      { "threshold": 0, "rate": 0.094 },
+      { "threshold": 49958, "rate": 0.14 },
+      { "threshold": 99916, "rate": 0.16 },
+      { "threshold": 185064, "rate": 0.195 }
+    ],
+    "credits": {
+      "basicPersonalAmount": {
+        "amount": 12580,
+        "rate": 0.094
+      }
+    },
+    "surtaxes": [],
+    "premiums": []
+  },
+  "NL": {
+    "name": "Newfoundland and Labrador",
+    "brackets": [
+      { "threshold": 0, "rate": 0.087 },
+      { "threshold": 43198, "rate": 0.145 },
+      { "threshold": 86395, "rate": 0.158 },
+      { "threshold": 154244, "rate": 0.173 },
+      { "threshold": 215943, "rate": 0.183 }
+    ],
+    "credits": {
+      "basicPersonalAmount": {
+        "amount": 12580,
+        "rate": 0.087
+      }
+    },
+    "surtaxes": [],
+    "premiums": []
+  },
+  "NS": {
+    "name": "Nova Scotia",
+    "brackets": [
+      { "threshold": 0, "rate": 0.0879 },
+      { "threshold": 29590, "rate": 0.1495 },
+      { "threshold": 59180, "rate": 0.1667 },
+      { "threshold": 93000, "rate": 0.175 },
+      { "threshold": 150000, "rate": 0.21 }
+    ],
+    "credits": {
+      "basicPersonalAmount": {
+        "amount": 12580,
+        "rate": 0.0879
+      }
+    },
+    "surtaxes": [],
+    "premiums": []
+  },
+  "NT": {
+    "name": "Northwest Territories",
+    "brackets": [
+      { "threshold": 0, "rate": 0.059 },
+      { "threshold": 48326, "rate": 0.086 },
+      { "threshold": 96655, "rate": 0.122 },
+      { "threshold": 157139, "rate": 0.1405 }
+    ],
+    "credits": {
+      "basicPersonalAmount": {
+        "amount": 16593,
+        "rate": 0.059
+      }
+    },
+    "surtaxes": [],
+    "premiums": []
+  },
+  "NU": {
+    "name": "Nunavut",
+    "brackets": [
+      { "threshold": 0, "rate": 0.04 },
+      { "threshold": 48326, "rate": 0.07 },
+      { "threshold": 96655, "rate": 0.09 },
+      { "threshold": 157139, "rate": 0.115 }
+    ],
+    "credits": {
+      "basicPersonalAmount": {
+        "amount": 17809,
+        "rate": 0.04
+      }
+    },
+    "surtaxes": [],
+    "premiums": []
+  },
+  "ON": {
+    "name": "Ontario",
+    "brackets": [
+      { "threshold": 0, "rate": 0.0505 },
+      { "threshold": 51446, "rate": 0.0915 },
+      { "threshold": 102894, "rate": 0.1116 },
+      { "threshold": 150000, "rate": 0.1216 },
+      { "threshold": 220000, "rate": 0.1316 }
+    ],
+    "credits": {
+      "basicPersonalAmount": {
+        "amount": 12580,
+        "rate": 0.0505
+      }
+    },
+    "surtaxes": [
+      {
+        "name": "Ontario Surtax",
+        "threshold": 5500,
+        "rate": 0.20,
+        "threshold2": 9000,
+        "rate2": 0.36
+      }
+    ],
+    "premiums": [
+      {
+        "name": "Ontario Health Premium",
+        "brackets": [
+          { "threshold": 0, "amount": 0 },
+          { "threshold": 20000, "amount": 0 },
+          { "threshold": 25000, "amount": 300 },
+          { "threshold": 36000, "amount": 450 },
+          { "threshold": 48000, "amount": 600 },
+          { "threshold": 72000, "amount": 750 },
+          { "threshold": 200000, "amount": 900 }
+        ]
+      }
+    ]
+  },
+  "PE": {
+    "name": "Prince Edward Island",
+    "brackets": [
+      { "threshold": 0, "rate": 0.098 },
+      { "threshold": 32656, "rate": 0.138 },
+      { "threshold": 65312, "rate": 0.167 },
+      { "threshold": 105000, "rate": 0.18 },
+      { "threshold": 140000, "rate": 0.18 }
+    ],
+    "credits": {
+      "basicPersonalAmount": {
+        "amount": 12580,
+        "rate": 0.098
+      }
+    },
+    "surtaxes": [],
+    "premiums": []
+  },
+  "QC": {
+    "name": "Quebec",
+    "brackets": [
+      { "threshold": 0, "rate": 0.14 },
+      { "threshold": 51480, "rate": 0.19 },
+      { "threshold": 102970, "rate": 0.24 },
+      { "threshold": 119910, "rate": 0.2575 }
+    ],
+    "credits": {
+      "basicPersonalAmount": {
+        "amount": 18056,
+        "rate": 0.14
+      }
+    },
+    "surtaxes": [],
+    "premiums": []
+  },
+  "SK": {
+    "name": "Saskatchewan",
+    "brackets": [
+      { "threshold": 0, "rate": 0.105 },
+      { "threshold": 52057, "rate": 0.125 },
+      { "threshold": 148734, "rate": 0.145 }
+    ],
+    "credits": {
+      "basicPersonalAmount": {
+        "amount": 18065,
+        "rate": 0.105
+      }
+    },
+    "surtaxes": [],
+    "premiums": []
+  },
+  "YT": {
+    "name": "Yukon",
+    "brackets": [
+      { "threshold": 0, "rate": 0.064 },
+      { "threshold": 55867, "rate": 0.09 },
+      { "threshold": 111733, "rate": 0.109 },
+      { "threshold": 173205, "rate": 0.128 },
+      { "threshold": 500000, "rate": 0.15 }
+    ],
+    "credits": {
+      "basicPersonalAmount": {
+        "amount": 15705,
+        "rate": 0.064
+      }
+    },
+    "surtaxes": [],
+    "premiums": []
+  }
+}
