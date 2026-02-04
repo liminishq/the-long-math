@@ -6,12 +6,17 @@
 
   function $(id) {
     const el = document.getElementById(id);
-    if (!el) throw new Error("Missing element #" + id);
+    if (!el) {
+      console.error("Missing element #" + id);
+      return null;
+    }
     return el;
   }
 
   function numFromInput(id) {
-    const raw = $(id).value.trim().replace(/,/g, "");
+    const el = $(id);
+    if (!el) return NaN;
+    const raw = el.value.trim().replace(/,/g, "");
     const n = Number(raw);
     return Number.isFinite(n) ? n : NaN;
   }
@@ -35,13 +40,19 @@
   }
 
   function setText(id, txt) {
-    $(id).textContent = txt;
+    const el = $(id);
+    if (el) el.textContent = txt;
   }
 
   // -----------------------------
   // Tool: Fee Cost pages
   // -----------------------------
   function initFeeCostPage() {
+    if (!window.TLM_FeeMath) {
+      console.error("TLM_FeeMath not available");
+      return;
+    }
+
     function render() {
       const P = numFromInput("P");
       const years = Math.round(numFromInput("years"));
@@ -80,6 +91,11 @@
   // Tool: Required return to offset fee
   // -----------------------------
   function initRequiredReturnPage() {
+    if (!window.TLM_FeeMath) {
+      console.error("TLM_FeeMath not available");
+      return;
+    }
+
     function render() {
       const P = numFromInput("P");
       const years = Math.round(numFromInput("years"));
@@ -145,6 +161,11 @@
   // Tool: Active vs Passive
   // -----------------------------
   function initActiveVsPassivePage() {
+    if (!window.TLM_FeeMath) {
+      console.error("TLM_FeeMath not available");
+      return;
+    }
+
     function render() {
       const P = numFromInput("P");
       const years = Math.round(numFromInput("years"));
@@ -214,18 +235,23 @@
     }
 
     ["P", "years", "rPassivePortfolioPct", "rActivePortfolioPct", "feePassivePct", "feeActivePct", "contrib"].forEach((id) => {
-      $(id).addEventListener("input", render);
+      const el = $(id);
+      if (el) el.addEventListener("input", render);
     });
 
     render();
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-    const tool = document.body.getAttribute("data-tool");
-    if (!tool) return;
+    try {
+      const tool = document.body.getAttribute("data-tool");
+      if (!tool) return;
 
-    if (tool === "fee-cost") initFeeCostPage();
-    if (tool === "required-alpha") initRequiredReturnPage();
-    if (tool === "active-vs-passive") initActiveVsPassivePage();
+      if (tool === "fee-cost") initFeeCostPage();
+      if (tool === "required-alpha") initRequiredReturnPage();
+      if (tool === "active-vs-passive") initActiveVsPassivePage();
+    } catch (err) {
+      console.error("Error initializing fee calculator:", err);
+    }
   });
 })();
