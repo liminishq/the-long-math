@@ -8,15 +8,19 @@
  * @returns {string} Formatted currency string
  */
 export function formatCurrency(value) {
-  if (value === null || value === undefined || isNaN(value)) {
-    return '$0.00';
+  if (value === null || value === undefined || (typeof value === 'number' && isNaN(value))) {
+    return '$–';
   }
-  return new Intl.NumberFormat('en-CA', {
-    style: 'currency',
-    currency: 'CAD',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }).format(value);
+  try {
+    return new Intl.NumberFormat('en-CA', {
+      style: 'currency',
+      currency: 'CAD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value);
+  } catch (e) {
+    return '$–';
+  }
 }
 
 /**
@@ -26,10 +30,14 @@ export function formatCurrency(value) {
  * @returns {string} Formatted percentage string
  */
 export function formatPercent(value, decimals = 2) {
-  if (value === null || value === undefined || isNaN(value)) {
-    return '0.00%';
+  if (value === null || value === undefined || (typeof value === 'number' && isNaN(value))) {
+    return '–%';
   }
-  return (value * 100).toFixed(decimals) + '%';
+  try {
+    return (value * 100).toFixed(decimals) + '%';
+  } catch (e) {
+    return '–%';
+  }
 }
 
 /**

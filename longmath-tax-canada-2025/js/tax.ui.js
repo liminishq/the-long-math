@@ -156,6 +156,11 @@ function calculate() {
 function renderResults(result) {
   const { totals } = result;
 
+  if (!totals) {
+    console.error('No totals in result:', result);
+    return;
+  }
+
   document.getElementById('totalIncome').textContent = formatCurrency(totals.totalIncome);
   document.getElementById('taxableIncome').textContent = formatCurrency(totals.taxableIncome);
   document.getElementById('totalBurden').textContent = formatCurrency(totals.totalBurden);
@@ -163,23 +168,37 @@ function renderResults(result) {
   document.getElementById('provTax').textContent = formatCurrency(totals.provTax);
   document.getElementById('cpp').textContent = formatCurrency(totals.cpp);
   document.getElementById('ei').textContent = formatCurrency(totals.ei);
-  document.getElementById('takeHomeAfterPayroll').textContent = formatCurrency(totals.takeHomeAfterPayroll);
-  document.getElementById('avgRate').textContent = formatPercent(totals.avgRate);
-  document.getElementById('marginalRate').textContent = formatPercent(totals.marginalRate);
+  
+  // Check if values exist before formatting
+  const takeHome = totals.takeHomeAfterPayroll;
+  const avgRate = totals.avgRate;
+  const marginalRate = totals.marginalRate;
+  const refundOwing = totals.refundOrOwing;
+  
+  document.getElementById('takeHomeAfterPayroll').textContent = (takeHome !== undefined && takeHome !== null) ? formatCurrency(takeHome) : '$–';
+  document.getElementById('avgRate').textContent = (avgRate !== undefined && avgRate !== null) ? formatPercent(avgRate) : '–%';
+  document.getElementById('marginalRate').textContent = (marginalRate !== undefined && marginalRate !== null) ? formatPercent(marginalRate) : '–%';
   
   // Refund/Owing display with proper styling and label
   const refundOwingEl = document.getElementById('refundOrOwing');
   const refundOwingLabel = document.getElementById('refundOrOwingLabel');
   const refundOwingResult = document.getElementById('refundOrOwingResult');
-  // Display: positive = refund, negative = balance owing (show absolute value for owing)
-  if (totals.refundOrOwing >= 0) {
-    refundOwingLabel.textContent = 'Refund';
-    refundOwingEl.textContent = formatCurrency(totals.refundOrOwing);
-    refundOwingResult.className = 'result refund';
+  
+  if (refundOwing !== undefined && refundOwing !== null) {
+    // Display: positive = refund, negative = balance owing (show absolute value for owing)
+    if (refundOwing >= 0) {
+      refundOwingLabel.textContent = 'Refund';
+      refundOwingEl.textContent = formatCurrency(refundOwing);
+      refundOwingResult.className = 'result refund';
+    } else {
+      refundOwingLabel.textContent = 'Balance Owing';
+      refundOwingEl.textContent = formatCurrency(Math.abs(refundOwing));
+      refundOwingResult.className = 'result owing';
+    }
   } else {
-    refundOwingLabel.textContent = 'Balance Owing';
-    refundOwingEl.textContent = formatCurrency(Math.abs(totals.refundOrOwing));
-    refundOwingResult.className = 'result owing';
+    refundOwingLabel.textContent = 'Balance Owing / Refund';
+    refundOwingEl.textContent = '$–';
+    refundOwingResult.className = 'result';
   }
 }
 
