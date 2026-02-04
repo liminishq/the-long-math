@@ -355,7 +355,6 @@
           </div>
 
           <div style="margin-top: 12px;">
-            <button id="refreshData" class="btns" style="margin: 0;">Refresh Data</button>
             <button id="calculateBtn" class="btns" style="margin: 0;">Calculate</button>
           </div>
         </div>
@@ -516,9 +515,11 @@
       <div class="methodology-content" id="methodologyContent">
         <p><strong>Data Sources</strong></p>
         <ul>
-          <li>Bank of Canada Valet API: USD/CAD exchange rates, Canadian CPI, Canadian T-bill yields, Canadian bond yields, posted 5-year GIC rates</li>
-          <li>Yale/Shiller academic dataset: US equities (price + dividends)</li>
-          <li>All series converted to monthly format (YYYY-MM)</li>
+          <li><strong>Historical, static datasets:</strong> All data is pre-validated and served from this domain to ensure stability and transparency.</li>
+          <li><strong>Bank of Canada:</strong> USD/CAD exchange rates, Canadian CPI, Canadian T-bill yields, Canadian bond yields, posted 5-year GIC rates (historical monthly averages)</li>
+          <li><strong>Yale/Shiller:</strong> US equities total return data (price + dividends, monthly)</li>
+          <li>All series are in monthly format (YYYY-MM) and have been validated for consistency</li>
+          <li>Data is pre-processed for educational use and does not update in real-time</li>
         </ul>
 
         <p><strong>Investment Vehicles</strong></p>
@@ -543,13 +544,15 @@
 
         <p><strong>Important Disclosures</strong></p>
         <ul>
+          <li><strong>Static Historical Data:</strong> This calculator uses pre-validated, static historical datasets served from this domain. Data does not update in real-time, ensuring stability, transparency, and repeatable results.</li>
           <li>This calculator uses government and academic data sources only. No proprietary index data, ETFs, mutual fund data, or scraped market data.</li>
           <li>Bond and cash returns are yield-based models, not bond index total returns.</li>
           <li>GIC rate is based on average posted rates over a disclosed window and applied as constant for illustration purposes.</li>
-          <li>FX uses Bank of Canada exchange rates with monthly averaging.</li>
+          <li>FX uses Bank of Canada historical exchange rates with monthly averaging.</li>
           <li>This tool is for educational purposes only and does not constitute financial advice.</li>
           <li>Exclusions: taxes, account rules, trading costs, product fees beyond stated fee-drag, tracking error, cash drag, leverage, etc.</li>
           <li>Contribution timing assumption: end-of-month.</li>
+          <li>If a data series fails to load, it will be clearly marked as unavailable rather than using fallback values.</li>
         </ul>
       </div>
     </section>

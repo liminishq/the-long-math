@@ -205,11 +205,7 @@
       </p>
     </div>
 
-    <!-- Sitewide footer (copyright) -->
-    <footer class="site-footer">
-      <p>© <span id="year"></span> The Long Math.</p>
-      <p>This site, including its text, layout, design, calculators and tools are original work and the intellectual property of The Long Math.</p>
-    </footer>
+    <div id="footerMount"></div>
   </div>
 
   <!-- Theme toggle -->
@@ -232,14 +228,5 @@
     })();
   </script>
 
-  <!-- Year -->
-  <script>
-    (function(){
-      var y=document.getElementById("year");
-      if(y) y.textContent=String(new Date().getFullYear());
-    })();
-  </script>
-
-  <div id="footerMount"></div>
 </body>
 </html>

@@ -1,0 +1,22 @@
+{
+  "source": "Bank of Canada",
+  "frequency": "monthly",
+  "start": "1990-01",
+  "end": "2024-12",
+  "description": "Canada 5-year GIC posted rate, monthly average",
+  "series": [
+    {
+      "date": "1990-01",
+      "value": 10.50
+    },
+    {
+      "date": "1990-02",
+      "value": 10.45
+    }
+  ],
+  "metadata": {
+    "averageRate": 5.25,
+    "startDate": "1990-01"
+  },
+  "note": "This is a placeholder file. Replace with actual Bank of Canada 5-year GIC rate data (series V121764 or equivalent). The averageRate is computed from the series data."
+}

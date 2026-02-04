@@ -1,0 +1,18 @@
+{
+  "source": "Bank of Canada",
+  "frequency": "monthly",
+  "start": "1950-01",
+  "end": "2024-12",
+  "description": "Canada Government Bond yield, 5-10 year average, monthly average",
+  "series": [
+    {
+      "date": "1950-01",
+      "value": 2.75
+    },
+    {
+      "date": "1950-02",
+      "value": 2.80
+    }
+  ],
+  "note": "This is a placeholder file. Replace with actual Bank of Canada 5-10 year bond yield data (average of V39052 and V39053 or equivalent)."
+}

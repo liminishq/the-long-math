@@ -1,0 +1,20 @@
+{
+  "source": "Yale/Shiller (Robert Shiller's Irrational Exuberance dataset)",
+  "frequency": "monthly",
+  "start": "1871-01",
+  "end": "2024-12",
+  "description": "US equities total return (price + dividends), monthly data",
+  "series": [
+    {
+      "date": "1871-01",
+      "price": 4.44,
+      "dividend": 0.26
+    },
+    {
+      "date": "1871-02",
+      "price": 4.50,
+      "dividend": 0.26
+    }
+  ],
+  "note": "This is a placeholder file. Replace with actual Shiller data from https://www.econ.yale.edu/~shiller/data/ie_data.csv"
+}

@@ -24,14 +24,6 @@
   // Setup event listeners
   // ============================================================
   function setupEventListeners() {
-    // Refresh data button
-    const refreshBtn = document.getElementById('refreshData');
-    if (refreshBtn) {
-      refreshBtn.addEventListener('click', () => {
-        loadData(true);
-      });
-    }
-    
     // Calculate button
     const calculateBtn = document.getElementById('calculateBtn');
     if (calculateBtn) {
@@ -71,14 +63,10 @@
     
     isLoading = true;
     const statusEl = document.getElementById('dataStatus');
-    const refreshBtn = document.getElementById('refreshData');
     
     if (statusEl) {
       statusEl.textContent = 'Loading data...';
       statusEl.className = 'data-status loading';
-    }
-    if (refreshBtn) {
-      refreshBtn.disabled = true;
     }
     
     try {
@@ -104,14 +92,11 @@
     } catch (error) {
       console.error('Data load error:', error);
       if (statusEl) {
-        statusEl.textContent = 'Error loading data. Please try refreshing.';
+        statusEl.textContent = 'Error loading data. Please check console for details.';
         statusEl.className = 'data-status error';
       }
     } finally {
       isLoading = false;
-      if (refreshBtn) {
-        refreshBtn.disabled = false;
-      }
     }
   }
   
