@@ -12,49 +12,28 @@
 
   <!-- Page-local layout only (keeps your global colors/fonts untouched) -->
   <style>
-    /* Two-column blocks inside full-width cards */
-    .two-col{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap:16px;
-      margin-top: 8px;
-    }
-    @media (max-width: 980px){
-      .two-col{ grid-template-columns: 1fr; }
-    }
-
-    /* Input field block: label above input (matches your screenshot style better than .row) */
+    /* Input field block: label above input */
     .field{
       display:flex;
       flex-direction:column;
       gap:8px;
+      margin-bottom: 14px;
     }
     .field label{
       font-size: 13px;
       color: var(--muted);
     }
 
-    /* Results grid: force two columns while preserving existing .result styling */
-    .results.two-col{
-      margin-top: 0; /* remove extra top margin from .two-col helper */
+    /* Larger input boxes */
+    .field input[type="number"],
+    .field input[type="text"]{
+      font-size: 16px;
+      padding: 12px;
     }
 
-    /* Results callout (high-salience summary above RESULTS) */
+    /* Results callout (high-salience summary) */
     .results-callout{
       width: 100%;
-      margin-bottom: 14px;
-      padding: 16px 18px;
-      background: linear-gradient(180deg, var(--card), var(--card2));
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      box-shadow: var(--shadow), var(--inset);
-    }
-
-    @media (max-width: 980px){
-      .results-callout{
-        padding: 14px 16px;
-        margin-bottom: 12px;
-      }
     }
 
     .results-callout__headline{
@@ -104,6 +83,15 @@
     .muted-inline{
       color: var(--muted);
       font-weight: normal;
+    }
+
+    /* Smaller result values (reduce imbalance with inputs) */
+    .results .result .v{
+      font-size: 18px;
+    }
+
+    .results .result.prominent .v{
+      font-size: 26px;
     }
   </style>
 </head>
@@ -170,11 +158,12 @@
       <p><strong>Just arithmetic</strong> showing long-term fee drag in real dollars.</p>
     </section>
 
-    <!-- INPUTS (full width, 2 columns) -->
-    <section class="card">
-      <h2 class="section-title">Inputs</h2>
+    <!-- CALCULATOR GRID (2 columns: inputs left, results right) -->
+    <div class="calc-grid">
+      <!-- INPUTS (left column) -->
+      <section class="card">
+        <h2 class="section-title">Inputs</h2>
 
-      <div class="two-col">
         <div class="field">
           <label for="starting_balance">Starting balance (CAD)</label>
           <input id="starting_balance" type="number" inputmode="decimal" />
@@ -201,77 +190,79 @@
           <div class="helper">Added once per year (simple timing model).</div>
         </div>
 
-        <!-- Empty spacer to keep the grid visually balanced when contribution helper wraps -->
-        <div class="field" aria-hidden="true"></div>
-      </div>
+        <p class="helper" style="margin-top: 10px;">
+          Gross return is used only to translate percentage differences into dollar outcomes.
+          The fee is treated as an annual drag on returns, compounding against you.
+        </p>
+      </section>
 
-      <p class="helper" style="margin-top: 10px;">
-        Gross return is used only to translate percentage differences into dollar outcomes.
-        The fee is treated as an annual drag on returns, compounding against you.
-      </p>
-    </section>
+      <!-- RESULTS (right column) -->
+      <section class="card">
+        <h2 class="section-title">Results</h2>
 
-    <!-- RESULTS CALLOUT (high-salience summary) -->
-    <div class="results-callout" aria-label="Fee offset summary">
-      <p class="results-callout__headline">
-        To fully offset a <span class="muted-inline" id="calloutFee">1.0%</span> annual fee, this portfolio must earn an additional
-        <span class="accent-number" id="calloutAlpha">+1.0%</span>
-        every year — for the entire <span class="muted-inline" id="calloutHorizon">30</span>-year horizon.
-      </p>
-      <p class="results-callout__subhead">
-        If that excess return is not achieved, the shortfall must be made up with an additional
-        <span class="accent-number" id="calloutContribution">$–</span>
-        of new capital every year.
-      </p>
-      <p class="results-callout__note">
-        This replaces performance with contributions using the same assumptions shown above.
-      </p>
+        <div class="results">
+          <div class="result">
+            <p class="k">Required excess return (alpha)</p>
+            <p class="v" id="out_required_excess">–%</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Required gross return (baseline + alpha)</p>
+            <p class="v" id="out_required_gross">–%</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Ending value (no fee)</p>
+            <p class="v" id="out_end_no_fee">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Ending value (with fee, no extra return)</p>
+            <p class="v" id="out_end_with_fee">$–</p>
+          </div>
+
+          <div class="result prominent">
+            <p class="k">Ending value lost to fees</p>
+            <p class="v" id="out_lost_to_fees">$–</p>
+            <p class="subl">No-fee ending value minus with-fee ending value</p>
+          </div>
+
+          <div class="result prominent">
+            <p class="k">Additional annual contribution required if excess return (ALPHA) is not achieved</p>
+            <p class="v" id="out_extra_contrib">$–</p>
+            <p class="meta">Extra capital required EACH YEAR to compensate for fees.</p>
+          </div>
+        </div>
+      </section>
     </div>
 
-    <!-- RESULTS (full width, 2 columns) -->
-    <section class="card">
-      <h2 class="section-title">Results</h2>
-
-      <div class="results two-col">
-        <div class="result">
-          <p class="k">Required excess return (alpha)</p>
-          <p class="v" id="out_required_excess">–%</p>
-        </div>
-
-        <div class="result">
-          <p class="k">Required gross return (baseline + alpha)</p>
-          <p class="v" id="out_required_gross">–%</p>
-        </div>
-
-        <div class="result">
-          <p class="k">Ending value (no fee)</p>
-          <p class="v" id="out_end_no_fee">$–</p>
-        </div>
-
-        <div class="result">
-          <p class="k">Ending value (with fee, no extra return)</p>
-          <p class="v" id="out_end_with_fee">$–</p>
-        </div>
-
-        <div class="result prominent">
-          <p class="k">Ending value lost to fees</p>
-          <p class="v" id="out_lost_to_fees">$–</p>
-          <p class="subl">No-fee ending value minus with-fee ending value</p>
-        </div>
-
-        <div class="result prominent">
-          <p class="k">Additional annual contribution required if excess return (ALPHA) is not achieved</p>
-          <p class="v" id="out_extra_contrib">$–</p>
-          <p class="meta">Extra capital required EACH YEAR to compensate for fees.</p>
-        </div>
+    <!-- RESULTS CALLOUT (full-width card) -->
+    <section class="card" style="margin-top: 18px;">
+      <div class="results-callout" aria-label="Fee offset summary">
+        <p class="results-callout__headline">
+          To fully offset a <span class="muted-inline" id="calloutFee">1.0%</span> annual fee, this portfolio must earn an additional
+          <span class="accent-number" id="calloutAlpha">+1.0%</span>
+          every year — for the entire <span class="muted-inline" id="calloutHorizon">30</span>-year horizon.
+        </p>
+        <p class="results-callout__subhead">
+          If that excess return is not achieved, the shortfall must be made up with an additional
+          <span class="accent-number" id="calloutContribution">$–</span>
+          of new capital every year.
+        </p>
+        <p class="results-callout__note">
+          This represents a dollar-for-dollar replacement of performance with contributions, using the same assumptions shown above.
+        </p>
       </div>
+    </section>
 
-      <p class="meta" id="out_meta" style="margin-top: 12px;">
+    <!-- ASSUMPTIONS & PROOF (full-width card) -->
+    <section class="card" style="margin-top: 16px;">
+      <p class="meta" id="out_meta">
         Calculated using the assumptions shown above.
       </p>
 
       <p class="meta" style="margin-top: 10px;">
-        Proof sketch: break-even requires r = (r + α − fee) ⇒ α = fee. (Specific to the “net = gross − fee” model.)
+        Proof sketch: break-even requires r = (r + α − fee) ⇒ α = fee. (Specific to the "net = gross − fee" model.)
       </p>
     </section>
 
