@@ -82,40 +82,60 @@ class PortfolioChart {
     // Clear
     ctx.clearRect(0, 0, width, height);
     
-    // Collect all paths
+    // Collect all paths (only from available series)
     const paths = [];
-    if (this.data.cash && this.visibleSeries.has('cash')) {
+    if (this.data.cash && this.data.cash.ok && this.visibleSeries.has('cash')) {
       paths.push({ name: 'cash', path: this.data.cash.path, color: this.options.colors.cash });
     }
-    if (this.data.tBill && this.visibleSeries.has('tBill')) {
+    if (this.data.tBill && this.data.tBill.ok && this.visibleSeries.has('tBill')) {
       paths.push({ name: 'tBill', path: this.data.tBill.path, color: this.options.colors.tBill });
     }
-    if (this.data.bond && this.visibleSeries.has('bond')) {
+    if (this.data.bond && this.data.bond.ok && this.visibleSeries.has('bond')) {
       paths.push({ name: 'bond', path: this.data.bond.path, color: this.options.colors.bond });
     }
-    if (this.data.gic && this.visibleSeries.has('gic')) {
+    if (this.data.gic && this.data.gic.ok && this.visibleSeries.has('gic')) {
       paths.push({ name: 'gic', path: this.data.gic.path, color: this.options.colors.gic });
     }
-    if (this.data.equities && this.visibleSeries.has('equities')) {
+    if (this.data.equities && this.data.equities.ok && this.visibleSeries.has('equities')) {
       paths.push({ name: 'equities', path: this.data.equities.path, color: this.options.colors.equities });
     }
-    if (this.data.activeFund && this.visibleSeries.has('activeFund')) {
+    if (this.data.activeFund && this.data.activeFund.ok && this.visibleSeries.has('activeFund')) {
       paths.push({ name: 'activeFund', path: this.data.activeFund.path, color: this.options.colors.activeFund });
     }
     
-    if (paths.length === 0) return;
+    if (paths.length === 0) {
+      // Show message if no data to plot
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted') || 'rgba(238,242,247,0.72)';
+      ctx.font = '14px system-ui';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('Not enough data to plot', width / 2, height / 2);
+      return;
+    }
     
-    // Find min/max values
+    // Find min/max values (only finite values)
     let minValue = Infinity;
     let maxValue = -Infinity;
     
     paths.forEach(({ path }) => {
       path.forEach(({ value, valueReal }) => {
         const v = valueReal != null ? valueReal : value;
-        if (v < minValue) minValue = v;
-        if (v > maxValue) maxValue = v;
+        if (v != null && Number.isFinite(v)) {
+          if (v < minValue) minValue = v;
+          if (v > maxValue) maxValue = v;
+        }
       });
     });
+    
+    // Safety check: if no valid values found, don't draw
+    if (!Number.isFinite(minValue) || !Number.isFinite(maxValue) || minValue === Infinity || maxValue === -Infinity) {
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted') || 'rgba(238,242,247,0.72)';
+      ctx.font = '14px system-ui';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('Not enough data to plot', width / 2, height / 2);
+      return;
+    }
     
     // Add padding
     const range = maxValue - minValue;
@@ -207,6 +227,12 @@ class PortfolioChart {
       
       path.forEach((point, idx) => {
         const value = point.valueReal != null ? point.valueReal : point.value;
+        
+        // Skip non-finite values
+        if (value == null || !Number.isFinite(value)) {
+          return;
+        }
+        
         const x = p.left + timeScale(idx, path.length);
         const y = p.top + valueScale(value);
         

@@ -224,10 +224,59 @@
       color: var(--text);
       cursor: pointer;
     }
+
+    /* Coming Soon Overlay */
+    .coming-soon-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .coming-soon-card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 48px 64px;
+      max-width: 600px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .coming-soon-card h2 {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 0 0 16px;
+    }
+
+    .coming-soon-card p {
+      font-size: 16px;
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.6;
+    }
   </style>
 </head>
 
 <body>
+  <!-- Coming Soon Overlay -->
+  <div class="coming-soon-overlay">
+    <div class="coming-soon-card">
+      <h2>Coming Soon</h2>
+      <p>This calculator is currently under development. We're working hard to bring you a fully functional portfolio growth simulator with historical data from multiple sources.</p>
+      <p style="margin-top: 16px; font-size: 14px;">Please check back soon!</p>
+    </div>
+  </div>
+
   <div class="wrap">
     <a href="/calculators/" class="home-link">← Back to Calculators</a>
 
@@ -256,6 +305,12 @@
 
     <!-- Data Status -->
     <div id="dataStatus" class="data-status loading">Loading data...</div>
+
+    <!-- Series Warnings -->
+    <div id="seriesWarnings" class="data-status warning" style="display: none;">
+      <strong>Some data series could not be loaded and are excluded from results:</strong>
+      <ul id="seriesWarningsList" style="margin: 8px 0 0 0; padding-left: 20px;"></ul>
+    </div>
 
     <!-- Main Card -->
     <section class="card">

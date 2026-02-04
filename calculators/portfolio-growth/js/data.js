@@ -77,6 +77,133 @@ const CACHE_KEYS = {
 const CACHE_EXPIRY_HOURS = 24;
 
 // ============================================================
+// SeriesLoadResult type structure
+// ============================================================
+/**
+ * @typedef {Object} SeriesLoadResult
+ * @property {boolean} ok - Whether the series loaded successfully
+ * @property {string} seriesId - Internal identifier (e.g. "FX_USDCAD", "SHILLER")
+ * @property {string} label - Display label for UI
+ * @property {string} [reason] - User-friendly error message
+ * @property {string} [detail] - Technical detail for console
+ * @property {Array<{month: string, value: number}>} [data] - Validated monthly data
+ */
+
+// ============================================================
+// Validation: Check if value is finite
+// ============================================================
+function isValidValue(value) {
+  return value != null && Number.isFinite(value);
+}
+
+// ============================================================
+// Validation: Validate monthly data array
+// ============================================================
+function validateMonthlyData(data, seriesId) {
+  if (!Array.isArray(data) || data.length === 0) {
+    return {
+      valid: false,
+      reason: 'No data available',
+      detail: `${seriesId}: Data array is empty or not an array`
+    };
+  }
+
+  // Check all values are finite
+  for (let i = 0; i < data.length; i++) {
+    const item = data[i];
+    if (!item || typeof item !== 'object') {
+      return {
+        valid: false,
+        reason: 'Invalid data format',
+        detail: `${seriesId}: Item ${i} is not an object`
+      };
+    }
+    
+    const month = item.month || item[0];
+    const value = item.value !== undefined ? item.value : item[1];
+    
+    if (!month || typeof month !== 'string') {
+      return {
+        valid: false,
+        reason: 'Invalid date format',
+        detail: `${seriesId}: Item ${i} has invalid month: ${month}`
+      };
+    }
+    
+    if (!isValidValue(value)) {
+      return {
+        valid: false,
+        reason: 'Invalid data values',
+        detail: `${seriesId}: Item ${i} has non-finite value: ${value}`
+      };
+    }
+  }
+
+  // Check dates are monotonic (increasing)
+  const months = data.map(item => {
+    const month = item.month || item[0];
+    return month;
+  });
+  
+  for (let i = 1; i < months.length; i++) {
+    if (months[i] <= months[i - 1]) {
+      return {
+        valid: false,
+        reason: 'Dates not in order',
+        detail: `${seriesId}: Dates are not monotonic at index ${i}`
+      };
+    }
+  }
+
+  return { valid: true };
+}
+
+// ============================================================
+// Helper: Create failure result
+// ============================================================
+function createFailureResult(seriesId, label, reason, detail, attemptedUrls = []) {
+  const result = {
+    ok: false,
+    seriesId,
+    label,
+    reason,
+    detail
+  };
+  
+  if (attemptedUrls.length > 0) {
+    result.detail = `${detail} Attempted URLs: ${attemptedUrls.join(', ')}`;
+  }
+  
+  console.error(`[${seriesId}] Load failed:`, reason, result.detail);
+  return result;
+}
+
+// ============================================================
+// Helper: Create success result
+// ============================================================
+function createSuccessResult(seriesId, label, data) {
+  // Convert to standard format if needed
+  const normalizedData = data.map(item => {
+    if (Array.isArray(item)) {
+      return { month: item[0], value: item[1] };
+    }
+    return item;
+  });
+  
+  const validation = validateMonthlyData(normalizedData, seriesId);
+  if (!validation.valid) {
+    return createFailureResult(seriesId, label, validation.reason, validation.detail);
+  }
+  
+  return {
+    ok: true,
+    seriesId,
+    label,
+    data: normalizedData
+  };
+}
+
+// ============================================================
 // Helper: Parse date to YYYY-MM format
 // ============================================================
 function toMonthKey(date) {
@@ -162,16 +289,18 @@ async function findSeriesCode(searchTerms) {
 
 // ============================================================
 // Bank of Canada Valet API fetcher
+// Returns SeriesLoadResult
 // ============================================================
-async function fetchBOCSeries(seriesCodeOrArray) {
+async function fetchBOCSeries(seriesCodeOrArray, seriesId, label) {
   // Valet API format: GET /valet/observations/{seriesNames}/json
   // Returns JSON with observations array
   // Documentation: https://www.bankofcanada.ca/valet/docs
   
   // Handle array of possible series codes (try each until one works)
   const seriesCodes = Array.isArray(seriesCodeOrArray) ? seriesCodeOrArray : [seriesCodeOrArray];
-  
+  const attemptedUrls = [];
   let lastError = null;
+  let lastStatus = null;
   
   for (const seriesCode of seriesCodes) {
     try {
@@ -184,32 +313,41 @@ async function fetchBOCSeries(seriesCodeOrArray) {
       ];
       
       for (const url of urlFormats) {
+        attemptedUrls.push(url);
         try {
           const response = await fetch(url);
           
-      if (response.ok) {
-        const data = await response.json();
-        const result = parseBOCResponse(data, seriesCode);
-        if (result.length > 0) {
-          console.log(`Successfully fetched ${seriesCode} from ${url}`);
-          return result;
-        }
-      } else {
-            // Log the status for debugging
+          if (response.ok) {
+            const data = await response.json();
+            const rawResult = parseBOCResponse(data, seriesCode);
+            
+            if (rawResult.length > 0) {
+              // Convert to monthly format and validate
+              const monthlyData = dailyToMonthly(rawResult);
+              const normalizedData = monthlyData.map(([month, value]) => ({ month, value }));
+              
+              const validation = validateMonthlyData(normalizedData, seriesId);
+              if (validation.valid) {
+                console.log(`[${seriesId}] Successfully fetched from ${url}`);
+                return createSuccessResult(seriesId, label, normalizedData);
+              } else {
+                return createFailureResult(seriesId, label, validation.reason, validation.detail, [url]);
+              }
+            }
+          } else {
+            lastStatus = response.status;
             if (response.status === 404) {
-              console.debug(`404 for ${url} (trying next format)`);
+              console.debug(`[${seriesId}] 404 for ${url} (trying next format)`);
             } else {
-              console.warn(`BOC API returned ${response.status} for ${url}`);
+              console.warn(`[${seriesId}] BOC API returned ${response.status} for ${url}`);
             }
           }
         } catch (urlError) {
-          // Try next URL format
-          console.debug(`Error fetching ${url}:`, urlError.message);
+          lastError = urlError;
+          console.debug(`[${seriesId}] Error fetching ${url}:`, urlError.message);
           continue;
         }
       }
-      
-      lastError = new Error(`BOC API error: All URL formats failed for series ${seriesCode}`);
     } catch (error) {
       lastError = error;
       continue; // Try next series code
@@ -217,23 +355,24 @@ async function fetchBOCSeries(seriesCodeOrArray) {
   }
   
   // If all series codes failed, try to find the series by searching available series
-  console.warn(`All provided series codes failed for: ${seriesCodes.join(', ')}, attempting to find series...`);
+  console.warn(`[${seriesId}] All provided series codes failed for: ${seriesCodes.join(', ')}, attempting to find series...`);
   
   try {
     // Try to find a matching series by searching
     const foundCode = await findSeriesCode(seriesCodes);
     if (foundCode) {
-      console.log(`Found matching series: ${foundCode}, attempting to fetch...`);
+      console.log(`[${seriesId}] Found matching series: ${foundCode}, attempting to fetch...`);
       // Recursively try to fetch with the found code
-      return await fetchBOCSeries(foundCode);
+      return await fetchBOCSeries(foundCode, seriesId, label);
     }
   } catch (searchError) {
-    console.warn('Series search also failed:', searchError);
+    console.warn(`[${seriesId}] Series search also failed:`, searchError);
   }
   
-  // If everything failed, throw the last error
-  console.error(`All series codes failed for: ${seriesCodes.join(', ')}`, lastError);
-  throw lastError || new Error(`Failed to fetch BOC series: ${seriesCodes.join(', ')}`);
+  // If everything failed, return failure result
+  const reason = lastStatus ? `HTTP ${lastStatus}` : 'Network or API error';
+  const detail = lastError ? lastError.message : 'All URL formats failed';
+  return createFailureResult(seriesId, label, `Failed to load: ${reason}`, detail, attemptedUrls);
 }
 
 // ============================================================
@@ -287,147 +426,194 @@ function parseBOCResponse(data, seriesCode = null) {
 
 // ============================================================
 // Fetch USD/CAD FX (daily → monthly average)
+// Returns SeriesLoadResult
 // ============================================================
 async function fetchUSDCAD() {
-  const daily = await fetchBOCSeries(BOC_SERIES.FX_USDCAD);
-  return dailyToMonthly(daily);
+  return await fetchBOCSeries(BOC_SERIES.FX_USDCAD, 'FX_USDCAD', 'USD/CAD Exchange Rate');
 }
 
 // ============================================================
 // Fetch Canada CPI (monthly, or daily → monthly average)
+// Returns SeriesLoadResult
 // ============================================================
 async function fetchCanadaCPI() {
-  const data = await fetchBOCSeries(BOC_SERIES.CPI_CANADA);
-  // If already monthly, convert format; otherwise average
-  return dailyToMonthly(data);
+  return await fetchBOCSeries(BOC_SERIES.CPI_CANADA, 'CPI_CANADA', 'Canada CPI');
 }
 
 // ============================================================
 // Fetch 3-month T-bill yield (daily → monthly average)
+// Returns SeriesLoadResult
 // ============================================================
 async function fetchTBill3M() {
-  const daily = await fetchBOCSeries(BOC_SERIES.T_BILL_3M);
-  return dailyToMonthly(daily);
+  return await fetchBOCSeries(BOC_SERIES.T_BILL_3M, 'T_BILL_3M', 'Canada 3-month T-bills');
 }
 
 // ============================================================
 // Fetch 5-10 year bond yield (daily → monthly average)
+// Returns SeriesLoadResult
 // ============================================================
 async function fetchBond5_10Y() {
   // Fetch both 5-year and 10-year, then average them
-  try {
-    const [bond5Y, bond10Y] = await Promise.all([
-      fetchBOCSeries(BOC_SERIES.BOND_5Y).catch(() => null),
-      fetchBOCSeries(BOC_SERIES.BOND_10Y).catch(() => null)
-    ]);
+  const [bond5Y, bond10Y] = await Promise.all([
+    fetchBOCSeries(BOC_SERIES.BOND_5Y, 'BOND_5Y', 'Canada 5-year Bonds'),
+    fetchBOCSeries(BOC_SERIES.BOND_10Y, 'BOND_10Y', 'Canada 10-year Bonds')
+  ]);
+  
+  // If we have both, average them
+  if (bond5Y.ok && bond10Y.ok) {
+    const monthlyMap = new Map();
     
-    // If we have both, average them
-    if (bond5Y && bond10Y) {
-      // Convert both to monthly
-      const monthly5Y = dailyToMonthly(bond5Y);
-      const monthly10Y = dailyToMonthly(bond10Y);
-      
-      // Create a map for averaging
-      const monthlyMap = new Map();
-      
-      // Add 5-year data
-      monthly5Y.forEach(([month, value]) => {
-        if (!monthlyMap.has(month)) {
-          monthlyMap.set(month, []);
-        }
-        monthlyMap.get(month).push(value);
-      });
-      
-      // Add 10-year data
-      monthly10Y.forEach(([month, value]) => {
-        if (!monthlyMap.has(month)) {
-          monthlyMap.set(month, []);
-        }
-        monthlyMap.get(month).push(value);
-      });
-      
-      // Average values for each month
-      const averaged = [];
-      for (const [month, values] of monthlyMap.entries()) {
-        const avg = values.reduce((a, b) => a + b, 0) / values.length;
-        averaged.push([month, avg]);
+    // Add 5-year data
+    bond5Y.data.forEach(({ month, value }) => {
+      if (!monthlyMap.has(month)) {
+        monthlyMap.set(month, []);
       }
-      
-      return averaged.sort((a, b) => a[0].localeCompare(b[0]));
+      monthlyMap.get(month).push(value);
+    });
+    
+    // Add 10-year data
+    bond10Y.data.forEach(({ month, value }) => {
+      if (!monthlyMap.has(month)) {
+        monthlyMap.set(month, []);
+      }
+      monthlyMap.get(month).push(value);
+    });
+    
+    // Average values for each month
+    const averaged = [];
+    for (const [month, values] of monthlyMap.entries()) {
+      const avg = values.reduce((a, b) => a + b, 0) / values.length;
+      if (isValidValue(avg)) {
+        averaged.push({ month, value: avg });
+      }
     }
     
-    // Fallback: use whichever one we have
-    if (bond5Y) {
-      return dailyToMonthly(bond5Y);
-    }
-    if (bond10Y) {
-      return dailyToMonthly(bond10Y);
-    }
+    const sorted = averaged.sort((a, b) => a.month.localeCompare(b.month));
+    const validation = validateMonthlyData(sorted, 'BOND_5_10Y');
     
-    throw new Error('Failed to fetch bond data');
-  } catch (error) {
-    console.warn('Failed to fetch bond series:', error);
-    throw error;
+    if (validation.valid) {
+      return createSuccessResult('BOND_5_10Y', 'Canada Bonds (5-10 year)', sorted);
+    } else {
+      return createFailureResult('BOND_5_10Y', 'Canada Bonds (5-10 year)', validation.reason, validation.detail);
+    }
   }
+  
+  // If only one works, use it
+  if (bond5Y.ok) {
+    return createSuccessResult('BOND_5_10Y', 'Canada Bonds (5-year only)', bond5Y.data);
+  }
+  if (bond10Y.ok) {
+    return createSuccessResult('BOND_5_10Y', 'Canada Bonds (10-year only)', bond10Y.data);
+  }
+  
+  // Both failed - return failure with combined reason
+  const reasons = [bond5Y.reason, bond10Y.reason].filter(Boolean).join('; ');
+  return createFailureResult('BOND_5_10Y', 'Canada Bonds (5-10 year)', 'Failed to load bond data', reasons);
 }
 
 // ============================================================
 // Fetch 5-year GIC rate and compute historical average
+// Returns SeriesLoadResult with additional metadata
 // ============================================================
 async function fetchGIC5Y() {
-  const data = await fetchBOCSeries(BOC_SERIES.GIC_5Y);
-  const monthly = weeklyToMonthly(data);
+  const result = await fetchBOCSeries(BOC_SERIES.GIC_5Y, 'GIC_5Y', 'Canada 5-year GIC');
+  
+  if (!result.ok) {
+    return result;
+  }
   
   // Compute average from 1990-01-01 to latest (or since inception)
   const startDate = '1990-01';
-  const filtered = monthly.filter(([month]) => month >= startDate);
+  const filtered = result.data.filter(({ month }) => month >= startDate);
   
   if (filtered.length === 0) {
-    // Fallback: use all available data
-    const values = monthly.map(([_, v]) => v).filter(v => v != null);
+    // Use all available data if filtered is empty
+    const values = result.data.map(({ value }) => value).filter(isValidValue);
+    if (values.length === 0) {
+      return createFailureResult('GIC_5Y', 'Canada 5-year GIC', 'No valid data values', 'All values are invalid');
+    }
     const avg = values.reduce((a, b) => a + b, 0) / values.length;
-    return { averageRate: avg, startDate: monthly[0]?.[0] || 'unknown', data: monthly };
+    if (!isValidValue(avg)) {
+      return createFailureResult('GIC_5Y', 'Canada 5-year GIC', 'Invalid average calculation', 'Average is not finite');
+    }
+    return {
+      ...result,
+      metadata: {
+        averageRate: avg,
+        startDate: result.data[0]?.month || 'unknown'
+      }
+    };
   }
   
-  const values = filtered.map(([_, v]) => v).filter(v => v != null);
+  const values = filtered.map(({ value }) => value).filter(isValidValue);
+  if (values.length === 0) {
+    return createFailureResult('GIC_5Y', 'Canada 5-year GIC', 'No valid data after filtering', 'No valid values in date range');
+  }
   const avg = values.reduce((a, b) => a + b, 0) / values.length;
+  if (!isValidValue(avg)) {
+    return createFailureResult('GIC_5Y', 'Canada 5-year GIC', 'Invalid average calculation', 'Average is not finite');
+  }
   
   return {
-    averageRate: avg,
-    startDate: filtered[0]?.[0] || startDate,
-    data: monthly
+    ...result,
+    metadata: {
+      averageRate: avg,
+      startDate: filtered[0]?.month || startDate
+    }
   };
 }
 
 // ============================================================
 // Fetch Shiller dataset (US equities)
+// Returns SeriesLoadResult
 // ============================================================
 async function fetchShillerData() {
-  // Shiller data: Try CSV first, fallback to other methods
-  // If CORS blocks, embed a static snapshot file (see comments in code)
+  const attemptedUrls = [SHILLER_URL_CSV];
   
   try {
     // Try CSV version first
     const response = await fetch(SHILLER_URL_CSV, { mode: 'cors' });
     
     if (!response.ok) {
-      throw new Error('Shiller CSV not available');
+      return createFailureResult(
+        'SHILLER',
+        'US Equities (Shiller)',
+        `HTTP ${response.status}`,
+        `Shiller CSV not available: ${response.status} ${response.statusText}`,
+        attemptedUrls
+      );
     }
     
     const csv = await response.text();
     const parsed = parseShillerCSV(csv);
     
     if (parsed.length === 0) {
-      throw new Error('Shiller CSV parsing returned no data');
+      return createFailureResult(
+        'SHILLER',
+        'US Equities (Shiller)',
+        'No data after parsing',
+        'Shiller CSV parsing returned no data',
+        attemptedUrls
+      );
     }
     
-    return parsed;
+    // Validate the parsed data
+    const validation = validateMonthlyData(parsed, 'SHILLER');
+    if (!validation.valid) {
+      return createFailureResult('SHILLER', 'US Equities (Shiller)', validation.reason, validation.detail, attemptedUrls);
+    }
+    
+    return createSuccessResult('SHILLER', 'US Equities (Shiller)', parsed);
   } catch (error) {
-    console.warn('Shiller fetch failed:', error);
-    // Fallback: try to load from embedded static file if available
-    // TODO: If CORS continues to block, embed a static snapshot file
-    // and update it manually. See: https://www.econ.yale.edu/~shiller/data/ie_data.csv
-    return { error: 'Shiller data fetch failed due to CORS or network error. Please check console for details.' };
+    const detail = error.message || 'CORS or network error';
+    console.warn('[SHILLER] Fetch failed:', error);
+    return createFailureResult(
+      'SHILLER',
+      'US Equities (Shiller)',
+      'Network or CORS error',
+      detail,
+      attemptedUrls
+    );
   }
 }
 
@@ -465,6 +651,11 @@ function parseShillerCSV(csv) {
       const [month, year] = dateStr.split('/');
       monthKey = `${year}-${month.padStart(2, '0')}`;
     } else {
+      continue;
+    }
+    
+    // Validate values are finite
+    if (!isValidValue(price) || !isValidValue(dividend)) {
       continue;
     }
     
@@ -514,6 +705,7 @@ function setCached(key, data) {
 
 // ============================================================
 // Main data fetcher (with caching)
+// Returns object with SeriesLoadResult for each series
 // ============================================================
 async function fetchAllData(forceRefresh = false) {
   const results = {};
@@ -521,50 +713,110 @@ async function fetchAllData(forceRefresh = false) {
   // USD/CAD FX
   if (forceRefresh || !getCached(CACHE_KEYS.FX_USDCAD)) {
     results.fxUSDCAD = await fetchUSDCAD();
-    setCached(CACHE_KEYS.FX_USDCAD, results.fxUSDCAD);
+    if (results.fxUSDCAD.ok) {
+      setCached(CACHE_KEYS.FX_USDCAD, results.fxUSDCAD);
+    }
   } else {
-    results.fxUSDCAD = getCached(CACHE_KEYS.FX_USDCAD);
+    const cached = getCached(CACHE_KEYS.FX_USDCAD);
+    if (cached && cached.ok !== undefined) {
+      results.fxUSDCAD = cached;
+    } else {
+      // Legacy cache format - re-fetch
+      results.fxUSDCAD = await fetchUSDCAD();
+      if (results.fxUSDCAD.ok) {
+        setCached(CACHE_KEYS.FX_USDCAD, results.fxUSDCAD);
+      }
+    }
   }
   
   // Canada CPI
   if (forceRefresh || !getCached(CACHE_KEYS.CPI_CANADA)) {
     results.cpiCanada = await fetchCanadaCPI();
-    setCached(CACHE_KEYS.CPI_CANADA, results.cpiCanada);
+    if (results.cpiCanada.ok) {
+      setCached(CACHE_KEYS.CPI_CANADA, results.cpiCanada);
+    }
   } else {
-    results.cpiCanada = getCached(CACHE_KEYS.CPI_CANADA);
+    const cached = getCached(CACHE_KEYS.CPI_CANADA);
+    if (cached && cached.ok !== undefined) {
+      results.cpiCanada = cached;
+    } else {
+      results.cpiCanada = await fetchCanadaCPI();
+      if (results.cpiCanada.ok) {
+        setCached(CACHE_KEYS.CPI_CANADA, results.cpiCanada);
+      }
+    }
   }
   
   // T-bill 3M
   if (forceRefresh || !getCached(CACHE_KEYS.T_BILL_3M)) {
     results.tBill3M = await fetchTBill3M();
-    setCached(CACHE_KEYS.T_BILL_3M, results.tBill3M);
+    if (results.tBill3M.ok) {
+      setCached(CACHE_KEYS.T_BILL_3M, results.tBill3M);
+    }
   } else {
-    results.tBill3M = getCached(CACHE_KEYS.T_BILL_3M);
+    const cached = getCached(CACHE_KEYS.T_BILL_3M);
+    if (cached && cached.ok !== undefined) {
+      results.tBill3M = cached;
+    } else {
+      results.tBill3M = await fetchTBill3M();
+      if (results.tBill3M.ok) {
+        setCached(CACHE_KEYS.T_BILL_3M, results.tBill3M);
+      }
+    }
   }
   
   // Bond 5-10Y
   if (forceRefresh || !getCached(CACHE_KEYS.BOND_5_10Y)) {
     results.bond5_10Y = await fetchBond5_10Y();
-    setCached(CACHE_KEYS.BOND_5_10Y, results.bond5_10Y);
+    if (results.bond5_10Y.ok) {
+      setCached(CACHE_KEYS.BOND_5_10Y, results.bond5_10Y);
+    }
   } else {
-    results.bond5_10Y = getCached(CACHE_KEYS.BOND_5_10Y);
+    const cached = getCached(CACHE_KEYS.BOND_5_10Y);
+    if (cached && cached.ok !== undefined) {
+      results.bond5_10Y = cached;
+    } else {
+      results.bond5_10Y = await fetchBond5_10Y();
+      if (results.bond5_10Y.ok) {
+        setCached(CACHE_KEYS.BOND_5_10Y, results.bond5_10Y);
+      }
+    }
   }
   
   // GIC 5Y
   if (forceRefresh || !getCached(CACHE_KEYS.GIC_5Y)) {
-    const gicData = await fetchGIC5Y();
-    results.gic5Y = gicData;
-    setCached(CACHE_KEYS.GIC_5Y, gicData);
+    results.gic5Y = await fetchGIC5Y();
+    if (results.gic5Y.ok) {
+      setCached(CACHE_KEYS.GIC_5Y, results.gic5Y);
+    }
   } else {
-    results.gic5Y = getCached(CACHE_KEYS.GIC_5Y);
+    const cached = getCached(CACHE_KEYS.GIC_5Y);
+    if (cached && cached.ok !== undefined) {
+      results.gic5Y = cached;
+    } else {
+      results.gic5Y = await fetchGIC5Y();
+      if (results.gic5Y.ok) {
+        setCached(CACHE_KEYS.GIC_5Y, results.gic5Y);
+      }
+    }
   }
   
   // Shiller
   if (forceRefresh || !getCached(CACHE_KEYS.SHILLER)) {
     results.shiller = await fetchShillerData();
-    setCached(CACHE_KEYS.SHILLER, results.shiller);
+    if (results.shiller.ok) {
+      setCached(CACHE_KEYS.SHILLER, results.shiller);
+    }
   } else {
-    results.shiller = getCached(CACHE_KEYS.SHILLER);
+    const cached = getCached(CACHE_KEYS.SHILLER);
+    if (cached && cached.ok !== undefined) {
+      results.shiller = cached;
+    } else {
+      results.shiller = await fetchShillerData();
+      if (results.shiller.ok) {
+        setCached(CACHE_KEYS.SHILLER, results.shiller);
+      }
+    }
   }
   
   // Update cache timestamp

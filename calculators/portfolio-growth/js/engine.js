@@ -40,11 +40,19 @@ function calculateCAGR(startValue, endValue, years) {
 
 // ============================================================
 // Helper: Get value from monthly series at month key
+// (Legacy function - kept for compatibility but prefer direct Map lookups)
 // ============================================================
 function getValueAtMonth(series, monthKey) {
-  // series is array of [month, value] pairs
-  const entry = series.find(([m]) => m === monthKey);
-  return entry ? entry[1] : null;
+  if (!series) return null;
+  // Handle both old format [month, value] and new format {month, value}
+  if (Array.isArray(series)) {
+    const entry = series.find(item => {
+      const month = Array.isArray(item) ? item[0] : item.month;
+      return month === monthKey;
+    });
+    return entry ? (Array.isArray(entry) ? entry[1] : entry.value) : null;
+  }
+  return null;
 }
 
 // ============================================================
@@ -107,71 +115,169 @@ function simulateCash(startMonth, numMonths, startingAmount, contributionAmount,
 
 // ============================================================
 // Vehicle: Canada T-bills (3-month yield)
+// Returns { ok: boolean, path?: Array, reason?: string }
 // ============================================================
 function simulateTBill(startMonth, numMonths, startingAmount, contributionAmount, contributionFreq, tBillSeries) {
+  // Validate inputs - NO FALLBACKS
+  if (!tBillSeries || !tBillSeries.ok || !Array.isArray(tBillSeries.data) || tBillSeries.data.length === 0) {
+    return {
+      ok: false,
+      reason: tBillSeries?.reason || 'Missing T-bill data',
+      detail: tBillSeries?.detail || 'T-bill series not available'
+    };
+  }
+  
   const months = generateMonthSequence(startMonth, numMonths);
   const path = [];
   let value = startingAmount;
   
+  // Build lookup map
+  const seriesMap = new Map();
+  tBillSeries.data.forEach(({ month, value: seriesValue }) => {
+    if (month && isValidValue(seriesValue)) {
+      seriesMap.set(month, seriesValue);
+    }
+  });
+  
+  let hasValidData = false;
+  
   months.forEach((month, idx) => {
     // Get yield for this month (or use previous if not available)
-    let yieldVal = getValueAtMonth(tBillSeries, month);
+    let yieldVal = seriesMap.get(month);
     if (yieldVal == null && idx > 0) {
-      yieldVal = getValueAtMonth(tBillSeries, months[idx - 1]);
+      yieldVal = seriesMap.get(months[idx - 1]);
     }
-    if (yieldVal == null) yieldVal = 0;
     
-    // Growth from yield
-    const monthlyReturn = yieldToMonthlyReturn(yieldVal);
-    value *= (1 + monthlyReturn);
+    if (yieldVal != null && isValidValue(yieldVal)) {
+      // Growth from yield
+      const monthlyReturn = yieldToMonthlyReturn(yieldVal);
+      if (isValidValue(monthlyReturn)) {
+        value *= (1 + monthlyReturn);
+        hasValidData = true;
+      }
+    }
     
     // Contribution at end of month
     if (shouldContribute(idx, contributionFreq)) {
       value += contributionAmount;
     }
     
+    if (!isValidValue(value)) {
+      return {
+        ok: false,
+        reason: 'Invalid calculation result',
+        detail: `Non-finite value computed at ${month}`
+      };
+    }
+    
     path.push({ month, value });
   });
   
-  return path;
+  if (!hasValidData) {
+    return {
+      ok: false,
+      reason: 'Insufficient data for simulation period',
+      detail: 'No valid T-bill data found for the selected time period'
+    };
+  }
+  
+  return { ok: true, path };
 }
 
 // ============================================================
 // Vehicle: Canada Government Bonds (5-10 year yield)
+// Returns { ok: boolean, path?: Array, reason?: string }
 // ============================================================
 function simulateBonds(startMonth, numMonths, startingAmount, contributionAmount, contributionFreq, bondSeries) {
+  // Validate inputs - NO FALLBACKS
+  if (!bondSeries || !bondSeries.ok || !Array.isArray(bondSeries.data) || bondSeries.data.length === 0) {
+    return {
+      ok: false,
+      reason: bondSeries?.reason || 'Missing bond data',
+      detail: bondSeries?.detail || 'Bond series not available'
+    };
+  }
+  
   const months = generateMonthSequence(startMonth, numMonths);
   const path = [];
   let value = startingAmount;
   
-  months.forEach((month, idx) => {
-    let yieldVal = getValueAtMonth(bondSeries, month);
-    if (yieldVal == null && idx > 0) {
-      yieldVal = getValueAtMonth(bondSeries, months[idx - 1]);
+  // Build lookup map
+  const seriesMap = new Map();
+  bondSeries.data.forEach(({ month, value: seriesValue }) => {
+    if (month && isValidValue(seriesValue)) {
+      seriesMap.set(month, seriesValue);
     }
-    if (yieldVal == null) yieldVal = 0;
+  });
+  
+  let hasValidData = false;
+  
+  months.forEach((month, idx) => {
+    let yieldVal = seriesMap.get(month);
+    if (yieldVal == null && idx > 0) {
+      yieldVal = seriesMap.get(months[idx - 1]);
+    }
     
-    const monthlyReturn = yieldToMonthlyReturn(yieldVal);
-    value *= (1 + monthlyReturn);
+    if (yieldVal != null && isValidValue(yieldVal)) {
+      const monthlyReturn = yieldToMonthlyReturn(yieldVal);
+      if (isValidValue(monthlyReturn)) {
+        value *= (1 + monthlyReturn);
+        hasValidData = true;
+      }
+    }
     
     if (shouldContribute(idx, contributionFreq)) {
       value += contributionAmount;
     }
     
+    if (!isValidValue(value)) {
+      return {
+        ok: false,
+        reason: 'Invalid calculation result',
+        detail: `Non-finite value computed at ${month}`
+      };
+    }
+    
     path.push({ month, value });
   });
   
-  return path;
+  if (!hasValidData) {
+    return {
+      ok: false,
+      reason: 'Insufficient data for simulation period',
+      detail: 'No valid bond data found for the selected time period'
+    };
+  }
+  
+  return { ok: true, path };
 }
 
 // ============================================================
 // Vehicle: Canada 5-year GIC (constant rate)
+// Returns { ok: boolean, path?: Array, reason?: string }
 // ============================================================
-function simulateGIC(startMonth, numMonths, startingAmount, contributionAmount, contributionFreq, gicRate) {
+function simulateGIC(startMonth, numMonths, startingAmount, contributionAmount, contributionFreq, gicData) {
+  // Validate inputs - NO FALLBACKS
+  if (!gicData || !gicData.ok || !gicData.metadata || !isValidValue(gicData.metadata.averageRate)) {
+    return {
+      ok: false,
+      reason: gicData?.reason || 'Missing GIC data',
+      detail: gicData?.detail || 'GIC rate not available'
+    };
+  }
+  
   const months = generateMonthSequence(startMonth, numMonths);
   const path = [];
   let value = startingAmount;
-  const monthlyReturn = yieldToMonthlyReturn(gicRate);
+  const monthlyReturn = yieldToMonthlyReturn(gicData.metadata.averageRate);
+  
+  if (!isValidValue(monthlyReturn)) {
+    return {
+      ok: false,
+      reason: 'Invalid GIC rate',
+      detail: 'GIC rate calculation produced non-finite value'
+    };
+  }
   
   months.forEach((month, idx) => {
     value *= (1 + monthlyReturn);
@@ -180,59 +286,100 @@ function simulateGIC(startMonth, numMonths, startingAmount, contributionAmount, 
       value += contributionAmount;
     }
     
+    if (!isValidValue(value)) {
+      return {
+        ok: false,
+        reason: 'Invalid calculation result',
+        detail: `Non-finite value computed at ${month}`
+      };
+    }
+    
     path.push({ month, value });
   });
   
-  return path;
+  return { ok: true, path };
 }
 
 // ============================================================
 // Vehicle: US Equities (Shiller data, converted to CAD)
+// Returns { ok: boolean, path?: Array, reason?: string }
 // ============================================================
 function simulateUSEquities(startMonth, numMonths, startingAmount, contributionAmount, contributionFreq, shillerData, fxSeries) {
+  // Validate inputs - NO FALLBACKS
+  if (!shillerData || !shillerData.ok || !Array.isArray(shillerData.data) || shillerData.data.length === 0) {
+    return {
+      ok: false,
+      reason: shillerData?.reason || 'Missing US Equities data',
+      detail: shillerData?.detail || 'Shiller data not available'
+    };
+  }
+  
+  // FX is required for USD to CAD conversion
+  if (!fxSeries || !fxSeries.ok || !Array.isArray(fxSeries.data) || fxSeries.data.length === 0) {
+    return {
+      ok: false,
+      reason: 'Missing USD/CAD exchange-rate data',
+      detail: fxSeries?.detail || 'FX data required for USD to CAD conversion'
+    };
+  }
+  
   const months = generateMonthSequence(startMonth, numMonths);
   const path = [];
   let value = startingAmount;
   
-  // Check if Shiller data is valid
-  if (!shillerData || !Array.isArray(shillerData) || shillerData.length === 0) {
-    // If no Shiller data, return a path with just contributions (no growth)
-    months.forEach((month, idx) => {
-      if (shouldContribute(idx, contributionFreq)) {
-        value += contributionAmount;
-      }
-      path.push({ month, value });
-    });
-    return path;
-  }
-  
   // Build lookup for Shiller data
   const shillerMap = new Map();
-  shillerData.forEach(d => {
-    shillerMap.set(d.month, { price: d.price, dividend: d.dividend });
+  shillerData.data.forEach(d => {
+    if (d.month && isValidValue(d.price) && isValidValue(d.dividend)) {
+      shillerMap.set(d.month, { price: d.price, dividend: d.dividend });
+    }
   });
+  
+  // Build lookup for FX data
+  const fxMap = new Map();
+  fxSeries.data.forEach(({ month, value: fxValue }) => {
+    if (month && isValidValue(fxValue)) {
+      fxMap.set(month, fxValue);
+    }
+  });
+  
+  let hasValidData = false;
   
   months.forEach((month, idx) => {
     const current = shillerMap.get(month);
     const prev = idx > 0 ? shillerMap.get(months[idx - 1]) : null;
+    const fxCurrent = fxMap.get(month);
+    const fxPrev = idx > 0 ? fxMap.get(months[idx - 1]) : null;
     
-    if (current && prev) {
+    if (current && prev && isValidValue(current.price) && isValidValue(prev.price)) {
       // Monthly total return: r_eq(t) = (P(t) + D(t)) / P(t-1) - 1
       const returnUSD = (current.price + current.dividend) / prev.price - 1;
       
-      // FX return: r_fx(t) = fx(t)/fx(t-1) - 1
-      const fxCurrent = getValueAtMonth(fxSeries, month);
-      const fxPrev = getValueAtMonth(fxSeries, months[idx - 1]);
+      if (!isValidValue(returnUSD)) {
+        // Skip this month if return is invalid
+        if (shouldContribute(idx, contributionFreq)) {
+          value += contributionAmount;
+        }
+        path.push({ month, value });
+        return;
+      }
       
-      if (fxCurrent != null && fxPrev != null) {
+      // FX return: r_fx(t) = fx(t)/fx(t-1) - 1
+      if (fxCurrent != null && fxPrev != null && isValidValue(fxCurrent) && isValidValue(fxPrev) && fxPrev !== 0) {
         const fxReturn = fxCurrent / fxPrev - 1;
         
-        // Combined CAD return: (1 + r_cad) = (1 + r_usd) * (1 + r_fx)
-        const returnCAD = (1 + returnUSD) * (1 + fxReturn) - 1;
-        value *= (1 + returnCAD);
+        if (isValidValue(fxReturn)) {
+          // Combined CAD return: (1 + r_cad) = (1 + r_usd) * (1 + r_fx)
+          const returnCAD = (1 + returnUSD) * (1 + fxReturn) - 1;
+          
+          if (isValidValue(returnCAD)) {
+            value *= (1 + returnCAD);
+            hasValidData = true;
+          }
+        }
       } else {
-        // Fallback: use USD return only
-        value *= (1 + returnUSD);
+        // Cannot convert without FX - mark as failed
+        return;
       }
     }
     
@@ -240,55 +387,110 @@ function simulateUSEquities(startMonth, numMonths, startingAmount, contributionA
       value += contributionAmount;
     }
     
+    if (!isValidValue(value)) {
+      return {
+        ok: false,
+        reason: 'Invalid calculation result',
+        detail: `Non-finite value computed at ${month}`
+      };
+    }
+    
     path.push({ month, value });
   });
   
-  return path;
+  if (!hasValidData) {
+    return {
+      ok: false,
+      reason: 'Insufficient data for simulation period',
+      detail: 'No valid return data found for the selected time period'
+    };
+  }
+  
+  return { ok: true, path };
+}
+
+// ============================================================
+// Helper: Check if value is finite
+// ============================================================
+function isValidValue(value) {
+  return value != null && Number.isFinite(value);
 }
 
 // ============================================================
 // Vehicle: Typical Active Fund (US equities minus fee drag)
+// Returns { ok: boolean, path?: Array, reason?: string }
 // ============================================================
 function simulateActiveFund(startMonth, numMonths, startingAmount, contributionAmount, contributionFreq, shillerData, fxSeries) {
+  // Validate inputs - NO FALLBACKS
+  if (!shillerData || !shillerData.ok || !Array.isArray(shillerData.data) || shillerData.data.length === 0) {
+    return {
+      ok: false,
+      reason: shillerData?.reason || 'Missing US Equities data',
+      detail: shillerData?.detail || 'Shiller data not available'
+    };
+  }
+  
+  // FX is required for USD to CAD conversion
+  if (!fxSeries || !fxSeries.ok || !Array.isArray(fxSeries.data) || fxSeries.data.length === 0) {
+    return {
+      ok: false,
+      reason: 'Missing USD/CAD exchange-rate data',
+      detail: fxSeries?.detail || 'FX data required for USD to CAD conversion'
+    };
+  }
+  
   const months = generateMonthSequence(startMonth, numMonths);
   const path = [];
   let value = startingAmount;
   
-  // Check if Shiller data is valid
-  if (!shillerData || !Array.isArray(shillerData) || shillerData.length === 0) {
-    // If no Shiller data, return a path with just contributions (no growth)
-    months.forEach((month, idx) => {
-      if (shouldContribute(idx, contributionFreq)) {
-        value += contributionAmount;
-      }
-      path.push({ month, value });
-    });
-    return path;
-  }
-  
   const shillerMap = new Map();
-  shillerData.forEach(d => {
-    shillerMap.set(d.month, { price: d.price, dividend: d.dividend });
+  shillerData.data.forEach(d => {
+    if (d.month && isValidValue(d.price) && isValidValue(d.dividend)) {
+      shillerMap.set(d.month, { price: d.price, dividend: d.dividend });
+    }
   });
+  
+  // Build lookup for FX data
+  const fxMap = new Map();
+  fxSeries.data.forEach(({ month, value: fxValue }) => {
+    if (month && isValidValue(fxValue)) {
+      fxMap.set(month, fxValue);
+    }
+  });
+  
+  let hasValidData = false;
   
   months.forEach((month, idx) => {
     const current = shillerMap.get(month);
     const prev = idx > 0 ? shillerMap.get(months[idx - 1]) : null;
+    const fxCurrent = fxMap.get(month);
+    const fxPrev = idx > 0 ? fxMap.get(months[idx - 1]) : null;
     
-    if (current && prev) {
+    if (current && prev && isValidValue(current.price) && isValidValue(prev.price)) {
       const returnUSD = (current.price + current.dividend) / prev.price - 1;
       
-      const fxCurrent = getValueAtMonth(fxSeries, month);
-      const fxPrev = getValueAtMonth(fxSeries, months[idx - 1]);
+      if (!isValidValue(returnUSD)) {
+        if (shouldContribute(idx, contributionFreq)) {
+          value += contributionAmount;
+        }
+        path.push({ month, value });
+        return;
+      }
       
-      if (fxCurrent != null && fxPrev != null) {
+      if (fxCurrent != null && fxPrev != null && isValidValue(fxCurrent) && isValidValue(fxPrev) && fxPrev !== 0) {
         const fxReturn = fxCurrent / fxPrev - 1;
-        const returnCAD = (1 + returnUSD) * (1 + fxReturn) - 1;
         
-        // Apply fee drag: (1 + r_active) = (1 + r_eq) * monthly_multiplier
-        value *= (1 + returnCAD) * ACTIVE_FUND_FEE_MONTHLY;
+        if (isValidValue(fxReturn)) {
+          const returnCAD = (1 + returnUSD) * (1 + fxReturn) - 1;
+          
+          if (isValidValue(returnCAD)) {
+            // Apply fee drag: (1 + r_active) = (1 + r_eq) * monthly_multiplier
+            value *= (1 + returnCAD) * ACTIVE_FUND_FEE_MONTHLY;
+            hasValidData = true;
+          }
+        }
       } else {
-        value *= (1 + returnUSD) * ACTIVE_FUND_FEE_MONTHLY;
+        return;
       }
     }
     
@@ -296,10 +498,26 @@ function simulateActiveFund(startMonth, numMonths, startingAmount, contributionA
       value += contributionAmount;
     }
     
+    if (!isValidValue(value)) {
+      return {
+        ok: false,
+        reason: 'Invalid calculation result',
+        detail: `Non-finite value computed at ${month}`
+      };
+    }
+    
     path.push({ month, value });
   });
   
-  return path;
+  if (!hasValidData) {
+    return {
+      ok: false,
+      reason: 'Insufficient data for simulation period',
+      detail: 'No valid return data found for the selected time period'
+    };
+  }
+  
+  return { ok: true, path };
 }
 
 // ============================================================
@@ -329,7 +547,27 @@ function applyInflationAdjustment(path, cpiSeries, startMonth) {
 }
 
 // ============================================================
+// Sanity check: Detect if series collapsed to cash (fallback behavior)
+// ============================================================
+function detectCollapseToCash(path, cashPath, seriesId) {
+  if (!path || !cashPath || path.length !== cashPath.length) {
+    return false;
+  }
+  
+  // Check if all values are exactly equal (within floating point tolerance)
+  for (let i = 0; i < path.length; i++) {
+    const diff = Math.abs(path[i].value - cashPath[i].value);
+    if (diff > 0.01) { // Allow small floating point differences
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+// ============================================================
 // Main simulation function
+// Returns results with ok status for each series
 // ============================================================
 function simulatePortfolio({
   startMonth,
@@ -338,19 +576,49 @@ function simulatePortfolio({
   contributionAmount,
   contributionFreq, // 'monthly', 'quarterly', 'annually'
   showReal, // boolean
-  data // { fxUSDCAD, cpiCanada, tBill3M, bond5_10Y, gic5Y, shiller }
+  data // { fxUSDCAD, cpiCanada, tBill3M, bond5_10Y, gic5Y, shiller } - all SeriesLoadResult
 }) {
   const numMonths = Math.round(horizonYears * 12);
   
   // Run simulations for each vehicle
-  const cashPath = simulateCash(startMonth, numMonths, startingAmount, contributionAmount, contributionFreq);
-  const tBillPath = simulateTBill(startMonth, numMonths, startingAmount, contributionAmount, contributionFreq, data.tBill3M);
-  const bondPath = simulateBonds(startMonth, numMonths, startingAmount, contributionAmount, contributionFreq, data.bond5_10Y);
-  const gicPath = simulateGIC(startMonth, numMonths, startingAmount, contributionAmount, contributionFreq, data.gic5Y.averageRate);
-  const equitiesPath = simulateUSEquities(startMonth, numMonths, startingAmount, contributionAmount, contributionFreq, data.shiller, data.fxUSDCAD);
-  const activeFundPath = simulateActiveFund(startMonth, numMonths, startingAmount, contributionAmount, contributionFreq, data.shiller, data.fxUSDCAD);
+  const cashResult = { ok: true, path: simulateCash(startMonth, numMonths, startingAmount, contributionAmount, contributionFreq) };
+  const tBillResult = simulateTBill(startMonth, numMonths, startingAmount, contributionAmount, contributionFreq, data.tBill3M);
+  const bondResult = simulateBonds(startMonth, numMonths, startingAmount, contributionAmount, contributionFreq, data.bond5_10Y);
+  const gicResult = simulateGIC(startMonth, numMonths, startingAmount, contributionAmount, contributionFreq, data.gic5Y);
+  const equitiesResult = simulateUSEquities(startMonth, numMonths, startingAmount, contributionAmount, contributionFreq, data.shiller, data.fxUSDCAD);
+  const activeFundResult = simulateActiveFund(startMonth, numMonths, startingAmount, contributionAmount, contributionFreq, data.shiller, data.fxUSDCAD);
   
-  // Apply inflation adjustment if requested
+  // Sanity check: Detect if any series collapsed to cash (except cash itself)
+  if (tBillResult.ok && detectCollapseToCash(tBillResult.path, cashResult.path, 'tBill')) {
+    tBillResult.ok = false;
+    tBillResult.reason = 'Series data invalid (collapsed to fallback)';
+    tBillResult.detail = 'T-bill series values match cash exactly - likely fallback behavior';
+  }
+  if (bondResult.ok && detectCollapseToCash(bondResult.path, cashResult.path, 'bond')) {
+    bondResult.ok = false;
+    bondResult.reason = 'Series data invalid (collapsed to fallback)';
+    bondResult.detail = 'Bond series values match cash exactly - likely fallback behavior';
+  }
+  if (equitiesResult.ok && detectCollapseToCash(equitiesResult.path, cashResult.path, 'equities')) {
+    equitiesResult.ok = false;
+    equitiesResult.reason = 'Series data invalid (collapsed to fallback)';
+    equitiesResult.detail = 'Equities series values match cash exactly - likely fallback behavior';
+  }
+  if (activeFundResult.ok && detectCollapseToCash(activeFundResult.path, cashResult.path, 'activeFund')) {
+    activeFundResult.ok = false;
+    activeFundResult.reason = 'Series data invalid (collapsed to fallback)';
+    activeFundResult.detail = 'Active fund series values match cash exactly - likely fallback behavior';
+  }
+  
+  // Extract paths (only if ok)
+  const cashPath = cashResult.path;
+  const tBillPath = tBillResult.ok ? tBillResult.path : null;
+  const bondPath = bondResult.ok ? bondResult.path : null;
+  const gicPath = gicResult.ok ? gicResult.path : null;
+  const equitiesPath = equitiesResult.ok ? equitiesResult.path : null;
+  const activeFundPath = activeFundResult.ok ? activeFundResult.path : null;
+  
+  // Apply inflation adjustment if requested (only for valid series)
   let cashPathFinal = cashPath;
   let tBillPathFinal = tBillPath;
   let bondPathFinal = bondPath;
@@ -358,59 +626,92 @@ function simulatePortfolio({
   let equitiesPathFinal = equitiesPath;
   let activeFundPathFinal = activeFundPath;
   
-  if (showReal && data.cpiCanada) {
-    cashPathFinal = applyInflationAdjustment(cashPath, data.cpiCanada, startMonth);
-    tBillPathFinal = applyInflationAdjustment(tBillPath, data.cpiCanada, startMonth);
-    bondPathFinal = applyInflationAdjustment(bondPath, data.cpiCanada, startMonth);
-    gicPathFinal = applyInflationAdjustment(gicPath, data.cpiCanada, startMonth);
-    equitiesPathFinal = applyInflationAdjustment(equitiesPath, data.cpiCanada, startMonth);
-    activeFundPathFinal = applyInflationAdjustment(activeFundPath, data.cpiCanada, startMonth);
+  if (showReal && data.cpiCanada && data.cpiCanada.ok) {
+    cashPathFinal = applyInflationAdjustment(cashPath, data.cpiCanada.data, startMonth);
+    if (tBillPath) tBillPathFinal = applyInflationAdjustment(tBillPath, data.cpiCanada.data, startMonth);
+    if (bondPath) bondPathFinal = applyInflationAdjustment(bondPath, data.cpiCanada.data, startMonth);
+    if (gicPath) gicPathFinal = applyInflationAdjustment(gicPath, data.cpiCanada.data, startMonth);
+    if (equitiesPath) equitiesPathFinal = applyInflationAdjustment(equitiesPath, data.cpiCanada.data, startMonth);
+    if (activeFundPath) activeFundPathFinal = applyInflationAdjustment(activeFundPath, data.cpiCanada.data, startMonth);
   }
   
-  // Calculate results
-  const getEndingValue = (path) => showReal && path[0]?.valueReal != null ? path[path.length - 1].valueReal : path[path.length - 1].value;
-  const getStartingValue = (path) => showReal && path[0]?.valueReal != null ? path[0].valueReal : path[0].value;
+  // Calculate results helper
+  const getEndingValue = (path) => {
+    if (!path || path.length === 0) return null;
+    return showReal && path[0]?.valueReal != null ? path[path.length - 1].valueReal : path[path.length - 1].value;
+  };
+  const getStartingValue = (path) => {
+    if (!path || path.length === 0) return null;
+    return showReal && path[0]?.valueReal != null ? path[0].valueReal : path[0].value;
+  };
   
   const totalContributions = contributionAmount * (contributionFreq === 'monthly' ? numMonths : contributionFreq === 'quarterly' ? Math.floor(numMonths / 3) : Math.floor(numMonths / 12));
   
+  // Build results with ok status
   const results = {
     cash: {
+      ok: true,
       path: cashPathFinal,
       endingValue: getEndingValue(cashPathFinal),
       cagr: calculateCAGR(getStartingValue(cashPathFinal), getEndingValue(cashPathFinal), horizonYears),
       totalContributions
     },
-    tBill: {
+    tBill: tBillResult.ok ? {
+      ok: true,
       path: tBillPathFinal,
       endingValue: getEndingValue(tBillPathFinal),
       cagr: calculateCAGR(getStartingValue(tBillPathFinal), getEndingValue(tBillPathFinal), horizonYears),
       totalContributions
+    } : {
+      ok: false,
+      reason: tBillResult.reason,
+      detail: tBillResult.detail
     },
-    bond: {
+    bond: bondResult.ok ? {
+      ok: true,
       path: bondPathFinal,
       endingValue: getEndingValue(bondPathFinal),
       cagr: calculateCAGR(getStartingValue(bondPathFinal), getEndingValue(bondPathFinal), horizonYears),
       totalContributions
+    } : {
+      ok: false,
+      reason: bondResult.reason,
+      detail: bondResult.detail
     },
-    gic: {
+    gic: gicResult.ok ? {
+      ok: true,
       path: gicPathFinal,
       endingValue: getEndingValue(gicPathFinal),
       cagr: calculateCAGR(getStartingValue(gicPathFinal), getEndingValue(gicPathFinal), horizonYears),
       totalContributions,
-      gicRate: data.gic5Y.averageRate,
-      gicStartDate: data.gic5Y.startDate
+      gicRate: data.gic5Y.metadata?.averageRate,
+      gicStartDate: data.gic5Y.metadata?.startDate
+    } : {
+      ok: false,
+      reason: gicResult.reason,
+      detail: gicResult.detail
     },
-    equities: {
+    equities: equitiesResult.ok ? {
+      ok: true,
       path: equitiesPathFinal,
       endingValue: getEndingValue(equitiesPathFinal),
       cagr: calculateCAGR(getStartingValue(equitiesPathFinal), getEndingValue(equitiesPathFinal), horizonYears),
       totalContributions
+    } : {
+      ok: false,
+      reason: equitiesResult.reason,
+      detail: equitiesResult.detail
     },
-    activeFund: {
+    activeFund: activeFundResult.ok ? {
+      ok: true,
       path: activeFundPathFinal,
       endingValue: getEndingValue(activeFundPathFinal),
       cagr: calculateCAGR(getStartingValue(activeFundPathFinal), getEndingValue(activeFundPathFinal), horizonYears),
       totalContributions
+    } : {
+      ok: false,
+      reason: activeFundResult.reason,
+      detail: activeFundResult.detail
     }
   };
   

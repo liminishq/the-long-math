@@ -85,15 +85,16 @@
       const data = await window.portfolioData.fetchAll(forceRefresh);
       currentData = data;
       
-      if (statusEl) {
-        statusEl.textContent = 'Data loaded';
-        statusEl.className = 'data-status success';
-      }
+      // Count available vs unavailable series
+      const seriesCount = Object.keys(data).length;
+      const availableCount = Object.values(data).filter(s => s && s.ok).length;
       
-      // Check for errors
-      if (data.shiller?.error) {
-        if (statusEl) {
-          statusEl.textContent = 'Warning: Shiller data unavailable. Some features may not work.';
+      if (statusEl) {
+        if (availableCount === seriesCount) {
+          statusEl.textContent = 'Data loaded';
+          statusEl.className = 'data-status success';
+        } else {
+          statusEl.textContent = `Data loaded (${availableCount}/${seriesCount} series available)`;
           statusEl.className = 'data-status warning';
         }
       }
@@ -161,45 +162,165 @@
   // Display results
   // ============================================================
   function displayResults(results) {
+    // Collect unavailable series for warning
+    const unavailable = [];
+    
     // Update result cards
-    updateResultCard('cash', results.cash, 'Cash (0%)');
-    updateResultCard('tBill', results.tBill, 'Canada T-bills');
-    updateResultCard('bond', results.bond, 'Canada Bonds');
-    updateResultCard('gic', results.gic, 'Canada 5-year GIC', {
+    updateResultCard('cash', results.cash, 'Cash (0%)', unavailable);
+    updateResultCard('tBill', results.tBill, 'Canada T-bills', unavailable);
+    updateResultCard('bond', results.bond, 'Canada Bonds', unavailable);
+    updateResultCard('gic', results.gic, 'Canada 5-year GIC', unavailable, {
       gicRate: results.gic.gicRate,
       gicStartDate: results.gic.gicStartDate
     });
-    updateResultCard('equities', results.equities, 'US Equities');
-    updateResultCard('activeFund', results.activeFund, 'Typical Active Fund');
+    updateResultCard('equities', results.equities, 'US Equities', unavailable);
+    updateResultCard('activeFund', results.activeFund, 'Typical Active Fund', unavailable);
+    
+    // Show/hide warnings
+    showSeriesWarnings(unavailable);
+    
+    // Update legend checkboxes
+    updateLegendAvailability(results);
   }
   
   // ============================================================
   // Update result card
   // ============================================================
-  function updateResultCard(vehicleId, result, label, extra = {}) {
+  function updateResultCard(vehicleId, result, label, unavailable, extra = {}) {
     const card = document.getElementById(`result-${vehicleId}`);
     if (!card) return;
+    
+    // Check if this series is unavailable
+    if (!result || !result.ok) {
+      unavailable.push({
+        label: label,
+        reason: result?.reason || 'Unknown error',
+        vehicleId: vehicleId
+      });
+      
+      // Show disabled state
+      card.style.opacity = '0.5';
+      card.style.pointerEvents = 'none';
+      
+      const endingEl = card.querySelector('.result-ending');
+      const cagrEl = card.querySelector('.result-cagr');
+      const contributionsEl = card.querySelector('.result-contributions');
+      const extraEl = card.querySelector('.result-extra');
+      
+      if (endingEl) endingEl.textContent = 'Unavailable';
+      if (cagrEl) cagrEl.textContent = '—';
+      if (contributionsEl) contributionsEl.textContent = '—';
+      if (extraEl) extraEl.style.display = 'none';
+      
+      // Add reason tooltip or text
+      const reasonText = result?.reason || 'Data unavailable';
+      if (endingEl) {
+        endingEl.title = reasonText;
+      }
+      
+      return;
+    }
+    
+    // Series is available - show normal state
+    card.style.opacity = '1';
+    card.style.pointerEvents = 'auto';
     
     const endingEl = card.querySelector('.result-ending');
     const cagrEl = card.querySelector('.result-cagr');
     const contributionsEl = card.querySelector('.result-contributions');
     const extraEl = card.querySelector('.result-extra');
     
+    // Validate values before displaying
     if (endingEl) {
-      endingEl.textContent = formatCurrency(result.endingValue);
+      const endingValue = result.endingValue;
+      if (endingValue != null && Number.isFinite(endingValue)) {
+        endingEl.textContent = formatCurrency(endingValue);
+      } else {
+        endingEl.textContent = '—';
+        console.warn(`[${vehicleId}] Invalid ending value:`, endingValue);
+      }
     }
+    
     if (cagrEl) {
-      cagrEl.textContent = result.cagr.toFixed(2) + '%';
+      const cagr = result.cagr;
+      if (cagr != null && Number.isFinite(cagr)) {
+        cagrEl.textContent = cagr.toFixed(2) + '%';
+      } else {
+        cagrEl.textContent = '—';
+        console.warn(`[${vehicleId}] Invalid CAGR:`, cagr);
+      }
     }
+    
     if (contributionsEl) {
-      contributionsEl.textContent = formatCurrency(result.totalContributions);
+      const contributions = result.totalContributions;
+      if (contributions != null && Number.isFinite(contributions)) {
+        contributionsEl.textContent = formatCurrency(contributions);
+      } else {
+        contributionsEl.textContent = '—';
+      }
     }
-    if (extraEl && extra.gicRate) {
-      extraEl.textContent = `Average GIC rate: ${extra.gicRate.toFixed(2)}% (from ${extra.gicStartDate})`;
+    
+    if (extraEl && extra.gicRate != null && Number.isFinite(extra.gicRate)) {
+      extraEl.textContent = `Average GIC rate: ${extra.gicRate.toFixed(2)}% (from ${extra.gicStartDate || 'unknown'})`;
       extraEl.style.display = 'block';
     } else if (extraEl) {
       extraEl.style.display = 'none';
     }
+  }
+  
+  // ============================================================
+  // Show series warnings
+  // ============================================================
+  function showSeriesWarnings(unavailable) {
+    const warningsEl = document.getElementById('seriesWarnings');
+    const warningsListEl = document.getElementById('seriesWarningsList');
+    
+    if (!warningsEl || !warningsListEl) return;
+    
+    if (unavailable.length === 0) {
+      warningsEl.style.display = 'none';
+      return;
+    }
+    
+    warningsEl.style.display = 'block';
+    warningsListEl.innerHTML = '';
+    
+    unavailable.forEach(({ label, reason }) => {
+      const li = document.createElement('li');
+      li.textContent = `${label} — ${reason}`;
+      warningsListEl.appendChild(li);
+    });
+  }
+  
+  // ============================================================
+  // Update legend availability
+  // ============================================================
+  function updateLegendAvailability(results) {
+    const legendMap = {
+      cash: 'legend-cash',
+      tBill: 'legend-tBill',
+      bond: 'legend-bond',
+      gic: 'legend-gic',
+      equities: 'legend-equities',
+      activeFund: 'legend-activeFund'
+    };
+    
+    Object.entries(legendMap).forEach(([vehicleId, checkboxId]) => {
+      const checkbox = document.getElementById(checkboxId);
+      if (!checkbox) return;
+      
+      const result = results[vehicleId];
+      if (!result || !result.ok) {
+        // Disable and uncheck unavailable series
+        checkbox.disabled = true;
+        checkbox.checked = false;
+        checkbox.parentElement.style.opacity = '0.5';
+      } else {
+        // Enable available series
+        checkbox.disabled = false;
+        checkbox.parentElement.style.opacity = '1';
+      }
+    });
   }
   
   // ============================================================
@@ -208,7 +329,15 @@
   function updateChart(results) {
     if (!chart) return;
     
-    chart.setData(results);
+    // Filter out unavailable series
+    const availableResults = {};
+    Object.entries(results).forEach(([key, value]) => {
+      if (value && value.ok) {
+        availableResults[key] = value;
+      }
+    });
+    
+    chart.setData(availableResults);
   }
   
   // ============================================================
