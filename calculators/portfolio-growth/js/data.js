@@ -34,25 +34,27 @@
 // Configuration: Bank of Canada Valet API endpoints
 // ============================================================
 
-const BOC_VALET_BASE = 'https://www.bankofcanada.ca/valet/docs';
+const BOC_VALET_BASE = 'https://www.bankofcanada.ca/valet';
 
-// Series codes (these may need adjustment based on actual Valet API)
-// Note: Valet API uses series codes. Adjust these based on actual available series.
+// Series codes for Bank of Canada Valet API
+// See: https://www.bankofcanada.ca/valet/docs for available series
+// Note: If these codes don't work, check the BOC Valet API documentation for current series codes
 const BOC_SERIES = {
-  // USD/CAD exchange rate (daily)
-  FX_USDCAD: 'FXUSDCAD',
+  // USD/CAD exchange rate (daily) - try common series codes
+  FX_USDCAD: ['FXUSDCAD', 'IEXE0101', 'FXUSDCAD'],
   
-  // Canada CPI (monthly) - may need to check actual series code
-  CPI_CANADA: 'CPI', // or 'V41690973' or similar - adjust based on Valet
+  // Canada CPI (monthly) - try common series codes
+  CPI_CANADA: ['V41690973', 'CPI', 'V41690914'],
   
   // 3-month T-bill yield (daily, then monthly average)
-  T_BILL_3M: 'V39051', // Example - adjust based on actual series
+  T_BILL_3M: ['V39051', 'TB3MS'],
   
-  // Government of Canada bond yield, 5-10 year average (daily, then monthly average)
-  BOND_5_10Y: 'V39052', // Example - adjust based on actual series
+  // Government of Canada bond yield, 5-10 year average
+  BOND_5Y: ['V39052', 'V39053'], // Will try both and average
+  BOND_10Y: ['V39053', 'V39052'], // Will try both and average
   
   // Posted 5-year GIC rate (weekly/daily)
-  GIC_5Y: 'V121764' // Example - adjust based on actual series
+  GIC_5Y: ['V121764', 'V121765']
 };
 
 // Shiller dataset URL (Yale) - try CSV first, fallback to other formats
@@ -115,45 +117,78 @@ function weeklyToMonthly(weeklyData) {
 // ============================================================
 // Bank of Canada Valet API fetcher
 // ============================================================
-async function fetchBOCSeries(seriesCode) {
-  // Valet API format: GET /valet/docs/series/{seriesCode}
+async function fetchBOCSeries(seriesCodeOrArray) {
+  // Valet API format: GET /valet/observations/{seriesCode}
   // Returns JSON with observations array
-  // Note: Actual API structure may vary - adjust based on real response
+  // Documentation: https://www.bankofcanada.ca/valet/docs
   
-  const url = `https://www.bankofcanada.ca/valet/docs/series/${seriesCode}`;
+  // Handle array of possible series codes (try each until one works)
+  const seriesCodes = Array.isArray(seriesCodeOrArray) ? seriesCodeOrArray : [seriesCodeOrArray];
   
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`BOC API error: ${response.status}`);
+  let lastError = null;
+  
+  for (const seriesCode of seriesCodes) {
+    try {
+      // Try multiple URL formats in case the API structure has changed
+      const urlFormats = [
+        `${BOC_VALET_BASE}/observations/${seriesCode}?recent=1`,
+        `${BOC_VALET_BASE}/observations/${seriesCode}`,
+        `${BOC_VALET_BASE}/series/${seriesCode}/observations`,
+        `https://www.bankofcanada.ca/valet/docs/series/${seriesCode}`
+      ];
+      
+      for (const url of urlFormats) {
+        try {
+          const response = await fetch(url);
+          
+          if (response.ok) {
+            const data = await response.json();
+            const result = parseBOCResponse(data);
+            if (result.length > 0) {
+              return result;
+            }
+          }
+        } catch (urlError) {
+          // Try next URL format
+          continue;
+        }
+      }
+      
+      lastError = new Error(`BOC API error: All URL formats failed for series ${seriesCode}`);
+    } catch (error) {
+      lastError = error;
+      continue; // Try next series code
     }
-    
-    const data = await response.json();
-    
-    // Parse observations - handle multiple possible structures
-    let observations = [];
-    if (data.series && Array.isArray(data.series) && data.series[0]) {
-      observations = data.series[0].observations || [];
-    } else if (data.observations) {
-      observations = data.observations;
-    } else if (Array.isArray(data)) {
-      observations = data;
-    }
-    
-    // Extract date and value - handle different formats
-    const result = observations
-      .map(obs => {
-        const date = obs.d || obs.date || obs.DATE || obs[0];
-        const value = obs.v !== undefined ? obs.v : (obs.value !== undefined ? obs.value : obs[1]);
-        return [date, value];
-      })
-      .filter(([date, value]) => date && value != null && !isNaN(value));
-    
-    return result;
-  } catch (error) {
-    console.error(`Error fetching BOC series ${seriesCode}:`, error);
-    throw error;
   }
+  
+  // If all series codes failed, throw the last error
+  console.error(`All series codes failed for: ${seriesCodes.join(', ')}`, lastError);
+  throw lastError || new Error(`Failed to fetch BOC series: ${seriesCodes.join(', ')}`);
+}
+
+// ============================================================
+// Parse Bank of Canada API response
+// ============================================================
+function parseBOCResponse(data) {
+  // BOC Valet API returns: { observations: [{ d: "YYYY-MM-DD", v: value }, ...] }
+  let observations = [];
+  
+  if (data.observations && Array.isArray(data.observations)) {
+    observations = data.observations;
+  } else if (data.series && Array.isArray(data.series) && data.series[0]) {
+    observations = data.series[0].observations || [];
+  }
+  
+  // Extract date and value - BOC format uses 'd' for date and 'v' for value
+  const result = observations
+    .map(obs => {
+      const date = obs.d || obs.date || obs.DATE;
+      const value = obs.v !== undefined ? obs.v : (obs.value !== undefined ? obs.value : null);
+      return [date, value];
+    })
+    .filter(([date, value]) => date && value != null && !isNaN(value));
+  
+  return result;
 }
 
 // ============================================================
@@ -185,8 +220,61 @@ async function fetchTBill3M() {
 // Fetch 5-10 year bond yield (daily → monthly average)
 // ============================================================
 async function fetchBond5_10Y() {
-  const daily = await fetchBOCSeries(BOC_SERIES.BOND_5_10Y);
-  return dailyToMonthly(daily);
+  // Fetch both 5-year and 10-year, then average them
+  try {
+    const [bond5Y, bond10Y] = await Promise.all([
+      fetchBOCSeries(BOC_SERIES.BOND_5Y).catch(() => null),
+      fetchBOCSeries(BOC_SERIES.BOND_10Y).catch(() => null)
+    ]);
+    
+    // If we have both, average them
+    if (bond5Y && bond10Y) {
+      // Convert both to monthly
+      const monthly5Y = dailyToMonthly(bond5Y);
+      const monthly10Y = dailyToMonthly(bond10Y);
+      
+      // Create a map for averaging
+      const monthlyMap = new Map();
+      
+      // Add 5-year data
+      monthly5Y.forEach(([month, value]) => {
+        if (!monthlyMap.has(month)) {
+          monthlyMap.set(month, []);
+        }
+        monthlyMap.get(month).push(value);
+      });
+      
+      // Add 10-year data
+      monthly10Y.forEach(([month, value]) => {
+        if (!monthlyMap.has(month)) {
+          monthlyMap.set(month, []);
+        }
+        monthlyMap.get(month).push(value);
+      });
+      
+      // Average values for each month
+      const averaged = [];
+      for (const [month, values] of monthlyMap.entries()) {
+        const avg = values.reduce((a, b) => a + b, 0) / values.length;
+        averaged.push([month, avg]);
+      }
+      
+      return averaged.sort((a, b) => a[0].localeCompare(b[0]));
+    }
+    
+    // Fallback: use whichever one we have
+    if (bond5Y) {
+      return dailyToMonthly(bond5Y);
+    }
+    if (bond10Y) {
+      return dailyToMonthly(bond10Y);
+    }
+    
+    throw new Error('Failed to fetch bond data');
+  } catch (error) {
+    console.warn('Failed to fetch bond series:', error);
+    throw error;
+  }
 }
 
 // ============================================================
