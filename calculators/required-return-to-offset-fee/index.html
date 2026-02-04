@@ -38,6 +38,73 @@
     .results.two-col{
       margin-top: 0; /* remove extra top margin from .two-col helper */
     }
+
+    /* Results callout (high-salience summary above RESULTS) */
+    .results-callout{
+      width: 100%;
+      margin-bottom: 14px;
+      padding: 16px 18px;
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow), var(--inset);
+    }
+
+    @media (max-width: 980px){
+      .results-callout{
+        padding: 14px 16px;
+        margin-bottom: 12px;
+      }
+    }
+
+    .results-callout__headline{
+      margin: 0;
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--text);
+    }
+
+    @media (max-width: 980px){
+      .results-callout__headline{
+        font-size: 16px;
+        line-height: 1.35;
+      }
+    }
+
+    .results-callout__subhead{
+      margin: 9px 0 0;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.4;
+      color: var(--text);
+    }
+
+    @media (max-width: 980px){
+      .results-callout__subhead{
+        font-size: 15px;
+      }
+    }
+
+    .results-callout__note{
+      margin: 8px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .accent-number{
+      color: var(--accent);
+      font-weight: 700;
+      text-shadow: 0 0 8px rgba(217, 180, 106, 0.2);
+      border-bottom: 1px solid var(--accentSoft);
+      padding-bottom: 1px;
+    }
+
+    .muted-inline{
+      color: var(--muted);
+      font-weight: normal;
+    }
   </style>
 </head>
 
@@ -144,6 +211,23 @@
       </p>
     </section>
 
+    <!-- RESULTS CALLOUT (high-salience summary) -->
+    <div class="results-callout" aria-label="Fee offset summary">
+      <p class="results-callout__headline">
+        To fully offset a <span class="muted-inline" id="calloutFee">1.0%</span> annual fee, this portfolio must earn an additional
+        <span class="accent-number" id="calloutAlpha">+1.0%</span>
+        every year — for the entire <span class="muted-inline" id="calloutHorizon">30</span>-year horizon.
+      </p>
+      <p class="results-callout__subhead">
+        If that excess return is not achieved, the shortfall must be made up with an additional
+        <span class="accent-number" id="calloutContribution">$–</span>
+        of new capital every year.
+      </p>
+      <p class="results-callout__note">
+        This replaces performance with contributions using the same assumptions shown above.
+      </p>
+    </div>
+
     <!-- RESULTS (full width, 2 columns) -->
     <section class="card">
       <h2 class="section-title">Results</h2>
@@ -243,6 +327,12 @@
         outLost: document.getElementById("out_lost_to_fees"),
         outExtra: document.getElementById("out_extra_contrib"),
         outMeta: document.getElementById("out_meta"),
+
+        // Callout elements
+        calloutFee: document.getElementById("calloutFee"),
+        calloutHorizon: document.getElementById("calloutHorizon"),
+        calloutAlpha: document.getElementById("calloutAlpha"),
+        calloutContribution: document.getElementById("calloutContribution"),
       };
 
       function cleanNum(v) {
@@ -315,6 +405,8 @@
           els.outLost.textContent = "$–";
           els.outExtra.textContent = "$–";
           els.outMeta.textContent = "Calculated using the assumptions shown above.";
+          // Update callout with placeholder values
+          updateCallout(NaN, NaN, NaN, NaN);
           return;
         }
 
@@ -339,6 +431,35 @@
         els.outExtra.textContent = fmtCAD(extra);
 
         els.outMeta.textContent = "Calculated using the assumptions shown above.";
+
+        // Update callout values (mirror existing outputs)
+        updateCallout(feePct, years, requiredExcessPct, extra);
+      }
+
+      function updateCallout(feePct, years, alphaPct, extraContrib) {
+        // Format fee percentage
+        if (Number.isFinite(feePct)) {
+          els.calloutFee.textContent = feePct.toLocaleString("en-CA", { maximumFractionDigits: 2 }) + "%";
+        } else {
+          els.calloutFee.textContent = "–%";
+        }
+
+        // Format horizon
+        if (Number.isFinite(years) && years > 0) {
+          els.calloutHorizon.textContent = Math.floor(years).toString();
+        } else {
+          els.calloutHorizon.textContent = "–";
+        }
+
+        // Format alpha with + sign
+        if (Number.isFinite(alphaPct)) {
+          els.calloutAlpha.textContent = "+" + alphaPct.toLocaleString("en-CA", { maximumFractionDigits: 2 }) + "%";
+        } else {
+          els.calloutAlpha.textContent = "+–%";
+        }
+
+        // Format contribution (already formatted as CAD)
+        els.calloutContribution.textContent = els.outExtra.textContent;
       }
 
       function initDefaults() {
