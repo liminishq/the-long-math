@@ -194,6 +194,18 @@ function simulateUSEquities(startMonth, numMonths, startingAmount, contributionA
   const path = [];
   let value = startingAmount;
   
+  // Check if Shiller data is valid
+  if (!shillerData || !Array.isArray(shillerData) || shillerData.length === 0) {
+    // If no Shiller data, return a path with just contributions (no growth)
+    months.forEach((month, idx) => {
+      if (shouldContribute(idx, contributionFreq)) {
+        value += contributionAmount;
+      }
+      path.push({ month, value });
+    });
+    return path;
+  }
+  
   // Build lookup for Shiller data
   const shillerMap = new Map();
   shillerData.forEach(d => {
@@ -241,6 +253,18 @@ function simulateActiveFund(startMonth, numMonths, startingAmount, contributionA
   const months = generateMonthSequence(startMonth, numMonths);
   const path = [];
   let value = startingAmount;
+  
+  // Check if Shiller data is valid
+  if (!shillerData || !Array.isArray(shillerData) || shillerData.length === 0) {
+    // If no Shiller data, return a path with just contributions (no growth)
+    months.forEach((month, idx) => {
+      if (shouldContribute(idx, contributionFreq)) {
+        value += contributionAmount;
+      }
+      path.push({ month, value });
+    });
+    return path;
+  }
   
   const shillerMap = new Map();
   shillerData.forEach(d => {
