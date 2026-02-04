@@ -158,12 +158,11 @@ function renderResults(result) {
 
   document.getElementById('totalIncome').textContent = formatCurrency(totals.totalIncome);
   document.getElementById('taxableIncome').textContent = formatCurrency(totals.taxableIncome);
+  document.getElementById('totalBurden').textContent = formatCurrency(totals.totalBurden);
   document.getElementById('federalTax').textContent = formatCurrency(totals.federalTax);
   document.getElementById('provTax').textContent = formatCurrency(totals.provTax);
   document.getElementById('cpp').textContent = formatCurrency(totals.cpp);
   document.getElementById('ei').textContent = formatCurrency(totals.ei);
-  document.getElementById('totalBurden').textContent = formatCurrency(totals.totalBurden);
-  document.getElementById('afterTaxIncome').textContent = formatCurrency(totals.afterTaxIncome);
   document.getElementById('takeHomeAfterPayroll').textContent = formatCurrency(totals.takeHomeAfterPayroll);
   document.getElementById('avgRate').textContent = formatPercent(totals.avgRate);
   document.getElementById('marginalRate').textContent = formatPercent(totals.marginalRate);
@@ -388,17 +387,16 @@ function renderPayroll(payroll) {
 function clearResults() {
   document.getElementById('totalIncome').textContent = '$–';
   document.getElementById('taxableIncome').textContent = '$–';
+  document.getElementById('totalBurden').textContent = '$–';
   document.getElementById('federalTax').textContent = '$–';
   document.getElementById('provTax').textContent = '$–';
   document.getElementById('cpp').textContent = '$–';
   document.getElementById('ei').textContent = '$–';
-  document.getElementById('totalBurden').textContent = '$–';
-  document.getElementById('afterTaxIncome').textContent = '$–';
   document.getElementById('takeHomeAfterPayroll').textContent = '$–';
   document.getElementById('avgRate').textContent = '–%';
   document.getElementById('marginalRate').textContent = '–%';
   document.getElementById('refundOrOwing').textContent = '$–';
-  document.getElementById('refundOrOwingLabel').textContent = 'Refund / Balance Owing';
+  document.getElementById('refundOrOwingLabel').textContent = 'Balance Owing / Refund';
   const refundOwingResult = document.getElementById('refundOrOwingResult');
   if (refundOwingResult) {
     refundOwingResult.className = 'result';

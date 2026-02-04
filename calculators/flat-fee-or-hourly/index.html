@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flat-Fee or Hourly Advisor Cost Calculator – The Long Math</title>
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script defer src="/assets/js/site.js"></script>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <!-- Back link -->
+    <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
+
+    <!-- Header -->
+    <header>
+      <div class="sitehead">
+        <div class="brandstack">
+          <div class="brand">The Long Math</div>
+          <div class="sigil">$ = P(1 + r/n)<sup>nt</sup></div>
+        </div>
+
+        <div class="themebox">
+          <div class="tlabel" id="theme_label">Dark</div>
+          <label class="switch" aria-label="Toggle light/dark mode">
+            <input id="theme_toggle" type="checkbox" />
+            <span class="knob"></span>
+          </label>
+        </div>
+      </div>
+
+      <h1>The True Calculated Cost of a Flat-Fee or Hourly Financial Advisor</h1>
+
+      <div class="lede">
+        <p>Flat fees and hourly advice are paid in dollars, not as a percentage of your portfolio.</p>
+
+        <p>
+          Over long time horizons, the true cost includes both fees paid and the opportunity cost of no longer compounding those dollars.
+        </p>
+
+        <p>
+          This calculator estimates total fees, lost compounding, ending values, and the AUM-fee equivalent.
+        </p>
+
+        <p><strong>No opinions. No hidden assumptions. Just arithmetic.</strong></p>
+      </div>
+    </header>
+
+    <!-- =========================
+         MAIN GRID (2 columns)
+         ========================= -->
+    <div class="calc-grid">
+
+      <!-- INPUTS -->
+      <section class="card">
+        <h2 class="section-title">Inputs</h2>
+
+        <div class="row">
+          <label for="starting_balance">Starting balance ($)</label>
+          <input id="starting_balance" type="number" />
+        </div>
+
+        <div class="row">
+          <label for="monthly_contribution">Monthly contribution ($/mo)</label>
+          <input id="monthly_contribution" type="number" />
+        </div>
+
+        <div class="row">
+          <label for="horizon_years">Time horizon (years)</label>
+          <input id="horizon_years" type="number" />
+        </div>
+
+        <div class="row">
+          <label for="annual_return">Expected annual return (%)</label>
+          <input id="annual_return" type="text" placeholder="e.g. 7 or 4.5" />
+        </div>
+
+        <div class="slider-block">
+          <div class="slider-top">
+            <div class="lbl">Expected annual return slider</div>
+            <div class="val" id="annual_return_label">–</div>
+          </div>
+          <input id="annual_return_slider" type="range" />
+        </div>
+
+        <!-- Fee model selector -->
+        <div class="row" style="margin-top: 16px;">
+          <label style="grid-column: 1 / -1; margin-bottom: 8px;">Fee model</label>
+          <div style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
+              <input type="radio" name="fee_model" id="model_flat" value="flat" checked />
+              Flat annual fee
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
+              <input type="radio" name="fee_model" id="model_hourly" value="hourly" />
+              Hourly fee
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
+              <input type="radio" name="fee_model" id="model_aum" value="aum" />
+              AUM fee (for comparison)
+            </label>
+          </div>
+        </div>
+
+        <p class="helper">
+          Flat and hourly fees are applied as dollars deducted over time. AUM fees are applied as a percentage of assets.
+        </p>
+
+        <!-- Flat fee fields -->
+        <div id="fields_flat" class="fee-model-fields">
+          <div class="row">
+            <label for="flat_fee">Flat fee per year ($)</label>
+            <input id="flat_fee" type="number" />
+          </div>
+
+          <div class="toggle">
+            <input id="fee_inflation_on" type="checkbox" />
+            <label for="fee_inflation_on">Increase fee each year</label>
+          </div>
+
+          <div id="fields_fee_increase" class="fee-increase-fields" style="display: none;">
+            <div class="row">
+              <label for="fee_increase_pct">Annual fee increase (%)</label>
+              <input id="fee_increase_pct" type="text" placeholder="e.g. 2.0" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Hourly fee fields -->
+        <div id="fields_hourly" class="fee-model-fields" style="display: none;">
+          <div class="row">
+            <label for="hourly_rate">Hourly rate ($/hr)</label>
+            <input id="hourly_rate" type="number" />
+          </div>
+
+          <div class="row">
+            <label for="hours_per_year">Hours per year</label>
+            <input id="hours_per_year" type="number" />
+          </div>
+
+          <div class="toggle">
+            <input id="fee_inflation_on_hourly" type="checkbox" />
+            <label for="fee_inflation_on_hourly">Increase fee each year</label>
+          </div>
+
+          <div id="fields_fee_increase_hourly" class="fee-increase-fields" style="display: none;">
+            <div class="row">
+              <label for="fee_increase_pct_hourly">Annual fee increase (%)</label>
+              <input id="fee_increase_pct_hourly" type="text" placeholder="e.g. 2.0" />
+            </div>
+          </div>
+        </div>
+
+        <!-- AUM fee fields -->
+        <div id="fields_aum" class="fee-model-fields" style="display: none;">
+          <div class="row">
+            <label for="aum_fee_pct">AUM fee (%/yr)</label>
+            <input id="aum_fee_pct" type="text" placeholder="e.g. 1.0" />
+          </div>
+        </div>
+
+      </section>
+
+      <!-- RESULTS -->
+      <section class="card">
+        <h2 class="section-title">Calculated Results</h2>
+
+        <div class="results">
+
+          <div class="result prominent">
+            <p class="k">Total calculated cost</p>
+            <p class="v" id="out_total_cost">$–</p>
+            <p class="subl">Fees paid + lost compounding</p>
+          </div>
+
+          <div class="result">
+            <p class="k">AUM-fee equivalent</p>
+            <p class="v" id="out_aum_equiv">–</p>
+            <p class="subl" style="font-size: 11px; margin-top: 4px;">What AUM % produces the same ending value?</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Ending value (with advisor fee model)</p>
+            <p class="v" id="out_with">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Ending value (no advisor fees)</p>
+            <p class="v" id="out_without">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Fees paid</p>
+            <p class="v" id="out_fees">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Lost compounding</p>
+            <p class="v" id="out_lost">$–</p>
+          </div>
+
+        </div>
+
+        <p class="meta" id="out_meta">
+          Calculated using monthly compounding and the assumptions shown above.
+        </p>
+      </section>
+    </div>
+
+    <!-- FULL-WIDTH METHODS SECTION -->
+    <section class="methods" id="methods">
+      <div class="methods-card">
+        <h2>Method & assumptions</h2>
+
+        <div class="method-list">
+          <div class="method-item">
+            <strong>Monthly compounding</strong>
+            <div>
+              Monthly compounding based on the annual return.
+            </div>
+          </div>
+
+          <div class="method-item">
+            <strong>Contributions</strong>
+            <div>
+              Contributions occur monthly.
+            </div>
+          </div>
+
+          <div class="method-item">
+            <strong>Fee deductions</strong>
+            <div>
+              Fees are deducted monthly (annual fee divided by 12; AUM fee applied monthly).
+            </div>
+          </div>
+
+          <div class="method-item">
+            <strong>Lost compounding</strong>
+            <div>
+              Lost compounding is calculated as the future value of each fee deducted, compounded at the same assumed return to the end of the horizon.
+            </div>
+          </div>
+
+          <div class="method-item">
+            <strong>Consistency with AUM calculator</strong>
+            <div>
+              When the same AUM percentage, return assumptions, and contribution schedule are used, this calculator produces the same numerical results as the AUM-based advisor cost calculator.
+            </div>
+          </div>
+
+          <div class="method-item">
+            <strong>Scope note</strong>
+            <div>
+              Taxes, trading costs, and account-specific fees not included.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> The calculators and tools at The Long Math are provided for educational purposes only
+        and are not intended to constitute financial or tax advice. Results are based on simplified
+        models and user-supplied assumptions.  Users are recommended to complete their own due diligence.
+      </p>
+    </div>
+
+  </div>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+
+  <!-- Logic -->
+  <script defer src="./engine.js"></script>
+  <script defer src="./ui.js"></script>
+
+  <!-- Theme toggle -->
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const toggle = document.getElementById("theme_toggle");
+      const label = document.getElementById("theme_label");
+
+      const theme = root.getAttribute("data-theme") || "dark";
+      toggle.checked = theme === "light";
+      label.textContent = theme === "light" ? "Light" : "Dark";
+
+      toggle.addEventListener("change", () => {
+        const next = toggle.checked ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem("tlm_theme", next);
+        label.textContent = next === "light" ? "Light" : "Dark";
+      });
+    })();
+  </script>
+  <div id="footerMount"></div>
+
+</body>
+</html>

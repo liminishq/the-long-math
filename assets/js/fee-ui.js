@@ -141,11 +141,91 @@
     render();
   }
 
+  // -----------------------------
+  // Tool: Active vs Passive
+  // -----------------------------
+  function initActiveVsPassivePage() {
+    function render() {
+      const P = numFromInput("P");
+      const years = Math.round(numFromInput("years"));
+      const rPassivePortfolio = pctToDec(numFromInput("rPassivePortfolioPct"));
+      const rActivePortfolio = pctToDec(numFromInput("rActivePortfolioPct"));
+      const feePassive = pctToDec(numFromInput("feePassivePct"));
+      const feeActive = pctToDec(numFromInput("feeActivePct"));
+      const contrib = numFromInput("contrib");
+
+      // Calculate implied alpha (for display only)
+      const alphaImplied = rActivePortfolio - rPassivePortfolio;
+
+      // Break-even alpha (fee difference)
+      const alphaBreakEven = feeActive - feePassive;
+      const rActiveBreakEven = rPassivePortfolio + alphaBreakEven;
+
+      // Net returns
+      const rPassiveNet = rPassivePortfolio - feePassive;
+      const rActiveNet = rActivePortfolio - feeActive;
+      const rActiveNetBreakEven = rActiveBreakEven - feeActive;
+
+      // Ending values
+      const endPassive = window.TLM_FeeMath.endingValueWithFee({
+        P,
+        gross: rPassivePortfolio,
+        fee: feePassive,
+        years,
+        contrib
+      });
+
+      const endActive = window.TLM_FeeMath.endingValueWithFee({
+        P,
+        gross: rActivePortfolio,
+        fee: feeActive,
+        years,
+        contrib
+      });
+
+      const endActiveBreakEven = window.TLM_FeeMath.endingValueWithFee({
+        P,
+        gross: rActiveBreakEven,
+        fee: feeActive,
+        years,
+        contrib
+      });
+
+      const diff = endActive - endPassive;
+
+      if (![endPassive, endActive, endActiveBreakEven, diff, alphaBreakEven, rActiveBreakEven, rActivePortfolio].every(Number.isFinite)) {
+        setText("outAlphaBreakEven", "—");
+        setText("outActiveGrossBreakEven", "—");
+        setText("outActivePortfolioAssumed", "—");
+        setText("outEndPassive", "—");
+        setText("outEndActive", "—");
+        setText("outDiff", "—");
+        setText("outEndActiveBreakEven", "—");
+        return;
+      }
+
+      setText("outAlphaBreakEven", fmtPctDec(alphaBreakEven, 2));
+      setText("outActiveGrossBreakEven", fmtPctDec(rActiveBreakEven, 2));
+      setText("outActivePortfolioAssumed", fmtPctDec(rActivePortfolio, 2));
+      setText("outEndPassive", fmtMoney(endPassive));
+      setText("outEndActive", fmtMoney(endActive));
+      setText("outDiff", fmtMoney(diff));
+      setText("outEndActiveBreakEven", fmtMoney(endActiveBreakEven));
+    }
+
+    ["P", "years", "rPassivePortfolioPct", "rActivePortfolioPct", "feePassivePct", "feeActivePct", "contrib"].forEach((id) => {
+      $(id).addEventListener("input", render);
+    });
+
+    render();
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     const tool = document.body.getAttribute("data-tool");
     if (!tool) return;
 
     if (tool === "fee-cost") initFeeCostPage();
     if (tool === "required-alpha") initRequiredReturnPage();
+    if (tool === "active-vs-passive") initActiveVsPassivePage();
   });
 })();

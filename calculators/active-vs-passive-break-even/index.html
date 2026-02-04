@@ -3,36 +3,28 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Active vs Passive Fee Comparison | The Long Math</title>
-  <meta name="description" content="Compare passive vs active outcomes after fees, compute break-even alpha, and show ending values under your assumed active excess return." />
+  <title>Active vs Passive Investing: Fee Comparison and Break-Even Return | The Long Math</title>
+  <meta name="description" content="Compare passive vs active outcomes after fees, compute break-even return, and show ending values under your assumed active portfolio return." />
   <link rel="canonical" href="https://thelongmath.com/calculators/active-vs-passive-break-even/" />
+  
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script defer src="/assets/js/site.js"></script>
 
   <style>
-    :root{--bg:#0b0f17;--panel:#111827;--text:#e5e7eb;--muted:#a1a1aa;--border:rgba(255,255,255,.10);--link:#93c5fd;--shadow:0 10px 30px rgba(0,0,0,.35);--radius:14px;--maxw:980px;}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--text);line-height:1.55;}
-    a{color:var(--link);text-decoration:none} a:hover{text-decoration:underline}
-    .wrap{max-width:var(--maxw);margin:0 auto;padding:24px 18px 70px}
-    .card{background:linear-gradient(180deg, rgba(17,24,39,.85), rgba(15,23,42,.85));border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;}
-    h1{margin:0 0 6px;font-size:28px}
-    .lead{margin:0 0 12px;color:var(--muted);max-width:75ch}
-    .crumb{margin-bottom:10px;font-size:13px;color:var(--muted)}
-    .answer{margin:12px 0;padding:10px 12px;border:1px solid rgba(147,197,253,.25);background:rgba(147,197,253,.08);border-radius:12px}
-    .answer .label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.02em;margin-bottom:4px}
+    /* Calculator-specific styles */
     .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:12px}
-    .panel{border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.04);padding:12px}
-    h2{margin:0 0 8px;font-size:16px}
-    label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px}
-    input{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.18);color:var(--text);font-size:14px}
+    @media(min-width:780px){ .grid{grid-template-columns:1fr 1fr} }
+    .panel{border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:12px}
     .row{display:grid;grid-template-columns:1fr;gap:10px}
     @media(min-width:780px){ .row{grid-template-columns:1fr 1fr} }
     .out{display:grid;grid-template-columns:1fr;gap:10px}
     @media(min-width:780px){ .out{grid-template-columns:1fr 1fr} }
-    .kv{padding:10px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.03)}
+    .kv{padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
     .k{font-size:12px;color:var(--muted)}
     .v{font-size:16px;font-weight:800}
     .math{margin-top:10px;font-size:13px;color:var(--muted)}
-    footer{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.10);font-size:13px;color:var(--muted)}
+    .helper-text{font-size:12px;color:var(--muted);margin-top:4px}
   </style>
 
   <script defer src="/assets/js/fee-math.js"></script>
@@ -41,23 +33,42 @@
 
 <body data-tool="active-vs-passive">
   <div class="wrap">
-    <div class="card">
+    
+    <!-- Back link -->
+    <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
 
-      <div class="crumb">
-        <a href="/fees/">Fees</a> / <a href="/calculators/">Calculators</a>
+    <!-- Header -->
+    <header>
+      <div class="sitehead">
+        <div class="brandstack">
+          <div class="brand">The Long Math</div>
+          <div class="sigil">$ = P(1 + r/n)<sup>nt</sup></div>
+        </div>
+
+        <div class="themebox">
+          <div class="tlabel" id="theme_label">Dark</div>
+          <label class="switch" aria-label="Toggle light/dark mode">
+            <input id="theme_toggle" type="checkbox" />
+            <span class="knob"></span>
+          </label>
+        </div>
       </div>
 
-      <h1>Active vs passive fee comparison</h1>
-      <p class="lead">
-        This page does two things:
-        (1) shows the <strong>break-even</strong> excess return implied by the fee difference (under this model),
-        and (2) shows <strong>ending values</strong> under your assumed active excess return.
-      </p>
+      <h1>Active vs Passive Investing: Fee Comparison and Break-Even Return</h1>
 
-      <div class="answer" role="note" aria-label="Short Answer">
-        <span class="label">Short answer</span>
-        Break-even alpha equals (active fee − passive fee) under the net = gross − fee model.
-        The dollar consequences depend on balance, horizon, contributions, and the alpha you assume.
+      <div class="lede">
+        <p>
+          This page does two things:
+          (1) shows the <strong>break-even</strong> excess return implied by the fee difference (under this model),
+          and (2) shows <strong>ending values</strong> under your assumed active portfolio return.
+        </p>
+      </div>
+    </header>
+
+    <div class="card">
+      <div class="helper" style="margin-bottom: 12px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface);">
+        <strong>Break-even excess return</strong> equals (active fee − passive fee) under the net = gross − fee model.
+        The dollar consequences depend on balance, horizon, contributions, and the active portfolio return you assume.
       </div>
 
       <div class="grid">
@@ -74,8 +85,8 @@
             </div>
 
             <div>
-              <label for="rPassiveGrossPct">Passive gross return (%)</label>
-              <input id="rPassiveGrossPct" value="6" />
+              <label for="rPassivePortfolioPct">Passive portfolio return (%)</label>
+              <input id="rPassivePortfolioPct" value="6" />
             </div>
             <div>
               <label for="feePassivePct">Passive fee (%)</label>
@@ -87,8 +98,9 @@
               <input id="feeActivePct" value="2.00" />
             </div>
             <div>
-              <label for="alphaAssumedPct">Assumed active excess return (alpha %) vs passive gross</label>
-              <input id="alphaAssumedPct" value="0.00" />
+              <label for="rActivePortfolioPct">Active portfolio return (%)</label>
+              <input id="rActivePortfolioPct" value="6" />
+              <div class="helper-text">The total annual return you expect from the active strategy before fees.</div>
             </div>
 
             <div>
@@ -110,15 +122,15 @@
               <div class="v" id="outActiveGrossBreakEven">—</div>
             </div>
             <div class="kv">
-              <div class="k">Assumed active gross return (passive gross + assumed alpha)</div>
-              <div class="v" id="outActiveGrossAssumed">—</div>
+              <div class="k">Assumed active portfolio return</div>
+              <div class="v" id="outActivePortfolioAssumed">—</div>
             </div>
             <div class="kv">
               <div class="k">Ending value (passive, after fee)</div>
               <div class="v" id="outEndPassive">—</div>
             </div>
             <div class="kv">
-              <div class="k">Ending value (active, after fee, assumed alpha)</div>
+              <div class="k">Ending value (active, after fee, assumed active return)</div>
               <div class="v" id="outEndActive">—</div>
             </div>
             <div class="kv">
@@ -138,15 +150,29 @@
         ⇒ r<sub>active</sub> = r<sub>passive</sub> + (fee<sub>active</sub> − fee<sub>passive</sub>)
       </div>
 
-      <footer>© <span id="year"></span> The Long Math. All rights reserved.</footer>
     </div>
   </div>
 
+  <!-- Theme toggle -->
   <script>
-    (function(){
-      var y=document.getElementById("year");
-      if(y) y.textContent=String(new Date().getFullYear());
+    (function () {
+      const root = document.documentElement;
+      const toggle = document.getElementById("theme_toggle");
+      const label = document.getElementById("theme_label");
+
+      const theme = root.getAttribute("data-theme") || "dark";
+      toggle.checked = theme === "light";
+      label.textContent = theme === "light" ? "Light" : "Dark";
+
+      toggle.addEventListener("change", () => {
+        const next = toggle.checked ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem("tlm_theme", next);
+        label.textContent = next === "light" ? "Light" : "Dark";
+      });
     })();
   </script>
+  <div id="footerMount"></div>
+
 </body>
 </html>
