@@ -9,83 +9,16 @@
   <!-- Update to your final public URL when live -->
   <link rel="canonical" href="https://thelongmath.com/fees/" />
 
-  <style>
-    :root{
-      --bg:#0b0f17; --panel:#111827; --panel2:#0f172a; --text:#e5e7eb; --muted:#a1a1aa;
-      --border:rgba(255,255,255,.10); --link:#93c5fd; --link2:#bfdbfe;
-      --shadow:0 10px 30px rgba(0,0,0,.35); --radius:14px; --maxw:980px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-      background: radial-gradient(1200px 800px at 20% 0%, rgba(59,130,246,.12), transparent 55%),
-                  radial-gradient(1200px 800px at 90% 30%, rgba(16,185,129,.10), transparent 60%),
-                  var(--bg);
-      color:var(--text); line-height:1.55;
-    }
-    a{color:var(--link); text-decoration:none}
-    a:hover{color:var(--link2); text-decoration:underline}
-    .wrap{max-width:var(--maxw); margin:0 auto; padding:24px 18px 70px}
-    .topbar{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      padding:14px 16px;
-      background:rgba(17,24,39,.60);
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      backdrop-filter: blur(10px);
-      position: sticky; top:14px; z-index:30;
-    }
-    .brand{display:flex; align-items:center; gap:12px; min-width:0}
-    .sigil{font-weight:800; letter-spacing:.02em; font-size:18px; white-space:nowrap}
-    .brand small{display:block; color:var(--muted); font-size:12px; margin-top:2px}
-    .brandtext{min-width:0}
-    .brandtext .title{
-      font-weight:700; font-size:14px; color:var(--text); opacity:.95;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .navlinks{display:flex; gap:16px; align-items:center}
-    .navlinks a{color:var(--text); opacity:.85; font-size:14px}
-    .navlinks a:hover{opacity:1; text-decoration:none}
-    .hamburger{
-      display:none;
-      border:1px solid var(--border);
-      background:rgba(0,0,0,.20);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:12px;
-      cursor:pointer;
-    }
-    .hamburger:focus{outline:2px solid rgba(147,197,253,.35); outline-offset:2px}
-    .mobileMenu{
-      display:none;
-      margin-top:10px;
-      padding:10px 12px;
-      background:rgba(17,24,39,.75);
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-    }
-    .mobileMenu a{
-      display:block; padding:10px 8px; border-radius:10px;
-      color:var(--text); opacity:.9;
-    }
-    .mobileMenu a:hover{background:rgba(255,255,255,.06); opacity:1; text-decoration:none}
+  <!-- Site-wide theme + styles -->
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script defer src="/assets/js/site.js"></script>
 
-    .crumb{margin:18px 2px 10px; color:var(--muted); font-size:13px}
-    header.hero{margin-top:14px; padding:18px 18px 6px}
-    h1{margin:0 0 8px; font-size:30px; letter-spacing:-.01em}
-    .lead{margin:0 0 12px; color:var(--muted); max-width:70ch}
+  <style>
+    /* Fees Hub specific overrides */
     .tagline{margin:10px 0 0; color:var(--text); opacity:.9; font-weight:600}
 
-    .grid{display:grid; grid-template-columns:1fr; gap:14px; margin-top:12px}
-    .card{
-      background:linear-gradient(180deg, rgba(17,24,39,.85), rgba(15,23,42,.85));
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:16px 16px 14px;
-    }
+    .grid{display:grid; grid-template-columns:1fr; gap:14px; margin-top:18px}
     .card h2{margin:0 0 10px; font-size:18px; letter-spacing:-.01em}
     .q{margin:0 0 8px; font-size:15px; font-weight:700}
     .answer{
@@ -114,16 +47,6 @@
     .btn:hover{background:rgba(255,255,255,.10); text-decoration:none}
     .btnPrimary{border-color:rgba(147,197,253,.35); background:rgba(147,197,253,.12)}
     .note{margin-top:14px; color:var(--muted); font-size:13px}
-    footer{
-      margin-top:22px; padding:18px 10px 0;
-      color:var(--muted); font-size:13px;
-      border-top:1px solid rgba(255,255,255,.10);
-    }
-    @media (max-width:720px){
-      .navlinks{display:none}
-      .hamburger{display:inline-flex}
-      .brandtext .title{max-width:190px}
-    }
   </style>
 
   <!-- AI/SEO-friendly: FAQ structured data -->
@@ -160,41 +83,32 @@
 <body>
   <div class="wrap">
 
-    <div class="topbar" role="banner" aria-label="Site header">
-      <div class="brand">
-        <div class="sigil" aria-label="The Long Math sigil">$ =</div>
-        <div class="brandtext">
-          <div class="title">The Long Math</div>
-          <small>No opinions. No hidden assumptions. Just arithmetic.</small>
+    <!-- Back link -->
+    <a href="/calculators/" class="home-link">← Back to Calculators</a>
+
+    <!-- Header -->
+    <header>
+      <div class="sitehead">
+        <div class="brandstack">
+          <div class="brand">The Long Math</div>
+          <div class="sigil">$ = P(1 + r/n)<sup>nt</sup></div>
+        </div>
+
+        <div class="themebox">
+          <div class="tlabel" id="theme_label">Dark</div>
+          <label class="switch" aria-label="Toggle light/dark mode">
+            <input id="theme_toggle" type="checkbox" />
+            <span class="knob"></span>
+          </label>
         </div>
       </div>
 
-      <nav class="navlinks" aria-label="Primary navigation">
-        <a href="/" aria-label="Home">Home</a>
-        <a href="/about/" aria-label="About">About</a>
-        <a href="/calculators/" aria-label="Calculators">Calculators</a>
-        <a href="/calculator/" aria-label="Advisor fee calculator">Advisor Fee Tool</a>
-      </nav>
+      <h1>Investment Fees: Common Long-Term Cost Questions</h1>
 
-      <button class="hamburger" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">☰</button>
-    </div>
-
-    <div class="mobileMenu" id="mobileMenu" aria-label="Mobile menu">
-      <a href="/">Home</a>
-      <a href="/about/">About</a>
-      <a href="/calculators/">Calculators</a>
-      <a href="/calculator/">Advisor Fee Tool</a>
-    </div>
-
-    <div class="crumb"><a href="/">Home</a> / Fees</div>
-
-    <header class="hero">
-      <h1>Investment fees: common long-term cost questions</h1>
-      <p class="lead">
-        This hub summarizes four fee questions with explicit default assumptions and short answers.
-        Each answer links to a dedicated calculator page where the full math is shown and inputs can be changed.
-      </p>
-      <p class="tagline">Clear questions. Clear answers. Inspectable arithmetic.</p>
+      <div class="lede">
+        <p>This hub summarizes four fee questions with explicit default assumptions and short answers. Each answer links to a dedicated calculator page where the full math is shown and inputs can be changed.</p>
+        <p class="tagline">Clear questions. Clear answers. Inspectable arithmetic.</p>
+      </div>
     </header>
 
     <main class="grid" role="main">
@@ -282,32 +196,50 @@
       </section>
     </main>
 
-    <footer>© <span id="year"></span> The Long Math. All rights reserved.</footer>
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> The calculators and tools at The Long Math are provided for educational purposes only
+        and are not intended to constitute financial or tax advice. Results are based on simplified
+        models and user-supplied assumptions. Users are recommended to complete their own due diligence.
+      </p>
+    </div>
+
+    <!-- Sitewide footer (copyright) -->
+    <footer class="site-footer">
+      <p>© <span id="year"></span> The Long Math.</p>
+      <p>This site, including its text, layout, design, calculators and tools are original work and the intellectual property of The Long Math.</p>
+    </footer>
   </div>
 
+  <!-- Theme toggle -->
   <script>
     (function () {
-      "use strict";
-      var y = document.getElementById("year");
-      if (y) y.textContent = String(new Date().getFullYear());
+      const root = document.documentElement;
+      const toggle = document.getElementById("theme_toggle");
+      const label = document.getElementById("theme_label");
 
-      var btn = document.getElementById("menuBtn");
-      var menu = document.getElementById("mobileMenu");
-      if (btn && menu) {
-        btn.addEventListener("click", function () {
-          var open = menu.style.display === "block";
-          menu.style.display = open ? "none" : "block";
-          btn.setAttribute("aria-expanded", open ? "false" : "true");
-        });
-        menu.addEventListener("click", function (e) {
-          var t = e.target;
-          if (t && t.tagName === "A") {
-            menu.style.display = "none";
-            btn.setAttribute("aria-expanded", "false");
-          }
-        });
-      }
+      const theme = root.getAttribute("data-theme") || "dark";
+      toggle.checked = theme === "light";
+      label.textContent = theme === "light" ? "Light" : "Dark";
+
+      toggle.addEventListener("change", () => {
+        const next = toggle.checked ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem("tlm_theme", next);
+        label.textContent = next === "light" ? "Light" : "Dark";
+      });
     })();
   </script>
+
+  <!-- Year -->
+  <script>
+    (function(){
+      var y=document.getElementById("year");
+      if(y) y.textContent=String(new Date().getFullYear());
+    })();
+  </script>
+
+  <div id="footerMount"></div>
 </body>
 </html>
