@@ -38,23 +38,25 @@ const BOC_VALET_BASE = 'https://www.bankofcanada.ca/valet';
 
 // Series codes for Bank of Canada Valet API
 // See: https://www.bankofcanada.ca/valet/docs for available series
-// Note: If these codes don't work, check the BOC Valet API documentation for current series codes
+// Note: These codes may need to be verified against the BOC Valet API lists endpoint
 const BOC_SERIES = {
-  // USD/CAD exchange rate (daily) - try common series codes
-  FX_USDCAD: ['FXUSDCAD', 'IEXE0101', 'FXUSDCAD'],
+  // USD/CAD exchange rate (daily) - Bank of Canada uses FXUSDCAD for daily closing rate
+  // Alternative formats to try
+  FX_USDCAD: ['FXUSDCAD', 'IEXE0101', 'FXCADUSD'],
   
-  // Canada CPI (monthly) - try common series codes
-  CPI_CANADA: ['V41690973', 'CPI', 'V41690914'],
+  // Canada CPI (monthly) - V41690973 is CPI all-items, V41690914 is CPI excluding food/energy
+  CPI_CANADA: ['V41690973', 'V41690914', 'CPI'],
   
   // 3-month T-bill yield (daily, then monthly average)
-  T_BILL_3M: ['V39051', 'TB3MS'],
+  // V39051 is 3-month T-bill, V39052 is 5-year bond, V39053 is 10-year bond
+  T_BILL_3M: ['V39051', 'V122530', 'TB3MS'],
   
   // Government of Canada bond yield, 5-10 year average
-  BOND_5Y: ['V39052', 'V39053'], // Will try both and average
-  BOND_10Y: ['V39053', 'V39052'], // Will try both and average
+  BOND_5Y: ['V39052', 'V122531'], // 5-year bond
+  BOND_10Y: ['V39053', 'V122532'], // 10-year bond
   
   // Posted 5-year GIC rate (weekly/daily)
-  GIC_5Y: ['V121764', 'V121765']
+  GIC_5Y: ['V121764', 'V121765', 'V121766']
 };
 
 // Shiller dataset URL (Yale) - try CSV first, fallback to other formats
@@ -115,10 +117,54 @@ function weeklyToMonthly(weeklyData) {
 }
 
 // ============================================================
+// Query available series from Bank of Canada Valet API
+// ============================================================
+async function queryAvailableSeries() {
+  try {
+    const url = `${BOC_VALET_BASE}/lists/series/json`;
+    const response = await fetch(url);
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    }
+  } catch (error) {
+    console.warn('Could not query available series:', error);
+  }
+  return null;
+}
+
+// ============================================================
+// Find series code by searching available series
+// ============================================================
+async function findSeriesCode(searchTerms) {
+  try {
+    const availableSeries = await queryAvailableSeries();
+    if (!availableSeries || !availableSeries.series) {
+      return null;
+    }
+    
+    // Search for series that match any of the search terms
+    const searchLower = searchTerms.map(term => term.toLowerCase());
+    const matches = availableSeries.series.filter(series => {
+      const label = (series.label || '').toLowerCase();
+      const name = (series.name || '').toLowerCase();
+      return searchLower.some(term => label.includes(term) || name.includes(term));
+    });
+    
+    if (matches.length > 0) {
+      return matches[0].name; // Return the first match
+    }
+  } catch (error) {
+    console.warn('Error finding series code:', error);
+  }
+  return null;
+}
+
+// ============================================================
 // Bank of Canada Valet API fetcher
 // ============================================================
 async function fetchBOCSeries(seriesCodeOrArray) {
-  // Valet API format: GET /valet/observations/{seriesCode}
+  // Valet API format: GET /valet/observations/{seriesNames}/json
   // Returns JSON with observations array
   // Documentation: https://www.bankofcanada.ca/valet/docs
   
@@ -129,27 +175,36 @@ async function fetchBOCSeries(seriesCodeOrArray) {
   
   for (const seriesCode of seriesCodes) {
     try {
-      // Try multiple URL formats in case the API structure has changed
+      // Correct BOC Valet API format: /valet/observations/{seriesName}/json
       const urlFormats = [
-        `${BOC_VALET_BASE}/observations/${seriesCode}?recent=1`,
+        `${BOC_VALET_BASE}/observations/${seriesCode}/json`,
+        `${BOC_VALET_BASE}/observations/${seriesCode}/json?recent=1`,
         `${BOC_VALET_BASE}/observations/${seriesCode}`,
-        `${BOC_VALET_BASE}/series/${seriesCode}/observations`,
-        `https://www.bankofcanada.ca/valet/docs/series/${seriesCode}`
+        `${BOC_VALET_BASE}/observations/${seriesCode}?recent=1`
       ];
       
       for (const url of urlFormats) {
         try {
           const response = await fetch(url);
           
-          if (response.ok) {
-            const data = await response.json();
-            const result = parseBOCResponse(data);
-            if (result.length > 0) {
-              return result;
+      if (response.ok) {
+        const data = await response.json();
+        const result = parseBOCResponse(data, seriesCode);
+        if (result.length > 0) {
+          console.log(`Successfully fetched ${seriesCode} from ${url}`);
+          return result;
+        }
+      } else {
+            // Log the status for debugging
+            if (response.status === 404) {
+              console.debug(`404 for ${url} (trying next format)`);
+            } else {
+              console.warn(`BOC API returned ${response.status} for ${url}`);
             }
           }
         } catch (urlError) {
           // Try next URL format
+          console.debug(`Error fetching ${url}:`, urlError.message);
           continue;
         }
       }
@@ -161,7 +216,22 @@ async function fetchBOCSeries(seriesCodeOrArray) {
     }
   }
   
-  // If all series codes failed, throw the last error
+  // If all series codes failed, try to find the series by searching available series
+  console.warn(`All provided series codes failed for: ${seriesCodes.join(', ')}, attempting to find series...`);
+  
+  try {
+    // Try to find a matching series by searching
+    const foundCode = await findSeriesCode(seriesCodes);
+    if (foundCode) {
+      console.log(`Found matching series: ${foundCode}, attempting to fetch...`);
+      // Recursively try to fetch with the found code
+      return await fetchBOCSeries(foundCode);
+    }
+  } catch (searchError) {
+    console.warn('Series search also failed:', searchError);
+  }
+  
+  // If everything failed, throw the last error
   console.error(`All series codes failed for: ${seriesCodes.join(', ')}`, lastError);
   throw lastError || new Error(`Failed to fetch BOC series: ${seriesCodes.join(', ')}`);
 }
@@ -169,8 +239,9 @@ async function fetchBOCSeries(seriesCodeOrArray) {
 // ============================================================
 // Parse Bank of Canada API response
 // ============================================================
-function parseBOCResponse(data) {
-  // BOC Valet API returns: { observations: [{ d: "YYYY-MM-DD", v: value }, ...] }
+function parseBOCResponse(data, seriesCode = null) {
+  // BOC Valet API returns: { observations: [{ d: "YYYY-MM-DD", SERIESCODE: { v: value } }, ...] }
+  // OR: { observations: [{ d: "YYYY-MM-DD", v: value }, ...] }
   let observations = [];
   
   if (data.observations && Array.isArray(data.observations)) {
@@ -179,11 +250,34 @@ function parseBOCResponse(data) {
     observations = data.series[0].observations || [];
   }
   
-  // Extract date and value - BOC format uses 'd' for date and 'v' for value
+  // Extract date and value - BOC format can have nested structure
   const result = observations
     .map(obs => {
       const date = obs.d || obs.date || obs.DATE;
-      const value = obs.v !== undefined ? obs.v : (obs.value !== undefined ? obs.value : null);
+      let value = null;
+      
+      // Try nested format first (obs.SERIESCODE.v)
+      if (seriesCode && obs[seriesCode] && obs[seriesCode].v !== undefined) {
+        value = obs[seriesCode].v;
+      } 
+      // Try direct format (obs.v)
+      else if (obs.v !== undefined) {
+        value = obs.v;
+      }
+      // Try other common formats
+      else if (obs.value !== undefined) {
+        value = obs.value;
+      }
+      // Try to find any property with a 'v' field (for nested format)
+      else {
+        for (const key in obs) {
+          if (key !== 'd' && key !== 'date' && key !== 'DATE' && obs[key] && typeof obs[key] === 'object' && obs[key].v !== undefined) {
+            value = obs[key].v;
+            break;
+          }
+        }
+      }
+      
       return [date, value];
     })
     .filter(([date, value]) => date && value != null && !isNaN(value));
