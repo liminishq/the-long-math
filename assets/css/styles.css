@@ -558,6 +558,45 @@ html[data-theme="light"] .default-fee{
   font-size: 13px;
 }
 
+/* Calculator list semantic structure */
+.calculator-list{
+  margin-top: 14px;
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+  margin-left: 0;
+}
+
+.calculator-card{
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.calculator-card h3{
+  margin: 0 0 6px;
+  color: var(--accent2);
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.calculator-card h3 a{
+  color: var(--accent2);
+  text-decoration: none;
+}
+
+.calculator-card h3 a:hover{
+  text-decoration: underline;
+}
+
+.calculator-card p{
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
 .fee-table{
   width: 100%;
   border-collapse: collapse;
