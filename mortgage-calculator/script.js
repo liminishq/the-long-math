@@ -299,7 +299,7 @@ function computeSchedule(principal, annualRate, years, frequency) {
     pointsCumInterest.push({ year: Math.min(payoffYears, 40), cumulativeInterest });
   }
   
-  // Calculate max plotted Y value for axis scaling
+  // Calculate max plotted Y value for axis scaling (curves only)
   let maxPlottedY = 0;
   if (pointsBalance.length > 0) {
     maxPlottedY = Math.max(maxPlottedY, pointsBalance[0].balance); // Initial balance
@@ -315,9 +315,6 @@ function computeSchedule(principal, annualRate, years, frequency) {
     }
   });
   const totalPaid = principal + totalInterest;
-  if (isFinite(totalPaid)) {
-    maxPlottedY = Math.max(maxPlottedY, totalPaid);
-  }
   
   return {
     isValid: true,
@@ -384,19 +381,22 @@ class AxisManager {
   }
   
   /**
-   * Compute nice number for Y axis ticks (rounds to 1, 2, 5 * 10^k)
-   * Ensures readable tick labels that don't change unnecessarily
+   * Compute axis max with gentle rounding.
+   * Uses steps 1, 2, 2.5, 5, 10 * 10^k to avoid big jumps.
    */
-  nextNiceNumber(value) {
-    if (value <= 0) return 100000;
-    const magnitude = Math.pow(10, Math.floor(Math.log10(value)));
-    const normalized = value / magnitude;
-    let nice;
-    if (normalized <= 1) nice = 1;
-    else if (normalized <= 2) nice = 2;
-    else if (normalized <= 5) nice = 5;
-    else nice = 10;
-    return nice * magnitude;
+  niceAxisMax(paddedMax, desiredTicks = 6) {
+    if (!isFinite(paddedMax) || paddedMax <= 0) return 100000;
+    const rawStep = paddedMax / desiredTicks;
+    const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
+    const normalized = rawStep / magnitude;
+    let stepNorm;
+    if (normalized <= 1) stepNorm = 1;
+    else if (normalized <= 2) stepNorm = 2;
+    else if (normalized <= 2.5) stepNorm = 2.5;
+    else if (normalized <= 5) stepNorm = 5;
+    else stepNorm = 10;
+    const step = stepNorm * magnitude;
+    return step * desiredTicks;
   }
   
   /**
@@ -417,9 +417,9 @@ class AxisManager {
       // During drag: only expand if needed, never shrink
       if (scheduleResult.isValid && this.yMaxCached !== null) {
         const maxPlottedY = scheduleResult.maxPlottedY || 0;
-        // If curves would exceed 95% of current yMax, expand
-        if (maxPlottedY > 0.95 * this.yMaxCached) {
-          const expanded = this.nextNiceNumber(maxPlottedY * 1.10);
+        // If curves would exceed 97% of current yMax, expand slightly
+        if (maxPlottedY > 0.97 * this.yMaxCached) {
+          const expanded = this.niceAxisMax(maxPlottedY * 1.03, 6);
           this.yMaxCached = Math.max(this.yMaxCached, expanded); // Only expand, never shrink
         }
         // Otherwise keep yMaxCached unchanged
@@ -433,21 +433,24 @@ class AxisManager {
         : 0;
       
       if (scheduleResult.isValid) {
-        // Valid schedule: base max from current schedule values
+        // Valid schedule: base max from plotted curves (initial balance, final cumulative interest)
+        const finalCumInterest = scheduleResult.pointsCumInterest.length > 0
+          ? scheduleResult.pointsCumInterest[scheduleResult.pointsCumInterest.length - 1].cumulativeInterest || 0
+          : 0;
         const baseMax = Math.max(
-          maxPlottedY,
-          scheduleResult.totalPaid || 0,
-          initialBalance
+          initialBalance,
+          finalCumInterest,
+          maxPlottedY
         );
-        // Apply padding and round to nice number, with floor
-        const padded = baseMax * 1.10;
-        const nice = this.nextNiceNumber(padded);
+        // Apply tighter padding (5%) and round to nice number, with floor
+        const padded = baseMax * 1.05;
+        const nice = this.niceAxisMax(padded, 6);
         this.yMaxCached = Math.max(nice, 100000); // Floor at 100k
       } else {
         // Invalid schedule: use maxPlottedY if available, otherwise default
         if (maxPlottedY > 0) {
-          const padded = maxPlottedY * 1.10;
-          const nice = this.nextNiceNumber(padded);
+          const padded = maxPlottedY * 1.05;
+          const nice = this.niceAxisMax(padded, 6);
           this.yMaxCached = Math.max(nice, 100000);
         } else if (this.yMaxCached === null) {
           this.yMaxCached = 1000000; // Default fallback
@@ -882,7 +885,7 @@ function updateOutputs(data) {
     
     // Restore summary sentence structure if it was replaced
     if (!summarySentence.querySelector('#summary_years')) {
-      summarySentence.innerHTML = 'With these inputs:<ul style="margin: 8px 0 0 0; padding-left: 20px; list-style-type: none;"><li>Mortgage is paid off in <span id="summary_years">–</span> years</li><li><span id="summary_interest">$–</span> paid in interest</li><li><span id="summary_total">$–</span> paid in total mortgage payments (principal + interest)</li></ul>';
+      summarySentence.innerHTML = '<div class="summary-title">With these inputs:</div><ul class="summary-list"><li><span class="summary-label">Mortgage is paid off in</span> <span id="summary_years" class="summary-value">–</span> <span class="summary-label">years</span></li><li><span id="summary_interest" class="summary-value">$–</span> <span class="summary-label">paid in interest</span></li><li><span id="summary_total" class="summary-value">$–</span> <span class="summary-label">paid in total mortgage payments (principal + interest)</span></li></ul>';
     }
     summarySentence.innerHTML = '<span class="error-state">Payment does not amortize the loan at this rate.</span>';
     return;
@@ -890,7 +893,7 @@ function updateOutputs(data) {
   
   // Restore summary sentence structure if it was replaced by error
   if (!summarySentence.querySelector('#summary_years')) {
-    summarySentence.innerHTML = 'With these inputs:<ul style="margin: 8px 0 0 0; padding-left: 20px; list-style-type: none;"><li>Mortgage is paid off in <span id="summary_years">–</span> years</li><li><span id="summary_interest">$–</span> paid in interest</li><li><span id="summary_total">$–</span> paid in total mortgage payments (principal + interest)</li></ul>';
+    summarySentence.innerHTML = '<div class="summary-title">With these inputs:</div><ul class="summary-list"><li><span class="summary-label">Mortgage is paid off in</span> <span id="summary_years" class="summary-value">–</span> <span class="summary-label">years</span></li><li><span id="summary_interest" class="summary-value">$–</span> <span class="summary-label">paid in interest</span></li><li><span id="summary_total" class="summary-value">$–</span> <span class="summary-label">paid in total mortgage payments (principal + interest)</span></li></ul>';
   }
   
   const inputs = getInputs();

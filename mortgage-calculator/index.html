@@ -68,9 +68,37 @@
       color: var(--text);
       line-height: 1.5;
       padding: 12px;
-      border: 1px solid var(--border);
+      border: 1px solid var(--accent);
       border-radius: 12px;
-      background: var(--surface);
+      background: var(--accentSoft);
+    }
+
+    .summary-title {
+      margin: 0 0 6px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .summary-list {
+      margin: 0;
+      padding-left: 16px;
+      list-style: none;
+    }
+
+    .summary-list li {
+      margin: 6px 0;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .summary-label {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .summary-value {
+      font-weight: 800;
+      color: var(--accent);
     }
 
     .slider-selector {
@@ -419,11 +447,11 @@
         </div>
 
         <div class="summary-sentence" id="summary_sentence">
-          With these inputs:
-          <ul style="margin: 8px 0 0 0; padding-left: 20px; list-style-type: none;">
-            <li>Mortgage is paid off in <span id="summary_years">–</span> years</li>
-            <li><span id="summary_interest">$–</span> paid in interest</li>
-            <li><span id="summary_total">$–</span> paid in total mortgage payments (principal + interest)</li>
+          <div class="summary-title">With these inputs:</div>
+          <ul class="summary-list">
+            <li><span class="summary-label">Mortgage is paid off in</span> <span id="summary_years" class="summary-value">–</span> <span class="summary-label">years</span></li>
+            <li><span id="summary_interest" class="summary-value">$–</span> <span class="summary-label">paid in interest</span></li>
+            <li><span id="summary_total" class="summary-value">$–</span> <span class="summary-label">paid in total mortgage payments (principal + interest)</span></li>
           </ul>
         </div>
       </section>
