@@ -207,14 +207,18 @@ class MortgageChart {
   }
   
   resize() {
+    if (!this.canvas) return;
+    
     const rect = this.canvas.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
-    const oldWidth = this.canvas.width;
-    const oldHeight = this.canvas.height;
     
     this.canvas.width = rect.width * dpr;
     this.canvas.height = rect.height * dpr;
+    
+    // Re-establish context after resize
+    this.ctx = this.canvas.getContext('2d');
     this.ctx.scale(dpr, dpr);
+    
     this.canvas.style.width = rect.width + 'px';
     this.canvas.style.height = rect.height + 'px';
     
@@ -231,16 +235,46 @@ class MortgageChart {
   
   setData(data) {
     // Always replace data completely to ensure clean state
-    this.data = data ? { ...data } : null;
+    // Deep copy to avoid reference issues
+    if (data) {
+      this.data = {
+        error: data.error || null,
+        schedule: data.schedule ? [...data.schedule] : [],
+        totalInterest: data.totalInterest || 0,
+        totalPaid: data.totalPaid || 0,
+        payoffYears: data.payoffYears || 0,
+        balanceOverTime: data.balanceOverTime ? [...data.balanceOverTime] : [],
+        interestOverTime: data.interestOverTime ? [...data.interestOverTime] : []
+      };
+    } else {
+      this.data = null;
+    }
     // Force redraw
     this.draw();
   }
   
   draw() {
     try {
+      // Ensure canvas context is valid
+      if (!this.canvas || !this.ctx) {
+        console.error('Canvas or context not available');
+        return;
+      }
+      
       const ctx = this.ctx;
-      const width = this.canvas.width / (window.devicePixelRatio || 1);
-      const height = this.canvas.height / (window.devicePixelRatio || 1);
+      const dpr = window.devicePixelRatio || 1;
+      const rect = this.canvas.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+      
+      // Ensure canvas size matches display size
+      if (this.canvas.width !== width * dpr || this.canvas.height !== height * dpr) {
+        this.canvas.width = width * dpr;
+        this.canvas.height = height * dpr;
+        this.ctx.scale(dpr, dpr);
+        this.canvas.style.width = width + 'px';
+        this.canvas.style.height = height + 'px';
+      }
       
       // Always clear canvas first
       ctx.clearRect(0, 0, width, height);
@@ -522,6 +556,13 @@ function updateOutputs(data) {
 function updateGraph(data) {
   if (chart) {
     chart.setData(data);
+  } else {
+    // Chart not initialized yet, try to initialize it
+    const canvas = document.getElementById('chartCanvas');
+    if (canvas) {
+      chart = new MortgageChart(canvas);
+      chart.setData(data);
+    }
   }
 }
 
@@ -818,16 +859,27 @@ function setupEventListeners() {
     debouncedRecalculate();
   });
   
-  // Sync down payment amount and percent
+  // Sync down payment amount and percent with validation
   document.getElementById('down_payment_amount').addEventListener('input', () => {
-    const inputs = getInputs();
-    const percent = (inputs.downPayment / inputs.homePrice) * 100;
+    const homePrice = parseFloat(document.getElementById('home_price').value) || 500000;
+    const downPaymentAmount = parseFloat(document.getElementById('down_payment_amount').value) || 0;
+    // Cap down payment at home price
+    const cappedAmount = Math.min(downPaymentAmount, homePrice);
+    if (downPaymentAmount !== cappedAmount) {
+      document.getElementById('down_payment_amount').value = cappedAmount;
+    }
+    const percent = (cappedAmount / homePrice) * 100;
     document.getElementById('down_payment_percent').value = percent.toFixed(1);
   });
   
   document.getElementById('down_payment_percent').addEventListener('input', () => {
-    const inputs = getInputs();
-    const amount = inputs.homePrice * (parseFloat(document.getElementById('down_payment_percent').value) / 100);
+    const homePrice = parseFloat(document.getElementById('home_price').value) || 500000;
+    const percent = Math.min(100, Math.max(0, parseFloat(document.getElementById('down_payment_percent').value) || 0));
+    // Cap percent at 100
+    if (parseFloat(document.getElementById('down_payment_percent').value) !== percent) {
+      document.getElementById('down_payment_percent').value = percent.toFixed(1);
+    }
+    const amount = homePrice * (percent / 100);
     document.getElementById('down_payment_amount').value = Math.round(amount);
   });
   
