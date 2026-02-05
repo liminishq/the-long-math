@@ -711,7 +711,7 @@ function setupEventListeners() {
   document.getElementById('down_payment_mode_amount').addEventListener('click', () => {
     document.getElementById('down_payment_mode_amount').classList.add('active');
     document.getElementById('down_payment_mode_percent').classList.remove('active');
-    document.getElementById('down_payment_amount').parentElement.parentElement.style.display = 'grid';
+    document.getElementById('down_payment_amount_row').style.display = 'grid';
     document.getElementById('down_payment_percent_row').style.display = 'none';
     updateSlider();
     debouncedRecalculate();
@@ -720,7 +720,7 @@ function setupEventListeners() {
   document.getElementById('down_payment_mode_percent').addEventListener('click', () => {
     document.getElementById('down_payment_mode_percent').classList.add('active');
     document.getElementById('down_payment_mode_amount').classList.remove('active');
-    document.getElementById('down_payment_amount').parentElement.parentElement.style.display = 'none';
+    document.getElementById('down_payment_amount_row').style.display = 'none';
     document.getElementById('down_payment_percent_row').style.display = 'grid';
     
     // Sync percent from amount
