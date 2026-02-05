@@ -209,170 +209,207 @@ class MortgageChart {
   resize() {
     const rect = this.canvas.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
+    const oldWidth = this.canvas.width;
+    const oldHeight = this.canvas.height;
+    
     this.canvas.width = rect.width * dpr;
     this.canvas.height = rect.height * dpr;
     this.ctx.scale(dpr, dpr);
     this.canvas.style.width = rect.width + 'px';
     this.canvas.style.height = rect.height + 'px';
+    
+    // Force redraw after resize
     this.draw();
   }
   
+  // Force a redraw (useful for recovery)
+  redraw() {
+    if (this.data) {
+      this.draw();
+    }
+  }
+  
   setData(data) {
-    this.data = data;
+    // Always replace data completely to ensure clean state
+    this.data = data ? { ...data } : null;
+    // Force redraw
     this.draw();
   }
   
   draw() {
-    if (!this.data || this.data.error) {
-      this.drawError();
-      return;
-    }
-    
-    const ctx = this.ctx;
-    const width = this.canvas.width / (window.devicePixelRatio || 1);
-    const height = this.canvas.height / (window.devicePixelRatio || 1);
-    const padding = { top: 20, right: 20, bottom: 40, left: 70 };
-    
-    const chartWidth = width - padding.left - padding.right;
-    const chartHeight = height - padding.top - padding.bottom;
-    
-    // Clear
-    ctx.clearRect(0, 0, width, height);
-    
-    const { balanceOverTime, interestOverTime } = this.data;
-    
-    if (!balanceOverTime || !interestOverTime || balanceOverTime.length === 0 || interestOverTime.length === 0) {
-      // Draw empty state message
+    try {
+      const ctx = this.ctx;
+      const width = this.canvas.width / (window.devicePixelRatio || 1);
+      const height = this.canvas.height / (window.devicePixelRatio || 1);
+      
+      // Always clear canvas first
+      ctx.clearRect(0, 0, width, height);
+      
+      // Check for error or missing data
+      if (!this.data || this.data.error) {
+        this.drawError();
+        return;
+      }
+      
+      const padding = { top: 20, right: 20, bottom: 40, left: 70 };
+      const chartWidth = width - padding.left - padding.right;
+      const chartHeight = height - padding.top - padding.bottom;
+      
+      const { balanceOverTime, interestOverTime } = this.data;
+      
+      // Validate data structure
+      if (!balanceOverTime || !interestOverTime || 
+          !Array.isArray(balanceOverTime) || !Array.isArray(interestOverTime) ||
+          balanceOverTime.length === 0 || interestOverTime.length === 0) {
+        // Draw empty state message
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted') || 'rgba(238,242,247,.72)';
+        ctx.font = '14px system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('No data to display', width / 2, height / 2);
+        return;
+      }
+      
+      // Validate data points have required properties
+      if (balanceOverTime.length > 0 && interestOverTime.length > 0) {
+        if (!balanceOverTime[0].hasOwnProperty('year') || !balanceOverTime[0].hasOwnProperty('balance') ||
+            !interestOverTime[0].hasOwnProperty('year') || !interestOverTime[0].hasOwnProperty('cumulativeInterest')) {
+          ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted') || 'rgba(238,242,247,.72)';
+          ctx.font = '14px system-ui, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('Invalid data structure', width / 2, height / 2);
+          return;
+        }
+      }
+      
+      // Find max values for scaling
+      const maxYear = Math.max(
+        ...balanceOverTime.map(d => d.year),
+        ...interestOverTime.map(d => d.year),
+        1 // Ensure at least 1 year
+      );
+      const maxValue = Math.max(
+        ...balanceOverTime.map(d => d.balance),
+        ...interestOverTime.map(d => d.cumulativeInterest),
+        1000 // Ensure minimum scale
+      );
+      
+      const yMax = maxValue * 1.1; // 10% padding
+      
+      // Helper to convert data to screen coordinates
+      const xScale = (year) => padding.left + (year / maxYear) * chartWidth;
+      const yScale = (value) => padding.top + chartHeight - (value / yMax) * chartHeight;
+      
+      // Draw grid lines
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--border') || 'rgba(238,242,247,.14)';
+      ctx.lineWidth = 1;
+      
+      // Horizontal grid lines (Y axis)
+      for (let i = 0; i <= 5; i++) {
+        const y = padding.top + (chartHeight / 5) * i;
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(padding.left + chartWidth, y);
+        ctx.stroke();
+      }
+      
+      // Vertical grid lines (X axis)
+      for (let i = 0; i <= 5; i++) {
+        const x = padding.left + (chartWidth / 5) * i;
+        ctx.beginPath();
+        ctx.moveTo(x, padding.top);
+        ctx.lineTo(x, padding.top + chartHeight);
+        ctx.stroke();
+      }
+      
+      // Draw curves
+      ctx.lineWidth = 2;
+      
+      // Remaining principal curve (amber)
+      ctx.strokeStyle = '#D9B46A';
+      ctx.beginPath();
+      for (let i = 0; i < balanceOverTime.length; i++) {
+        const point = balanceOverTime[i];
+        const x = xScale(point.year);
+        const y = yScale(point.balance);
+        if (i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      }
+      ctx.stroke();
+      
+      // Cumulative interest curve (blue)
+      ctx.strokeStyle = '#4A90E2';
+      ctx.beginPath();
+      for (let i = 0; i < interestOverTime.length; i++) {
+        const point = interestOverTime[i];
+        const x = xScale(point.year);
+        const y = yScale(point.cumulativeInterest);
+        if (i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      }
+      ctx.stroke();
+      
+      // Draw axes
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--text') || '#eef2f7';
+      ctx.lineWidth = 1;
+      
+      // X axis
+      ctx.beginPath();
+      ctx.moveTo(padding.left, padding.top + chartHeight);
+      ctx.lineTo(padding.left + chartWidth, padding.top + chartHeight);
+      ctx.stroke();
+      
+      // Y axis
+      ctx.beginPath();
+      ctx.moveTo(padding.left, padding.top);
+      ctx.lineTo(padding.left, padding.top + chartHeight);
+      ctx.stroke();
+      
+      // Axis labels
       ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted') || 'rgba(238,242,247,.72)';
-      ctx.font = '14px system-ui, sans-serif';
+      ctx.font = '11px system-ui, sans-serif';
       ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      
+      // X axis labels (years)
+      for (let i = 0; i <= 5; i++) {
+        const year = (maxYear / 5) * i;
+        const x = xScale(year);
+        ctx.fillText(Math.round(year), x, padding.top + chartHeight + 8);
+      }
+      
+      // Y axis labels (dollars)
+      ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
-      ctx.fillText('No data to display', width / 2, height / 2);
-      return;
-    }
-    
-    // Find max values for scaling
-    const maxYear = Math.max(
-      ...balanceOverTime.map(d => d.year),
-      ...interestOverTime.map(d => d.year),
-      1 // Ensure at least 1 year
-    );
-    const maxValue = Math.max(
-      ...balanceOverTime.map(d => d.balance),
-      ...interestOverTime.map(d => d.cumulativeInterest),
-      1000 // Ensure minimum scale
-    );
-    
-    const yMax = maxValue * 1.1; // 10% padding
-    
-    // Helper to convert data to screen coordinates
-    const xScale = (year) => padding.left + (year / maxYear) * chartWidth;
-    const yScale = (value) => padding.top + chartHeight - (value / yMax) * chartHeight;
-    
-    // Draw grid lines
-    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--border') || 'rgba(238,242,247,.14)';
-    ctx.lineWidth = 1;
-    
-    // Horizontal grid lines (Y axis)
-    for (let i = 0; i <= 5; i++) {
-      const y = padding.top + (chartHeight / 5) * i;
-      ctx.beginPath();
-      ctx.moveTo(padding.left, y);
-      ctx.lineTo(padding.left + chartWidth, y);
-      ctx.stroke();
-    }
-    
-    // Vertical grid lines (X axis)
-    for (let i = 0; i <= 5; i++) {
-      const x = padding.left + (chartWidth / 5) * i;
-      ctx.beginPath();
-      ctx.moveTo(x, padding.top);
-      ctx.lineTo(x, padding.top + chartHeight);
-      ctx.stroke();
-    }
-    
-    // Draw curves
-    ctx.lineWidth = 2;
-    
-    // Remaining principal curve (amber)
-    ctx.strokeStyle = '#D9B46A';
-    ctx.beginPath();
-    for (let i = 0; i < balanceOverTime.length; i++) {
-      const point = balanceOverTime[i];
-      const x = xScale(point.year);
-      const y = yScale(point.balance);
-      if (i === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
+      for (let i = 0; i <= 5; i++) {
+        const value = (yMax / 5) * (5 - i);
+        const y = padding.top + (chartHeight / 5) * i;
+        const label = formatter.currency.format(value);
+        ctx.fillText(label, padding.left - 8, y);
       }
+      
+      // Axis titles
+      ctx.textAlign = 'center';
+      ctx.fillText('Years', width / 2, height - 10);
+      
+      ctx.save();
+      ctx.translate(15, height / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.textAlign = 'center';
+      ctx.fillText('Dollars', 0, 0);
+      ctx.restore();
+    } catch (error) {
+      // If any error occurs during drawing, show error message
+      console.error('Graph drawing error:', error);
+      this.drawError();
     }
-    ctx.stroke();
-    
-    // Cumulative interest curve (blue)
-    ctx.strokeStyle = '#4A90E2';
-    ctx.beginPath();
-    for (let i = 0; i < interestOverTime.length; i++) {
-      const point = interestOverTime[i];
-      const x = xScale(point.year);
-      const y = yScale(point.cumulativeInterest);
-      if (i === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
-      }
-    }
-    ctx.stroke();
-    
-    // Draw axes
-    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--text') || '#eef2f7';
-    ctx.lineWidth = 1;
-    
-    // X axis
-    ctx.beginPath();
-    ctx.moveTo(padding.left, padding.top + chartHeight);
-    ctx.lineTo(padding.left + chartWidth, padding.top + chartHeight);
-    ctx.stroke();
-    
-    // Y axis
-    ctx.beginPath();
-    ctx.moveTo(padding.left, padding.top);
-    ctx.lineTo(padding.left, padding.top + chartHeight);
-    ctx.stroke();
-    
-    // Axis labels
-    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted') || 'rgba(238,242,247,.72)';
-    ctx.font = '11px system-ui, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'top';
-    
-    // X axis labels (years)
-    for (let i = 0; i <= 5; i++) {
-      const year = (maxYear / 5) * i;
-      const x = xScale(year);
-      ctx.fillText(Math.round(year), x, padding.top + chartHeight + 8);
-    }
-    
-    // Y axis labels (dollars)
-    ctx.textAlign = 'right';
-    ctx.textBaseline = 'middle';
-    for (let i = 0; i <= 5; i++) {
-      const value = (yMax / 5) * (5 - i);
-      const y = padding.top + (chartHeight / 5) * i;
-      const label = formatter.currency.format(value);
-      ctx.fillText(label, padding.left - 8, y);
-    }
-    
-    // Axis titles
-    ctx.textAlign = 'center';
-    ctx.fillText('Years', width / 2, height - 10);
-    
-    ctx.save();
-    ctx.translate(15, height / 2);
-    ctx.rotate(-Math.PI / 2);
-    ctx.textAlign = 'center';
-    ctx.fillText('Dollars', 0, 0);
-    ctx.restore();
   }
   
   drawError() {
