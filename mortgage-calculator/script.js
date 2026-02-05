@@ -173,7 +173,8 @@ function computeSchedule(principal, annualRate, years, frequency) {
         schedule: [],
         totalInterest: 0,
         totalPaid: 0,
-        payoffYears: 0
+        payoffYears: 0,
+        maxPlottedY: principal || 0
       };
     }
   } catch (e) {
@@ -185,12 +186,14 @@ function computeSchedule(principal, annualRate, years, frequency) {
       schedule: [],
       totalInterest: 0,
       totalPaid: 0,
-      payoffYears: 0
+      payoffYears: 0,
+      maxPlottedY: principal || 0
     };
   }
   
   // Check if payment is sufficient to amortize
   if (periodicRate > 0 && paymentAmount <= principal * periodicRate) {
+    // Return invalid but include maxPlottedY for axis scaling
     return {
       isValid: false,
       errorMessage: 'Payment does not amortize the loan at this rate',
@@ -199,7 +202,8 @@ function computeSchedule(principal, annualRate, years, frequency) {
       schedule: [],
       totalInterest: 0,
       totalPaid: 0,
-      payoffYears: 0
+      payoffYears: 0,
+      maxPlottedY: principal // Use principal for axis scaling even when invalid
     };
   }
   
@@ -229,6 +233,19 @@ function computeSchedule(principal, annualRate, years, frequency) {
     
     // Check if payment is sufficient (should not happen if we passed initial check, but guard anyway)
     if (principalPortion <= 0) {
+      // Calculate maxPlottedY from what we have so far
+      let maxPlottedY = principal;
+      pointsBalance.forEach(p => {
+        if (p.balance !== undefined && isFinite(p.balance)) {
+          maxPlottedY = Math.max(maxPlottedY, p.balance);
+        }
+      });
+      pointsCumInterest.forEach(p => {
+        if (p.cumulativeInterest !== undefined && isFinite(p.cumulativeInterest)) {
+          maxPlottedY = Math.max(maxPlottedY, p.cumulativeInterest);
+        }
+      });
+      
       return {
         isValid: false,
         errorMessage: 'Payment does not amortize the loan',
@@ -237,7 +254,8 @@ function computeSchedule(principal, annualRate, years, frequency) {
         schedule,
         totalInterest,
         totalPaid: principal + totalInterest,
-        payoffYears: (paymentNum - 1) / paymentsPerYear
+        payoffYears: (paymentNum - 1) / paymentsPerYear,
+        maxPlottedY
       };
     }
     
@@ -281,6 +299,26 @@ function computeSchedule(principal, annualRate, years, frequency) {
     pointsCumInterest.push({ year: Math.min(payoffYears, 40), cumulativeInterest });
   }
   
+  // Calculate max plotted Y value for axis scaling
+  let maxPlottedY = 0;
+  if (pointsBalance.length > 0) {
+    maxPlottedY = Math.max(maxPlottedY, pointsBalance[0].balance); // Initial balance
+  }
+  pointsBalance.forEach(p => {
+    if (p.balance !== undefined && isFinite(p.balance)) {
+      maxPlottedY = Math.max(maxPlottedY, p.balance);
+    }
+  });
+  pointsCumInterest.forEach(p => {
+    if (p.cumulativeInterest !== undefined && isFinite(p.cumulativeInterest)) {
+      maxPlottedY = Math.max(maxPlottedY, p.cumulativeInterest);
+    }
+  });
+  const totalPaid = principal + totalInterest;
+  if (isFinite(totalPaid)) {
+    maxPlottedY = Math.max(maxPlottedY, totalPaid);
+  }
+  
   return {
     isValid: true,
     errorMessage: null,
@@ -288,8 +326,9 @@ function computeSchedule(principal, annualRate, years, frequency) {
     pointsCumInterest,
     schedule,
     totalInterest,
-    totalPaid: principal + totalInterest,
-    payoffYears
+    totalPaid,
+    payoffYears,
+    maxPlottedY: Math.max(maxPlottedY, principal) // Ensure initial principal is included
   };
 }
 
@@ -323,17 +362,33 @@ function buildAmortizationSchedule(principal, annualRate, years, frequency) {
 // Axis Manager - Handles stable axis ranges during slider dragging
 // ============================================================
 
+/**
+ * AxisManager - Manages stable axis ranges with hysteresis during slider dragging
+ * 
+ * Y-axis hysteresis policy:
+ * - During slider drag: yMax only EXPANDS if curves would clip (>95% of current yMax), never shrinks
+ * - On init/target change/non-slider change: recompute yMax fresh from CURRENT schedule only
+ * - We do NOT precompute worst-case across slider extremes (e.g., sampling price 50k-3M)
+ *   This prevents unreadable compression at typical values (e.g., 500k home shows curves compressed
+ *   near bottom if yMax is set to accommodate 3M worst-case)
+ */
 class AxisManager {
   constructor() {
-    this.axisRange = null;
+    // X-axis is always fixed: 0..40 years
+    this.xMin = 0;
+    this.xMax = 40;
+    this.yMin = 0;
+    this.yMaxCached = null; // Cached Y max with hysteresis - only expands during drag, recomputes on changes
     this.lastSliderTarget = null;
     this.lastNonSliderInputs = null;
   }
   
   /**
-   * Compute nice number for Y axis ticks
+   * Compute nice number for Y axis ticks (rounds to 1, 2, 5 * 10^k)
+   * Ensures readable tick labels that don't change unnecessarily
    */
   nextNiceNumber(value) {
+    if (value <= 0) return 100000;
     const magnitude = Math.pow(10, Math.floor(Math.log10(value)));
     const normalized = value / magnitude;
     let nice;
@@ -345,157 +400,73 @@ class AxisManager {
   }
   
   /**
-   * Sample schedule across slider range to find worst-case Y max
+   * Update axis range based on schedule and reason
+   * reason: "INIT" | "SLIDER_TARGET_CHANGE" | "NON_SLIDER_INPUT_CHANGE" | "SLIDER_DRAG"
+   * 
+   * Y-axis hysteresis logic:
+   * - During slider drag: only expand if curves would clip (never shrink)
+   * - On init/target change/non-slider change: recompute fresh from current schedule only
+   * - We do NOT precompute worst-case across slider extremes (prevents unreadable compression)
    */
-  computeYMaxForSliderRange(inputs, sliderTarget, getInputsFn) {
-    const samples = [0, 0.25, 0.5, 0.75, 1.0]; // 5-point sample
-    let maxCandidate = 0;
+  update(scheduleResult, reason) {
+    // X-axis is always fixed
+    const xMin = 0;
+    const xMax = 40;
     
-    // Get slider min/max
-    let min, max;
-    switch (sliderTarget) {
-      case 'price':
-        min = 50000;
-        max = 3000000;
-        break;
-      case 'down_payment':
-        if (inputs.isAmountMode) {
-          min = 0;
-          max = inputs.homePrice;
-        } else {
-          min = 0;
-          max = 100;
+    if (reason === 'SLIDER_DRAG') {
+      // During drag: only expand if needed, never shrink
+      if (scheduleResult.isValid && this.yMaxCached !== null) {
+        const maxPlottedY = scheduleResult.maxPlottedY || 0;
+        // If curves would exceed 95% of current yMax, expand
+        if (maxPlottedY > 0.95 * this.yMaxCached) {
+          const expanded = this.nextNiceNumber(maxPlottedY * 1.10);
+          this.yMaxCached = Math.max(this.yMaxCached, expanded); // Only expand, never shrink
         }
-        break;
-      case 'interest_rate':
-        min = 0.5;
-        max = 15;
-        break;
-      case 'amortization':
-        min = 5;
-        max = 40;
-        break;
-      default:
-        return 1000000; // Default fallback
-    }
-    
-    // Sample across range
-    for (const t of samples) {
-      const sampleValue = min + (max - min) * t;
-      const sampleInputs = { ...inputs };
-      
-      switch (sliderTarget) {
-        case 'price':
-          sampleInputs.homePrice = sampleValue;
-          sampleInputs.loanAmount = Math.max(0, sampleValue - sampleInputs.downPayment);
-          break;
-        case 'down_payment':
-          if (sampleInputs.isAmountMode) {
-            sampleInputs.downPayment = sampleValue;
-            sampleInputs.loanAmount = Math.max(0, sampleInputs.homePrice - sampleValue);
-          } else {
-            sampleInputs.downPayment = sampleInputs.homePrice * (sampleValue / 100);
-            sampleInputs.loanAmount = Math.max(0, sampleInputs.homePrice - sampleInputs.downPayment);
-          }
-          break;
-        case 'interest_rate':
-          sampleInputs.interestRate = sampleValue;
-          break;
-        case 'amortization':
-          sampleInputs.amortizationYears = sampleValue;
-          break;
+        // Otherwise keep yMaxCached unchanged
       }
+    } else {
+      // INIT, SLIDER_TARGET_CHANGE, or NON_SLIDER_INPUT_CHANGE: recompute fresh from current schedule
+      // Handle both valid and invalid schedules (invalid may still have maxPlottedY for axis scaling)
+      const maxPlottedY = scheduleResult.maxPlottedY || 0;
+      const initialBalance = scheduleResult.pointsBalance.length > 0 
+        ? scheduleResult.pointsBalance[0].balance 
+        : 0;
       
-      const result = computeSchedule(
-        sampleInputs.loanAmount,
-        sampleInputs.interestRate,
-        sampleInputs.amortizationYears,
-        sampleInputs.paymentFrequency
-      );
-      
-      if (result.isValid) {
-        const maxBalance = Math.max(...result.pointsBalance.map(p => p.balance || 0), 0);
-        const maxInterest = Math.max(...result.pointsCumInterest.map(p => p.cumulativeInterest || 0), 0);
-        maxCandidate = Math.max(maxCandidate, maxBalance, maxInterest, result.totalPaid, sampleInputs.homePrice, sampleInputs.loanAmount);
+      if (scheduleResult.isValid) {
+        // Valid schedule: base max from current schedule values
+        const baseMax = Math.max(
+          maxPlottedY,
+          scheduleResult.totalPaid || 0,
+          initialBalance
+        );
+        // Apply padding and round to nice number, with floor
+        const padded = baseMax * 1.10;
+        const nice = this.nextNiceNumber(padded);
+        this.yMaxCached = Math.max(nice, 100000); // Floor at 100k
+      } else {
+        // Invalid schedule: use maxPlottedY if available, otherwise default
+        if (maxPlottedY > 0) {
+          const padded = maxPlottedY * 1.10;
+          const nice = this.nextNiceNumber(padded);
+          this.yMaxCached = Math.max(nice, 100000);
+        } else if (this.yMaxCached === null) {
+          this.yMaxCached = 1000000; // Default fallback
+        }
+        // If we already have a cached value, keep it (maintains stability)
       }
     }
-    
-    // Apply padding and round to nice number
-    const padded = maxCandidate * 1.05;
-    const nice = this.nextNiceNumber(padded);
-    return Math.max(nice, 100000); // Minimum 100k
   }
   
   /**
-   * Check if axis range needs to be recomputed
-   */
-  shouldRecomputeAxisRange(currentInputs, currentSliderTarget, isDraggingSlider) {
-    // Always recompute if we don't have a range yet
-    if (!this.axisRange) return true;
-    
-    // Recompute if slider target changed
-    if (currentSliderTarget !== this.lastSliderTarget) return true;
-    
-    // Recompute if non-slider inputs changed (but not during slider drag)
-    if (!isDraggingSlider) {
-      const currentNonSlider = {
-        homePrice: currentInputs.homePrice,
-        downPayment: currentInputs.downPayment,
-        interestRate: currentInputs.interestRate,
-        amortizationYears: currentInputs.amortizationYears,
-        paymentFrequency: currentInputs.paymentFrequency,
-        isAmountMode: currentInputs.isAmountMode
-      };
-      
-      if (!this.lastNonSliderInputs || 
-          JSON.stringify(currentNonSlider) !== JSON.stringify(this.lastNonSliderInputs)) {
-        return true;
-      }
-    }
-    
-    return false;
-  }
-  
-  /**
-   * Update axis range if needed
-   */
-  updateAxisRangeIfNeeded(currentInputs, currentSliderTarget, isDraggingSlider) {
-    if (this.shouldRecomputeAxisRange(currentInputs, currentSliderTarget, isDraggingSlider)) {
-      // X axis: fixed 0 to 40 years
-      const xMin = 0;
-      const xMax = 40;
-      
-      // Y axis: compute worst-case max
-      const yMin = 0;
-      const yMax = this.computeYMaxForSliderRange(currentInputs, currentSliderTarget, null);
-      
-      this.axisRange = { xMin, xMax, yMin, yMax };
-      this.lastSliderTarget = currentSliderTarget;
-      
-      if (!isDraggingSlider) {
-        this.lastNonSliderInputs = {
-          homePrice: currentInputs.homePrice,
-          downPayment: currentInputs.downPayment,
-          interestRate: currentInputs.interestRate,
-          amortizationYears: currentInputs.amortizationYears,
-          paymentFrequency: currentInputs.paymentFrequency,
-          isAmountMode: currentInputs.isAmountMode
-        };
-      }
-    }
-    
-    return this.axisRange;
-  }
-  
-  /**
-   * Get current axis range (use cached if available)
+   * Get current axis range
    */
   getAxisRange() {
-    if (!this.axisRange) {
-      // Default fallback
-      return { xMin: 0, xMax: 40, yMin: 0, yMax: 1000000 };
-    }
-    return this.axisRange;
+    return {
+      xMin: this.xMin,
+      xMax: this.xMax,
+      yMin: this.yMin,
+      yMax: this.yMaxCached || 1000000 // Fallback if not initialized
+    };
   }
 }
 
@@ -553,17 +524,53 @@ class MortgageChart {
     }
   }
   
-  setData(scheduleResult) {
+  setData(scheduleResult, reason) {
     // Store schedule result directly
     this.data = scheduleResult;
     
-    // Update axis range if needed (but not during slider drag)
-    if (this.currentInputs && this.currentSliderTarget) {
-      this.axisManager.updateAxisRangeIfNeeded(
-        this.currentInputs,
-        this.currentSliderTarget,
-        this.isDraggingSlider
-      );
+    // Determine reason if not provided
+    if (!reason) {
+      if (!this.axisManager.yMaxCached) {
+        reason = 'INIT';
+      } else if (this.isDraggingSlider) {
+        reason = 'SLIDER_DRAG';
+      } else {
+        // Check if slider target changed
+        const currentSliderTarget = this.currentSliderTarget;
+        if (currentSliderTarget !== this.axisManager.lastSliderTarget) {
+          reason = 'SLIDER_TARGET_CHANGE';
+          this.axisManager.lastSliderTarget = currentSliderTarget;
+        } else if (this.currentInputs && this.axisManager.lastNonSliderInputs) {
+          // Check if non-slider inputs changed
+          const currentNonSlider = {
+            homePrice: this.currentInputs.homePrice,
+            downPayment: this.currentInputs.downPayment,
+            interestRate: this.currentInputs.interestRate,
+            amortizationYears: this.currentInputs.amortizationYears,
+            paymentFrequency: this.currentInputs.paymentFrequency,
+            isAmountMode: this.currentInputs.isAmountMode
+          };
+          const inputsChanged = JSON.stringify(currentNonSlider) !== JSON.stringify(this.axisManager.lastNonSliderInputs);
+          reason = inputsChanged ? 'NON_SLIDER_INPUT_CHANGE' : 'SLIDER_DRAG'; // Default to SLIDER_DRAG if no change detected
+        } else {
+          reason = 'NON_SLIDER_INPUT_CHANGE'; // First time with inputs
+        }
+      }
+    }
+    
+    // Update axis range with hysteresis logic
+    this.axisManager.update(scheduleResult, reason);
+    
+    // Update last non-slider inputs if not dragging
+    if (!this.isDraggingSlider && this.currentInputs) {
+      this.axisManager.lastNonSliderInputs = {
+        homePrice: this.currentInputs.homePrice,
+        downPayment: this.currentInputs.downPayment,
+        interestRate: this.currentInputs.interestRate,
+        amortizationYears: this.currentInputs.amortizationYears,
+        paymentFrequency: this.currentInputs.paymentFrequency,
+        isAmountMode: this.currentInputs.isAmountMode
+      };
     }
     
     // Schedule render (throttled with RAF)
@@ -875,7 +882,7 @@ function updateOutputs(data) {
     
     // Restore summary sentence structure if it was replaced
     if (!summarySentence.querySelector('#summary_years')) {
-      summarySentence.innerHTML = 'With these inputs, the mortgage is paid off in <span id="summary_years">–</span> years, with <span id="summary_interest">$–</span> paid in interest and <span id="summary_total">$–</span> paid in total mortgage payments (principal + interest).';
+      summarySentence.innerHTML = 'With these inputs:<ul style="margin: 8px 0 0 0; padding-left: 20px; list-style-type: none;"><li>Mortgage is paid off in <span id="summary_years">–</span> years</li><li><span id="summary_interest">$–</span> paid in interest</li><li><span id="summary_total">$–</span> paid in total mortgage payments (principal + interest)</li></ul>';
     }
     summarySentence.innerHTML = '<span class="error-state">Payment does not amortize the loan at this rate.</span>';
     return;
@@ -883,7 +890,7 @@ function updateOutputs(data) {
   
   // Restore summary sentence structure if it was replaced by error
   if (!summarySentence.querySelector('#summary_years')) {
-    summarySentence.innerHTML = 'With these inputs, the mortgage is paid off in <span id="summary_years">–</span> years, with <span id="summary_interest">$–</span> paid in interest and <span id="summary_total">$–</span> paid in total mortgage payments (principal + interest).';
+    summarySentence.innerHTML = 'With these inputs:<ul style="margin: 8px 0 0 0; padding-left: 20px; list-style-type: none;"><li>Mortgage is paid off in <span id="summary_years">–</span> years</li><li><span id="summary_interest">$–</span> paid in interest</li><li><span id="summary_total">$–</span> paid in total mortgage payments (principal + interest)</li></ul>';
   }
   
   const inputs = getInputs();
@@ -924,6 +931,7 @@ function updateGraph(scheduleResult) {
     const inputs = getInputs();
     const sliderTarget = document.querySelector('input[name="slider_target"]:checked')?.value || 'price';
     chart.setCurrentInputs(inputs, sliderTarget);
+    // setData will determine the reason automatically based on state
     chart.setData(scheduleResult);
   } else {
     // Chart not initialized yet, try to initialize it
@@ -933,7 +941,7 @@ function updateGraph(scheduleResult) {
       const inputs = getInputs();
       const sliderTarget = document.querySelector('input[name="slider_target"]:checked')?.value || 'price';
       chart.setCurrentInputs(inputs, sliderTarget);
-      chart.setData(scheduleResult);
+      chart.setData(scheduleResult, 'INIT');
     }
   }
 }
@@ -1188,17 +1196,29 @@ function updateSlider() {
   slider.parentNode.replaceChild(newSlider, slider);
   const activeSlider = document.getElementById('active_slider');
   
-  // Slider drag state tracking
-  const handleSliderStart = () => {
+  // Slider drag state tracking - use window-level listeners so pointerup always fires
+  const handleSliderStart = (e) => {
     if (chart) {
       chart.setDraggingSlider(true);
     }
+    // Add window-level end listeners to ensure they fire even if pointer leaves slider
+    const handleWindowEnd = () => {
+      if (chart) {
+        chart.setDraggingSlider(false);
+      }
+      window.removeEventListener('pointerup', handleWindowEnd);
+      window.removeEventListener('mouseup', handleWindowEnd);
+      window.removeEventListener('touchend', handleWindowEnd);
+    };
+    window.addEventListener('pointerup', handleWindowEnd, { once: true });
+    window.addEventListener('mouseup', handleWindowEnd, { once: true });
+    window.addEventListener('touchend', handleWindowEnd, { once: true });
   };
   
   const handleSliderEnd = () => {
     if (chart) {
       chart.setDraggingSlider(false);
-      // Optionally recompute axis range after drag ends (we choose not to for stability)
+      // Keep yMax as-is after drag ends (no shrink) for stability
     }
   };
   
@@ -1333,7 +1353,7 @@ function setupEventListeners() {
   document.querySelectorAll('input[name="slider_target"]').forEach(radio => {
     radio.addEventListener('change', () => {
       if (chart) {
-        // Reset axis range to force recomputation
+        // Reset to force recomputation on next update
         chart.axisManager.lastSliderTarget = null;
       }
       updateSlider();
