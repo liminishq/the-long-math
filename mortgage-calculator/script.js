@@ -235,46 +235,51 @@ class MortgageChart {
   
   setData(data) {
     // Always replace data completely to ensure clean state
-    // Deep copy to avoid reference issues
+    // Deep copy to avoid reference issues - create new objects for each data point
     if (data) {
       this.data = {
         error: data.error || null,
-        schedule: data.schedule ? [...data.schedule] : [],
+        schedule: data.schedule ? data.schedule.map(p => ({ ...p })) : [],
         totalInterest: data.totalInterest || 0,
         totalPaid: data.totalPaid || 0,
         payoffYears: data.payoffYears || 0,
-        balanceOverTime: data.balanceOverTime ? [...data.balanceOverTime] : [],
-        interestOverTime: data.interestOverTime ? [...data.interestOverTime] : []
+        balanceOverTime: data.balanceOverTime ? data.balanceOverTime.map(d => ({ year: d.year, balance: d.balance })) : [],
+        interestOverTime: data.interestOverTime ? data.interestOverTime.map(d => ({ year: d.year, cumulativeInterest: d.cumulativeInterest })) : []
       };
     } else {
       this.data = null;
     }
-    // Force redraw
+    // Force redraw with new data
     this.draw();
   }
   
   draw() {
     try {
       // Ensure canvas context is valid
-      if (!this.canvas || !this.ctx) {
-        console.error('Canvas or context not available');
+      if (!this.canvas) {
+        console.error('Canvas not available');
         return;
       }
       
-      const ctx = this.ctx;
       const dpr = window.devicePixelRatio || 1;
       const rect = this.canvas.getBoundingClientRect();
-      const width = rect.width;
-      const height = rect.height;
+      const displayWidth = rect.width;
+      const displayHeight = rect.height;
       
       // Ensure canvas size matches display size
-      if (this.canvas.width !== width * dpr || this.canvas.height !== height * dpr) {
-        this.canvas.width = width * dpr;
-        this.canvas.height = height * dpr;
+      if (this.canvas.width !== displayWidth * dpr || this.canvas.height !== displayHeight * dpr) {
+        this.canvas.width = displayWidth * dpr;
+        this.canvas.height = displayHeight * dpr;
+        // Re-establish context after resize
+        this.ctx = this.canvas.getContext('2d');
         this.ctx.scale(dpr, dpr);
-        this.canvas.style.width = width + 'px';
-        this.canvas.style.height = height + 'px';
+        this.canvas.style.width = displayWidth + 'px';
+        this.canvas.style.height = displayHeight + 'px';
       }
+      
+      const ctx = this.ctx;
+      const width = displayWidth;
+      const height = displayHeight;
       
       // Always clear canvas first
       ctx.clearRect(0, 0, width, height);
@@ -289,7 +294,9 @@ class MortgageChart {
       const chartWidth = width - padding.left - padding.right;
       const chartHeight = height - padding.top - padding.bottom;
       
-      const { balanceOverTime, interestOverTime } = this.data;
+      // Get fresh data reference (don't cache)
+      const balanceOverTime = this.data.balanceOverTime || [];
+      const interestOverTime = this.data.interestOverTime || [];
       
       // Validate data structure
       if (!balanceOverTime || !interestOverTime || 
@@ -317,15 +324,20 @@ class MortgageChart {
         }
       }
       
-      // Find max values for scaling
+      // Find max values for scaling - use actual data values
+      const balanceYears = balanceOverTime.map(d => d.year || 0);
+      const interestYears = interestOverTime.map(d => d.year || 0);
+      const balanceValues = balanceOverTime.map(d => d.balance || 0);
+      const interestValues = interestOverTime.map(d => d.cumulativeInterest || 0);
+      
       const maxYear = Math.max(
-        ...balanceOverTime.map(d => d.year),
-        ...interestOverTime.map(d => d.year),
+        ...balanceYears,
+        ...interestYears,
         1 // Ensure at least 1 year
       );
       const maxValue = Math.max(
-        ...balanceOverTime.map(d => d.balance),
-        ...interestOverTime.map(d => d.cumulativeInterest),
+        ...balanceValues,
+        ...interestValues,
         1000 // Ensure minimum scale
       );
       
@@ -581,7 +593,17 @@ function updateTables(data) {
   if (first12Payments.length === 0) {
     tbody12.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--muted);">No payments to display</td></tr>';
   } else {
+    let totalPayments = 0;
+    let totalInterest = 0;
+    let totalPrincipal = 0;
+    let finalBalance = 0;
+    
     first12Payments.forEach(payment => {
+      totalPayments += payment.paymentAmount;
+      totalInterest += payment.interestPortion;
+      totalPrincipal += payment.principalPortion;
+      finalBalance = payment.balance;
+      
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${payment.paymentNum}</td>
@@ -592,6 +614,19 @@ function updateTables(data) {
       `;
       tbody12.appendChild(row);
     });
+    
+    // Add summary row
+    const summaryRow = document.createElement('tr');
+    summaryRow.style.fontWeight = '700';
+    summaryRow.style.borderTop = '2px solid var(--border)';
+    summaryRow.innerHTML = `
+      <td><strong>Total</strong></td>
+      <td><strong>${formatter.currency.format(totalPayments)}</strong></td>
+      <td><strong>${formatter.currency.format(totalInterest)}</strong></td>
+      <td><strong>${formatter.currency.format(totalPrincipal)}</strong></td>
+      <td><strong>${formatter.currency.format(finalBalance)}</strong></td>
+    `;
+    tbody12.appendChild(summaryRow);
   }
   
   // Annual summary table
@@ -646,7 +681,17 @@ function updateTables(data) {
     });
   }
   
+  let grandTotalPayments = 0;
+  let grandTotalInterest = 0;
+  let grandTotalPrincipal = 0;
+  let finalEndingBalance = 0;
+  
   annualData.forEach(yearData => {
+    grandTotalPayments += yearData.totalPayments;
+    grandTotalInterest += yearData.totalInterest;
+    grandTotalPrincipal += yearData.totalPrincipal;
+    finalEndingBalance = yearData.endingBalance;
+    
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>${yearData.year}</td>
@@ -657,6 +702,21 @@ function updateTables(data) {
     `;
     tbodyAnnual.appendChild(row);
   });
+  
+  // Add summary row
+  if (annualData.length > 0) {
+    const summaryRow = document.createElement('tr');
+    summaryRow.style.fontWeight = '700';
+    summaryRow.style.borderTop = '2px solid var(--border)';
+    summaryRow.innerHTML = `
+      <td><strong>Total</strong></td>
+      <td><strong>${formatter.currency.format(grandTotalPayments)}</strong></td>
+      <td><strong>${formatter.currency.format(grandTotalInterest)}</strong></td>
+      <td><strong>${formatter.currency.format(grandTotalPrincipal)}</strong></td>
+      <td><strong>${formatter.currency.format(finalEndingBalance)}</strong></td>
+    `;
+    tbodyAnnual.appendChild(summaryRow);
+  }
 }
 
 function recalculate() {
