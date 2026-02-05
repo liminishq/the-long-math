@@ -90,59 +90,136 @@ function getPaymentsPerYear(frequency) {
 }
 
 /**
- * Build full amortization schedule
+ * Compute amortization schedule with robust error handling
  * Returns: {
+ *   isValid: boolean,
+ *   errorMessage: string | null,
+ *   pointsBalance: array of {year, balance},
+ *   pointsCumInterest: array of {year, cumulativeInterest},
  *   schedule: array of payment objects,
  *   totalInterest: number,
  *   totalPaid: number,
- *   payoffYears: number,
- *   balanceOverTime: array of {year, balance},
- *   interestOverTime: array of {year, cumulativeInterest}
+ *   payoffYears: number
  * }
  */
-function buildAmortizationSchedule(principal, annualRate, years, frequency) {
-  const paymentAmount = calculatePaymentAmount(principal, annualRate, years, frequency);
+function computeSchedule(principal, annualRate, years, frequency) {
+  // Input validation
+  if (isNaN(principal) || principal < 0) {
+    return {
+      isValid: false,
+      errorMessage: 'Invalid principal amount',
+      pointsBalance: [],
+      pointsCumInterest: [],
+      schedule: [],
+      totalInterest: 0,
+      totalPaid: 0,
+      payoffYears: 0
+    };
+  }
+  
+  if (isNaN(annualRate) || annualRate < 0) {
+    return {
+      isValid: false,
+      errorMessage: 'Invalid interest rate',
+      pointsBalance: [],
+      pointsCumInterest: [],
+      schedule: [],
+      totalInterest: 0,
+      totalPaid: 0,
+      payoffYears: 0
+    };
+  }
+  
+  if (isNaN(years) || years < 1 || years > 40) {
+    return {
+      isValid: false,
+      errorMessage: 'Invalid amortization period',
+      pointsBalance: [],
+      pointsCumInterest: [],
+      schedule: [],
+      totalInterest: 0,
+      totalPaid: 0,
+      payoffYears: 0
+    };
+  }
+  
+  if (principal === 0) {
+    return {
+      isValid: true,
+      errorMessage: null,
+      pointsBalance: [{ year: 0, balance: 0 }],
+      pointsCumInterest: [{ year: 0, cumulativeInterest: 0 }],
+      schedule: [],
+      totalInterest: 0,
+      totalPaid: 0,
+      payoffYears: 0
+    };
+  }
+  
   const paymentsPerYear = getPaymentsPerYear(frequency);
   const periodicRate = annualRate / 100 / paymentsPerYear;
-  const totalPayments = years * paymentsPerYear;
+  const totalPayments = Math.floor(years * paymentsPerYear);
   
+  // Calculate payment amount
+  let paymentAmount;
+  try {
+    paymentAmount = calculatePaymentAmount(principal, annualRate, years, frequency);
+    if (!isFinite(paymentAmount) || paymentAmount <= 0) {
+      return {
+        isValid: false,
+        errorMessage: 'Cannot compute payment amount',
+        pointsBalance: [],
+        pointsCumInterest: [],
+        schedule: [],
+        totalInterest: 0,
+        totalPaid: 0,
+        payoffYears: 0
+      };
+    }
+  } catch (e) {
+    return {
+      isValid: false,
+      errorMessage: 'Error calculating payment',
+      pointsBalance: [],
+      pointsCumInterest: [],
+      schedule: [],
+      totalInterest: 0,
+      totalPaid: 0,
+      payoffYears: 0
+    };
+  }
+  
+  // Check if payment is sufficient to amortize
+  if (periodicRate > 0 && paymentAmount <= principal * periodicRate) {
+    return {
+      isValid: false,
+      errorMessage: 'Payment does not amortize the loan at this rate',
+      pointsBalance: [{ year: 0, balance: principal }],
+      pointsCumInterest: [{ year: 0, cumulativeInterest: 0 }],
+      schedule: [],
+      totalInterest: 0,
+      totalPaid: 0,
+      payoffYears: 0
+    };
+  }
+  
+  // Build schedule
   const schedule = [];
   let balance = principal;
   let totalInterest = 0;
   let cumulativeInterest = 0;
   
-  // Arrays for graph plotting (annual snapshots)
-  const balanceOverTime = [{ year: 0, balance: principal }];
-  const interestOverTime = [{ year: 0, cumulativeInterest: 0 }];
+  // Arrays for graph plotting - downsample to max ~800 points
+  const maxPoints = 800;
+  const pointsBalance = [{ year: 0, balance: principal }];
+  const pointsCumInterest = [{ year: 0, cumulativeInterest: 0 }];
+  const sampleInterval = Math.max(1, Math.ceil(totalPayments / maxPoints));
   
-  let currentYear = 0;
-  let yearStartBalance = principal;
-  let yearInterest = 0;
-  let yearPrincipal = 0;
-  let yearPayments = 0;
-  
-  // Check if payment is sufficient
-  if (periodicRate > 0 && paymentAmount <= balance * periodicRate) {
-    return {
-      error: 'Payment does not amortize the loan at this rate.',
-      schedule: [],
-      totalInterest: 0,
-      totalPaid: 0,
-      payoffYears: 0,
-      balanceOverTime: [],
-      interestOverTime: []
-    };
-  }
-  
-  for (let paymentNum = 1; paymentNum <= totalPayments && balance > 0.01; paymentNum++) {
-    const yearFraction = paymentNum / paymentsPerYear;
-    const newYear = Math.floor(yearFraction);
-    
-    // Calculate interest and principal for this payment
+  for (let paymentNum = 1; paymentNum <= totalPayments && balance > 1e-6; paymentNum++) {
+    // Calculate interest and principal
     let interestPortion, principalPortion;
     
     if (periodicRate === 0) {
-      // Zero interest case
       interestPortion = 0;
       principalPortion = paymentAmount;
     } else {
@@ -150,20 +227,33 @@ function buildAmortizationSchedule(principal, annualRate, years, frequency) {
       principalPortion = paymentAmount - interestPortion;
     }
     
+    // Check if payment is sufficient (should not happen if we passed initial check, but guard anyway)
+    if (principalPortion <= 0) {
+      return {
+        isValid: false,
+        errorMessage: 'Payment does not amortize the loan',
+        pointsBalance: pointsBalance.length > 0 ? pointsBalance : [{ year: 0, balance: principal }],
+        pointsCumInterest: pointsCumInterest.length > 0 ? pointsCumInterest : [{ year: 0, cumulativeInterest: 0 }],
+        schedule,
+        totalInterest,
+        totalPaid: principal + totalInterest,
+        payoffYears: (paymentNum - 1) / paymentsPerYear
+      };
+    }
+    
     // Ensure we don't overpay
     if (principalPortion > balance) {
       principalPortion = balance;
-      paymentAmount = principalPortion + interestPortion;
     }
     
     balance -= principalPortion;
     totalInterest += interestPortion;
     cumulativeInterest += interestPortion;
     
-    // Track annual summaries
-    yearInterest += interestPortion;
-    yearPrincipal += principalPortion;
-    yearPayments += paymentAmount;
+    // Clamp tiny negatives due to floating point error
+    if (balance < 1e-6) {
+      balance = 0;
+    }
     
     schedule.push({
       paymentNum,
@@ -173,24 +263,240 @@ function buildAmortizationSchedule(principal, annualRate, years, frequency) {
       balance: Math.max(0, balance)
     });
     
-    // Annual snapshots for graph
-    if (newYear > currentYear || paymentNum === totalPayments) {
-      balanceOverTime.push({ year: newYear, balance: Math.max(0, balance) });
-      interestOverTime.push({ year: newYear, cumulativeInterest });
-      currentYear = newYear;
+    // Sample points for graph (downsample for performance)
+    if (paymentNum % sampleInterval === 0 || paymentNum === totalPayments || balance <= 1e-6) {
+      const tYears = paymentNum / paymentsPerYear;
+      if (tYears <= 40) { // Only include points within our axis range
+        pointsBalance.push({ year: tYears, balance: Math.max(0, balance) });
+        pointsCumInterest.push({ year: tYears, cumulativeInterest });
+      }
     }
   }
   
   const payoffYears = schedule.length / paymentsPerYear;
   
+  // Ensure final point is included
+  if (pointsBalance.length === 0 || pointsBalance[pointsBalance.length - 1].year < payoffYears) {
+    pointsBalance.push({ year: Math.min(payoffYears, 40), balance: 0 });
+    pointsCumInterest.push({ year: Math.min(payoffYears, 40), cumulativeInterest });
+  }
+  
   return {
+    isValid: true,
+    errorMessage: null,
+    pointsBalance,
+    pointsCumInterest,
     schedule,
     totalInterest,
     totalPaid: principal + totalInterest,
-    payoffYears,
-    balanceOverTime,
-    interestOverTime
+    payoffYears
   };
+}
+
+/**
+ * Legacy wrapper for backward compatibility
+ */
+function buildAmortizationSchedule(principal, annualRate, years, frequency) {
+  const result = computeSchedule(principal, annualRate, years, frequency);
+  if (!result.isValid) {
+    return {
+      error: result.errorMessage,
+      schedule: result.schedule,
+      totalInterest: result.totalInterest,
+      totalPaid: result.totalPaid,
+      payoffYears: result.payoffYears,
+      balanceOverTime: result.pointsBalance,
+      interestOverTime: result.pointsCumInterest
+    };
+  }
+  return {
+    schedule: result.schedule,
+    totalInterest: result.totalInterest,
+    totalPaid: result.totalPaid,
+    payoffYears: result.payoffYears,
+    balanceOverTime: result.pointsBalance,
+    interestOverTime: result.pointsCumInterest
+  };
+}
+
+// ============================================================
+// Axis Manager - Handles stable axis ranges during slider dragging
+// ============================================================
+
+class AxisManager {
+  constructor() {
+    this.axisRange = null;
+    this.lastSliderTarget = null;
+    this.lastNonSliderInputs = null;
+  }
+  
+  /**
+   * Compute nice number for Y axis ticks
+   */
+  nextNiceNumber(value) {
+    const magnitude = Math.pow(10, Math.floor(Math.log10(value)));
+    const normalized = value / magnitude;
+    let nice;
+    if (normalized <= 1) nice = 1;
+    else if (normalized <= 2) nice = 2;
+    else if (normalized <= 5) nice = 5;
+    else nice = 10;
+    return nice * magnitude;
+  }
+  
+  /**
+   * Sample schedule across slider range to find worst-case Y max
+   */
+  computeYMaxForSliderRange(inputs, sliderTarget, getInputsFn) {
+    const samples = [0, 0.25, 0.5, 0.75, 1.0]; // 5-point sample
+    let maxCandidate = 0;
+    
+    // Get slider min/max
+    let min, max;
+    switch (sliderTarget) {
+      case 'price':
+        min = 50000;
+        max = 3000000;
+        break;
+      case 'down_payment':
+        if (inputs.isAmountMode) {
+          min = 0;
+          max = inputs.homePrice;
+        } else {
+          min = 0;
+          max = 100;
+        }
+        break;
+      case 'interest_rate':
+        min = 0.5;
+        max = 15;
+        break;
+      case 'amortization':
+        min = 5;
+        max = 40;
+        break;
+      default:
+        return 1000000; // Default fallback
+    }
+    
+    // Sample across range
+    for (const t of samples) {
+      const sampleValue = min + (max - min) * t;
+      const sampleInputs = { ...inputs };
+      
+      switch (sliderTarget) {
+        case 'price':
+          sampleInputs.homePrice = sampleValue;
+          sampleInputs.loanAmount = Math.max(0, sampleValue - sampleInputs.downPayment);
+          break;
+        case 'down_payment':
+          if (sampleInputs.isAmountMode) {
+            sampleInputs.downPayment = sampleValue;
+            sampleInputs.loanAmount = Math.max(0, sampleInputs.homePrice - sampleValue);
+          } else {
+            sampleInputs.downPayment = sampleInputs.homePrice * (sampleValue / 100);
+            sampleInputs.loanAmount = Math.max(0, sampleInputs.homePrice - sampleInputs.downPayment);
+          }
+          break;
+        case 'interest_rate':
+          sampleInputs.interestRate = sampleValue;
+          break;
+        case 'amortization':
+          sampleInputs.amortizationYears = sampleValue;
+          break;
+      }
+      
+      const result = computeSchedule(
+        sampleInputs.loanAmount,
+        sampleInputs.interestRate,
+        sampleInputs.amortizationYears,
+        sampleInputs.paymentFrequency
+      );
+      
+      if (result.isValid) {
+        const maxBalance = Math.max(...result.pointsBalance.map(p => p.balance || 0), 0);
+        const maxInterest = Math.max(...result.pointsCumInterest.map(p => p.cumulativeInterest || 0), 0);
+        maxCandidate = Math.max(maxCandidate, maxBalance, maxInterest, result.totalPaid, sampleInputs.homePrice, sampleInputs.loanAmount);
+      }
+    }
+    
+    // Apply padding and round to nice number
+    const padded = maxCandidate * 1.05;
+    const nice = this.nextNiceNumber(padded);
+    return Math.max(nice, 100000); // Minimum 100k
+  }
+  
+  /**
+   * Check if axis range needs to be recomputed
+   */
+  shouldRecomputeAxisRange(currentInputs, currentSliderTarget, isDraggingSlider) {
+    // Always recompute if we don't have a range yet
+    if (!this.axisRange) return true;
+    
+    // Recompute if slider target changed
+    if (currentSliderTarget !== this.lastSliderTarget) return true;
+    
+    // Recompute if non-slider inputs changed (but not during slider drag)
+    if (!isDraggingSlider) {
+      const currentNonSlider = {
+        homePrice: currentInputs.homePrice,
+        downPayment: currentInputs.downPayment,
+        interestRate: currentInputs.interestRate,
+        amortizationYears: currentInputs.amortizationYears,
+        paymentFrequency: currentInputs.paymentFrequency,
+        isAmountMode: currentInputs.isAmountMode
+      };
+      
+      if (!this.lastNonSliderInputs || 
+          JSON.stringify(currentNonSlider) !== JSON.stringify(this.lastNonSliderInputs)) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+  
+  /**
+   * Update axis range if needed
+   */
+  updateAxisRangeIfNeeded(currentInputs, currentSliderTarget, isDraggingSlider) {
+    if (this.shouldRecomputeAxisRange(currentInputs, currentSliderTarget, isDraggingSlider)) {
+      // X axis: fixed 0 to 40 years
+      const xMin = 0;
+      const xMax = 40;
+      
+      // Y axis: compute worst-case max
+      const yMin = 0;
+      const yMax = this.computeYMaxForSliderRange(currentInputs, currentSliderTarget, null);
+      
+      this.axisRange = { xMin, xMax, yMin, yMax };
+      this.lastSliderTarget = currentSliderTarget;
+      
+      if (!isDraggingSlider) {
+        this.lastNonSliderInputs = {
+          homePrice: currentInputs.homePrice,
+          downPayment: currentInputs.downPayment,
+          interestRate: currentInputs.interestRate,
+          amortizationYears: currentInputs.amortizationYears,
+          paymentFrequency: currentInputs.paymentFrequency,
+          isAmountMode: currentInputs.isAmountMode
+        };
+      }
+    }
+    
+    return this.axisRange;
+  }
+  
+  /**
+   * Get current axis range (use cached if available)
+   */
+  getAxisRange() {
+    if (!this.axisRange) {
+      // Default fallback
+      return { xMin: 0, xMax: 40, yMin: 0, yMax: 1000000 };
+    }
+    return this.axisRange;
+  }
 }
 
 // ============================================================
@@ -202,8 +508,22 @@ class MortgageChart {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.data = null;
+    this.axisManager = new AxisManager();
+    this.isDraggingSlider = false;
+    this.currentInputs = null;
+    this.currentSliderTarget = null;
+    this.rafPending = false;
     this.resize();
     window.addEventListener('resize', () => this.resize());
+  }
+  
+  setDraggingSlider(isDragging) {
+    this.isDraggingSlider = isDragging;
+  }
+  
+  setCurrentInputs(inputs, sliderTarget) {
+    this.currentInputs = inputs;
+    this.currentSliderTarget = sliderTarget;
   }
   
   resize() {
@@ -233,24 +553,27 @@ class MortgageChart {
     }
   }
   
-  setData(data) {
-    // Always replace data completely to ensure clean state
-    // Deep copy to avoid reference issues - create new objects for each data point
-    if (data) {
-      this.data = {
-        error: data.error || null,
-        schedule: data.schedule ? data.schedule.map(p => ({ ...p })) : [],
-        totalInterest: data.totalInterest || 0,
-        totalPaid: data.totalPaid || 0,
-        payoffYears: data.payoffYears || 0,
-        balanceOverTime: data.balanceOverTime ? data.balanceOverTime.map(d => ({ year: d.year, balance: d.balance })) : [],
-        interestOverTime: data.interestOverTime ? data.interestOverTime.map(d => ({ year: d.year, cumulativeInterest: d.cumulativeInterest })) : []
-      };
-    } else {
-      this.data = null;
+  setData(scheduleResult) {
+    // Store schedule result directly
+    this.data = scheduleResult;
+    
+    // Update axis range if needed (but not during slider drag)
+    if (this.currentInputs && this.currentSliderTarget) {
+      this.axisManager.updateAxisRangeIfNeeded(
+        this.currentInputs,
+        this.currentSliderTarget,
+        this.isDraggingSlider
+      );
     }
-    // Force redraw with new data
-    this.draw();
+    
+    // Schedule render (throttled with RAF)
+    if (!this.rafPending) {
+      this.rafPending = true;
+      requestAnimationFrame(() => {
+        this.rafPending = false;
+        this.draw();
+      });
+    }
   }
   
   draw() {
@@ -284,99 +607,171 @@ class MortgageChart {
       // Always clear canvas first
       ctx.clearRect(0, 0, width, height);
       
-      // Check for error or missing data
-      if (!this.data || this.data.error) {
-        this.drawError();
+      // Get axis range (cached, stable during slider drag)
+      const axisRange = this.axisManager.getAxisRange();
+      
+      // Draw axes first (always, even for invalid data)
+      this.drawAxes(ctx, width, height, axisRange);
+      
+      // Check for invalid data
+      if (!this.data || !this.data.isValid) {
+        this.drawInvalidMessage(ctx, width, height);
         return;
       }
       
-      const padding = { top: 20, right: 20, bottom: 40, left: 70 };
-      const chartWidth = width - padding.left - padding.right;
-      const chartHeight = height - padding.top - padding.bottom;
+      // Draw curves using stable axis range
+      this.drawCurves(ctx, width, height, axisRange, this.data);
       
-      // Get fresh data reference (don't cache)
-      const balanceOverTime = this.data.balanceOverTime || [];
-      const interestOverTime = this.data.interestOverTime || [];
-      
-      // Validate data structure
-      if (!balanceOverTime || !interestOverTime || 
-          !Array.isArray(balanceOverTime) || !Array.isArray(interestOverTime) ||
-          balanceOverTime.length === 0 || interestOverTime.length === 0) {
-        // Draw empty state message
-        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted') || 'rgba(238,242,247,.72)';
-        ctx.font = '14px system-ui, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('No data to display', width / 2, height / 2);
-        return;
+    } catch (error) {
+      // If any error occurs during drawing, show error message
+      console.error('Graph drawing error:', error);
+      try {
+        const ctx = this.ctx;
+        const width = this.canvas.width / (window.devicePixelRatio || 1);
+        const height = this.canvas.height / (window.devicePixelRatio || 1);
+        ctx.clearRect(0, 0, width, height);
+        const axisRange = this.axisManager.getAxisRange();
+        this.drawAxes(ctx, width, height, axisRange);
+        this.drawInvalidMessage(ctx, width, height);
+      } catch (e) {
+        console.error('Error in error handler:', e);
       }
-      
-      // Validate data points have required properties
-      if (balanceOverTime.length > 0 && interestOverTime.length > 0) {
-        if (!balanceOverTime[0].hasOwnProperty('year') || !balanceOverTime[0].hasOwnProperty('balance') ||
-            !interestOverTime[0].hasOwnProperty('year') || !interestOverTime[0].hasOwnProperty('cumulativeInterest')) {
-          ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted') || 'rgba(238,242,247,.72)';
-          ctx.font = '14px system-ui, sans-serif';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText('Invalid data structure', width / 2, height / 2);
-          return;
-        }
-      }
-      
-      // Find max values for scaling - use actual data values
-      const balanceYears = balanceOverTime.map(d => d.year || 0);
-      const interestYears = interestOverTime.map(d => d.year || 0);
-      const balanceValues = balanceOverTime.map(d => d.balance || 0);
-      const interestValues = interestOverTime.map(d => d.cumulativeInterest || 0);
-      
-      const maxYear = Math.max(
-        ...balanceYears,
-        ...interestYears,
-        1 // Ensure at least 1 year
-      );
-      const maxValue = Math.max(
-        ...balanceValues,
-        ...interestValues,
-        1000 // Ensure minimum scale
-      );
-      
-      const yMax = maxValue * 1.1; // 10% padding
-      
-      // Helper to convert data to screen coordinates
-      const xScale = (year) => padding.left + (year / maxYear) * chartWidth;
-      const yScale = (value) => padding.top + chartHeight - (value / yMax) * chartHeight;
-      
-      // Draw grid lines
-      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--border') || 'rgba(238,242,247,.14)';
-      ctx.lineWidth = 1;
-      
-      // Horizontal grid lines (Y axis)
-      for (let i = 0; i <= 5; i++) {
-        const y = padding.top + (chartHeight / 5) * i;
-        ctx.beginPath();
-        ctx.moveTo(padding.left, y);
-        ctx.lineTo(padding.left + chartWidth, y);
-        ctx.stroke();
-      }
-      
-      // Vertical grid lines (X axis)
-      for (let i = 0; i <= 5; i++) {
-        const x = padding.left + (chartWidth / 5) * i;
+    }
+  }
+  
+  /**
+   * Draw axes and grid using stable axis range
+   */
+  drawAxes(ctx, width, height, axisRange) {
+    const padding = { top: 20, right: 20, bottom: 40, left: 70 };
+    const chartWidth = width - padding.left - padding.right;
+    const chartHeight = height - padding.top - padding.bottom;
+    
+    ctx.save();
+    
+    // Draw grid lines
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--border') || 'rgba(238,242,247,.14)';
+    ctx.lineWidth = 1;
+    
+    // Horizontal grid lines (Y axis) - 5 lines
+    for (let i = 0; i <= 5; i++) {
+      const y = padding.top + (chartHeight / 5) * i;
+      ctx.beginPath();
+      ctx.moveTo(padding.left, y);
+      ctx.lineTo(padding.left + chartWidth, y);
+      ctx.stroke();
+    }
+    
+    // Vertical grid lines (X axis) - fixed at 0, 5, 10, 15, 20, 25, 30, 35, 40
+    const xTicks = [0, 5, 10, 15, 20, 25, 30, 35, 40];
+    xTicks.forEach(year => {
+      const x = padding.left + ((year - axisRange.xMin) / (axisRange.xMax - axisRange.xMin)) * chartWidth;
+      if (x >= padding.left && x <= padding.left + chartWidth) {
         ctx.beginPath();
         ctx.moveTo(x, padding.top);
         ctx.lineTo(x, padding.top + chartHeight);
         ctx.stroke();
       }
-      
-      // Draw curves
-      ctx.lineWidth = 2;
-      
-      // Remaining principal curve (amber)
+    });
+    
+    // Draw axes
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--text') || '#eef2f7';
+    ctx.lineWidth = 1;
+    
+    // X axis
+    ctx.beginPath();
+    ctx.moveTo(padding.left, padding.top + chartHeight);
+    ctx.lineTo(padding.left + chartWidth, padding.top + chartHeight);
+    ctx.stroke();
+    
+    // Y axis
+    ctx.beginPath();
+    ctx.moveTo(padding.left, padding.top);
+    ctx.lineTo(padding.left, padding.top + chartHeight);
+    ctx.stroke();
+    
+    // X axis labels (years) - fixed ticks
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted') || 'rgba(238,242,247,.72)';
+    ctx.font = '11px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    
+    xTicks.forEach(year => {
+      const x = padding.left + ((year - axisRange.xMin) / (axisRange.xMax - axisRange.xMin)) * chartWidth;
+      if (x >= padding.left && x <= padding.left + chartWidth) {
+        ctx.fillText(Math.round(year), x, padding.top + chartHeight + 8);
+      }
+    });
+    
+    // Y axis labels (dollars) - nice ticks
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    
+    const yRange = axisRange.yMax - axisRange.yMin;
+    for (let i = 0; i <= 5; i++) {
+      const value = axisRange.yMax - (yRange / 5) * i;
+      const y = padding.top + (chartHeight / 5) * i;
+      const label = this.formatCurrencyCompact(value);
+      ctx.fillText(label, padding.left - 8, y);
+    }
+    
+    // Axis titles
+    ctx.textAlign = 'center';
+    ctx.fillText('Years', width / 2, height - 10);
+    
+    ctx.save();
+    ctx.translate(15, height / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center';
+    ctx.fillText('Dollars', 0, 0);
+    ctx.restore();
+    
+    ctx.restore();
+  }
+  
+  /**
+   * Format currency compactly for axis labels
+   */
+  formatCurrencyCompact(value) {
+    if (value >= 1000000) {
+      return '$' + (value / 1000000).toFixed(1) + 'M';
+    } else if (value >= 1000) {
+      return '$' + (value / 1000).toFixed(0) + 'k';
+    } else {
+      return formatter.currency.format(value);
+    }
+  }
+  
+  /**
+   * Draw curves using schedule data and stable axis range
+   */
+  drawCurves(ctx, width, height, axisRange, scheduleResult) {
+    const padding = { top: 20, right: 20, bottom: 40, left: 70 };
+    const chartWidth = width - padding.left - padding.right;
+    const chartHeight = height - padding.top - padding.bottom;
+    
+    const { pointsBalance, pointsCumInterest } = scheduleResult;
+    
+    // Scaling functions using stable axis range
+    const xScale = (year) => {
+      const t = (year - axisRange.xMin) / (axisRange.xMax - axisRange.xMin);
+      return padding.left + t * chartWidth;
+    };
+    
+    const yScale = (value) => {
+      const t = (value - axisRange.yMin) / (axisRange.yMax - axisRange.yMin);
+      return padding.top + chartHeight - t * chartHeight;
+    };
+    
+    ctx.save();
+    
+    // Remaining principal curve (amber)
+    if (pointsBalance && pointsBalance.length > 0) {
       ctx.strokeStyle = '#D9B46A';
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      for (let i = 0; i < balanceOverTime.length; i++) {
-        const point = balanceOverTime[i];
+      for (let i = 0; i < pointsBalance.length; i++) {
+        const point = pointsBalance[i];
         const x = xScale(point.year);
         const y = yScale(point.balance);
         if (i === 0) {
@@ -386,12 +781,15 @@ class MortgageChart {
         }
       }
       ctx.stroke();
-      
-      // Cumulative interest curve (blue)
+    }
+    
+    // Cumulative interest curve (blue)
+    if (pointsCumInterest && pointsCumInterest.length > 0) {
       ctx.strokeStyle = '#4A90E2';
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      for (let i = 0; i < interestOverTime.length; i++) {
-        const point = interestOverTime[i];
+      for (let i = 0; i < pointsCumInterest.length; i++) {
+        const point = pointsCumInterest[i];
         const x = xScale(point.year);
         const y = yScale(point.cumulativeInterest);
         if (i === 0) {
@@ -401,74 +799,30 @@ class MortgageChart {
         }
       }
       ctx.stroke();
-      
-      // Draw axes
-      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--text') || '#eef2f7';
-      ctx.lineWidth = 1;
-      
-      // X axis
-      ctx.beginPath();
-      ctx.moveTo(padding.left, padding.top + chartHeight);
-      ctx.lineTo(padding.left + chartWidth, padding.top + chartHeight);
-      ctx.stroke();
-      
-      // Y axis
-      ctx.beginPath();
-      ctx.moveTo(padding.left, padding.top);
-      ctx.lineTo(padding.left, padding.top + chartHeight);
-      ctx.stroke();
-      
-      // Axis labels
-      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted') || 'rgba(238,242,247,.72)';
-      ctx.font = '11px system-ui, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      
-      // X axis labels (years)
-      for (let i = 0; i <= 5; i++) {
-        const year = (maxYear / 5) * i;
-        const x = xScale(year);
-        ctx.fillText(Math.round(year), x, padding.top + chartHeight + 8);
-      }
-      
-      // Y axis labels (dollars)
-      ctx.textAlign = 'right';
-      ctx.textBaseline = 'middle';
-      for (let i = 0; i <= 5; i++) {
-        const value = (yMax / 5) * (5 - i);
-        const y = padding.top + (chartHeight / 5) * i;
-        const label = formatter.currency.format(value);
-        ctx.fillText(label, padding.left - 8, y);
-      }
-      
-      // Axis titles
-      ctx.textAlign = 'center';
-      ctx.fillText('Years', width / 2, height - 10);
-      
-      ctx.save();
-      ctx.translate(15, height / 2);
-      ctx.rotate(-Math.PI / 2);
-      ctx.textAlign = 'center';
-      ctx.fillText('Dollars', 0, 0);
-      ctx.restore();
-    } catch (error) {
-      // If any error occurs during drawing, show error message
-      console.error('Graph drawing error:', error);
-      this.drawError();
     }
+    
+    ctx.restore();
   }
   
-  drawError() {
-    const ctx = this.ctx;
-    const width = this.canvas.width / (window.devicePixelRatio || 1);
-    const height = this.canvas.height / (window.devicePixelRatio || 1);
-    
-    ctx.clearRect(0, 0, width, height);
+  /**
+   * Draw invalid message overlay
+   */
+  drawInvalidMessage(ctx, width, height) {
+    ctx.save();
     ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted') || 'rgba(238,242,247,.72)';
     ctx.font = '14px system-ui, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('Unable to calculate amortization', width / 2, height / 2);
+    const message = this.data && this.data.errorMessage 
+      ? this.data.errorMessage 
+      : 'Cannot amortize with these inputs';
+    ctx.fillText(message, width / 2, height / 2);
+    ctx.restore();
+  }
+  
+  drawError() {
+    // Legacy method - now handled by drawInvalidMessage
+    this.draw();
   }
 }
 
@@ -565,15 +919,21 @@ function updateOutputs(data) {
   document.getElementById('summary_total').textContent = formatter.currency.format(data.totalPaid);
 }
 
-function updateGraph(data) {
+function updateGraph(scheduleResult) {
   if (chart) {
-    chart.setData(data);
+    const inputs = getInputs();
+    const sliderTarget = document.querySelector('input[name="slider_target"]:checked')?.value || 'price';
+    chart.setCurrentInputs(inputs, sliderTarget);
+    chart.setData(scheduleResult);
   } else {
     // Chart not initialized yet, try to initialize it
     const canvas = document.getElementById('chartCanvas');
     if (canvas) {
       chart = new MortgageChart(canvas);
-      chart.setData(data);
+      const inputs = getInputs();
+      const sliderTarget = document.querySelector('input[name="slider_target"]:checked')?.value || 'price';
+      chart.setCurrentInputs(inputs, sliderTarget);
+      chart.setData(scheduleResult);
     }
   }
 }
@@ -722,40 +1082,35 @@ function updateTables(data) {
 function recalculate() {
   const inputs = getInputs();
   
-  if (inputs.loanAmount < 0 || inputs.amortizationYears <= 0 || inputs.homePrice <= 0) {
-    const errorData = { error: 'Invalid inputs', schedule: [], totalInterest: 0, totalPaid: 0, payoffYears: 0, balanceOverTime: [], interestOverTime: [] };
-    updateOutputs(errorData);
-    updateGraph(errorData);
-    updateTables(errorData);
-    return;
-  }
-  
-  // Handle zero loan amount case (no mortgage needed)
-  if (inputs.loanAmount === 0) {
-    const zeroData = {
-      schedule: [],
-      totalInterest: 0,
-      totalPaid: 0,
-      payoffYears: 0,
-      balanceOverTime: [{ year: 0, balance: 0 }],
-      interestOverTime: [{ year: 0, cumulativeInterest: 0 }]
-    };
-    updateOutputs(zeroData);
-    updateGraph(zeroData);
-    updateTables(zeroData);
-    return;
-  }
-  
-  const data = buildAmortizationSchedule(
+  // Compute schedule using new robust function
+  const scheduleResult = computeSchedule(
     inputs.loanAmount,
     inputs.interestRate,
     inputs.amortizationYears,
     inputs.paymentFrequency
   );
   
-  updateOutputs(data);
-  updateGraph(data);
-  updateTables(data);
+  // Convert to legacy format for outputs and tables
+  const legacyData = scheduleResult.isValid ? {
+    schedule: scheduleResult.schedule,
+    totalInterest: scheduleResult.totalInterest,
+    totalPaid: scheduleResult.totalPaid,
+    payoffYears: scheduleResult.payoffYears,
+    balanceOverTime: scheduleResult.pointsBalance,
+    interestOverTime: scheduleResult.pointsCumInterest
+  } : {
+    error: scheduleResult.errorMessage,
+    schedule: [],
+    totalInterest: 0,
+    totalPaid: 0,
+    payoffYears: 0,
+    balanceOverTime: [],
+    interestOverTime: []
+  };
+  
+  updateOutputs(legacyData);
+  updateGraph(scheduleResult);
+  updateTables(legacyData);
 }
 
 function debouncedRecalculate() {
@@ -828,9 +1183,27 @@ function updateSlider() {
   slider.value = value;
   sliderValue.textContent = displayValue;
   
-  // Update slider value display on change
-  slider.oninput = () => {
-    const newValue = parseFloat(slider.value);
+  // Remove old event listeners by cloning and replacing
+  const newSlider = slider.cloneNode(true);
+  slider.parentNode.replaceChild(newSlider, slider);
+  const activeSlider = document.getElementById('active_slider');
+  
+  // Slider drag state tracking
+  const handleSliderStart = () => {
+    if (chart) {
+      chart.setDraggingSlider(true);
+    }
+  };
+  
+  const handleSliderEnd = () => {
+    if (chart) {
+      chart.setDraggingSlider(false);
+      // Optionally recompute axis range after drag ends (we choose not to for stability)
+    }
+  };
+  
+  const handleSliderInput = () => {
+    const newValue = parseFloat(activeSlider.value);
     let newDisplayValue;
     
     switch (sliderTarget) {
@@ -860,6 +1233,19 @@ function updateSlider() {
     sliderValue.textContent = newDisplayValue;
     debouncedRecalculate();
   };
+  
+  // Add event listeners for drag tracking
+  activeSlider.addEventListener('pointerdown', handleSliderStart);
+  activeSlider.addEventListener('mousedown', handleSliderStart);
+  activeSlider.addEventListener('touchstart', handleSliderStart);
+  
+  activeSlider.addEventListener('pointerup', handleSliderEnd);
+  activeSlider.addEventListener('mouseup', handleSliderEnd);
+  activeSlider.addEventListener('touchend', handleSliderEnd);
+  activeSlider.addEventListener('pointerleave', handleSliderEnd); // Handle drag outside
+  
+  // Input handler (fires during drag)
+  activeSlider.addEventListener('input', handleSliderInput);
 }
 
 // ============================================================
@@ -943,10 +1329,15 @@ function setupEventListeners() {
     document.getElementById('down_payment_amount').value = Math.round(amount);
   });
   
-  // Slider target selection
+  // Slider target selection - force axis range recomputation
   document.querySelectorAll('input[name="slider_target"]').forEach(radio => {
     radio.addEventListener('change', () => {
+      if (chart) {
+        // Reset axis range to force recomputation
+        chart.axisManager.lastSliderTarget = null;
+      }
       updateSlider();
+      debouncedRecalculate();
     });
   });
   
