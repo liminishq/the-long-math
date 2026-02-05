@@ -241,7 +241,13 @@ class MortgageChart {
     
     const { balanceOverTime, interestOverTime } = this.data;
     
-    if (balanceOverTime.length === 0 || interestOverTime.length === 0) {
+    if (!balanceOverTime || !interestOverTime || balanceOverTime.length === 0 || interestOverTime.length === 0) {
+      // Draw empty state message
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted') || 'rgba(238,242,247,.72)';
+      ctx.font = '14px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('No data to display', width / 2, height / 2);
       return;
     }
     
@@ -421,17 +427,44 @@ function getInputs() {
 }
 
 function updateOutputs(data) {
+  const summarySentence = document.getElementById('summary_sentence');
+  
   if (data.error) {
     document.getElementById('out_payment').textContent = '—';
     document.getElementById('out_loan_amount').textContent = '—';
     document.getElementById('out_total_interest').textContent = '—';
     document.getElementById('out_total_paid').textContent = '—';
     document.getElementById('out_payoff_time').textContent = '—';
-    document.getElementById('summary_sentence').innerHTML = '<span class="error-state">Payment does not amortize the loan at this rate.</span>';
+    
+    // Restore summary sentence structure if it was replaced
+    if (!summarySentence.querySelector('#summary_years')) {
+      summarySentence.innerHTML = 'With these inputs, the mortgage is paid off in <span id="summary_years">–</span> years, with <span id="summary_interest">$–</span> paid in interest and <span id="summary_total">$–</span> paid in total mortgage payments (principal + interest).';
+    }
+    summarySentence.innerHTML = '<span class="error-state">Payment does not amortize the loan at this rate.</span>';
     return;
   }
   
+  // Restore summary sentence structure if it was replaced by error
+  if (!summarySentence.querySelector('#summary_years')) {
+    summarySentence.innerHTML = 'With these inputs, the mortgage is paid off in <span id="summary_years">–</span> years, with <span id="summary_interest">$–</span> paid in interest and <span id="summary_total">$–</span> paid in total mortgage payments (principal + interest).';
+  }
+  
   const inputs = getInputs();
+  
+  // Handle zero loan amount case
+  if (inputs.loanAmount === 0) {
+    document.getElementById('out_payment').textContent = formatter.currency.format(0);
+    document.getElementById('out_loan_amount').textContent = formatter.currency.format(0);
+    document.getElementById('out_total_interest').textContent = formatter.currency.format(0);
+    document.getElementById('out_total_paid').textContent = formatter.currency.format(0);
+    document.getElementById('out_payoff_time').textContent = '0 years';
+    
+    document.getElementById('summary_years').textContent = '0';
+    document.getElementById('summary_interest').textContent = formatter.currency.format(0);
+    document.getElementById('summary_total').textContent = formatter.currency.format(0);
+    return;
+  }
+  
   const paymentAmount = calculatePaymentAmount(inputs.loanAmount, inputs.interestRate, inputs.amortizationYears, inputs.paymentFrequency);
   
   document.getElementById('out_payment').textContent = formatter.currency.format(paymentAmount);
@@ -551,11 +584,27 @@ function updateTables(data) {
 function recalculate() {
   const inputs = getInputs();
   
-  if (inputs.loanAmount <= 0 || inputs.amortizationYears <= 0) {
-    const errorData = { error: 'Invalid inputs' };
+  if (inputs.loanAmount < 0 || inputs.amortizationYears <= 0 || inputs.homePrice <= 0) {
+    const errorData = { error: 'Invalid inputs', schedule: [], totalInterest: 0, totalPaid: 0, payoffYears: 0, balanceOverTime: [], interestOverTime: [] };
     updateOutputs(errorData);
     updateGraph(errorData);
     updateTables(errorData);
+    return;
+  }
+  
+  // Handle zero loan amount case (no mortgage needed)
+  if (inputs.loanAmount === 0) {
+    const zeroData = {
+      schedule: [],
+      totalInterest: 0,
+      totalPaid: 0,
+      payoffYears: 0,
+      balanceOverTime: [{ year: 0, balance: 0 }],
+      interestOverTime: [{ year: 0, cumulativeInterest: 0 }]
+    };
+    updateOutputs(zeroData);
+    updateGraph(zeroData);
+    updateTables(zeroData);
     return;
   }
   
