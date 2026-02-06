@@ -7,7 +7,8 @@
    stability and transparency.
    
    Data sources (historical, static):
-   - Bank of Canada (USD/CAD FX, CPI, T-bills, bonds, GIC)
+   - Statistics Canada (USD/CAD FX, Table 33-10-0163-01)
+   - Bank of Canada (CPI, T-bills, bonds, GIC)
    - Yale/Shiller dataset (US equities)
    
    All series are in monthly format (YYYY-MM).

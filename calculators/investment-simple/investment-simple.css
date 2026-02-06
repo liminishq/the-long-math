@@ -1,0 +1,73 @@
+/* Minimal local styles; relies on your global styles.css */
+
+.panel {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+}
+
+.lead {
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+.calc-grid{
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+@media (max-width: 900px){
+  .calc-grid{ grid-template-columns: 1fr; }
+}
+
+.field{ margin: 12px 0; }
+.field label{ display:block; margin-bottom:6px; }
+.field input, .field select{
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface, rgba(255,255,255,0.04));
+  color: var(--text);
+}
+
+.inline{ display:flex; align-items:center; gap:10px; }
+.inline input{ flex: 1; }
+.unit{ opacity: .75; }
+
+.sep{
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+.checkbox{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+}
+.checkbox input{ width:auto; margin-top: 3px; }
+
+.help{ font-size: 13px; margin-top: 8px; }
+.hidden{ display:none; }
+
+.results{ display:flex; flex-direction:column; gap: 10px; margin-top: 8px; }
+.result-row{
+  display:flex;
+  justify-content:space-between;
+  gap: 14px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.result-row .label{ opacity: .85; }
+.result-row .value{ font-weight: 700; }
+
+.assumptions h3{ margin: 0 0 8px; font-size: 14px; }
+.assumptions ul{ margin: 0; padding-left: 18px; }
+.assumptions li{ margin: 6px 0; }
+
+.disclaimer{ margin-top: 14px; font-size: 12.5px; }

@@ -1,0 +1,189 @@
+/* Portfolio Growth Calculator Styles */
+
+.data-status {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  border: 1px solid;
+}
+
+.data-status.loading {
+  background: rgba(74, 144, 226, 0.15);
+  color: #4A90E2;
+  border-color: rgba(74, 144, 226, 0.3);
+}
+
+.data-status.success {
+  background: rgba(80, 200, 120, 0.15);
+  color: #50C878;
+  border-color: rgba(80, 200, 120, 0.3);
+}
+
+.data-status.warning {
+  background: rgba(255, 184, 77, 0.15);
+  color: #FFB84D;
+  border-color: rgba(255, 184, 77, 0.3);
+}
+
+.data-status.error {
+  background: rgba(232, 93, 117, 0.15);
+  color: #E85D75;
+  border-color: rgba(232, 93, 117, 0.3);
+}
+
+.chart-container {
+  width: 100%;
+  height: 450px;
+  margin-top: 12px;
+  position: relative;
+}
+
+.input-group {
+  margin-bottom: 16px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.input-group input[type="number"],
+.input-group select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--inputBorder);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+}
+
+.allocation-item {
+  margin-bottom: 12px;
+}
+
+.allocation-item label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.allocation-item input[type="range"] {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface2);
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.allocation-item input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+}
+
+.allocation-item input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: none;
+}
+
+.allocation-item .allocation-value {
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 50px;
+  text-align: right;
+}
+
+.allocation-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.btn-small {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-small:hover {
+  background: var(--surface2);
+}
+
+.error-message {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(232, 93, 117, 0.15);
+  color: #E85D75;
+  border: 1px solid rgba(232, 93, 117, 0.3);
+  font-size: 12px;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.toggle-label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.result-item {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.result-item:last-child {
+  border-bottom: none;
+}
+
+.result-label {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.result-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.result-value-small {
+  font-size: 14px;
+  color: var(--text);
+}

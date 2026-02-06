@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simple Investment Calculator | The Long Math</title>
+  <meta name="description" content="Simple investment growth calculator: contributions, time horizon, expected return, and optional inflation-adjusted results. No fees. Inspectable arithmetic." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/investment-simple/" />
+
+  <!-- Site-wide theme + styles -->
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  
+  <!-- Calculator-specific styles -->
+  <link rel="stylesheet" href="/calculators/investment-simple/investment-simple.css" />
+</head>
+
+<body>
+  <div id="site-header"></div>
+  
+  <div class="wrap">
+    <div class="card">
+      <div class="crumb">
+        <a href="/calculators/">Calculators</a>
+      </div>
+
+      <h1>Simple Investment Calculator</h1>
+      <p class="lead">
+        Models compound growth with recurring contributions. No fees. No opinions. Just arithmetic.
+      </p>
+
+      <div class="calc-grid">
+        <!-- Inputs -->
+        <article class="panel">
+          <h2 class="section-title">Inputs</h2>
+
+          <div class="field">
+            <label for="startingAmount">Starting amount</label>
+            <input id="startingAmount" type="number" inputmode="decimal" min="0" step="100" value="10000" />
+          </div>
+
+          <div class="field">
+            <label for="contribFreq">Contribution frequency</label>
+            <select id="contribFreq">
+              <option value="52">Weekly</option>
+              <option value="26">Biweekly</option>
+              <option value="12" selected>Monthly</option>
+              <option value="1">Annually</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="contribAmount">Contribution amount (per period)</label>
+            <input id="contribAmount" type="number" inputmode="decimal" min="0" step="10" value="500" />
+          </div>
+
+          <div class="field">
+            <label for="years">Time horizon (years)</label>
+            <input id="years" type="number" inputmode="numeric" min="0" step="1" value="25" />
+          </div>
+
+          <div class="field">
+            <label for="annualReturn">Expected annual return (nominal)</label>
+            <div class="inline">
+              <input id="annualReturn" type="number" inputmode="decimal" step="0.1" value="7" />
+              <span class="unit">%</span>
+            </div>
+          </div>
+
+          <hr class="sep" />
+
+          <div class="field checkbox">
+            <input id="realToggle" type="checkbox" />
+            <label for="realToggle">Show inflation-adjusted (real) results</label>
+          </div>
+
+          <div id="inflationWrap" class="field hidden">
+            <label for="inflationRate">Inflation rate</label>
+            <div class="inline">
+              <input id="inflationRate" type="number" inputmode="decimal" step="0.1" value="2.5" />
+              <span class="unit">%</span>
+            </div>
+            <p class="help muted">
+              Real return is computed as: (1 + nominal) / (1 + inflation) − 1.
+            </p>
+          </div>
+
+          <p class="help muted">
+            Assumes contributions happen at the <em>end</em> of each period and growth compounds once per contribution period.
+          </p>
+        </article>
+
+        <!-- Outputs -->
+        <article class="panel">
+          <h2 class="section-title">Results</h2>
+
+          <div class="results">
+            <div class="result-row">
+              <div class="label">Final balance</div>
+              <div class="value" id="finalBalance">$—</div>
+            </div>
+            <div class="result-row">
+              <div class="label">Total capital invested</div>
+              <div class="value" id="totalInvested">$—</div>
+            </div>
+            <div class="result-row">
+              <div class="label">Interest earned</div>
+              <div class="value" id="interestEarned">$—</div>
+            </div>
+            <div class="result-row">
+              <div class="label">IRR (money-weighted, annualized)</div>
+              <div class="value" id="irr">—</div>
+            </div>
+          </div>
+
+          <hr class="sep" />
+
+          <div class="assumptions">
+            <h3>Assumptions shown</h3>
+            <ul>
+              <li><span class="muted">Compounding:</span> per contribution period</li>
+              <li><span class="muted">Contributions:</span> end of each period</li>
+              <li><span class="muted">Fees:</span> none</li>
+              <li><span class="muted">Taxes:</span> not modeled</li>
+            </ul>
+          </div>
+
+          <p class="disclaimer muted">
+            Educational math only. Verify with your own assumptions and professional advice if needed.
+          </p>
+        </article>
+      </div>
+
+      <footer style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted);">
+        © <span id="year"></span> The Long Math. All rights reserved.
+      </footer>
+    </div>
+  </div>
+
+  <script src="/calculators/investment-simple/investment-simple.js"></script>
+  
+  <script>
+    (function(){
+      var y=document.getElementById("year");
+      if(y) y.textContent=String(new Date().getFullYear());
+    })();
+  </script>
+</body>
+</html>
