@@ -14,6 +14,8 @@
   const totalInvestedEl = el("totalInvested");
   const interestEarnedEl = el("interestEarned");
   const irrEl = el("irr");
+  const milestonesBody = el("milestonesBody");
+  const realExplainer = el("realExplainer");
 
   function toNumber(v){
     const x = Number(v);
@@ -59,6 +61,39 @@
     const growth = Math.pow(1 + i, N);
     const fv = P0 * growth + PMT * ((growth - 1) / i);
     return { fv, N, i };
+  }
+
+  // Compute milestone values at year-end snapshots
+  function computeMilestones(P0, PMT, periodsPerYear, years, rAnnual){
+    const milestones = [];
+    const maxYear = Math.floor(years);
+    const milestoneYears = [0, 5, 10, 15, 20, 25, 30].filter(y => y <= maxYear);
+    
+    if(milestoneYears.length === 0) return milestones;
+
+    const i = Math.pow(1 + rAnnual, 1 / periodsPerYear) - 1; // effective rate per period
+    const isZeroRate = Math.abs(i) < 1e-12;
+
+    for(const year of milestoneYears){
+      const periodsElapsed = Math.round(periodsPerYear * year);
+      let balance, contributed;
+
+      if(year === 0){
+        balance = P0;
+        contributed = P0;
+      } else if(isZeroRate){
+        balance = P0 + PMT * periodsElapsed;
+        contributed = P0 + PMT * periodsElapsed;
+      } else {
+        const growth = Math.pow(1 + i, periodsElapsed);
+        balance = P0 * growth + PMT * ((growth - 1) / i);
+        contributed = P0 + PMT * periodsElapsed;
+      }
+
+      milestones.push({ year, balance, contributed });
+    }
+
+    return milestones;
   }
 
   // Money-weighted IRR from cash flows (per period), then annualize.
@@ -164,6 +199,7 @@
     const rAnnual = effectiveAnnualReturn();
 
     inflationWrap.classList.toggle("hidden", !realToggle.checked);
+    realExplainer.classList.toggle("hidden", !realToggle.checked);
 
     const { fv, N } = computeFutureValue(P0, PMT, ppy, Y, rAnnual);
 
@@ -178,6 +214,19 @@
     interestEarnedEl.textContent = fmtMoney(interest);
 
     irrEl.textContent = (irr === null) ? "—" : fmtPct(irr);
+
+    // Update milestones table
+    const milestones = computeMilestones(P0, PMT, ppy, Y, rAnnual);
+    milestonesBody.innerHTML = "";
+    for(const m of milestones){
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${m.year}</td>
+        <td>${fmtMoney(m.contributed)}</td>
+        <td>${fmtMoney(m.balance)}</td>
+      `;
+      milestonesBody.appendChild(row);
+    }
   }
 
   // Events

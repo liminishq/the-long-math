@@ -82,3 +82,106 @@
 .assumptions li{ margin: 6px 0; }
 
 .disclaimer{ margin-top: 14px; font-size: 12.5px; }
+
+/* Milestones table */
+.milestones {
+  margin-top: 16px;
+}
+
+.milestones-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.milestones-table thead {
+  border-bottom: 1px solid var(--border);
+}
+
+.milestones-table th {
+  text-align: left;
+  padding: 8px 6px;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.milestones-table td {
+  padding: 8px 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.milestones-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.milestones-table td:last-child {
+  font-weight: 600;
+  text-align: right;
+}
+
+.milestones-table td:nth-child(2) {
+  text-align: right;
+}
+
+@media (max-width: 600px) {
+  .milestones-table {
+    font-size: 12px;
+  }
+  .milestones-table th,
+  .milestones-table td {
+    padding: 6px 4px;
+  }
+}
+
+/* Inflation explainer callout */
+.callout {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--accentSoft);
+}
+
+.callout h3 {
+  color: var(--accent2);
+  font-weight: 700;
+}
+
+.callout p {
+  color: var(--text);
+}
+
+/* FAQ section */
+.faq-section {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.faq-section h2 {
+  margin: 0 0 20px;
+  font-size: 20px;
+  color: var(--text);
+}
+
+.faq-item {
+  margin-bottom: 24px;
+}
+
+.faq-item h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: var(--accent2);
+  font-weight: 700;
+}
+
+.faq-item p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
