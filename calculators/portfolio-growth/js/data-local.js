@@ -36,12 +36,27 @@ const DataLocal = {
    */
   getValueAtDate(series, date) {
     if (!series || series.length === 0) return null;
+    
+    // First try exact match
+    for (let i = 0; i < series.length; i++) {
+      if (series[i].date === date) {
+        return series[i].value;
+      }
+    }
+    
+    // Then find nearest before
     for (let i = series.length - 1; i >= 0; i--) {
       if (series[i].date <= date) {
         return series[i].value;
       }
     }
-    return series[0]?.value || null;
+    
+    // If date is before all data, return first value
+    if (series.length > 0 && date < series[0].date) {
+      return series[0].value;
+    }
+    
+    return null;
   },
 
   /**

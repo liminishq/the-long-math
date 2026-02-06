@@ -5,7 +5,7 @@
 
 (function() {
   'use strict';
-
+  
   // State
   let alignedData = null;
   let allocations = {
@@ -180,7 +180,10 @@
     for (const [key, name] of Object.entries(assetNames)) {
       const slider = createAllocationSlider(key, { name });
       allocationContainer.appendChild(slider);
-      document.getElementById(`alloc-${key}`).textContent = (allocations[key] || 0).toFixed(1) + '%';
+      const allocDisplay = document.getElementById(`alloc-${key}`);
+      if (allocDisplay) {
+        allocDisplay.textContent = (allocations[key] || 0).toFixed(1) + '%';
+      }
     }
 
     updateAllocationTotal();
@@ -213,7 +216,7 @@
     if (!alignedData || !alignedData.dates || alignedData.dates.length === 0) {
       return;
     }
-
+    
     startDateSelect.innerHTML = '';
     
     const earliestDate = findEarliestCommonMonth();
@@ -262,7 +265,7 @@
         dataWarnings.style.display = 'block';
         dataWarnings.textContent = `Start date adjusted to ${clampedStart} (earliest available data)`;
       }
-    } else {
+      } else {
       if (dataWarnings) {
         dataWarnings.style.display = 'none';
       }
@@ -289,31 +292,50 @@
 
     for (const [key, name] of Object.entries(assetNames)) {
       const assetSeries = alignedData.assets[key];
-      if (assetSeries) {
-        const indexed = Sim.indexAssetSeries(assetSeries, startDate);
-        if (indexed.length > 0) {
-          // Apply inflation adjustment if needed
-          // Deflate to start month (base = start month CPI)
-          let values = indexed.map(item => item.value);
-          if (inflationAdjusted && alignedData.cpi && alignedData.cpi.length > 0) {
-            const cpiStart = DataLocal.getCPIAtDate(startDate);
-            if (cpiStart) {
-              values = indexed.map(item => {
-                const cpiCurrent = DataLocal.getCPIAtDate(item.date);
-                return cpiCurrent ? item.value * (cpiStart / cpiCurrent) : item.value;
+      if (assetSeries && assetSeries.length > 0) {
+        // Get the start value for indexing
+        const startValue = DataLocal.getValueAtDate(assetSeries, startDate);
+        
+        if (startValue != null && startValue > 0) {
+          // Get chart dates and index values
+          const startIndex = alignedData.dates.indexOf(startDate);
+          if (startIndex !== -1) {
+            const chartDates = alignedData.dates.slice(startIndex);
+            const values = [];
+            
+            for (const date of chartDates) {
+              const value = DataLocal.getValueAtDate(assetSeries, date);
+              if (value != null && value > 0) {
+                let indexedValue = value / startValue;
+                
+                // Apply inflation adjustment if needed
+                if (inflationAdjusted && alignedData.cpi && alignedData.cpi.length > 0) {
+                  const cpiStart = DataLocal.getCPIAtDate(startDate);
+                  const cpiCurrent = DataLocal.getCPIAtDate(date);
+                  if (cpiStart && cpiCurrent && cpiStart > 0 && cpiCurrent > 0) {
+                    indexedValue = indexedValue * (cpiStart / cpiCurrent);
+                  }
+                }
+                
+                values.push(indexedValue);
+              } else {
+                values.push(null); // Gap in data
+              }
+            }
+            
+            if (values.length > 0 && values.some(v => v != null)) {
+              datasets.push({
+                label: name,
+                data: values,
+                borderColor: colors[key],
+                backgroundColor: colors[key] + '40',
+                borderWidth: 1.5,
+                pointRadius: 0,
+                tension: 0.1,
+                spanGaps: false
               });
             }
           }
-
-          datasets.push({
-            label: name,
-            data: values,
-            borderColor: colors[key],
-            backgroundColor: colors[key] + '40',
-            borderWidth: 1.5,
-            pointRadius: 0,
-            tension: 0.1
-          });
         }
       }
     }
@@ -334,15 +356,28 @@
         if (result.portfolio.length > 0) {
           const indexedPortfolio = Sim.indexPortfolio(result.portfolio, inflationAdjusted);
           if (indexedPortfolio.length > 0) {
+            // Align portfolio data to chart dates
+            const portfolioMap = new Map();
+            for (const item of indexedPortfolio) {
+              portfolioMap.set(item.date, item.value);
+            }
+            
+            const portfolioValues = [];
+            for (const date of chartDates) {
+              const value = portfolioMap.get(date);
+              portfolioValues.push(value != null ? value : null);
+            }
+            
             datasets.push({
               label: 'Your Portfolio',
-              data: indexedPortfolio.map(p => p.value),
+              data: portfolioValues,
               borderColor: '#E85D75',
               backgroundColor: '#E85D7540',
               borderWidth: 2.5,
               pointRadius: 0,
               tension: 0.1,
-              borderDash: [5, 5]
+              borderDash: [5, 5],
+              spanGaps: false
             });
           }
         }
@@ -351,7 +386,7 @@
       }
     }
 
-    // Get chart dates
+    // Get chart dates (same as used for asset lines)
     const startIndex = alignedData.dates.indexOf(clampedStart);
     const chartDates = startIndex !== -1 
       ? alignedData.dates.slice(startIndex)
@@ -387,7 +422,7 @@
       updateChart();
       return;
     }
-
+    
     try {
       const startingAmount = parseFloat(startingAmountInput.value) || 0;
       const monthlyContribution = parseFloat(monthlyContributionInput.value) || 0;
