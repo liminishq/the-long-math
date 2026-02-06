@@ -23,10 +23,10 @@
   <div id="site-header"></div>
   
   <div class="wrap">
+    <!-- Back link -->
+    <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
+
     <div class="card">
-      <div class="crumb">
-        <a href="/calculators/">Calculators</a>
-      </div>
 
       <h1>Investment Growth Simulator</h1>
       <p class="lead">
@@ -131,12 +131,10 @@
           <li><strong>FX conversion:</strong> Not applied in this version.</li>
         </ul>
       </section>
-
-      <footer style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted);">
-        © <span id="year"></span> The Long Math. All rights reserved.
-      </footer>
     </div>
   </div>
+
+  <div id="footerMount"></div>
 
   <!-- Scripts -->
   <script src="/calculators/portfolio-growth/js/data-local.js"></script>
@@ -144,11 +142,5 @@
   <script src="/calculators/portfolio-growth/js/chart.js"></script>
   <script src="/calculators/portfolio-growth/js/ui.js"></script>
 
-  <script>
-    (function(){
-      var y=document.getElementById("year");
-      if(y) y.textContent=String(new Date().getFullYear());
-    })();
-  </script>
 </body>
 </html>

@@ -1,34 +1,33 @@
-<header class="site-header">
-  <div class="header-inner">
-    <a class="site-brand" href="/">The Long Math</a>
-
-    <button
-      class="hamburger"
-      type="button"
-      aria-label="Open menu"
-      aria-controls="site-drawer"
-      aria-expanded="false">
-      <span class="hamburger-lines" aria-hidden="true"></span>
-    </button>
+<header class="sitehead">
+  <div class="brandstack">
+    <div class="brand">The Long Math</div>
+    <div class="sigil">$ = P(1 + r/n)<sup>nt</sup></div>
   </div>
 
-  <div class="drawer-overlay" data-drawer-close hidden></div>
-
-  <aside id="site-drawer" class="drawer" aria-hidden="true">
-    <div class="drawer-top">
-      <div class="drawer-title">Menu</div>
-      <button
-        class="drawer-close"
-        type="button"
-        aria-label="Close menu"
-        data-drawer-close>
-        ×
-      </button>
+  <div class="head-actions">
+    <div class="themebox">
+      <div class="tlabel" id="theme_label">Dark</div>
+      <label class="switch" aria-label="Toggle light/dark mode">
+        <input id="theme_toggle" type="checkbox" />
+        <span class="knob"></span>
+      </label>
     </div>
 
-    <nav class="drawer-nav" aria-label="Site">
-      <a href="/about/">About</a>
-      <a href="/contact/">Contact</a>
-    </nav>
-  </aside>
+    <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="menuPanel" aria-label="Open menu">
+      ☰
+    </button>
+  </div>
 </header>
+
+<div id="menuOverlay" class="menu-overlay"></div>
+
+<nav id="menuPanel" class="menu-panel" aria-label="Site menu">
+  <div class="menu-top">
+    <div class="menu-title">Menu</div>
+    <button id="menuClose" class="menu-close" aria-label="Close menu">×</button>
+  </div>
+
+  <a class="menu-link" href="/">Home</a>
+  <a class="menu-link" href="/about/">About</a>
+  <a class="menu-link" href="/contact/">Contact</a>
+</nav>
