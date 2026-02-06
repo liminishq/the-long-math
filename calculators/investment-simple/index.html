@@ -22,7 +22,7 @@
   <div class="wrap">
     <div class="card">
       <div class="crumb">
-        <a href="/calculators/">Calculators</a>
+        <a href="/calculators/">← Back to Tools and Calculators</a>
       </div>
 
       <h1>Simple Investment Calculator</h1>
@@ -96,9 +96,9 @@
           <h2 class="section-title">Results</h2>
 
           <div class="results">
-            <div class="result-row">
+            <div class="result-row highlight">
               <div class="label">Final balance</div>
-              <div class="value" id="finalBalance">$—</div>
+              <div class="value highlight-value" id="finalBalance">$—</div>
             </div>
             <div class="result-row">
               <div class="label">Total capital invested</div>
@@ -108,9 +108,9 @@
               <div class="label">Interest earned</div>
               <div class="value" id="interestEarned">$—</div>
             </div>
-            <div class="result-row">
+            <div class="result-row highlight">
               <div class="label">IRR (money-weighted, annualized)</div>
-              <div class="value" id="irr">—</div>
+              <div class="value highlight-value" id="irr">—</div>
             </div>
           </div>
 
@@ -132,19 +132,11 @@
         </article>
       </div>
 
-      <footer style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted);">
-        © <span id="year"></span> The Long Math. All rights reserved.
-      </footer>
     </div>
   </div>
 
+  <div id="footerMount"></div>
+
   <script src="/calculators/investment-simple/investment-simple.js"></script>
-  
-  <script>
-    (function(){
-      var y=document.getElementById("year");
-      if(y) y.textContent=String(new Date().getFullYear());
-    })();
-  </script>
 </body>
 </html>

@@ -1,351 +1,44 @@
-/* ============================================================
-   Portfolio Growth Calculator — UI Module
-   ============================================================
-   
-   Handles user interactions, data loading, and result display.
-   ============================================================ */
+/**
+ * Portfolio Growth Calculator - UI Controller
+ * Wires inputs, sliders, chart, and results
+ */
 
 (function() {
   'use strict';
-  
-  let chart = null;
-  let currentData = null;
-  let isLoading = false;
-  
-  // ============================================================
-  // Initialize
-  // ============================================================
-  function init() {
-    setupEventListeners();
-    loadData();
-  }
-  
-  // ============================================================
-  // Setup event listeners
-  // ============================================================
-  function setupEventListeners() {
-    // Calculate button
-    const calculateBtn = document.getElementById('calculateBtn');
-    if (calculateBtn) {
-      calculateBtn.addEventListener('click', runSimulation);
-    }
-    
-    // Input changes
-    const inputs = ['startMonth', 'startingAmount', 'contributionAmount', 'contributionFreq', 'horizonYears', 'showReal'];
-    inputs.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.addEventListener('change', runSimulation);
-        el.addEventListener('input', runSimulation);
-      }
-    });
-    
-    // Legend toggles
-    const legendItems = document.querySelectorAll('.legend-item input[type="checkbox"]');
-    legendItems.forEach(checkbox => {
-      checkbox.addEventListener('change', () => {
-        updateChartVisibility();
-      });
-    });
-    
-    // Initialize chart
-    const canvas = document.getElementById('chartCanvas');
-    if (canvas) {
-      chart = new PortfolioChart(canvas);
-    }
-  }
-  
-  // ============================================================
-  // Load data
-  // ============================================================
-  async function loadData(forceRefresh = false) {
-    if (isLoading) return;
-    
-    isLoading = true;
-    const statusEl = document.getElementById('dataStatus');
-    
-    if (statusEl) {
-      statusEl.textContent = 'Loading data...';
-      statusEl.className = 'data-status loading';
-    }
-    
-    try {
-      const data = await window.portfolioData.fetchAll(forceRefresh);
-      currentData = data;
-      
-      // Count available vs unavailable series
-      const seriesCount = Object.keys(data).length;
-      const availableCount = Object.values(data).filter(s => s && s.ok).length;
-      
-      if (statusEl) {
-        if (availableCount === seriesCount) {
-          statusEl.textContent = 'Data loaded';
-          statusEl.className = 'data-status success';
-        } else {
-          statusEl.textContent = `Data loaded (${availableCount}/${seriesCount} series available)`;
-          statusEl.className = 'data-status warning';
-        }
-      }
-      
-      // Run simulation if we have inputs
-      runSimulation();
-    } catch (error) {
-      console.error('Data load error:', error);
-      if (statusEl) {
-        statusEl.textContent = 'Error loading data. Please check console for details.';
-        statusEl.className = 'data-status error';
-      }
-    } finally {
-      isLoading = false;
-    }
-  }
-  
-  // ============================================================
-  // Run simulation
-  // ============================================================
-  function runSimulation() {
-    if (!currentData) {
-      console.warn('Data not loaded yet');
-      return;
-    }
-    
-    // Get inputs
-    const startMonth = document.getElementById('startMonth')?.value || '2000-01';
-    const startingAmount = parseFloat(document.getElementById('startingAmount')?.value || 0);
-    const contributionAmount = parseFloat(document.getElementById('contributionAmount')?.value || 0);
-    const contributionFreq = document.getElementById('contributionFreq')?.value || 'monthly';
-    const horizonYears = parseFloat(document.getElementById('horizonYears')?.value || 30);
-    const showReal = document.getElementById('showReal')?.checked || false;
-    
-    // Validate
-    if (horizonYears < 1 || horizonYears > 60) {
-      console.warn('Invalid horizon');
-      return;
-    }
-    
-    // Run simulation
-    try {
-      const results = window.portfolioEngine.simulate({
-        startMonth,
-        horizonYears,
-        startingAmount,
-        contributionAmount,
-        contributionFreq,
-        showReal,
-        data: currentData
-      });
-      
-      // Update UI
-      displayResults(results);
-      updateChart(results);
-    } catch (error) {
-      console.error('Simulation error:', error);
-    }
-  }
-  
-  // ============================================================
-  // Display results
-  // ============================================================
-  function displayResults(results) {
-    // Collect unavailable series for warning
-    const unavailable = [];
-    
-    // Update result cards
-    updateResultCard('cash', results.cash, 'Cash (0%)', unavailable);
-    updateResultCard('tBill', results.tBill, 'Canada T-bills', unavailable);
-    updateResultCard('bond', results.bond, 'Canada Bonds', unavailable);
-    updateResultCard('gic', results.gic, 'Canada 5-year GIC', unavailable, {
-      gicRate: results.gic.gicRate,
-      gicStartDate: results.gic.gicStartDate
-    });
-    updateResultCard('equities', results.equities, 'US Equities', unavailable);
-    updateResultCard('activeFund', results.activeFund, 'Typical Active Fund', unavailable);
-    
-    // Show/hide warnings
-    showSeriesWarnings(unavailable);
-    
-    // Update legend checkboxes
-    updateLegendAvailability(results);
-  }
-  
-  // ============================================================
-  // Update result card
-  // ============================================================
-  function updateResultCard(vehicleId, result, label, unavailable, extra = {}) {
-    const card = document.getElementById(`result-${vehicleId}`);
-    if (!card) return;
-    
-    // Check if this series is unavailable
-    if (!result || !result.ok) {
-      unavailable.push({
-        label: label,
-        reason: result?.reason || 'Unknown error',
-        vehicleId: vehicleId
-      });
-      
-      // Show disabled state
-      card.style.opacity = '0.5';
-      card.style.pointerEvents = 'none';
-      
-      const endingEl = card.querySelector('.result-ending');
-      const cagrEl = card.querySelector('.result-cagr');
-      const contributionsEl = card.querySelector('.result-contributions');
-      const extraEl = card.querySelector('.result-extra');
-      
-      if (endingEl) endingEl.textContent = 'Unavailable';
-      if (cagrEl) cagrEl.textContent = '—';
-      if (contributionsEl) contributionsEl.textContent = '—';
-      if (extraEl) extraEl.style.display = 'none';
-      
-      // Add reason tooltip or text
-      const reasonText = result?.reason || 'Data unavailable';
-      if (endingEl) {
-        endingEl.title = reasonText;
-      }
-      
-      return;
-    }
-    
-    // Series is available - show normal state
-    card.style.opacity = '1';
-    card.style.pointerEvents = 'auto';
-    
-    const endingEl = card.querySelector('.result-ending');
-    const cagrEl = card.querySelector('.result-cagr');
-    const contributionsEl = card.querySelector('.result-contributions');
-    const extraEl = card.querySelector('.result-extra');
-    
-    // Validate values before displaying
-    if (endingEl) {
-      const endingValue = result.endingValue;
-      if (endingValue != null && Number.isFinite(endingValue)) {
-        endingEl.textContent = formatCurrency(endingValue);
-      } else {
-        endingEl.textContent = '—';
-        console.warn(`[${vehicleId}] Invalid ending value:`, endingValue);
-      }
-    }
-    
-    if (cagrEl) {
-      const cagr = result.cagr;
-      if (cagr != null && Number.isFinite(cagr)) {
-        cagrEl.textContent = cagr.toFixed(2) + '%';
-      } else {
-        cagrEl.textContent = '—';
-        console.warn(`[${vehicleId}] Invalid CAGR:`, cagr);
-      }
-    }
-    
-    if (contributionsEl) {
-      const contributions = result.totalContributions;
-      if (contributions != null && Number.isFinite(contributions)) {
-        contributionsEl.textContent = formatCurrency(contributions);
-      } else {
-        contributionsEl.textContent = '—';
-      }
-    }
-    
-    if (extraEl && extra.gicRate != null && Number.isFinite(extra.gicRate)) {
-      extraEl.textContent = `Average GIC rate: ${extra.gicRate.toFixed(2)}% (from ${extra.gicStartDate || 'unknown'})`;
-      extraEl.style.display = 'block';
-    } else if (extraEl) {
-      extraEl.style.display = 'none';
-    }
-  }
-  
-  // ============================================================
-  // Show series warnings
-  // ============================================================
-  function showSeriesWarnings(unavailable) {
-    const warningsEl = document.getElementById('seriesWarnings');
-    const warningsListEl = document.getElementById('seriesWarningsList');
-    
-    if (!warningsEl || !warningsListEl) return;
-    
-    if (unavailable.length === 0) {
-      warningsEl.style.display = 'none';
-      return;
-    }
-    
-    warningsEl.style.display = 'block';
-    warningsListEl.innerHTML = '';
-    
-    unavailable.forEach(({ label, reason }) => {
-      const li = document.createElement('li');
-      li.textContent = `${label} — ${reason}`;
-      warningsListEl.appendChild(li);
-    });
-  }
-  
-  // ============================================================
-  // Update legend availability
-  // ============================================================
-  function updateLegendAvailability(results) {
-    const legendMap = {
-      cash: 'legend-cash',
-      tBill: 'legend-tBill',
-      bond: 'legend-bond',
-      gic: 'legend-gic',
-      equities: 'legend-equities',
-      activeFund: 'legend-activeFund'
-    };
-    
-    Object.entries(legendMap).forEach(([vehicleId, checkboxId]) => {
-      const checkbox = document.getElementById(checkboxId);
-      if (!checkbox) return;
-      
-      const result = results[vehicleId];
-      if (!result || !result.ok) {
-        // Disable and uncheck unavailable series
-        checkbox.disabled = true;
-        checkbox.checked = false;
-        checkbox.parentElement.style.opacity = '0.5';
-      } else {
-        // Enable available series
-        checkbox.disabled = false;
-        checkbox.parentElement.style.opacity = '1';
-      }
-    });
-  }
-  
-  // ============================================================
-  // Update chart
-  // ============================================================
-  function updateChart(results) {
-    if (!chart) return;
-    
-    // Filter out unavailable series
-    const availableResults = {};
-    Object.entries(results).forEach(([key, value]) => {
-      if (value && value.ok) {
-        availableResults[key] = value;
-      }
-    });
-    
-    chart.setData(availableResults);
-  }
-  
-  // ============================================================
-  // Update chart visibility from legend
-  // ============================================================
-  function updateChartVisibility() {
-    if (!chart) return;
-    
-    const visible = [];
-    const checkboxes = document.querySelectorAll('.legend-item input[type="checkbox"]');
-    checkboxes.forEach(cb => {
-      if (cb.checked) {
-        visible.push(cb.value);
-      }
-    });
-    
-    chart.setVisibleSeries(visible);
-  }
-  
-  // ============================================================
-  // Format currency
-  // ============================================================
+
+  // State
+  let alignedData = null;
+  let allocations = {
+    cash: 0,
+    bonds: 0,
+    gic: 0,
+    equities: 0
+  };
+  let lastTouchedSlider = null;
+
+  // DOM elements
+  const dataStatus = document.getElementById('dataStatus');
+  const dataWarnings = document.getElementById('dataWarnings');
+  const startDateSelect = document.getElementById('startDate');
+  const startingAmountInput = document.getElementById('startingAmount');
+  const monthlyContributionInput = document.getElementById('monthlyContribution');
+  const horizonYearsInput = document.getElementById('horizonYears');
+  const allocationContainer = document.getElementById('allocationContainer');
+  const allocationTotal = document.getElementById('allocationTotal');
+  const allocationError = document.getElementById('allocationError');
+  const resetAllocationsBtn = document.getElementById('resetAllocations');
+  const inflationAdjustedCheckbox = document.getElementById('inflationAdjusted');
+  const endingValueDisplay = document.getElementById('endingValue');
+  const cagrDisplay = document.getElementById('cagr');
+  const totalContributionsDisplay = document.getElementById('totalContributions');
+  const periodDisplay = document.getElementById('period');
+  const chartCanvas = document.getElementById('growthChart');
+
+  /**
+   * Format currency
+   */
   function formatCurrency(value) {
+    if (value == null || !isFinite(value)) return '—';
     return new Intl.NumberFormat('en-CA', {
       style: 'currency',
       currency: 'CAD',
@@ -353,9 +46,475 @@
       maximumFractionDigits: 0
     }).format(value);
   }
-  
-  // ============================================================
-  // Boot
-  // ============================================================
-  document.addEventListener('DOMContentLoaded', init);
+
+  /**
+   * Format percentage
+   */
+  function formatPercent(value) {
+    if (value == null || !isFinite(value)) return '—';
+    return value.toFixed(2) + '%';
+  }
+
+  /**
+   * Find earliest common month across all required datasets
+   */
+  function findEarliestCommonMonth() {
+    if (!alignedData || !alignedData.dates || alignedData.dates.length === 0) {
+      return null;
+    }
+
+    // Find earliest date where we have all required assets
+    for (const date of alignedData.dates) {
+      let hasAllData = true;
+      for (const assetKey of Object.keys(allocations)) {
+        const assetSeries = alignedData.assets[assetKey];
+        if (!assetSeries || DataLocal.getValueAtDate(assetSeries, date) == null) {
+          hasAllData = false;
+          break;
+        }
+      }
+      if (hasAllData) {
+        return date;
+      }
+    }
+
+    return alignedData.dates[0];
+  }
+
+  /**
+   * Clamp start date to available range
+   */
+  function clampStartDate(requestedDate) {
+    const earliest = findEarliestCommonMonth();
+    if (!earliest) return requestedDate;
+    
+    if (requestedDate < earliest) {
+      return earliest;
+    }
+    return requestedDate;
+  }
+
+  /**
+   * Update allocation total display and normalize if needed
+   */
+  function updateAllocationTotal() {
+    const total = Object.values(allocations).reduce((sum, val) => sum + val, 0);
+    allocationTotal.textContent = total.toFixed(1) + '%';
+    
+    if (Math.abs(total - 100) > 0.1) {
+      allocationTotal.style.color = 'var(--error, #E85D75)';
+      allocationError.textContent = `Allocations must sum to 100% (currently ${total.toFixed(1)}%)`;
+      allocationError.style.display = 'block';
+      
+      // Auto-normalize by adjusting the last-touched slider
+      if (lastTouchedSlider && total !== 0) {
+        const currentValue = allocations[lastTouchedSlider];
+        const adjustment = 100 - total;
+        allocations[lastTouchedSlider] = Math.max(0, Math.min(100, currentValue + adjustment));
+        
+        const slider = document.getElementById(`slider-${lastTouchedSlider}`);
+        if (slider) {
+          slider.value = allocations[lastTouchedSlider];
+          document.getElementById(`alloc-${lastTouchedSlider}`).textContent = allocations[lastTouchedSlider].toFixed(1) + '%';
+        }
+        
+        // Recursive call to check again
+        return updateAllocationTotal();
+      }
+      
+      return false;
+    } else {
+      allocationTotal.style.color = 'var(--accent)';
+      allocationError.style.display = 'none';
+      return true;
+    }
+  }
+
+  /**
+   * Create allocation slider
+   */
+  function createAllocationSlider(key, asset) {
+    const div = document.createElement('div');
+    div.className = 'allocation-item';
+    
+    const label = document.createElement('label');
+    label.innerHTML = `
+      <span>${asset.name}</span>
+      <span class="allocation-value" id="alloc-${key}">0%</span>
+    `;
+    
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.min = '0';
+    slider.max = '100';
+    slider.step = '0.1';
+    slider.value = allocations[key] || 0;
+    slider.id = `slider-${key}`;
+    
+    slider.addEventListener('input', function() {
+      lastTouchedSlider = key;
+      allocations[key] = parseFloat(this.value);
+      document.getElementById(`alloc-${key}`).textContent = allocations[key].toFixed(1) + '%';
+      updateAllocationTotal();
+      calculateAndUpdate();
+    });
+
+    div.appendChild(label);
+    div.appendChild(slider);
+    return div;
+  }
+
+  /**
+   * Initialize allocation sliders
+   */
+  function initAllocations() {
+    allocationContainer.innerHTML = '';
+    
+    const assetNames = {
+      cash: 'Cash',
+      bonds: 'Bonds',
+      gic: 'GIC Proxy',
+      equities: 'Equities'
+    };
+
+    for (const [key, name] of Object.entries(assetNames)) {
+      const slider = createAllocationSlider(key, { name });
+      allocationContainer.appendChild(slider);
+      document.getElementById(`alloc-${key}`).textContent = (allocations[key] || 0).toFixed(1) + '%';
+    }
+
+    updateAllocationTotal();
+  }
+
+  /**
+   * Reset allocations to equal weight
+   */
+  function resetAllocations() {
+    const count = Object.keys(allocations).length;
+    const equalWeight = 100 / count;
+    
+    for (const key of Object.keys(allocations)) {
+      allocations[key] = equalWeight;
+      const slider = document.getElementById(`slider-${key}`);
+      if (slider) {
+        slider.value = equalWeight;
+        document.getElementById(`alloc-${key}`).textContent = equalWeight.toFixed(1) + '%';
+      }
+    }
+    
+    updateAllocationTotal();
+    calculateAndUpdate();
+  }
+
+  /**
+   * Populate start date dropdown
+   */
+  function populateStartDates() {
+    if (!alignedData || !alignedData.dates || alignedData.dates.length === 0) {
+      return;
+    }
+
+    startDateSelect.innerHTML = '';
+    
+    const earliestDate = findEarliestCommonMonth();
+    if (!earliestDate) {
+      return;
+    }
+
+    // Add options from earliest to latest (going forward)
+    for (const date of alignedData.dates) {
+      if (date >= earliestDate) {
+        const option = document.createElement('option');
+        option.value = date;
+        option.textContent = date;
+        startDateSelect.appendChild(option);
+      }
+    }
+
+    // Set default to 2000-01 or earliest available
+    const defaultDate = alignedData.dates.find(d => d >= '2000-01') || earliestDate;
+    if (defaultDate) {
+      startDateSelect.value = defaultDate;
+    } else {
+      startDateSelect.value = startDateSelect.options[startDateSelect.options.length - 1]?.value || earliestDate;
+    }
+  }
+
+  /**
+   * Update chart with historical data and portfolio
+   */
+  function updateChart() {
+    if (!alignedData || !ChartManager.chart) return;
+
+    let startDate = startDateSelect.value;
+    if (!startDate) {
+      startDate = findEarliestCommonMonth();
+      if (!startDate) return;
+    }
+
+    // Clamp start date
+    const clampedStart = clampStartDate(startDate);
+    if (clampedStart !== startDate) {
+      startDateSelect.value = clampedStart;
+      startDate = clampedStart;
+      // Show warning
+      if (dataWarnings) {
+        dataWarnings.style.display = 'block';
+        dataWarnings.textContent = `Start date adjusted to ${clampedStart} (earliest available data)`;
+      }
+    } else {
+      if (dataWarnings) {
+        dataWarnings.style.display = 'none';
+      }
+    }
+
+    const inflationAdjusted = inflationAdjustedCheckbox.checked;
+    const datasets = [];
+
+    // Asset colors
+    const colors = {
+      cash: '#888888',
+      bonds: '#50C878',
+      gic: '#FFB84D',
+      equities: '#D9B46A'
+    };
+
+    // Add historical asset lines (pre-populated on load)
+    const assetNames = {
+      cash: 'Cash',
+      bonds: 'Bonds',
+      gic: 'GIC Proxy',
+      equities: 'Equities'
+    };
+
+    for (const [key, name] of Object.entries(assetNames)) {
+      const assetSeries = alignedData.assets[key];
+      if (assetSeries) {
+        const indexed = Sim.indexAssetSeries(assetSeries, startDate);
+        if (indexed.length > 0) {
+          // Apply inflation adjustment if needed
+          // Deflate to start month (base = start month CPI)
+          let values = indexed.map(item => item.value);
+          if (inflationAdjusted && alignedData.cpi && alignedData.cpi.length > 0) {
+            const cpiStart = DataLocal.getCPIAtDate(startDate);
+            if (cpiStart) {
+              values = indexed.map(item => {
+                const cpiCurrent = DataLocal.getCPIAtDate(item.date);
+                return cpiCurrent ? item.value * (cpiStart / cpiCurrent) : item.value;
+              });
+            }
+          }
+
+          datasets.push({
+            label: name,
+            data: values,
+            borderColor: colors[key],
+            backgroundColor: colors[key] + '40',
+            borderWidth: 1.5,
+            pointRadius: 0,
+            tension: 0.1
+          });
+        }
+      }
+    }
+
+    // Add portfolio line if allocations sum to 100%
+    if (updateAllocationTotal()) {
+      try {
+        const horizonYears = parseFloat(horizonYearsInput.value) || 30;
+        const result = Sim.simulatePortfolio(alignedData, {
+          startDate: clampedStart,
+          startingAmount: parseFloat(startingAmountInput.value) || 0,
+          monthlyContribution: parseFloat(monthlyContributionInput.value) || 0,
+          horizonYears,
+          allocations,
+          inflationAdjusted
+        });
+
+        if (result.portfolio.length > 0) {
+          const indexedPortfolio = Sim.indexPortfolio(result.portfolio, inflationAdjusted);
+          if (indexedPortfolio.length > 0) {
+            datasets.push({
+              label: 'Your Portfolio',
+              data: indexedPortfolio.map(p => p.value),
+              borderColor: '#E85D75',
+              backgroundColor: '#E85D7540',
+              borderWidth: 2.5,
+              pointRadius: 0,
+              tension: 0.1,
+              borderDash: [5, 5]
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Portfolio simulation error:', error);
+      }
+    }
+
+    // Get chart dates
+    const startIndex = alignedData.dates.indexOf(clampedStart);
+    const chartDates = startIndex !== -1 
+      ? alignedData.dates.slice(startIndex)
+      : [];
+
+    ChartManager.update(chartDates, datasets);
+  }
+
+  /**
+   * Calculate and update results
+   */
+  function calculateAndUpdate() {
+    if (!alignedData) return;
+
+    let startDate = startDateSelect.value;
+    if (!startDate) {
+      startDate = findEarliestCommonMonth();
+      if (!startDate) return;
+    }
+
+    // Clamp start date
+    const clampedStart = clampStartDate(startDate);
+    if (clampedStart !== startDate) {
+      startDateSelect.value = clampedStart;
+      startDate = clampedStart;
+    }
+
+    if (!updateAllocationTotal()) {
+      endingValueDisplay.textContent = '—';
+      cagrDisplay.textContent = '—';
+      totalContributionsDisplay.textContent = '—';
+      periodDisplay.textContent = '—';
+      updateChart();
+      return;
+    }
+
+    try {
+      const startingAmount = parseFloat(startingAmountInput.value) || 0;
+      const monthlyContribution = parseFloat(monthlyContributionInput.value) || 0;
+      const horizonYears = parseFloat(horizonYearsInput.value) || 30;
+      const inflationAdjusted = inflationAdjustedCheckbox.checked;
+
+      const result = Sim.simulatePortfolio(alignedData, {
+        startDate: clampedStart,
+        startingAmount,
+        monthlyContribution,
+        horizonYears,
+        allocations,
+        inflationAdjusted
+      });
+
+      if (result.portfolio.length === 0) {
+        endingValueDisplay.textContent = '—';
+        cagrDisplay.textContent = '—';
+        totalContributionsDisplay.textContent = '—';
+        periodDisplay.textContent = '—';
+        return;
+      }
+
+      const finalValue = inflationAdjusted && result.portfolio[result.portfolio.length - 1].realValue != null
+        ? result.portfolio[result.portfolio.length - 1].realValue
+        : result.portfolio[result.portfolio.length - 1].value;
+
+      endingValueDisplay.textContent = formatCurrency(finalValue);
+
+      const cagr = Sim.calculateCAGR(result.portfolio, startingAmount, monthlyContribution);
+      if (cagr != null && isFinite(cagr)) {
+        cagrDisplay.textContent = formatPercent(cagr);
+      } else {
+        cagrDisplay.textContent = 'IRR unavailable';
+      }
+
+      const totalContributions = monthlyContribution * (result.portfolio.length - 1);
+      totalContributionsDisplay.textContent = formatCurrency(totalContributions);
+
+      // Check if horizon was clamped
+      const requestedMonths = Math.floor(horizonYears * 12);
+      const actualMonths = result.portfolio.length - 1;
+      if (actualMonths < requestedMonths) {
+        periodDisplay.textContent = `${result.actualStartDate} to ${result.actualEndDate} (horizon limited by available data)`;
+      } else {
+        periodDisplay.textContent = `${result.actualStartDate} to ${result.actualEndDate}`;
+      }
+
+      updateChart();
+    } catch (error) {
+      console.error('Calculation error:', error);
+      endingValueDisplay.textContent = '—';
+      cagrDisplay.textContent = '—';
+      totalContributionsDisplay.textContent = '—';
+      periodDisplay.textContent = '—';
+    }
+  }
+
+  /**
+   * Initialize application
+   */
+  async function init() {
+    // Initialize UI
+    initAllocations();
+    ChartManager.init(chartCanvas);
+
+    // Set default starting amount to 0
+    startingAmountInput.value = '0';
+
+    // Load data
+    dataStatus.className = 'data-status loading';
+    dataStatus.textContent = 'Loading data...';
+
+    try {
+      const result = await DataLocal.loadAll();
+      alignedData = result.alignedData;
+
+      if (!result.success) {
+        dataStatus.className = 'data-status error';
+        dataStatus.textContent = `Error: Missing data files: ${result.missing.join(', ')}`;
+        return;
+      }
+
+      if (result.warnings.length > 0) {
+        dataWarnings.style.display = 'block';
+        dataWarnings.innerHTML = `<strong>Warnings:</strong> ${result.warnings.join(', ')}`;
+      } else {
+        dataWarnings.style.display = 'none';
+      }
+
+      dataStatus.className = 'data-status success';
+      dataStatus.textContent = 'Data loaded successfully';
+
+      // Populate start dates
+      populateStartDates();
+
+      // Set default allocations (equal weight)
+      resetAllocations();
+
+      // Pre-populate chart with historical lines (real/inflation-adjusted by default)
+      updateChart();
+
+      // Initial calculation
+      calculateAndUpdate();
+
+    } catch (error) {
+      console.error('Initialization error:', error);
+      dataStatus.className = 'data-status error';
+      dataStatus.textContent = `Error: ${error.message}`;
+    }
+
+    // Event listeners
+    startDateSelect.addEventListener('change', calculateAndUpdate);
+    startingAmountInput.addEventListener('input', calculateAndUpdate);
+    monthlyContributionInput.addEventListener('input', calculateAndUpdate);
+    horizonYearsInput.addEventListener('input', calculateAndUpdate);
+    inflationAdjustedCheckbox.addEventListener('change', function() {
+      updateChart(); // Update chart immediately to show real/nominal switch
+      calculateAndUpdate();
+    });
+    resetAllocationsBtn.addEventListener('click', resetAllocations);
+  }
+
+  // Start when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();

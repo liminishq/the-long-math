@@ -66,6 +66,17 @@
 .result-row .label{ opacity: .85; }
 .result-row .value{ font-weight: 700; }
 
+.result-row.highlight {
+  background: rgba(255,255,255,0.05);
+  border-color: var(--accent);
+}
+
+.result-row .value.highlight-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--accent);
+}
+
 .assumptions h3{ margin: 0 0 8px; font-size: 14px; }
 .assumptions ul{ margin: 0; padding-left: 18px; }
 .assumptions li{ margin: 6px 0; }

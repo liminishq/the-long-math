@@ -53,12 +53,17 @@
 
           <div class="input-group">
             <label for="startingAmount">Starting Amount (CAD)</label>
-            <input type="number" id="startingAmount" value="10000" min="0" step="1000" />
+            <input type="number" id="startingAmount" value="0" min="0" step="1000" />
           </div>
 
           <div class="input-group">
             <label for="monthlyContribution">Monthly Contribution (CAD)</label>
             <input type="number" id="monthlyContribution" value="500" min="0" step="100" />
+          </div>
+
+          <div class="input-group">
+            <label for="horizonYears">Horizon (Years)</label>
+            <input type="number" id="horizonYears" value="30" min="1" max="60" step="1" />
           </div>
 
           <div class="input-group">
@@ -73,8 +78,8 @@
 
           <div class="input-group">
             <label class="toggle-label">
-              <input type="checkbox" id="inflationAdjusted" />
-              <span>Inflation-adjusted (real)</span>
+              <input type="checkbox" id="inflationAdjusted" checked />
+              <span>Show real (inflation-adjusted) values</span>
             </label>
           </div>
         </section>
@@ -94,6 +99,11 @@
           </div>
 
           <div class="result-item">
+            <div class="result-label">Total Contributions</div>
+            <div class="result-value" id="totalContributions">—</div>
+          </div>
+
+          <div class="result-item">
             <div class="result-label">Period</div>
             <div class="result-value-small" id="period">—</div>
           </div>
@@ -110,17 +120,16 @@
 
       <!-- Methods Section -->
       <section class="panel" style="margin-top: 16px;">
-        <h2>Method</h2>
+        <h2>Method & Assumptions</h2>
         <ul style="font-size: 13px; color: var(--muted); line-height: 1.6; margin: 8px 0; padding-left: 20px;">
-          <li><strong>Cash:</strong> DTB3 yield→index</li>
-          <li><strong>Bonds:</strong> GS10 yield proxy→index</li>
-          <li><strong>GIC proxy:</strong> GS5 yield proxy→index</li>
-          <li><strong>Equities:</strong> Shiller P+D total return index</li>
-          <li><strong>Inflation:</strong> Shiller CPI</li>
+          <li><strong>Data sources:</strong> Local snapshots built from Shiller/FRED historical data.</li>
+          <li><strong>Monthly compounding:</strong> Portfolio evolves monthly using asset class returns.</li>
+          <li><strong>Contributions:</strong> Added at end of each month.</li>
+          <li><strong>Inflation adjustment:</strong> Uses CPI ratio vs start month (real values deflated to start month base).</li>
+          <li><strong>Portfolio returns:</strong> Weighted blend of asset class monthly returns: r_t = (index_t / index_{t-1}) - 1</li>
+          <li><strong>Asset classes:</strong> Cash (DTB3 yield→index), Bonds (GS10 yield proxy→index), GIC proxy (GS5 yield proxy→index), Equities (Shiller P+D total return index)</li>
+          <li><strong>FX conversion:</strong> Not applied in this version.</li>
         </ul>
-        <p style="font-size: 12px; color: var(--muted); margin-top: 12px;">
-          Note: Series are USD-based in nominal terms. Inflation toggle uses US CPI.
-        </p>
       </section>
 
       <footer style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted);">
@@ -130,9 +139,10 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/calculators/portfolio-growth/js/data-loader.js"></script>
-  <script src="/calculators/portfolio-growth/js/compute.js"></script>
-  <script src="/calculators/portfolio-growth/js/app.js"></script>
+  <script src="/calculators/portfolio-growth/js/data-local.js"></script>
+  <script src="/calculators/portfolio-growth/js/sim.js"></script>
+  <script src="/calculators/portfolio-growth/js/chart.js"></script>
+  <script src="/calculators/portfolio-growth/js/ui.js"></script>
 
   <script>
     (function(){
