@@ -9,12 +9,13 @@
   // State
   let alignedData = null;
   // Basis points (0-1000 representing 0.0%-100.0%)
-  let bondsBP = 250;   // 25.0%
-  let gicBP = 250;     // 25.0%
-  let eqBP = 250;      // 25.0%
-  // cashBP is derived: 1000 - (bondsBP + gicBP + eqBP)
+  let bondsBP = 0;     // 0.0%
+  let gicBP = 0;       // 0.0%
+  let eqBP = 0;        // 0.0%
+  // cashBP is derived: 1000 - (bondsBP + gicBP + eqBP), defaults to 1000 (100.0%)
   
   // Helper functions for basis points
+  // Supports 0.5% increments: 0.5% = 5 BP, 1.0% = 10 BP, etc.
   const toBP = (pct) => Math.round(parseFloat(pct) * 10);
   const fromBP = (bp) => (bp / 10).toFixed(1);
 
@@ -239,7 +240,7 @@
     slider.type = 'range';
     slider.min = '0';
     slider.max = '100';
-    slider.step = '0.1';
+    slider.step = '0.5';
     slider.id = `slider-${key}`;
     
     // Cash is derived (disabled), others are editable
@@ -292,13 +293,13 @@
   }
 
   /**
-   * Reset allocations to equal weight
+   * Reset allocations to default (all 0%, cash 100%)
    */
   function resetAllocations() {
-    bondsBP = 250; // 25.0%
-    gicBP = 250;   // 25.0%
-    eqBP = 250;    // 25.0%
-    // cashBP = 250 (derived)
+    bondsBP = 0;   // 0.0%
+    gicBP = 0;     // 0.0%
+    eqBP = 0;      // 0.0%
+    // cashBP = 1000 (100.0%) - derived
     
     const cashBP = 1000 - (bondsBP + gicBP + eqBP);
     
@@ -663,7 +664,7 @@
       // Populate start dates
       populateStartDates();
 
-      // Set default allocations (equal weight)
+      // Set default allocations (all 0%, cash 100%)
       resetAllocations();
 
       // Pre-populate chart with historical lines (real/inflation-adjusted by default)
