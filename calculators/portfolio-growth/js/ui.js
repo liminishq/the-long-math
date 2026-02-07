@@ -113,46 +113,47 @@
   }
 
   /**
-   * Calculate NPV for IRR (annual rate, monthly cashflows)
+   * Calculate NPV for monthly IRR (monthly rate, monthly cashflows)
    */
-  function npv(annualRate, cashflows, months) {
-    let sum = 0;
-    const monthlyRate = Math.pow(1 + annualRate, 1/12) - 1;
-    
-    for (let i = 0; i < cashflows.length; i++) {
-      const cf = cashflows[i];
-      const t = i; // months
-      sum += cf / Math.pow(1 + monthlyRate, t);
+  function npv(rate, cfs) {
+    let s = 0;
+    for (let t = 0; t < cfs.length; t++) {
+      s += cfs[t] / Math.pow(1 + rate, t);
     }
-    return sum;
+    return s;
   }
 
   /**
-   * Calculate IRR using bisection method
-   * Returns annual IRR as a decimal (e.g., 0.05 for 5%)
+   * Calculate monthly IRR using bisection method
+   * Returns monthly IRR as a decimal (e.g., 0.001 for 0.1% per month)
    */
-  function calculateIRR(cashflows, months) {
-    if (cashflows.length < 2) return null;
+  function irrMonthly(cfs) {
+    if (cfs.length < 2) return null;
     
-    let lo = -0.99; // -99% annual rate
-    let hi = 10;    // 1000% annual rate
-    
-    let fLo = npv(lo, cashflows, months);
-    let fHi = npv(hi, cashflows, months);
+    // Need a sign change for bisection
+    let lo = -0.9999;
+    let hi = 10;
+    let fLo = npv(lo, cfs);
+    let fHi = npv(hi, cfs);
     
     if (!Number.isFinite(fLo) || !Number.isFinite(fHi)) return null;
-    if (Math.abs(fLo) < 1e-10) return lo;
-    if (Math.abs(fHi) < 1e-10) return hi;
+    
+    // Expand hi if needed (rare case where initial range doesn't bracket solution)
+    let expand = 0;
+    while (fLo * fHi > 0 && expand < 20) {
+      hi *= 2;
+      fHi = npv(hi, cfs);
+      expand++;
+      if (!Number.isFinite(fHi)) return null;
+    }
     if (fLo * fHi > 0) return null; // No sign change, no solution
     
     // Bisection
     for (let i = 0; i < 100; i++) {
       const mid = (lo + hi) / 2;
-      const fMid = npv(mid, cashflows, months);
-      
+      const fMid = npv(mid, cfs);
       if (!Number.isFinite(fMid)) return null;
       if (Math.abs(fMid) < 1e-10) return mid;
-      
       if (fLo * fMid <= 0) {
         hi = mid;
         fHi = fMid;
@@ -160,10 +161,7 @@
         lo = mid;
         fLo = fMid;
       }
-      
-      if (Math.abs(hi - lo) < 1e-10) break;
     }
-    
     return (lo + hi) / 2;
   }
 
@@ -623,33 +621,54 @@
         // Contributions exist: use IRR (Money-weighted return)
         labelText = 'Money-weighted return (IRR)';
         
-        // Calculate portfolio annual return based on asset allocations and their returns
-        const portfolioAnnualReturn = calculatePortfolioAnnualReturn(
-          alignedData,
-          allocations,
-          result.actualStartDate,
-          result.actualEndDate
-        );
+        // Build monthly cashflow array matching simulation timing
+        // Simulation adds contributions at END of each month (see sim.js line 105)
+        // portfolio[0] = starting point (month 0, before any contributions)
+        // portfolio[1] = after month 1 (includes contribution at end of month 1)
+        // portfolio[2] = after month 2 (includes contribution at end of month 2)
+        // ...
+        // portfolio[totalMonths] = after month totalMonths (includes contribution at end of month totalMonths)
+        // So portfolio.length = totalMonths + 1
         
-        // Build cashflow array: monthly cashflows
-        // Month 0: -startingAmount (initial investment, negative outflow)
-        // Months 1 to N-1: -monthlyContribution (monthly contributions, negative outflows)
-        // Month N: +finalValue (ending portfolio value, positive inflow)
-        const cashflows = [-startingAmount]; // Month 0: initial investment (negative)
+        // Cashflows: cfs[t] represents cashflow at end of month t
+        const cfs = [];
         
-        // Monthly contributions (negative outflows) for months 1 through N-1
-        for (let i = 1; i < result.portfolio.length - 1; i++) {
-          cashflows.push(-monthlyContribution);
+        // Month 0: initial investment (negative outflow)
+        cfs[0] = -startingAmount;
+        
+        // Months 1 through totalMonths: monthly contributions (negative outflows)
+        // Each contribution occurs at END of that month
+        for (let t = 1; t <= totalMonths; t++) {
+          cfs[t] = -monthlyContribution;
         }
         
-        // Final month: ending value (positive inflow)
-        // This replaces what would have been the last contribution
-        cashflows.push(finalValue);
+        // Final month (totalMonths): add ending value (positive inflow)
+        // This is the portfolio value at end of month totalMonths, which already includes
+        // the contribution for that month, so we add the final value to the existing -contribution
+        cfs[totalMonths] += finalValue;
         
-        // Calculate IRR (returns annual rate as decimal)
-        const irrAnnual = calculateIRR(cashflows, totalMonths);
+        // Sanity check: total contributions should equal -sum(contribution cashflows)
+        // (excluding starting amount and final value)
+        const totalContribCashflows = -monthlyContribution * totalMonths;
+        // This should match totalContributionsDisplay value
         
-        if (irrAnnual != null && Number.isFinite(irrAnnual) && irrAnnual > -1 && irrAnnual < 10) {
+        // Calculate monthly IRR using bisection
+        const irrM = irrMonthly(cfs);
+        
+        // Annualize: IRR_annual = (1 + r_monthly)^12 - 1
+        let irrAnnual = null;
+        if (irrM != null && Number.isFinite(irrM) && irrM > -1 && irrM < 10) {
+          irrAnnual = Math.pow(1 + irrM, 12) - 1;
+        }
+        
+        // Sanity checks (dev comments):
+        // A) If endingValue equals exactly total contributions (no growth), IRR should be ~0%
+        //    Example: starting=0, contrib=500 monthly for 120 months, ending=60,000 => IRR ≈ 0%
+        // B) If endingValue is only slightly above contributions (e.g. 67,152 vs 60,000 over 10y),
+        //    IRR should be a low single digit (~2-4% depending on timing)
+        // C) If contributions are set to 0 and startingAmount>0, IRR should match CAGR
+        
+        if (irrAnnual != null && Number.isFinite(irrAnnual)) {
           returnValue = irrAnnual * 100; // Convert to percentage
         }
       }
