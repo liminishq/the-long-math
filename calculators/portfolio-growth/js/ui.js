@@ -56,6 +56,36 @@
   }
 
   /**
+   * Compute CAGR since first investment
+   * Handles startingAmount = 0 by finding first month with contribution > 0
+   */
+  function computeCagrSinceFirstInvestment({
+    startingAmount,
+    monthlyContribSchedule, // array length N with contribution $ each month (0 when none)
+    finalValue,
+    totalMonths
+  }) {
+    let startMonth = 0;
+    let vStart = startingAmount;
+
+    if (vStart <= 0) {
+      const t1 = monthlyContribSchedule.findIndex(c => c > 0);
+      if (t1 === -1) return null;
+      startMonth = t1;
+      vStart = monthlyContribSchedule[t1];
+    }
+
+    const monthsInvested = totalMonths - startMonth;
+    if (monthsInvested <= 0 || vStart <= 0 || finalValue <= 0) return null;
+
+    const years = monthsInvested / 12;
+    const cagr = Math.pow(finalValue / vStart, 1 / years) - 1;
+
+    if (!Number.isFinite(cagr)) return null;
+    return cagr * 100; // Convert to percentage
+  }
+
+  /**
    * Find earliest common month across all required datasets
    */
   function findEarliestCommonMonth() {
@@ -452,11 +482,34 @@
 
       endingValueDisplay.textContent = formatCurrency(finalValue);
 
-      const cagr = Sim.calculateCAGR(result.portfolio, startingAmount, monthlyContribution);
+      // Build monthly contribution schedule
+      // portfolio[0] = starting point (month 0, no contribution)
+      // portfolio[1] = after month 1 (includes contribution at end of month 1)
+      // portfolio[2] = after month 2 (includes contribution at end of month 2)
+      // ...
+      // So schedule[i] = contribution made at end of month i
+      // schedule[0] = 0 (no contribution at starting point)
+      // schedule[1..N-1] = monthlyContribution
+      const totalMonths = result.portfolio.length - 1; // Number of months invested
+      const monthlyContribSchedule = [0]; // Month 0: no contribution at starting point
+      for (let i = 1; i < result.portfolio.length; i++) {
+        monthlyContribSchedule.push(monthlyContribution);
+      }
+
+      // Compute CAGR since first investment
+      // Sanity check: startingAmount=0, monthlyContribution=500, horizon=30 years
+      // Should produce reasonable single-digit CAGR, not triple-digit
+      const cagr = computeCagrSinceFirstInvestment({
+        startingAmount,
+        monthlyContribSchedule,
+        finalValue,
+        totalMonths
+      });
+
       if (cagr != null && isFinite(cagr)) {
         cagrDisplay.textContent = formatPercent(cagr);
       } else {
-        cagrDisplay.textContent = 'IRR unavailable';
+        cagrDisplay.textContent = '—';
       }
 
       const totalContributions = monthlyContribution * (result.portfolio.length - 1);
