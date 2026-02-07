@@ -447,6 +447,12 @@
       }
     }
 
+    // Get chart dates (same as used for asset lines)
+    const startIndex = alignedData.dates.indexOf(clampedStart);
+    const chartDates = startIndex !== -1 
+      ? alignedData.dates.slice(startIndex)
+      : [];
+
     // Add portfolio line if allocations sum to 100%
     updateAllocationTotal(); // Always shows 100.0%
     try {
@@ -461,44 +467,37 @@
         inflationAdjusted
       });
 
-        if (result.portfolio.length > 0) {
-          const indexedPortfolio = Sim.indexPortfolio(result.portfolio, inflationAdjusted);
-          if (indexedPortfolio.length > 0) {
-            // Align portfolio data to chart dates
-            const portfolioMap = new Map();
-            for (const item of indexedPortfolio) {
-              portfolioMap.set(item.date, item.value);
-            }
-            
-            const portfolioValues = [];
-            for (const date of chartDates) {
-              const value = portfolioMap.get(date);
-              portfolioValues.push(value != null ? value : null);
-            }
-            
-            datasets.push({
-              label: 'Your Portfolio',
-              data: portfolioValues,
-              borderColor: '#E85D75',
-              backgroundColor: '#E85D7540',
-              borderWidth: 2.5,
-              pointRadius: 0,
-              tension: 0.1,
-              borderDash: [5, 5],
-              spanGaps: false
-            });
+      if (result.portfolio.length > 0) {
+        const indexedPortfolio = Sim.indexPortfolio(result.portfolio, inflationAdjusted);
+        if (indexedPortfolio.length > 0) {
+          // Align portfolio data to chart dates
+          const portfolioMap = new Map();
+          for (const item of indexedPortfolio) {
+            portfolioMap.set(item.date, item.value);
           }
+          
+          const portfolioValues = [];
+          for (const date of chartDates) {
+            const value = portfolioMap.get(date);
+            portfolioValues.push(value != null ? value : null);
+          }
+          
+          datasets.push({
+            label: 'Your Portfolio',
+            data: portfolioValues,
+            borderColor: '#E85D75',
+            backgroundColor: '#E85D7540',
+            borderWidth: 2.5,
+            pointRadius: 0,
+            tension: 0.1,
+            borderDash: [5, 5],
+            spanGaps: false
+          });
         }
-      } catch (error) {
-        console.error('Portfolio simulation error:', error);
       }
+    } catch (error) {
+      console.error('Portfolio simulation error:', error);
     }
-
-    // Get chart dates (same as used for asset lines)
-    const startIndex = alignedData.dates.indexOf(clampedStart);
-    const chartDates = startIndex !== -1 
-      ? alignedData.dates.slice(startIndex)
-      : [];
 
     ChartManager.update(chartDates, datasets);
   }
