@@ -241,7 +241,6 @@ function calculate() {
     }
 
     // Remove placeholder if present
-    const resultsSection = document.querySelector('.results');
     if (resultsSection) {
       const placeholder = resultsSection.querySelector('.province-placeholder');
       if (placeholder) {
