@@ -4,7 +4,7 @@
  */
 
 import { computePersonalTax } from './tax.engine.js';
-import { loadTaxData } from './tax.data.js';
+import { loadTaxData, getFederalData, getProvincialData } from './tax.data.js';
 import { formatCurrency, formatPercent, parseInput } from './format.js';
 
 let taxDataLoaded = false;
@@ -42,6 +42,9 @@ export async function initUI() {
   // Set default year
   document.getElementById('year').value = '2025';
 
+  // Set default province to Ontario
+  provinceSelect.value = 'ON';
+
   // Load tax data
   try {
     await loadTaxData(2025);
@@ -55,8 +58,11 @@ export async function initUI() {
   // Attach event listeners
   attachEventListeners();
 
-  // Initial calculation
+  // Initial calculation (will trigger after data loads)
   calculate();
+  
+  // Update RRSP max value from data (after data is loaded)
+  updateRRSPMaxValue();
 }
 
 /**
@@ -81,7 +87,7 @@ function attachEventListeners() {
  */
 function resetAllInputs() {
   document.getElementById('year').value = '2025';
-  document.getElementById('province').value = '';
+  document.getElementById('province').value = 'ON';
   document.getElementById('employmentIncome').value = '';
   document.getElementById('selfEmploymentIncome').value = '';
   document.getElementById('otherIncome').value = '';
@@ -93,8 +99,17 @@ function resetAllInputs() {
   document.getElementById('estimatedDeductions').value = '';
   document.getElementById('taxPaid').value = '';
   
-  // Clear results
+  // Remove validation state
+  const provinceSelect = document.getElementById('province');
+  const provinceWarning = document.getElementById('provinceWarning');
+  provinceSelect.classList.remove('is-invalid');
+  if (provinceWarning) {
+    provinceWarning.style.display = 'none';
+  }
+  
+  // Clear results and recalculate
   clearResults();
+  calculate();
   
   // Clear breakdown sections
   document.getElementById('federalBrackets').innerHTML = '';
@@ -134,10 +149,50 @@ function calculate() {
 
   try {
     const inputs = getInputs();
+    const provinceSelect = document.getElementById('province');
+    const provinceWarning = document.getElementById('provinceWarning');
+    const resultsSection = document.querySelector('.results');
     
-    if (!inputs.province) {
-      clearResults();
+    // Validate province
+    if (!inputs.province || inputs.province === '') {
+      // Show validation state
+      provinceSelect.classList.add('is-invalid');
+      if (provinceWarning) {
+        provinceWarning.textContent = 'Select a province/territory to calculate tax.';
+        provinceWarning.style.display = 'block';
+      }
+      // Show placeholder in results
+      showProvincePlaceholder();
       return;
+    }
+
+    // Validate province exists in data
+    try {
+      getProvincialData(inputs.province);
+    } catch (error) {
+      // Province not found in data
+      provinceSelect.classList.add('is-invalid');
+      if (provinceWarning) {
+        provinceWarning.textContent = 'Select a province/territory to calculate tax.';
+        provinceWarning.style.display = 'block';
+      }
+      showProvincePlaceholder();
+      return;
+    }
+
+    // Remove validation state
+    provinceSelect.classList.remove('is-invalid');
+    if (provinceWarning) {
+      provinceWarning.style.display = 'none';
+    }
+
+    // Remove placeholder if present
+    const resultsSection = document.querySelector('.results');
+    if (resultsSection) {
+      const placeholder = resultsSection.querySelector('.province-placeholder');
+      if (placeholder) {
+        placeholder.remove();
+      }
     }
 
     const result = computePersonalTax(inputs);
@@ -428,4 +483,53 @@ function clearResults() {
 function showError(message) {
   // Could add an error display element if needed
   console.error(message);
+}
+
+/**
+ * Show placeholder message when province is not selected
+ */
+function showProvincePlaceholder() {
+  // Clear all result values
+  clearResults();
+  
+  // Add placeholder message in results area
+  const resultsSection = document.querySelector('.results');
+  if (resultsSection) {
+    // Remove existing placeholder if present
+    const existingPlaceholder = resultsSection.querySelector('.province-placeholder');
+    if (existingPlaceholder) {
+      existingPlaceholder.remove();
+    }
+    
+    // Add new placeholder
+    const placeholder = document.createElement('div');
+    placeholder.className = 'province-placeholder';
+    placeholder.style.cssText = 'text-align: center; padding: 20px; color: var(--muted); font-size: 13px; grid-column: 1 / -1;';
+    placeholder.textContent = 'Waiting for province/territory selection.';
+    resultsSection.appendChild(placeholder);
+  }
+}
+
+/**
+ * Update RRSP max value from federal data
+ */
+function updateRRSPMaxValue() {
+  try {
+    if (!taxDataLoaded) {
+      return;
+    }
+    const federalData = getFederalData();
+    const rrspMaxEl = document.getElementById('rrsp-max-value');
+    const rrspMaxText = document.getElementById('rrsp-max-text');
+    
+    if (federalData && federalData.rrspDollarMax && rrspMaxEl) {
+      rrspMaxEl.textContent = formatCurrency(federalData.rrspDollarMax);
+    } else if (rrspMaxText) {
+      // Fallback: hide the paragraph with specific max value
+      rrspMaxText.style.display = 'none';
+    }
+  } catch (error) {
+    // Silently fail - will show fallback text
+    console.debug('Could not load RRSP max value:', error);
+  }
 }

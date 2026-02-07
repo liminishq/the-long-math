@@ -20,5 +20,7 @@
       "rate": 0.15
     }
   },
-  "_note": "2025 federal brackets indexed. BPA $15,705 for 2025. BPA credit = BPA × 15% (lowest rate). Employment amount credit = $1,500 × 15%. Verify all values against canada.ca/en/revenue-agency for official 2025 data."
+  "rrspRoomRate": 0.18,
+  "rrspDollarMax": 32490,
+  "_note": "2025 federal brackets indexed. BPA $15,705 for 2025. BPA credit = BPA × 15% (lowest rate). Employment amount credit = $1,500 × 15%. RRSP contribution limit: 18% of prior-year earned income, max $32,490 for 2025. Verify all values against canada.ca/en/revenue-agency for official 2025 data."
 }

@@ -64,10 +64,11 @@
         </div>
 
         <div class="field">
-          <label for="province">Province/Territory of Residence</label>
-          <select id="province">
+          <label for="province" class="req-select">Province/Territory of Residence</label>
+          <select id="province" class="req-select">
             <option value="">Select...</option>
           </select>
+          <div id="provinceWarning" class="inline-warning" aria-live="polite" style="display: none;"></div>
         </div>
 
         <div class="field">
@@ -103,6 +104,10 @@
         <div class="field">
           <label for="rrspDeduction">RRSP Deduction</label>
           <input type="text" id="rrspDeduction" placeholder="0" value="">
+          <div class="field-help">
+            RRSP deductions are limited by your available contribution room.
+            <a href="#rrsp-limits">RRSP limit details ↓</a>
+          </div>
         </div>
 
         <div class="field">
@@ -229,6 +234,34 @@
             <summary><strong>CPP and EI Calculations</strong></summary>
             <div id="payrollBreakdown" class="breakdown-content"></div>
           </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+      <div class="methods-card">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-list">
+          <div class="faq-item">
+            <h3 id="rrsp-limits">How much can I contribute to an RRSP?</h3>
+            <p>Your RRSP contribution limit is generally 18% of your prior-year earned income, up to an annual maximum set by the CRA, plus any unused room carried forward (and adjusted for pension contributions).</p>
+            <p id="rrsp-max-text">For the 2025 tax year, the annual RRSP contribution maximum is <span id="rrsp-max-value">up to an annual maximum set by the CRA</span>.</p>
+            <p>Your exact available contribution room appears on your CRA Notice of Assessment.</p>
+            <p>This calculator accepts an RRSP deduction input; it does not compute contribution room; it does not model CRA penalties or over-contribution rules.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3>Why might my results differ from the CRA?</h3>
+            <p>This calculator models federal/provincial brackets, common credits, and payroll contributions. It does not include every possible credit/deduction/special rule.</p>
+            <p>Examples of items not included: medical expenses, tuition credits, charitable donations, pension adjustments, prior-year losses, and CRA-specific rounding methods.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3>Does this calculator provide tax advice?</h3>
+            <p>No. This calculator provides arithmetic only. No recommendations. Educational/comparative use.</p>
+          </div>
         </div>
       </div>
     </section>
