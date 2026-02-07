@@ -372,7 +372,7 @@
         dataWarnings.style.display = 'block';
         dataWarnings.textContent = `Start date adjusted to ${clampedStart} (earliest available data)`;
       }
-      } else {
+    } else {
       if (dataWarnings) {
         dataWarnings.style.display = 'none';
       }
