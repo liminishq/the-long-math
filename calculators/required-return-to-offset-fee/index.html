@@ -103,23 +103,18 @@
     <!-- Back link -->
     <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
 
-    <!-- Header -->
-    <header>
+    <div class="card">
       <h1>How Much Extra Return Is Required to Offset Investment and Management Fees</h1>
+      <p class="lead">
+        The additional annual return required to fully offset investment and management fees over time.
+      </p>
+      <p class="lead">
+        This calculator does not estimate skill or predict returns.
+        It shows the arithmetic required to cancel out a fee.
+      </p>
 
-      <div class="lede">
-        <p>
-          The additional annual return required to fully offset investment and management fees over time.
-        </p>
-        <p>
-          This calculator does not estimate skill or predict returns.
-          It shows the arithmetic required to cancel out a fee.
-        </p>
-      </div>
-    </header>
-
-    <!-- FULL-WIDTH EXPLANATION -->
-    <section class="card">
+      <!-- FULL-WIDTH EXPLANATION -->
+      <section style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
       <h2 class="section-title">What this page shows</h2>
 
       <p>In a simple model, net investment return equals gross return minus fees.</p>
@@ -142,12 +137,12 @@
       <p><strong>No opinions</strong> about whether the fee is justified.</p>
       <p><strong>No assumptions</strong> about market outperformance or the availability of additional capital.</p>
       <p><strong>Just arithmetic</strong> showing long-term fee drag in real dollars.</p>
-    </section>
+      </section>
 
-    <!-- CALCULATOR GRID (2 columns: inputs left, results right) -->
-    <div class="calc-grid">
+      <!-- CALCULATOR GRID (2 columns: inputs left, results right) -->
+      <div class="calc-grid">
       <!-- INPUTS (left column) -->
-      <section class="card">
+      <section class="panel">
         <h2 class="section-title">Inputs</h2>
 
         <div class="field">
@@ -183,7 +178,7 @@
       </section>
 
       <!-- RESULTS (right column) -->
-      <section class="card">
+      <section class="panel">
         <h2 class="section-title">Results</h2>
 
         <div class="results">
@@ -220,10 +215,10 @@
           </div>
         </div>
       </section>
-    </div>
+      </div>
 
-    <!-- RESULTS CALLOUT (full-width card) -->
-    <section class="card" style="margin-top: 18px;">
+      <!-- RESULTS CALLOUT (full-width card) -->
+      <section style="margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border);">
       <div class="results-callout" aria-label="Fee offset summary">
         <p class="results-callout__headline">
           To fully offset a <span class="muted-inline" id="calloutFee">1.0%</span> annual fee, this portfolio must earn an additional
@@ -239,10 +234,10 @@
           This represents a dollar-for-dollar replacement of performance with contributions, using the same assumptions shown above.
         </p>
       </div>
-    </section>
+      </section>
 
-    <!-- ASSUMPTIONS & PROOF (full-width card) -->
-    <section class="card" style="margin-top: 16px;">
+      <!-- ASSUMPTIONS & PROOF (full-width card) -->
+      <section style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
       <p class="meta" id="out_meta">
         Calculated using the assumptions shown above.
       </p>
@@ -250,7 +245,8 @@
       <p class="meta" style="margin-top: 10px;">
         Proof sketch: break-even requires r = (r + α − fee) ⇒ α = fee. (Specific to the "net = gross − fee" model.)
       </p>
-    </section>
+      </section>
+    </div>
 
     <!-- Disclaimer -->
     <div class="disclaimer">
@@ -260,7 +256,6 @@
         models and user-supplied assumptions. Users are recommended to complete their own due diligence.
       </p>
     </div>
-
   </div>
 
   <!-- Theme toggle (same pattern as advisor calculator) -->
