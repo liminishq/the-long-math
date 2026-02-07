@@ -71,35 +71,88 @@
   }
 
   /**
-   * Calculate NPV for IRR
+   * Calculate annual return for an asset class over a time period
    */
-  function npv(rate, cfs) {
-    let s = 0;
-    for (let t = 0; t < cfs.length; t++) {
-      s += cfs[t] / Math.pow(1 + rate, t);
-    }
-    return s;
+  function calculateAssetAnnualReturn(alignedData, assetKey, startDate, endDate) {
+    const assetSeries = alignedData.assets[assetKey];
+    if (!assetSeries || assetSeries.length === 0) return 0;
+
+    const startValue = DataLocal.getValueAtDate(assetSeries, startDate);
+    const endValue = DataLocal.getValueAtDate(assetSeries, endDate);
+    
+    if (!startValue || !endValue || startValue <= 0 || endValue <= 0) return 0;
+
+    // Calculate number of years
+    const startIndex = alignedData.dates.indexOf(startDate);
+    const endIndex = alignedData.dates.indexOf(endDate);
+    if (startIndex === -1 || endIndex === -1 || endIndex <= startIndex) return 0;
+    
+    const months = endIndex - startIndex;
+    const years = months / 12;
+    if (years <= 0) return 0;
+
+    // Calculate annualized return: (end/start)^(1/years) - 1
+    const annualReturn = Math.pow(endValue / startValue, 1 / years) - 1;
+    return annualReturn;
   }
 
   /**
-   * Calculate monthly IRR using bisection
+   * Calculate weighted portfolio annual return based on allocations
    */
-  function irrMonthly(cfs) {
-    let lo = -0.9999;
-    let hi = 10;
-    let fLo = npv(lo, cfs);
-    let fHi = npv(hi, cfs);
+  function calculatePortfolioAnnualReturn(alignedData, allocations, startDate, endDate) {
+    let weightedReturn = 0;
+    
+    for (const [assetKey, allocation] of Object.entries(allocations)) {
+      if (allocation === 0) continue;
+      
+      const assetReturn = calculateAssetAnnualReturn(alignedData, assetKey, startDate, endDate);
+      weightedReturn += (allocation / 100) * assetReturn;
+    }
+    
+    return weightedReturn;
+  }
+
+  /**
+   * Calculate NPV for IRR (annual rate, monthly cashflows)
+   */
+  function npv(annualRate, cashflows, months) {
+    let sum = 0;
+    const monthlyRate = Math.pow(1 + annualRate, 1/12) - 1;
+    
+    for (let i = 0; i < cashflows.length; i++) {
+      const cf = cashflows[i];
+      const t = i; // months
+      sum += cf / Math.pow(1 + monthlyRate, t);
+    }
+    return sum;
+  }
+
+  /**
+   * Calculate IRR using bisection method
+   * Returns annual IRR as a decimal (e.g., 0.05 for 5%)
+   */
+  function calculateIRR(cashflows, months) {
+    if (cashflows.length < 2) return null;
+    
+    let lo = -0.99; // -99% annual rate
+    let hi = 10;    // 1000% annual rate
+    
+    let fLo = npv(lo, cashflows, months);
+    let fHi = npv(hi, cashflows, months);
     
     if (!Number.isFinite(fLo) || !Number.isFinite(fHi)) return null;
-    if (fLo === 0) return lo;
-    if (fHi === 0) return hi;
+    if (Math.abs(fLo) < 1e-10) return lo;
+    if (Math.abs(fHi) < 1e-10) return hi;
     if (fLo * fHi > 0) return null; // No sign change, no solution
     
-    for (let i = 0; i < 80; i++) {
+    // Bisection
+    for (let i = 0; i < 100; i++) {
       const mid = (lo + hi) / 2;
-      const fMid = npv(mid, cfs);
+      const fMid = npv(mid, cashflows, months);
+      
       if (!Number.isFinite(fMid)) return null;
       if (Math.abs(fMid) < 1e-10) return mid;
+      
       if (fLo * fMid <= 0) {
         hi = mid;
         fHi = fMid;
@@ -107,7 +160,10 @@
         lo = mid;
         fLo = fMid;
       }
+      
+      if (Math.abs(hi - lo) < 1e-10) break;
     }
+    
     return (lo + hi) / 2;
   }
 
@@ -567,27 +623,33 @@
         // Contributions exist: use IRR (Money-weighted return)
         labelText = 'Money-weighted return (IRR)';
         
-        // Build cashflow array matching simulation timing
-        // portfolio[0] = starting point (month 0)
-        // portfolio[1..N-1] = after each month with contribution added at end
-        // So cashflows: t=0: -startingAmount, t=1..N-2: -monthlyContribution, t=N-1: +finalValue
-        const cfs = [-startingAmount]; // Month 0: initial investment (negative outflow)
+        // Calculate portfolio annual return based on asset allocations and their returns
+        const portfolioAnnualReturn = calculatePortfolioAnnualReturn(
+          alignedData,
+          allocations,
+          result.actualStartDate,
+          result.actualEndDate
+        );
         
-        // Monthly contributions (negative outflows) at end of months 1 through N-2
+        // Build cashflow array: monthly cashflows
+        // Month 0: -startingAmount (initial investment, negative outflow)
+        // Months 1 to N-1: -monthlyContribution (monthly contributions, negative outflows)
+        // Month N: +finalValue (ending portfolio value, positive inflow)
+        const cashflows = [-startingAmount]; // Month 0: initial investment (negative)
+        
+        // Monthly contributions (negative outflows) for months 1 through N-1
         for (let i = 1; i < result.portfolio.length - 1; i++) {
-          cfs.push(-monthlyContribution);
+          cashflows.push(-monthlyContribution);
         }
         
-        // Final value (positive inflow) at end of final month
-        // finalValue already includes all contributions, so we add it as positive
-        cfs.push(finalValue);
+        // Final month: ending value (positive inflow)
+        // This replaces what would have been the last contribution
+        cashflows.push(finalValue);
         
-        // Calculate monthly IRR
-        const irrM = irrMonthly(cfs);
+        // Calculate IRR (returns annual rate as decimal)
+        const irrAnnual = calculateIRR(cashflows, totalMonths);
         
-        if (irrM != null && Number.isFinite(irrM) && irrM > -1 && irrM < 10) {
-          // Annualize: (1 + irr_m)^12 - 1
-          const irrAnnual = Math.pow(1 + irrM, 12) - 1;
+        if (irrAnnual != null && Number.isFinite(irrAnnual) && irrAnnual > -1 && irrAnnual < 10) {
           returnValue = irrAnnual * 100; // Convert to percentage
         }
       }
