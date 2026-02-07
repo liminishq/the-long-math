@@ -8,13 +8,15 @@
   
   // State
   let alignedData = null;
-  let allocations = {
-    cash: 0,
-    bonds: 0,
-    gic: 0,
-    equities: 0
-  };
-  let lastTouchedSlider = null;
+  // Basis points (0-1000 representing 0.0%-100.0%)
+  let bondsBP = 250;   // 25.0%
+  let gicBP = 250;     // 25.0%
+  let eqBP = 250;      // 25.0%
+  // cashBP is derived: 1000 - (bondsBP + gicBP + eqBP)
+  
+  // Helper functions for basis points
+  const toBP = (pct) => Math.round(parseFloat(pct) * 10);
+  const fromBP = (bp) => (bp / 10).toFixed(1);
 
   // DOM elements
   const dataStatus = document.getElementById('dataStatus');
@@ -30,6 +32,7 @@
   const inflationAdjustedCheckbox = document.getElementById('inflationAdjusted');
   const endingValueDisplay = document.getElementById('endingValue');
   const cagrDisplay = document.getElementById('cagr');
+  const returnLabel = document.getElementById('returnLabel');
   const totalContributionsDisplay = document.getElementById('totalContributions');
   const periodDisplay = document.getElementById('period');
   const chartCanvas = document.getElementById('growthChart');
@@ -56,33 +59,55 @@
   }
 
   /**
-   * Compute CAGR since first investment
-   * Handles startingAmount = 0 by finding first month with contribution > 0
+   * Compute CAGR (only when no contributions)
    */
-  function computeCagrSinceFirstInvestment({
-    startingAmount,
-    monthlyContribSchedule, // array length N with contribution $ each month (0 when none)
-    finalValue,
-    totalMonths
-  }) {
-    let startMonth = 0;
-    let vStart = startingAmount;
-
-    if (vStart <= 0) {
-      const t1 = monthlyContribSchedule.findIndex(c => c > 0);
-      if (t1 === -1) return null;
-      startMonth = t1;
-      vStart = monthlyContribSchedule[t1];
-    }
-
-    const monthsInvested = totalMonths - startMonth;
-    if (monthsInvested <= 0 || vStart <= 0 || finalValue <= 0) return null;
-
-    const years = monthsInvested / 12;
-    const cagr = Math.pow(finalValue / vStart, 1 / years) - 1;
-
+  function computeCAGR(startingAmount, finalValue, totalMonths) {
+    if (startingAmount <= 0 || finalValue <= 0 || totalMonths <= 0) return null;
+    const years = totalMonths / 12;
+    const cagr = Math.pow(finalValue / startingAmount, 1 / years) - 1;
     if (!Number.isFinite(cagr)) return null;
     return cagr * 100; // Convert to percentage
+  }
+
+  /**
+   * Calculate NPV for IRR
+   */
+  function npv(rate, cfs) {
+    let s = 0;
+    for (let t = 0; t < cfs.length; t++) {
+      s += cfs[t] / Math.pow(1 + rate, t);
+    }
+    return s;
+  }
+
+  /**
+   * Calculate monthly IRR using bisection
+   */
+  function irrMonthly(cfs) {
+    let lo = -0.9999;
+    let hi = 10;
+    let fLo = npv(lo, cfs);
+    let fHi = npv(hi, cfs);
+    
+    if (!Number.isFinite(fLo) || !Number.isFinite(fHi)) return null;
+    if (fLo === 0) return lo;
+    if (fHi === 0) return hi;
+    if (fLo * fHi > 0) return null; // No sign change, no solution
+    
+    for (let i = 0; i < 80; i++) {
+      const mid = (lo + hi) / 2;
+      const fMid = npv(mid, cfs);
+      if (!Number.isFinite(fMid)) return null;
+      if (Math.abs(fMid) < 1e-10) return mid;
+      if (fLo * fMid <= 0) {
+        hi = mid;
+        fHi = fMid;
+      } else {
+        lo = mid;
+        fLo = fMid;
+      }
+    }
+    return (lo + hi) / 2;
   }
 
   /**
@@ -93,10 +118,13 @@
       return null;
     }
 
+    // Check all asset keys (cash, bonds, gic, equities)
+    const assetKeys = ['cash', 'bonds', 'gic', 'equities'];
+
     // Find earliest date where we have all required assets
     for (const date of alignedData.dates) {
       let hasAllData = true;
-      for (const assetKey of Object.keys(allocations)) {
+      for (const assetKey of assetKeys) {
         const assetSeries = alignedData.assets[assetKey];
         if (!assetSeries || DataLocal.getValueAtDate(assetSeries, date) == null) {
           hasAllData = false;
@@ -125,39 +153,73 @@
   }
 
   /**
-   * Update allocation total display and normalize if needed
+   * Update allocation total display (always 100.0%)
    */
   function updateAllocationTotal() {
-    const total = Object.values(allocations).reduce((sum, val) => sum + val, 0);
-    allocationTotal.textContent = total.toFixed(1) + '%';
+    allocationTotal.textContent = '100.0%';
+    allocationTotal.style.color = 'var(--accent)';
+    allocationError.style.display = 'none';
+  }
+  
+  /**
+   * Update allocations object from basis points (for simulation)
+   */
+  function updateAllocationsFromBP() {
+    const cashBP = 1000 - (bondsBP + gicBP + eqBP);
+    return {
+      cash: cashBP / 10,
+      bonds: bondsBP / 10,
+      gic: gicBP / 10,
+      equities: eqBP / 10
+    };
+  }
+  
+  /**
+   * Handle slider input for editable sliders (bonds, gic, equities)
+   */
+  function handleSliderInput(key, value) {
+    const newBP = toBP(value);
+    let maxBP;
     
-    if (Math.abs(total - 100) > 0.1) {
-      allocationTotal.style.color = 'var(--error, #E85D75)';
-      allocationError.textContent = `Allocations must sum to 100% (currently ${total.toFixed(1)}%)`;
-      allocationError.style.display = 'block';
-      
-      // Auto-normalize by adjusting the last-touched slider
-      if (lastTouchedSlider && total !== 0) {
-        const currentValue = allocations[lastTouchedSlider];
-        const adjustment = 100 - total;
-        allocations[lastTouchedSlider] = Math.max(0, Math.min(100, currentValue + adjustment));
-        
-        const slider = document.getElementById(`slider-${lastTouchedSlider}`);
-        if (slider) {
-          slider.value = allocations[lastTouchedSlider];
-          document.getElementById(`alloc-${lastTouchedSlider}`).textContent = allocations[lastTouchedSlider].toFixed(1) + '%';
-        }
-        
-        // Recursive call to check again
-        return updateAllocationTotal();
-      }
-      
-      return false;
-    } else {
-      allocationTotal.style.color = 'var(--accent)';
-      allocationError.style.display = 'none';
-      return true;
+    if (key === 'bonds') {
+      maxBP = 1000 - (gicBP + eqBP);
+      bondsBP = Math.max(0, Math.min(maxBP, newBP));
+    } else if (key === 'gic') {
+      maxBP = 1000 - (bondsBP + eqBP);
+      gicBP = Math.max(0, Math.min(maxBP, newBP));
+    } else if (key === 'equities') {
+      maxBP = 1000 - (bondsBP + gicBP);
+      eqBP = Math.max(0, Math.min(maxBP, newBP));
     }
+    
+    // Derive cash
+    const cashBP = 1000 - (bondsBP + gicBP + eqBP);
+    
+    // Update all slider values and labels
+    const bondsSlider = document.getElementById('slider-bonds');
+    const gicSlider = document.getElementById('slider-gic');
+    const eqSlider = document.getElementById('slider-equities');
+    const cashSlider = document.getElementById('slider-cash');
+    
+    if (bondsSlider) {
+      bondsSlider.value = fromBP(bondsBP);
+      document.getElementById('alloc-bonds').textContent = fromBP(bondsBP) + '%';
+    }
+    if (gicSlider) {
+      gicSlider.value = fromBP(gicBP);
+      document.getElementById('alloc-gic').textContent = fromBP(gicBP) + '%';
+    }
+    if (eqSlider) {
+      eqSlider.value = fromBP(eqBP);
+      document.getElementById('alloc-equities').textContent = fromBP(eqBP) + '%';
+    }
+    if (cashSlider) {
+      cashSlider.value = fromBP(cashBP);
+      document.getElementById('alloc-cash').textContent = fromBP(cashBP) + '%';
+    }
+    
+    updateAllocationTotal();
+    calculateAndUpdate();
   }
 
   /**
@@ -178,16 +240,17 @@
     slider.min = '0';
     slider.max = '100';
     slider.step = '0.1';
-    slider.value = allocations[key] || 0;
     slider.id = `slider-${key}`;
     
-    slider.addEventListener('input', function() {
-      lastTouchedSlider = key;
-      allocations[key] = parseFloat(this.value);
-      document.getElementById(`alloc-${key}`).textContent = allocations[key].toFixed(1) + '%';
-      updateAllocationTotal();
-      calculateAndUpdate();
-    });
+    // Cash is derived (disabled), others are editable
+    if (key === 'cash') {
+      slider.disabled = true;
+      slider.classList.add('disabled');
+    } else {
+      slider.addEventListener('input', function() {
+        handleSliderInput(key, this.value);
+      });
+    }
 
     div.appendChild(label);
     div.appendChild(slider);
@@ -200,21 +263,30 @@
   function initAllocations() {
     allocationContainer.innerHTML = '';
     
-    const assetNames = {
-      cash: 'Cash',
-      bonds: 'Bonds',
-      gic: 'GIC Proxy',
-      equities: 'Equities'
-    };
+    // Create sliders in order: Bonds, GIC Proxy, Equities, Cash (derived)
+    const assetOrder = [
+      { key: 'bonds', name: 'Bonds' },
+      { key: 'gic', name: 'GIC Proxy' },
+      { key: 'equities', name: 'Equities' },
+      { key: 'cash', name: 'Cash' }
+    ];
 
-    for (const [key, name] of Object.entries(assetNames)) {
-      const slider = createAllocationSlider(key, { name });
+    for (const asset of assetOrder) {
+      const slider = createAllocationSlider(asset.key, asset);
       allocationContainer.appendChild(slider);
-      const allocDisplay = document.getElementById(`alloc-${key}`);
-      if (allocDisplay) {
-        allocDisplay.textContent = (allocations[key] || 0).toFixed(1) + '%';
-      }
     }
+    
+    // Initialize display values from basis points
+    const cashBP = 1000 - (bondsBP + gicBP + eqBP);
+    document.getElementById('alloc-bonds').textContent = fromBP(bondsBP) + '%';
+    document.getElementById('alloc-gic').textContent = fromBP(gicBP) + '%';
+    document.getElementById('alloc-equities').textContent = fromBP(eqBP) + '%';
+    document.getElementById('alloc-cash').textContent = fromBP(cashBP) + '%';
+    
+    document.getElementById('slider-bonds').value = fromBP(bondsBP);
+    document.getElementById('slider-gic').value = fromBP(gicBP);
+    document.getElementById('slider-equities').value = fromBP(eqBP);
+    document.getElementById('slider-cash').value = fromBP(cashBP);
 
     updateAllocationTotal();
   }
@@ -223,17 +295,22 @@
    * Reset allocations to equal weight
    */
   function resetAllocations() {
-    const count = Object.keys(allocations).length;
-    const equalWeight = 100 / count;
+    bondsBP = 250; // 25.0%
+    gicBP = 250;   // 25.0%
+    eqBP = 250;    // 25.0%
+    // cashBP = 250 (derived)
     
-    for (const key of Object.keys(allocations)) {
-      allocations[key] = equalWeight;
-      const slider = document.getElementById(`slider-${key}`);
-      if (slider) {
-        slider.value = equalWeight;
-        document.getElementById(`alloc-${key}`).textContent = equalWeight.toFixed(1) + '%';
-      }
-    }
+    const cashBP = 1000 - (bondsBP + gicBP + eqBP);
+    
+    document.getElementById('slider-bonds').value = fromBP(bondsBP);
+    document.getElementById('slider-gic').value = fromBP(gicBP);
+    document.getElementById('slider-equities').value = fromBP(eqBP);
+    document.getElementById('slider-cash').value = fromBP(cashBP);
+    
+    document.getElementById('alloc-bonds').textContent = fromBP(bondsBP) + '%';
+    document.getElementById('alloc-gic').textContent = fromBP(gicBP) + '%';
+    document.getElementById('alloc-equities').textContent = fromBP(eqBP) + '%';
+    document.getElementById('alloc-cash').textContent = fromBP(cashBP) + '%';
     
     updateAllocationTotal();
     calculateAndUpdate();
@@ -371,17 +448,18 @@
     }
 
     // Add portfolio line if allocations sum to 100%
-    if (updateAllocationTotal()) {
-      try {
-        const horizonYears = parseFloat(horizonYearsInput.value) || 30;
-        const result = Sim.simulatePortfolio(alignedData, {
-          startDate: clampedStart,
-          startingAmount: parseFloat(startingAmountInput.value) || 0,
-          monthlyContribution: parseFloat(monthlyContributionInput.value) || 0,
-          horizonYears,
-          allocations,
-          inflationAdjusted
-        });
+    updateAllocationTotal(); // Always shows 100.0%
+    try {
+      const horizonYears = parseFloat(horizonYearsInput.value) || 30;
+      const allocations = updateAllocationsFromBP();
+      const result = Sim.simulatePortfolio(alignedData, {
+        startDate: clampedStart,
+        startingAmount: parseFloat(startingAmountInput.value) || 0,
+        monthlyContribution: parseFloat(monthlyContributionInput.value) || 0,
+        horizonYears,
+        allocations,
+        inflationAdjusted
+      });
 
         if (result.portfolio.length > 0) {
           const indexedPortfolio = Sim.indexPortfolio(result.portfolio, inflationAdjusted);
@@ -444,20 +522,14 @@
       startDate = clampedStart;
     }
 
-    if (!updateAllocationTotal()) {
-      endingValueDisplay.textContent = '—';
-      cagrDisplay.textContent = '—';
-      totalContributionsDisplay.textContent = '—';
-      periodDisplay.textContent = '—';
-      updateChart();
-      return;
-    }
+    updateAllocationTotal(); // Always shows 100.0%
     
     try {
       const startingAmount = parseFloat(startingAmountInput.value) || 0;
       const monthlyContribution = parseFloat(monthlyContributionInput.value) || 0;
       const horizonYears = parseFloat(horizonYearsInput.value) || 30;
       const inflationAdjusted = inflationAdjustedCheckbox.checked;
+      const allocations = updateAllocationsFromBP();
 
       const result = Sim.simulatePortfolio(alignedData, {
         startDate: clampedStart,
@@ -482,32 +554,52 @@
 
       endingValueDisplay.textContent = formatCurrency(finalValue);
 
-      // Build monthly contribution schedule
-      // portfolio[0] = starting point (month 0, no contribution)
-      // portfolio[1] = after month 1 (includes contribution at end of month 1)
-      // portfolio[2] = after month 2 (includes contribution at end of month 2)
-      // ...
-      // So schedule[i] = contribution made at end of month i
-      // schedule[0] = 0 (no contribution at starting point)
-      // schedule[1..N-1] = monthlyContribution
-      const totalMonths = result.portfolio.length - 1; // Number of months invested
-      const monthlyContribSchedule = [0]; // Month 0: no contribution at starting point
-      for (let i = 1; i < result.portfolio.length; i++) {
-        monthlyContribSchedule.push(monthlyContribution);
+      // Calculate return metric: CAGR if no contributions, IRR if contributions exist
+      const totalMonths = result.portfolio.length - 1;
+      let returnValue = null;
+      let labelText = 'CAGR';
+      
+      if (monthlyContribution === 0) {
+        // No contributions: use CAGR
+        returnValue = computeCAGR(startingAmount, finalValue, totalMonths);
+        labelText = 'CAGR';
+      } else {
+        // Contributions exist: use IRR (Money-weighted return)
+        labelText = 'Money-weighted return (IRR)';
+        
+        // Build cashflow array matching simulation timing
+        // portfolio[0] = starting point (month 0)
+        // portfolio[1..N-1] = after each month with contribution added at end
+        // So cashflows: t=0: -startingAmount, t=1..N-2: -monthlyContribution, t=N-1: +finalValue
+        const cfs = [-startingAmount]; // Month 0: initial investment (negative outflow)
+        
+        // Monthly contributions (negative outflows) at end of months 1 through N-2
+        for (let i = 1; i < result.portfolio.length - 1; i++) {
+          cfs.push(-monthlyContribution);
+        }
+        
+        // Final value (positive inflow) at end of final month
+        // finalValue already includes all contributions, so we add it as positive
+        cfs.push(finalValue);
+        
+        // Calculate monthly IRR
+        const irrM = irrMonthly(cfs);
+        
+        if (irrM != null && Number.isFinite(irrM) && irrM > -1 && irrM < 10) {
+          // Annualize: (1 + irr_m)^12 - 1
+          const irrAnnual = Math.pow(1 + irrM, 12) - 1;
+          returnValue = irrAnnual * 100; // Convert to percentage
+        }
       }
 
-      // Compute CAGR since first investment
-      // Sanity check: startingAmount=0, monthlyContribution=500, horizon=30 years
-      // Should produce reasonable single-digit CAGR, not triple-digit
-      const cagr = computeCagrSinceFirstInvestment({
-        startingAmount,
-        monthlyContribSchedule,
-        finalValue,
-        totalMonths
-      });
+      // Update label
+      if (returnLabel) {
+        returnLabel.textContent = labelText;
+      }
 
-      if (cagr != null && isFinite(cagr)) {
-        cagrDisplay.textContent = formatPercent(cagr);
+      // Display result
+      if (returnValue != null && isFinite(returnValue)) {
+        cagrDisplay.textContent = formatPercent(returnValue);
       } else {
         cagrDisplay.textContent = '—';
       }
