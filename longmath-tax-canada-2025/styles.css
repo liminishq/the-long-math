@@ -524,6 +524,8 @@ select{
 .req-select{
   border-color:rgba(217,180,106,.55) !important;
   box-shadow:0 0 0 2px rgba(217,180,106,.12), 0 0 8px rgba(217,180,106,.08);
+  position:relative;
+  z-index:1;
 }
 
 .req-select:focus{

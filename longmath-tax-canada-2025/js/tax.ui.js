@@ -37,9 +37,23 @@ export async function initUI() {
     return;
   }
   
-  // Clear existing options except the placeholder
-  provinceSelect.innerHTML = '<option value="">Select...</option>';
+  // Ensure select is enabled first
+  provinceSelect.disabled = false;
+  provinceSelect.removeAttribute('disabled');
+  provinceSelect.removeAttribute('readonly');
   
+  // Clear existing options
+  while (provinceSelect.firstChild) {
+    provinceSelect.removeChild(provinceSelect.firstChild);
+  }
+  
+  // Add placeholder option
+  const placeholderOption = document.createElement('option');
+  placeholderOption.value = '';
+  placeholderOption.textContent = 'Select...';
+  provinceSelect.appendChild(placeholderOption);
+  
+  // Add all province options
   PROVINCES.forEach(prov => {
     const option = document.createElement('option');
     option.value = prov.code;
@@ -53,18 +67,27 @@ export async function initUI() {
     yearSelect.value = '2025';
   }
 
-  // Ensure select is enabled and remove any attributes that might block interaction
-  provinceSelect.disabled = false;
-  provinceSelect.removeAttribute('disabled');
-  provinceSelect.removeAttribute('readonly');
-  
-  // Set default province to Ontario (after options are added)
-  provinceSelect.value = 'ON';
-  
-  // Force a re-render to ensure the select is interactive
-  const style = provinceSelect.style;
-  style.pointerEvents = 'auto';
-  style.cursor = 'pointer';
+  // Use setTimeout to ensure DOM is updated before setting value
+  setTimeout(() => {
+    // Set default province to Ontario (after options are added and DOM is updated)
+    if (provinceSelect.options.length > 1) {
+      provinceSelect.value = 'ON';
+    }
+    
+    // Ensure select remains enabled and interactive
+    provinceSelect.disabled = false;
+    provinceSelect.removeAttribute('disabled');
+    provinceSelect.removeAttribute('readonly');
+    provinceSelect.setAttribute('tabindex', '0');
+    provinceSelect.style.pointerEvents = 'auto';
+    provinceSelect.style.cursor = 'pointer';
+    provinceSelect.style.userSelect = 'auto';
+    provinceSelect.style.webkitUserSelect = 'auto';
+    provinceSelect.style.mozUserSelect = 'auto';
+    
+    // Force a reflow to ensure styles are applied
+    void provinceSelect.offsetHeight;
+  }, 0);
 
   // Load tax data
   try {
@@ -90,10 +113,20 @@ export async function initUI() {
  * Attach event listeners to input fields
  */
 function attachEventListeners() {
-  const inputs = document.querySelectorAll('input[type="text"], select');
-  inputs.forEach(input => {
+  // Text inputs get both input and change events
+  const textInputs = document.querySelectorAll('input[type="text"]');
+  textInputs.forEach(input => {
     input.addEventListener('input', calculate);
     input.addEventListener('change', calculate);
+  });
+
+  // Select elements only get change events (they don't fire input events)
+  const selects = document.querySelectorAll('select');
+  selects.forEach(select => {
+    select.addEventListener('change', calculate);
+    // Ensure select is interactive
+    select.style.pointerEvents = 'auto';
+    select.style.cursor = 'pointer';
   });
 
   // Reset button
