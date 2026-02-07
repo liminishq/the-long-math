@@ -5,19 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Canada Personal Income Tax Calculator 2025 – The Long Math</title>
 
-  <!-- Theme init (must run before CSS) -->
-  <script>
-    (function () {
-      try {
-        const saved = localStorage.getItem("tlm_theme");
-        const theme = saved === "light" ? "light" : "dark";
-        document.documentElement.setAttribute("data-theme", theme);
-      } catch (e) {
-        document.documentElement.setAttribute("data-theme", "dark");
-      }
-    })();
-  </script>
+  <!-- Site-wide theme + styles -->
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script defer src="/assets/js/site.js"></script>
 
+  <!-- Page-local styles -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -258,26 +251,6 @@
     <div id="footerMount"></div>
 
   </div>
-
-  <!-- Theme toggle -->
-  <script>
-    (function () {
-      const root = document.documentElement;
-      const toggle = document.getElementById("theme_toggle");
-      const label = document.getElementById("theme_label");
-
-      const theme = root.getAttribute("data-theme") || "dark";
-      toggle.checked = theme === "light";
-      label.textContent = theme === "light" ? "Light" : "Dark";
-
-      toggle.addEventListener("change", () => {
-        const next = toggle.checked ? "light" : "dark";
-        root.setAttribute("data-theme", next);
-        localStorage.setItem("tlm_theme", next);
-        label.textContent = next === "light" ? "Light" : "Dark";
-      });
-    })();
-  </script>
 
   <script type="module">
     import { initUI } from './js/tax.ui.js';
