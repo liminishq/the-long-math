@@ -32,6 +32,14 @@ const PROVINCES = [
 export async function initUI() {
   // Populate province selector
   const provinceSelect = document.getElementById('province');
+  if (!provinceSelect) {
+    console.error('Province select element not found');
+    return;
+  }
+  
+  // Clear existing options except the placeholder
+  provinceSelect.innerHTML = '<option value="">Select...</option>';
+  
   PROVINCES.forEach(prov => {
     const option = document.createElement('option');
     option.value = prov.code;
@@ -40,10 +48,23 @@ export async function initUI() {
   });
 
   // Set default year
-  document.getElementById('year').value = '2025';
+  const yearSelect = document.getElementById('year');
+  if (yearSelect) {
+    yearSelect.value = '2025';
+  }
 
-  // Set default province to Ontario
+  // Ensure select is enabled and remove any attributes that might block interaction
+  provinceSelect.disabled = false;
+  provinceSelect.removeAttribute('disabled');
+  provinceSelect.removeAttribute('readonly');
+  
+  // Set default province to Ontario (after options are added)
   provinceSelect.value = 'ON';
+  
+  // Force a re-render to ensure the select is interactive
+  const style = provinceSelect.style;
+  style.pointerEvents = 'auto';
+  style.cursor = 'pointer';
 
   // Load tax data
   try {
