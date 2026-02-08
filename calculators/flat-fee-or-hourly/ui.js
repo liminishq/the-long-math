@@ -87,7 +87,10 @@
     if (!Number.isFinite(hoursPerYear)) hoursPerYear = DEFAULTS.hours_per_year;
 
     let aumFeePct = parsePercent($("aum_fee_pct").value);
-    if (!Number.isFinite(aumFeePct)) aumFeePct = DEFAULTS.aum_fee_pct / 100;
+    // If AUM model is selected, ensure we have a valid fee percentage
+    if (!Number.isFinite(aumFeePct) || aumFeePct <= 0) {
+      aumFeePct = DEFAULTS.aum_fee_pct / 100;
+    }
 
     const feeInflationOn = $("fee_inflation_on").checked || $("fee_inflation_on_hourly").checked;
     let feeIncreasePct = num($("fee_increase_pct").value) || num($("fee_increase_pct_hourly").value);

@@ -267,6 +267,12 @@ function calculateFlatFeeOrHourlyCost(inputs) {
   if (!Number.isFinite(annualReturn) || annualReturn < 0) {
     return { error: "Invalid annual return" };
   }
+  // Validate AUM fee when AUM model is selected
+  if (feeModel === "aum") {
+    if (!Number.isFinite(aumFeePct) || aumFeePct <= 0 || aumFeePct > 0.15) {
+      return { error: "Invalid AUM fee percentage (must be between 0 and 15%)" };
+    }
+  }
 
   // Simulate without fees
   const endingWithout = simulateWithoutFees({
