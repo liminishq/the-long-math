@@ -1,5 +1,5 @@
 // Investment Calculator - Inflation Adjusted
-// Version: 1.0
+// Version: 1.1 - Fixed: Removed compounding frequency selector, always uses annual compounding
 (function(){
   'use strict';
   const el = (id) => document.getElementById(id);
@@ -12,6 +12,13 @@
   const inflationRate = el("inflationRate");
   const contributionFrequency = el("contributionFrequency");
   const contributionTiming = el("contributionTiming");
+  
+  // Verify required elements exist
+  if (!startingAmount || !monthlyContribution || !timeHorizon || !expectedReturn || 
+      !inflationRate || !contributionFrequency || !contributionTiming) {
+    console.error('Required input elements not found');
+    return;
+  }
 
   // Output elements
   const finalBalanceReal = el("finalBalanceReal");
@@ -322,7 +329,7 @@
     inflationRate,
     contributionFrequency,
     contributionTiming
-  ].forEach((node) => node.addEventListener("input", updateDisplay));
+  ].filter(node => node !== null).forEach((node) => node.addEventListener("input", updateDisplay));
 
   scheduleViewRadios.forEach(radio => {
     radio.addEventListener("change", () => {
@@ -330,8 +337,10 @@
     });
   });
 
-  el("printButton").addEventListener("click", printResults);
-  el("exportCSVButton").addEventListener("click", exportCSV);
+  const printButton = el("printButton");
+  const exportCSVButton = el("exportCSVButton");
+  if (printButton) printButton.addEventListener("click", printResults);
+  if (exportCSVButton) exportCSVButton.addEventListener("click", exportCSV);
 
   // Initial calculation
   updateDisplay();
