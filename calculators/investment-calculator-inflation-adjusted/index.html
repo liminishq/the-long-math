@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Investment Calculator – Inflation Adjusted | The Long Math</title>
+  <meta name="description" content="Estimate investment growth with monthly contributions and compounding, and compare inflation-adjusted (real) buying power to nominal dollars using an assumed long-term inflation rate." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/investment-calculator-inflation-adjusted/" />
+
+  <!-- Site-wide theme + styles -->
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  
+  <!-- Calculator-specific styles -->
+  <link rel="stylesheet" href="/calculators/investment-calculator-inflation-adjusted/styles.css" />
+</head>
+
+<body>
+  <div id="site-header"></div>
+  
+  <!-- Back link -->
+  <div style="max-width: 980px; margin: 0 auto; padding: 8px 16px 0;">
+    <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
+  </div>
+  
+  <div class="wrap">
+
+    <!-- Full-width intro section -->
+    <header class="intro-section">
+      <h1>Investment Calculator – Inflation Adjusted</h1>
+      <p>This calculator estimates investment growth with recurring contributions and compounding. It shows inflation-adjusted (real) results as the primary output, reflecting purchasing power in today's dollars, while also displaying nominal results for comparison.</p>
+      <p>All dollar amounts you enter—starting balance and contributions—are assumed to be in today's dollars. The calculator applies an assumed long-term inflation rate to show how purchasing power evolves over time, making it easier to understand the real value of your future balance.</p>
+      <p>The calculator defaults to showing real (inflation-adjusted) results as the primary output, with nominal results shown as a secondary comparison. This approach helps you see both the dollar amount and the actual buying power of your investment over time.</p>
+    </header>
+
+    <!-- Two-column calculator section -->
+    <div class="calc-grid">
+      <!-- Left column: Inputs -->
+      <article class="panel">
+        <h2 class="section-title">Inputs</h2>
+
+        <div class="field">
+          <label for="startingAmount">Starting amount</label>
+          <input id="startingAmount" type="number" inputmode="decimal" min="0" step="100" value="20000" />
+        </div>
+
+        <div class="field">
+          <label for="monthlyContribution">Monthly contribution</label>
+          <input id="monthlyContribution" type="number" inputmode="decimal" min="0" step="10" value="500" />
+          <details class="contribution-disclosure">
+            <summary style="cursor: pointer; margin-top: 8px; font-size: 12px; color: var(--muted);">How recurring contributions are treated</summary>
+            <div style="margin-top: 8px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; font-size: 12px; line-height: 1.5;">
+              <p style="margin: 0 0 8px;">"$500 per month" means $500 per month in today's dollars, maintained over time.</p>
+              <p style="margin: 0;">This means:</p>
+              <ul style="margin: 8px 0 0; padding-left: 20px;">
+                <li>Nominal contribution amounts increase over time as prices change</li>
+                <li>The real saving effort stays constant</li>
+                <li>The calculator handles the inflation math internally</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+
+        <div class="field">
+          <label for="timeHorizon">Time horizon (years)</label>
+          <input id="timeHorizon" type="number" inputmode="numeric" min="1" max="60" step="1" value="25" />
+        </div>
+
+        <div class="field">
+          <label for="expectedReturn">Expected annual return (%)</label>
+          <div class="inline">
+            <input id="expectedReturn" type="number" inputmode="decimal" step="0.1" value="7" />
+            <span class="unit">%</span>
+          </div>
+          <p class="help muted">Nominal (before inflation).</p>
+        </div>
+
+        <div class="field">
+          <label for="inflationRate">Assumed long-term inflation rate (%)</label>
+          <div class="inline">
+            <input id="inflationRate" type="number" inputmode="decimal" step="0.1" value="2.5" />
+            <span class="unit">%</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="compoundingFrequency">Compounding frequency</label>
+          <select id="compoundingFrequency">
+            <option value="1">Annually</option>
+            <option value="2">Semiannually</option>
+            <option value="4">Quarterly</option>
+            <option value="12" selected>Monthly</option>
+            <option value="365">Daily</option>
+            <option value="continuous">Continuously</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="contributionFrequency">Contribution frequency</label>
+          <select id="contributionFrequency">
+            <option value="monthly" selected>Monthly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="contributionTiming">Contribution timing</label>
+          <select id="contributionTiming">
+            <option value="beginning">Beginning of period</option>
+            <option value="end" selected>End of period</option>
+          </select>
+        </div>
+      </article>
+
+      <!-- Right column: Results -->
+      <article class="panel">
+        <h2 class="section-title">Results</h2>
+
+        <div class="results">
+          <div class="result-row highlight primary">
+            <div>
+              <div class="label">Final balance (inflation-adjusted)</div>
+              <div class="sublabel">Buying power in today's dollars</div>
+            </div>
+            <div class="value highlight-value" id="finalBalanceReal">$—</div>
+          </div>
+
+          <div class="result-row highlight secondary">
+            <div>
+              <div class="label">Final balance (nominal)</div>
+              <div class="sublabel">Unadjusted dollar amount</div>
+            </div>
+            <div class="value highlight-value" id="finalBalanceNominal">$—</div>
+          </div>
+        </div>
+
+        <p class="explainer" style="margin: 16px 0; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px; font-size: 13px; line-height: 1.5;">
+          Nominal dollars show your balance without accounting for inflation.<br>
+          Inflation-adjusted dollars show how much buying power that balance has in today's dollars.
+        </p>
+
+        <hr class="sep" />
+
+        <div class="breakdown">
+          <h3 style="margin: 0 0 12px; font-size: 14px; font-weight: 600;">Breakdown (inflation-adjusted)</h3>
+          <div class="breakdown-item">
+            <div class="breakdown-label">Starting amount (today's dollars)</div>
+            <div class="breakdown-value" id="breakdownStarting">$—</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="breakdown-label">Total contributions (today's dollars)</div>
+            <div class="breakdown-value" id="breakdownContributions">$—</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="breakdown-label">Investment growth from assumed returns (today's dollars)</div>
+            <div class="breakdown-value" id="breakdownGrowth">$—</div>
+          </div>
+          <div class="breakdown-bar">
+            <div class="breakdown-bar-segment" id="barStarting" style="background: var(--accent);"></div>
+            <div class="breakdown-bar-segment" id="barContributions" style="background: var(--accent2);"></div>
+            <div class="breakdown-bar-segment" id="barGrowth" style="background: var(--accentSoft);"></div>
+          </div>
+        </div>
+
+        <hr class="sep" />
+
+        <div class="schedule">
+          <h3 style="margin: 0 0 12px; font-size: 14px; font-weight: 600;">Accumulation schedule</h3>
+          <div style="margin-bottom: 12px;">
+            <label style="font-size: 12px; color: var(--muted);">
+              <input type="radio" name="scheduleView" value="yearly" checked /> Yearly
+            </label>
+            <label style="font-size: 12px; color: var(--muted); margin-left: 16px;">
+              <input type="radio" name="scheduleView" value="monthly" /> Monthly
+            </label>
+          </div>
+          <div id="scheduleTableContainer">
+            <table class="schedule-table" id="scheduleTable">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th>Contributions</th>
+                  <th>Growth</th>
+                  <th>Ending balance</th>
+                </tr>
+              </thead>
+              <tbody id="scheduleBody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <hr class="sep" />
+
+        <div class="export-controls">
+          <button id="printButton" class="export-btn">Print results</button>
+          <button id="exportCSVButton" class="export-btn">Export CSV</button>
+        </div>
+      </article>
+    </div>
+
+    <!-- Assumptions block (full-width, collapsed by default) -->
+    <details class="assumptions-block">
+      <summary style="cursor: pointer; padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; font-weight: 600; font-size: 15px; margin-top: 24px;">
+        Assumptions used in this calculator
+      </summary>
+      <div style="padding: 16px; margin-top: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px;">
+        <p style="margin: 0 0 12px; font-size: 14px; line-height: 1.6;">
+          All dollar amounts you enter (starting balance and contributions) are assumed to be in today's dollars.
+        </p>
+        <p style="margin: 0 0 12px; font-size: 14px; line-height: 1.6;">
+          The calculator uses an assumed long-term inflation rate to show results in inflation-adjusted (real) dollars, reflecting purchasing power rather than nominal amounts.
+        </p>
+        <p style="margin: 0; font-size: 14px; line-height: 1.6;">
+          You do not need to adjust your inputs for inflation — the calculator applies the adjustment over time.
+        </p>
+      </div>
+    </details>
+
+    <!-- FAQ Section (full-width) -->
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <h3>What does "inflation-adjusted" mean?</h3>
+        <p><strong>Definition:</strong></p>
+        <p>Inflation-adjusted values show what money is worth after accounting for changes in prices over time.</p>
+        <p>In this calculator, inflation-adjusted results are expressed in today's dollars, so amounts can be compared based on purchasing power rather than raw dollar totals.</p>
+        <p><strong>Example:</strong></p>
+        <p>A loaf of bread that costs $3 today and $6 in the future has not become twice as valuable. Prices doubled.</p>
+        <p>The same adjustment applies to investments. If a portfolio grows from $100,000 today to $5 million over the same period, its inflation-adjusted value would be closer to $2.5 million in today's dollars.</p>
+        <p style="margin-top: 12px; font-size: 13px; color: var(--muted);">
+          The inflation rate used here is a long-term assumption. You can explore historical inflation rates by year to see how inflation has varied over time and to help contextualize the assumption used in this calculator.
+        </p>
+      </div>
+    </section>
+
+    <!-- Disclaimer (site-wide footer will be injected) -->
+  </div>
+
+  <div id="site-footer"></div>
+
+  <script src="/calculators/investment-calculator-inflation-adjusted/script.js"></script>
+</body>
+</html>

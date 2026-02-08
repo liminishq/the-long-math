@@ -1,0 +1,336 @@
+/* Minimal local styles; relies on global styles.css */
+
+.intro-section {
+  margin-bottom: 24px;
+}
+
+.intro-section h1 {
+  margin: 0 0 16px;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.intro-section p {
+  margin: 0 0 12px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+  max-width: 820px;
+}
+
+.panel {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+}
+
+.field {
+  margin: 12px 0;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface, rgba(255,255,255,0.04));
+  color: var(--text);
+  font-size: 14px;
+}
+
+.inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inline input {
+  flex: 1;
+}
+
+.unit {
+  opacity: 0.75;
+  font-size: 14px;
+}
+
+.help {
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.sep {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.result-row.primary {
+  background: rgba(255,255,255,0.05);
+  border-color: var(--accent);
+}
+
+.result-row.secondary {
+  background: rgba(255,255,255,0.04);
+  border-color: var(--accent2);
+}
+
+.result-row .label {
+  font-size: 13px;
+  opacity: 0.85;
+  margin-bottom: 4px;
+}
+
+.result-row .sublabel {
+  font-size: 11px;
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.result-row .value {
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.result-row .value.highlight-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.result-row.secondary .value.highlight-value {
+  color: var(--accent2);
+}
+
+.breakdown {
+  margin-top: 8px;
+}
+
+.breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 13px;
+}
+
+.breakdown-label {
+  opacity: 0.85;
+}
+
+.breakdown-value {
+  font-weight: 600;
+}
+
+.breakdown-bar {
+  display: flex;
+  height: 24px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 12px;
+  border: 1px solid var(--border);
+}
+
+.breakdown-bar-segment {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.schedule {
+  margin-top: 8px;
+}
+
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.schedule-table thead {
+  border-bottom: 1px solid var(--border);
+}
+
+.schedule-table th {
+  text-align: left;
+  padding: 8px 6px;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.schedule-table td {
+  padding: 8px 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.schedule-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.schedule-table td:last-child,
+.schedule-table td:nth-child(3),
+.schedule-table td:nth-child(2) {
+  text-align: right;
+  font-weight: 600;
+}
+
+.export-controls {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.export-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.export-btn:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+.export-btn:active {
+  background: rgba(255,255,255,0.08);
+}
+
+.assumptions-block {
+  margin-top: 24px;
+}
+
+.assumptions-block summary {
+  list-style: none;
+}
+
+.assumptions-block summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-section {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.faq-section h2 {
+  margin: 0 0 20px;
+  font-size: 20px;
+  color: var(--text);
+}
+
+.faq-item {
+  margin-bottom: 24px;
+}
+
+.faq-item h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  color: var(--accent2);
+  font-weight: 700;
+}
+
+.faq-item p {
+  margin: 0 0 12px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.faq-item p:last-child {
+  margin-bottom: 0;
+}
+
+.contribution-disclosure {
+  margin-top: 8px;
+}
+
+.contribution-disclosure summary {
+  list-style: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.contribution-disclosure summary::-webkit-details-marker {
+  display: none;
+}
+
+.contribution-disclosure summary:hover {
+  color: var(--text);
+}
+
+@media (max-width: 600px) {
+  .schedule-table {
+    font-size: 12px;
+  }
+  .schedule-table th,
+  .schedule-table td {
+    padding: 6px 4px;
+  }
+  .result-row .value.highlight-value {
+    font-size: 20px;
+  }
+  .export-controls {
+    flex-direction: column;
+  }
+}
+
+/* Print styles */
+@media print {
+  .export-controls,
+  .assumptions-block summary,
+  .contribution-disclosure summary {
+    display: none;
+  }
+  
+  .assumptions-block {
+    display: block !important;
+  }
+  
+  .assumptions-block > div {
+    display: block !important;
+  }
+  
+  .panel {
+    break-inside: avoid;
+  }
+  
+  .schedule-table {
+    font-size: 11px;
+  }
+}
