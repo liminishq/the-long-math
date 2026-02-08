@@ -4,28 +4,25 @@
 
    PURPOSE
    -------
-   Calculate the true cost of flat-fee or hourly advisor fees,
+   Calculate the true cost of flat-fee, hourly, or AUM advisor fees,
    including both direct fees paid and lost compounding.
 
    This engine:
      • Uses monthly compounding
      • Applies contributions at END of month (after growth and fees)
      • Applies fees monthly
-     • Tracks lost compounding as future value of fees
+     • Defines:
+         totalCost = endingWithoutFees - endingWithFees
+         feesPaid  = sum of fees deducted
+         lostCompounding = totalCost - feesPaid
      • Calculates AUM-fee equivalent via binary search
-*/
 
-/* ============================================================
-   Helper: Parse percentage string to decimal
-   ============================================================ */
-function parsePercent(str) {
-  if (str == null || str === "") return NaN;
-  const s = String(str).trim().replace(/,/g, "");
-  if (s === "") return NaN;
-  const n = Number(s);
-  if (!Number.isFinite(n)) return NaN;
-  return n / 100;
-}
+   IMPORTANT UNIT NOTE
+   -------------------
+   ui.js passes:
+     aumFeePct as an ANNUAL DECIMAL (e.g., user enters "2.5" => 0.025)
+   Therefore this engine treats aumFeePct as a decimal and does NOT /100 it.
+*/
 
 /* ============================================================
    Helper: Clamp number between min and max
@@ -36,11 +33,11 @@ function clamp(n, min, max) {
 }
 
 /* ============================================================
-   Helper: Calculate monthly rate from annual rate
+   Helper: Calculate monthly rate from annual rate (effective)
    ============================================================ */
-function monthlyRateFromAnnual(rAnnual) {
-  if (rAnnual === 0) return 0;
-  return Math.pow(1 + rAnnual, 1 / 12) - 1;
+function monthlyRateFromAnnual(rAnnualDec) {
+  if (!Number.isFinite(rAnnualDec) || rAnnualDec === 0) return 0;
+  return Math.pow(1 + rAnnualDec, 1 / 12) - 1;
 }
 
 /* ============================================================
@@ -54,6 +51,7 @@ function simulateWithoutFees({
 }) {
   const months = Math.round(horizonYears * 12);
   const rm = monthlyRateFromAnnual(annualReturn);
+
   let balance = startingBalance;
 
   for (let m = 0; m < months; m++) {
@@ -78,63 +76,54 @@ function simulateWithFees({
   flatFee,
   hourlyRate,
   hoursPerYear,
-  aumFeePct,
+  aumFeePct, // ANNUAL DECIMAL (e.g., 0.025 for 2.5%)
   feeInflationOn,
   feeIncreasePct
 }) {
   const months = Math.round(horizonYears * 12);
   const rm = monthlyRateFromAnnual(annualReturn);
+
   let balance = startingBalance;
   let feesPaid = 0;
-  let lostCompounding = 0;
 
   for (let m = 0; m < months; m++) {
-    const monthIndex = m;
-    const currentYear = Math.floor(monthIndex / 12) + 1;
+    const currentYear = Math.floor(m / 12) + 1;
 
     // Growth
     balance = balance * (1 + rm);
 
-    // Calculate monthly fee based on model
+    // Monthly fee based on model
     let feeMonth = 0;
 
     if (feeModel === "flat") {
-      // Calculate annual fee for current year
       let annualFee = flatFee;
+
       if (feeInflationOn && feeIncreasePct > 0) {
         annualFee = flatFee * Math.pow(1 + feeIncreasePct / 100, currentYear - 1);
       }
+
       feeMonth = annualFee / 12;
     } else if (feeModel === "hourly") {
-      // Calculate annual fee for current year
-      let annualFee = hourlyRate * hoursPerYear;
+      const baseAnnual = hourlyRate * hoursPerYear;
+      let annualFee = baseAnnual;
+
       if (feeInflationOn && feeIncreasePct > 0) {
-        annualFee = (hourlyRate * hoursPerYear) * Math.pow(1 + feeIncreasePct / 100, currentYear - 1);
+        annualFee = baseAnnual * Math.pow(1 + feeIncreasePct / 100, currentYear - 1);
       }
+
       feeMonth = annualFee / 12;
     } else if (feeModel === "aum") {
-      // AUM fee applied as percentage of assets
-      feeMonth = balance * (aumFeePct / 100 / 12);
+      // ui.js passes aumFeePct as annual DECIMAL (e.g., 0.025)
+      const aumAnnualDec = aumFeePct;
+      feeMonth = balance * (aumAnnualDec / 12);
     }
 
-    // Deduct fee (dollar fees)
-    if (feeModel === "flat" || feeModel === "hourly") {
-      balance = Math.max(0, balance - feeMonth);
-      feesPaid += feeMonth;
-      // Lost compounding: future value of this fee to end of horizon
-      const monthsRemaining = months - monthIndex - 1;
-      if (monthsRemaining > 0) {
-        lostCompounding += feeMonth * Math.pow(1 + rm, monthsRemaining);
-      }
-    } else if (feeModel === "aum") {
-      // AUM fee deducted
-      balance = Math.max(0, balance - feeMonth);
-      feesPaid += feeMonth;
-      // Lost compounding for AUM: future value of fee
-      const monthsRemaining = months - monthIndex - 1;
-      if (monthsRemaining > 0) {
-        lostCompounding += feeMonth * Math.pow(1 + rm, monthsRemaining);
-      }
+    // Deduct fee + track fees paid
+    if (feeMonth > 0) {
+      // Prevent going negative
+      const actualFee = Math.min(balance, feeMonth);
+      balance = balance - actualFee;
+      feesPaid += actualFee;
     }
 
     // Contribution at end of month
@@ -143,8 +132,7 @@ function simulateWithFees({
 
   return {
     endingValue: balance,
-    feesPaid,
-    lostCompounding
+    feesPaid
   };
 }
 
@@ -156,18 +144,25 @@ function simulateWithAUMFee({
   monthlyContribution,
   horizonYears,
   annualReturn,
-  aumFeeAnnualPct // annual percentage as decimal
+  aumFeeAnnualPct // annual DECIMAL (e.g., 0.01 = 1%)
 }) {
   const months = Math.round(horizonYears * 12);
   const rm = monthlyRateFromAnnual(annualReturn);
+
   let balance = startingBalance;
 
   for (let m = 0; m < months; m++) {
     // Growth
     balance = balance * (1 + rm);
-    // AUM fee (monthly)
+
+    // AUM fee (monthly), decimal annual -> monthly
     const feeMonth = balance * (aumFeeAnnualPct / 12);
-    balance = Math.max(0, balance - feeMonth);
+
+    if (feeMonth > 0) {
+      const actualFee = Math.min(balance, feeMonth);
+      balance = balance - actualFee;
+    }
+
     // Contribution at end of month
     balance = balance + monthlyContribution;
   }
@@ -186,8 +181,9 @@ function calculateAUMEquivalent({
   targetEndingValue,
   endingWithoutFees
 }) {
-  // If target is >= ending without fees (within tolerance), equivalent is 0%
   const tolerance = 1e-2;
+
+  // If target is >= ending without fees (within tolerance), equivalent is 0%
   if (targetEndingValue >= endingWithoutFees - tolerance) {
     return 0.0;
   }
@@ -201,18 +197,19 @@ function calculateAUMEquivalent({
     aumFeeAnnualPct: 0.05
   });
 
+  // If target is lower than what 5% produces, equivalent is >= 5%
   if (targetEndingValue < endingAt5Pct - tolerance) {
-    return null; // Will display as "≥ 5.00%"
+    return null; // UI displays "≥ 5.00%"
   }
 
   // Binary search on [0, 0.05]
   let low = 0;
   let high = 0.05;
   const maxIterations = 40;
-  let iterations = 0;
 
-  while (iterations < maxIterations) {
+  for (let i = 0; i < maxIterations; i++) {
     const mid = (low + high) / 2;
+
     const endingAtMid = simulateWithAUMFee({
       startingBalance,
       monthlyContribution,
@@ -234,11 +231,8 @@ function calculateAUMEquivalent({
       // Need lower fee
       high = mid;
     }
-
-    iterations++;
   }
 
-  // Return midpoint as best estimate
   return (low + high) / 2;
 }
 
@@ -292,15 +286,30 @@ function calculateFlatFeeOrHourlyCost(inputs) {
     flatFee: feeModel === "flat" ? flatFee : 0,
     hourlyRate: feeModel === "hourly" ? hourlyRate : 0,
     hoursPerYear: feeModel === "hourly" ? hoursPerYear : 0,
-    aumFeePct: feeModel === "aum" ? aumFeePct : 0,
-    feeInflationOn: feeInflationOn || false,
-    feeIncreasePct: feeIncreasePct || 0
+    aumFeePct: feeModel === "aum" ? aumFeePct : 0, // annual decimal if model==="aum"
+    feeInflationOn: !!feeInflationOn,
+    feeIncreasePct: Number.isFinite(feeIncreasePct) ? feeIncreasePct : 0
   });
 
   const endingWith = withFees.endingValue;
-  const feesPaid = withFees.feesPaid;
-  const lostCompounding = withFees.lostCompounding;
-  const totalCost = feesPaid + lostCompounding;
+  let feesPaid = withFees.feesPaid;
+
+  // Total "true cost" is the ending value gap
+  let totalImpact = endingWithout - endingWith;
+  if (!Number.isFinite(totalImpact)) totalImpact = 0;
+  if (totalImpact < 0) totalImpact = 0;
+
+  // Clamp rounding weirdness: feesPaid cannot exceed totalImpact in a consistent model
+  if (feesPaid > totalImpact + 0.01) {
+    feesPaid = totalImpact;
+  }
+
+  // Lost compounding is the residual
+  let lostCompounding = totalImpact - feesPaid;
+  if (lostCompounding < 0 && lostCompounding > -0.01) lostCompounding = 0;
+  if (lostCompounding < 0) lostCompounding = 0;
+
+  const totalCost = totalImpact;
 
   // Calculate AUM-fee equivalent (only for flat or hourly)
   let aumEquivalent = null;

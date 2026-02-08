@@ -41,9 +41,7 @@
   function clampNonNeg(x){ return Math.max(0, x); }
 
   function fmtMoney(x){
-    return new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency: "USD",
+    return "$" + new Intl.NumberFormat(undefined, {
       maximumFractionDigits: 0
     }).format(x);
   }
