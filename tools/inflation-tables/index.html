@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Historical Inflation Rates (CPI) — Canada and United States | The Long Math</title>
+  <meta name="description" content="Historical Consumer Price Index (CPI) inflation rates by year for Canada and the United States, with simple long-term averages for context.">
+
+  <!-- Must run BEFORE CSS to avoid flash -->
+  <script src="/assets/js/theme-init.js"></script>
+
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/tools/inflation-tables/styles.css">
+
+  <!-- Runs after DOM is parsed -->
+  <script defer src="/assets/js/site.js"></script>
+</head>
+
+<body>
+
+  <!-- Shared header/footer injection -->
+  <div id="site-header"></div>
+
+  <div class="wrap">
+
+    <!-- Back link -->
+    <div style="margin-bottom: 16px;">
+      <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
+    </div>
+
+    <!-- Full-width title and intro -->
+    <section class="card">
+      <h1>Historical Inflation Rates (CPI) — Canada and United States</h1>
+      
+      <div class="lede">
+        <p>This page shows historical Consumer Price Index (CPI) inflation rates by year for Canada and the United States.</p>
+        <p>The data is provided as a reference tool to help contextualize long-term inflation assumptions used elsewhere on The Long Math. No projections or forecasts are made.</p>
+      </div>
+    </section>
+
+    <!-- Quick context summary -->
+    <section class="card" style="margin-top: 16px;">
+      <h2 class="section-title">Quick context</h2>
+      
+      <div id="averages-container">
+        <div id="averages-canada" class="averages-section">
+          <h3 style="margin: 0 0 12px; font-size: 14px; font-weight: 700;">Canada</h3>
+          <div class="averages-grid">
+            <div class="average-item">
+              <span class="average-label">Average inflation (last 5 years)</span>
+              <span class="average-value" id="avg-canada-5">–</span>
+            </div>
+            <div class="average-item">
+              <span class="average-label">Average inflation (last 10 years)</span>
+              <span class="average-value" id="avg-canada-10">–</span>
+            </div>
+            <div class="average-item">
+              <span class="average-label">Average inflation (last 20 years)</span>
+              <span class="average-value" id="avg-canada-20">–</span>
+            </div>
+            <div class="average-item">
+              <span class="average-label">Long-term average (full dataset)</span>
+              <span class="average-value" id="avg-canada-all">–</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="averages-us" class="averages-section" style="margin-top: 20px;">
+          <h3 style="margin: 0 0 12px; font-size: 14px; font-weight: 700;">United States</h3>
+          <div class="averages-grid">
+            <div class="average-item">
+              <span class="average-label">Average inflation (last 5 years)</span>
+              <span class="average-value" id="avg-us-5">–</span>
+            </div>
+            <div class="average-item">
+              <span class="average-label">Average inflation (last 10 years)</span>
+              <span class="average-value" id="avg-us-10">–</span>
+            </div>
+            <div class="average-item">
+              <span class="average-label">Average inflation (last 20 years)</span>
+              <span class="average-value" id="avg-us-20">–</span>
+            </div>
+            <div class="average-item">
+              <span class="average-label">Long-term average (full dataset)</span>
+              <span class="average-value" id="avg-us-all">–</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p style="margin: 16px 0 0; font-size: 12px; color: var(--muted);">
+        Averages shown are simple annual averages based on published CPI inflation rates.
+      </p>
+    </section>
+
+    <!-- Canada table -->
+    <section class="card" style="margin-top: 16px;">
+      <h2 class="section-title">Canada</h2>
+      
+      <div class="table-container">
+        <table id="table-canada">
+          <caption>Annual CPI inflation rates by year — Canada</caption>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>CPI inflation rate (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top: 12px;">
+        <a href="#" id="download-canada-csv" class="csv-download">Download CSV</a>
+      </div>
+
+      <p style="margin: 12px 0 0; font-size: 12px; color: var(--muted);">
+        Source: Statistics Canada (CPI, annual % change)
+      </p>
+    </section>
+
+    <!-- United States table -->
+    <section class="card" style="margin-top: 16px;">
+      <h2 class="section-title">United States</h2>
+      
+      <div class="table-container">
+        <table id="table-us">
+          <caption>Annual CPI inflation rates by year — United States</caption>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>CPI inflation rate (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top: 12px;">
+        <a href="#" id="download-us-csv" class="csv-download">Download CSV</a>
+      </div>
+
+      <p style="margin: 12px 0 0; font-size: 12px; color: var(--muted);">
+        Source: U.S. Bureau of Labor Statistics (CPI-U, annual % change)
+      </p>
+    </section>
+
+  </div>
+
+  <div id="footerMount"></div>
+
+  <script src="/tools/inflation-tables/script.js"></script>
+
+</body>
+</html>

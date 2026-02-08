@@ -1,4 +1,7 @@
+// Investment Calculator - Inflation Adjusted
+// Version: 1.0
 (function(){
+  'use strict';
   const el = (id) => document.getElementById(id);
 
   // Input elements
@@ -101,10 +104,6 @@
     const compoundingStepsPerContribPeriod = compoundingPeriodsPerYear === Infinity
       ? 1
       : Math.max(1, Math.round(compoundingPeriodsPerYear / contribPeriodsPerYear));
-    
-    // Schedule data (yearly snapshots)
-    const schedule = [];
-    const monthlySchedule = [];
     
     // Schedule data (yearly snapshots)
     const schedule = [];

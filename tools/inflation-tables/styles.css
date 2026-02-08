@@ -1,0 +1,78 @@
+/* Page-local styles for inflation tables tool */
+
+/* Table container for horizontal scrolling on small screens */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 12px;
+}
+
+/* Table styling - inherits from site styles, with minimal overrides */
+table {
+  min-width: 300px;
+}
+
+table caption {
+  text-align: left;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+/* Averages section */
+.averages-section {
+  margin-bottom: 0;
+}
+
+.averages-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+@media (max-width: 600px) {
+  .averages-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.average-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.average-label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.average-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* CSV download link */
+.csv-download {
+  display: inline-block;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  text-decoration: none;
+  transition: border-color 0.18s ease;
+}
+
+.csv-download:hover {
+  border-color: var(--accent);
+  text-decoration: none;
+}
