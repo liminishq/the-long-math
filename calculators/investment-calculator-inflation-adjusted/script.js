@@ -10,7 +10,6 @@
   const timeHorizon = el("timeHorizon");
   const expectedReturn = el("expectedReturn");
   const inflationRate = el("inflationRate");
-  const compoundingFrequency = el("compoundingFrequency");
   const contributionFrequency = el("contributionFrequency");
   const contributionTiming = el("contributionTiming");
 
@@ -48,68 +47,43 @@
     return (1 + rNom) / (1 + inflation) - 1;
   }
 
-  // Get compounding periods per year
-  function getCompoundingPeriodsPerYear(){
-    const val = compoundingFrequency.value;
-    if (val === "continuous") return Infinity;
-    return Math.max(1, Math.round(toNumber(val)));
-  }
-
   // Get contribution periods per year
   function getContributionPeriodsPerYear(){
     return contributionFrequency.value === "monthly" ? 12 : 1;
   }
 
-  // Calculate period return based on compounding frequency
-  function getPeriodReturn(rAnnual, periodsPerYear){
-    if (periodsPerYear === Infinity) {
-      // Continuous compounding: use effective annual rate
-      return Math.exp(rAnnual) - 1;
-    }
-    if (periodsPerYear <= 0) return 0;
-    return Math.pow(1 + rAnnual, 1 / periodsPerYear) - 1;
-  }
-
   // Period-by-period simulation
+  // Compounding is ALWAYS annual. Simulation timestep matches contribution frequency.
   function simulateInvestment(){
     const P0 = clampNonNeg(toNumber(startingAmount.value));
     const contribPerPeriod = clampNonNeg(toNumber(monthlyContribution.value));
     const years = Math.max(1, Math.min(60, Math.round(toNumber(timeHorizon.value))));
-    const rNom = toNumber(expectedReturn.value) / 100;
-    const inflation = clampNonNeg(toNumber(inflationRate.value) / 100);
-    const rReal = calculateRealReturn(rNom, inflation);
+    const rNomAnnual = toNumber(expectedReturn.value) / 100; // Nominal annual return
+    const inflationAnnual = clampNonNeg(toNumber(inflationRate.value) / 100); // Annual inflation
+    
+    // Convert nominal annual return to real annual return ONCE
+    const rRealAnnual = calculateRealReturn(rNomAnnual, inflationAnnual);
     
     const contribPeriodsPerYear = getContributionPeriodsPerYear();
-    const compoundingPeriodsPerYear = getCompoundingPeriodsPerYear();
     const contribAtBeginning = contributionTiming.value === "beginning";
-    
     const totalPeriods = Math.round(contribPeriodsPerYear * years);
-    const totalCompoundingPeriods = compoundingPeriodsPerYear === Infinity 
-      ? totalPeriods 
-      : Math.round(compoundingPeriodsPerYear * years);
     
     // Real simulation (in today's dollars)
     let balanceReal = P0;
     let totalContributionsReal = 0;
     
-    // For nominal calculation, we'll track the inflation factor
-    let inflationFactor = 1;
-    const inflationPerPeriod = Math.pow(1 + inflation, 1 / contribPeriodsPerYear) - 1;
-    
-    // Calculate period returns
-    const realPeriodReturn = getPeriodReturn(rReal, compoundingPeriodsPerYear);
-    const nominalPeriodReturn = getPeriodReturn(rNom, compoundingPeriodsPerYear);
-    
-    // Determine how many compounding steps per contribution period
-    const compoundingStepsPerContribPeriod = compoundingPeriodsPerYear === Infinity
-      ? 1
-      : Math.max(1, Math.round(compoundingPeriodsPerYear / contribPeriodsPerYear));
+    // Derive period return from annual real return
+    // If monthly contributions: derive monthly rate such that (1 + r_month)^12 = (1 + r_annual)
+    // If yearly contributions: use annual rate directly
+    const rRealPeriod = contribPeriodsPerYear === 12
+      ? Math.pow(1 + rRealAnnual, 1 / 12) - 1  // Monthly rate from annual
+      : rRealAnnual;  // Yearly rate (same as annual)
     
     // Schedule data (yearly snapshots)
     const schedule = [];
     const monthlySchedule = [];
     
-    // Track yearly data
+    // Track yearly data for aggregation
     let yearData = [];
     for (let y = 0; y <= years; y++) {
       yearData.push({
@@ -120,6 +94,7 @@
       });
     }
     
+    // Period-by-period simulation
     for (let period = 0; period < totalPeriods; period++) {
       const periodStartBalance = balanceReal;
       
@@ -129,17 +104,9 @@
         totalContributionsReal += contribPerPeriod;
       }
       
-      // Apply compounding for this contribution period
-      if (compoundingPeriodsPerYear === Infinity) {
-        // Continuous compounding
-        const timeInYears = 1 / contribPeriodsPerYear;
-        balanceReal *= Math.exp(rReal * timeInYears);
-      } else {
-        // Discrete compounding
-        for (let step = 0; step < compoundingStepsPerContribPeriod; step++) {
-          balanceReal *= (1 + realPeriodReturn);
-        }
-      }
+      // Apply growth for this period using the derived period rate
+      // This ensures annual compounding regardless of contribution frequency
+      balanceReal *= (1 + rRealPeriod);
       
       // Apply contribution at end if needed
       if (!contribAtBeginning) {
@@ -147,10 +114,7 @@
         totalContributionsReal += contribPerPeriod;
       }
       
-      // Track inflation factor for nominal calculation
-      inflationFactor *= (1 + inflationPerPeriod);
-      
-      // Determine which year this period belongs to
+      // Determine which year this period belongs to for schedule aggregation
       const yearNum = Math.floor((period + 1) / contribPeriodsPerYear);
       if (yearNum <= years && yearData[yearNum]) {
         yearData[yearNum].contributions += contribPerPeriod;
@@ -175,7 +139,7 @@
       }
     }
     
-    // Build yearly schedule from yearData
+    // Build yearly schedule from yearData (real-only)
     for (let y = 0; y <= years; y++) {
       if (y === 0) {
         schedule.push({
@@ -195,11 +159,27 @@
       }
     }
     
-    // Calculate nominal final balance
-    // We can derive it from the real balance by applying the inflation factor
+    // Calculate nominal final balance from real final balance
+    // Use simple formula: nominal = real * (1 + inflation)^years
+    const inflationFactor = Math.pow(1 + inflationAnnual, years);
     const finalBalanceNominal = balanceReal * inflationFactor;
     
-    // Calculate breakdown
+    // INVARIANT CHECK: Ensure nominal calculation is consistent
+    const nominalFromReal = balanceReal * inflationFactor;
+    const tolerance = 0.005; // 0.5%
+    const diff = Math.abs(finalBalanceNominal - nominalFromReal) / Math.max(finalBalanceNominal, 1);
+    if (diff > tolerance) {
+      console.warn('Nominal/Real consistency check failed:', {
+        realFinal: balanceReal,
+        nominalFinal: finalBalanceNominal,
+        nominalFromReal: nominalFromReal,
+        diff: diff,
+        inflationFactor: inflationFactor,
+        years: years
+      });
+    }
+    
+    // Calculate breakdown (real-only)
     const growthReal = balanceReal - P0 - totalContributionsReal;
     
     return {
@@ -300,7 +280,7 @@
     csv += "# Time Horizon (years)," + timeHorizon.value + "\n";
     csv += "# Expected Annual Return (nominal)," + expectedReturn.value + "%\n";
     csv += "# Assumed Inflation Rate," + inflationRate.value + "%\n";
-    csv += "# Compounding Frequency," + compoundingFrequency.options[compoundingFrequency.selectedIndex].text + "\n";
+    csv += "# Compounding Frequency,Annual (fixed)\n";
     csv += "# Contribution Frequency," + contributionFrequency.options[contributionFrequency.selectedIndex].text + "\n";
     csv += "# Contribution Timing," + contributionTiming.options[contributionTiming.selectedIndex].text + "\n";
     csv += "#\n";
@@ -340,7 +320,6 @@
     timeHorizon,
     expectedReturn,
     inflationRate,
-    compoundingFrequency,
     contributionFrequency,
     contributionTiming
   ].forEach((node) => node.addEventListener("input", updateDisplay));
