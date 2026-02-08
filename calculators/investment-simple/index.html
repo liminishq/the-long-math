@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Inflation-Adjusted Investment Calculator (Real vs Nominal) | The Long Math</title>
-  <meta name="description" content="Model investment growth with starting amount, recurring contributions, time horizon, and expected return. Toggle inflation-adjusted (real) results and see final balance, total contributed, interest earned, and money-weighted IRR." />
+  <title>Simple Investment Calculator | The Long Math</title>
+  <meta name="description" content="Quick compound growth estimates with recurring contributions and optional inflation adjustment for a first-pass view." />
   <link rel="canonical" href="https://thelongmath.com/calculators/investment-simple/" />
 
   <!-- Site-wide theme + styles -->
@@ -29,9 +29,9 @@
     <header>
 
     <div class="card">
-      <h1>Inflation-Adjusted Investment Calculator</h1>
+      <h1>Simple Investment Calculator</h1>
       <p class="lead">
-        Model compound investment growth with a starting amount and recurring contributions. Toggle inflation-adjusted (real) results to view outcomes in today's dollars instead of future nominal dollars. Assumes end-of-period contributions, no fees, and no taxes.
+        A simplified investment calculator for quick, first-pass estimates of compound growth with recurring contributions.
       </p>
 
       <div class="calc-grid">
@@ -87,6 +87,17 @@
             </div>
             <p class="help muted">
               Real return is computed as: (1 + nominal) / (1 + inflation) − 1.
+            </p>
+          </div>
+
+          <div class="callout" style="margin-top: 16px;">
+            <h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 700;">About this calculator</h3>
+            <p style="margin: 0 0 12px; font-size: 13px; line-height: 1.5;">
+              This is a simplified investment calculator intended for quick, first-pass estimates.
+              Inflation adjustment here is handled in a basic way and does not reflect how contributions, purchasing power, or assumptions interact over long time horizons.
+            </p>
+            <p style="margin: 0; font-size: 13px; line-height: 1.5;">
+              For a more complete and assumption-explicit analysis, use the <a href="/calculators/investment-calculator-inflation-adjusted/" style="color:var(--accent2);">Inflation-Adjusted Investment Calculator (advanced)</a>.
             </p>
           </div>
 
