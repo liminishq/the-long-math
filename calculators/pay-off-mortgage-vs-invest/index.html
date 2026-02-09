@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pay Off Mortgage vs Invest Calculator (Cash-Flow Neutral) | The Long Math</title>
+  <meta name="description" content="Compare paying down your mortgage faster versus investing the same monthly cash. This cash-flow-neutral calculator shows net worth outcomes under explicit assumptions." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/pay-off-mortgage-vs-invest/" />
+
+  <!-- Site-wide theme + styles -->
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  
+  <!-- Calculator-specific styles -->
+  <link rel="stylesheet" href="/calculators/pay-off-mortgage-vs-invest/styles.css" />
+
+  <!-- FAQPage JSON-LD -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Should I pay off my mortgage or invest extra cash?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This depends on interest rates, expected investment returns, time horizon, and how much cash you have available each month. This calculator compares both strategies using identical monthly cash outflows and shows the resulting net worth under your assumptions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it better to invest or pay down a mortgage faster?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "There is no universally correct answer. Paying down a mortgage produces a guaranteed return equal to the mortgage rate, while investing introduces market risk. This tool shows how those trade-offs affect net worth when the same monthly cash is used in either strategy."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does cash-flow neutral mean?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Cash-flow neutral means both strategies spend the same amount of money every month. The difference is how that cash is allocated — toward mortgage payments or investments — not how much is spent."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens after the mortgage is paid off?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Once the mortgage is fully paid off, the calculator assumes the entire monthly budget continues to be invested. This keeps cash outflows identical in both strategies and prevents distorted comparisons."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this calculator include home price growth?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Home price growth can be included as an optional assumption. By default, results focus on mortgage balances, investments, and net worth under explicit inputs rather than housing price predictions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this calculator account for taxes?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This version uses a simplified investment account with no tax drag. The goal is to isolate the arithmetic of mortgage paydown versus investing before introducing jurisdiction-specific tax complexity."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is paying off a mortgage a guaranteed return?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Paying down a mortgage produces a return equal to the mortgage interest rate, after considering compounding. Unlike investments, this return is not subject to market volatility."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the break-even return shown in the results?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The break-even return is the annual investment return required for investing to produce the same net worth as accelerated mortgage payoff, given the same monthly cash outflow."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this calculator predict markets or housing prices?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. This calculator does not predict future returns or prices. It shows arithmetic outcomes based on the assumptions you enter."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+  <div id="site-header"></div>
+  
+  <!-- Back link -->
+  <div style="max-width: 980px; margin: 0 auto; padding: 8px 16px 0;">
+    <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
+  </div>
+  
+  <div class="wrap" style="max-width: 1260px;">
+
+    <div class="card">
+      <h1>Pay Off Mortgage vs. Invest (Cash-Flow Neutral) Calculator</h1>
+      <p class="lead">
+        Compare the net worth effects of using the same monthly cash to pay down your mortgage faster vs. investing
+      </p>
+
+      <div class="intro-text">
+        <p>This calculator compares two strategies under a strict cash-flow-neutral rule.</p>
+        <p>Both paths spend the same amount of money every month; only the allocation differs.</p>
+        <p>The results show arithmetic under your assumptions.</p>
+      </div>
+
+      <!-- =========================
+           MAIN GRID (3 columns)
+           ========================= -->
+      <div class="calc-grid">
+        <!-- COLUMN 1: Mortgage Inputs -->
+        <article class="panel">
+          <h2 class="section-title">Mortgage payment</h2>
+          
+          <div class="field">
+            <div class="toggle-wrapper">
+              <label for="use_calculator_toggle">Use mortgage calculator</label>
+              <input id="use_calculator_toggle" type="checkbox" />
+            </div>
+          </div>
+
+          <div id="direct_payment_field">
+            <div class="field">
+              <label for="mortgage_payment">Mortgage payment amount</label>
+              <input id="mortgage_payment" type="number" inputmode="decimal" min="0" step="10" value="2806" />
+            </div>
+            <div class="field">
+              <label for="current_balance">Current mortgage balance</label>
+              <input id="current_balance" type="number" inputmode="decimal" min="0" step="1000" value="480000" />
+            </div>
+            <div class="field">
+              <label for="current_rate">Interest rate (annual, %)</label>
+              <div class="inline">
+                <input id="current_rate" type="number" inputmode="decimal" step="0.01" value="5" />
+                <span class="unit">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label for="current_home_price">Home value</label>
+              <input id="current_home_price" type="number" inputmode="decimal" min="0" step="1000" value="600000" />
+              <p class="help muted">Current estimated value of your home.</p>
+            </div>
+          </div>
+
+          <div id="mortgage_calculator_field" class="hidden">
+            <div class="field">
+              <label for="calc_home_price">Home purchase price</label>
+              <input id="calc_home_price" type="number" inputmode="decimal" min="0" step="1000" value="600000" />
+            </div>
+
+            <div class="field">
+              <div class="toggle-wrapper">
+                <label for="calc_down_mode_toggle">Use down payment percentage</label>
+                <input id="calc_down_mode_toggle" type="checkbox" />
+              </div>
+            </div>
+
+            <div class="field" id="calc_down_amount_field">
+              <label for="calc_down_amount">Down payment amount</label>
+              <input id="calc_down_amount" type="number" inputmode="decimal" min="0" step="1000" value="120000" />
+            </div>
+
+            <div class="field hidden" id="calc_down_pct_field">
+              <label for="calc_down_pct">Down payment (%)</label>
+              <div class="inline">
+                <input id="calc_down_pct" type="number" inputmode="decimal" min="0" max="100" step="0.1" value="20" />
+                <span class="unit">%</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="calc_interest_rate">Interest rate (annual, %)</label>
+              <div class="inline">
+                <input id="calc_interest_rate" type="number" inputmode="decimal" step="0.01" value="5" />
+                <span class="unit">%</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="calc_amortization">Amortization (years)</label>
+              <input id="calc_amortization" type="number" inputmode="numeric" min="1" step="1" value="25" />
+            </div>
+
+            <div class="field">
+              <label>Calculated payment</label>
+              <div class="calculated-payment" id="calculated_payment_display">$—</div>
+            </div>
+          </div>
+
+          <hr class="sep" />
+
+          <h2 class="section-title">Assumptions</h2>
+
+          <div class="field">
+            <label for="home_growth">Home price growth (annual, %)</label>
+            <div class="inline">
+              <input id="home_growth" type="number" inputmode="decimal" step="0.1" value="0" />
+              <span class="unit">%</span>
+            </div>
+            <p class="help muted">
+              Home price growth is typically 2-3% per year but can vary wildly between cities, neighbourhoods, and over time.
+            </p>
+          </div>
+
+          <div class="field">
+            <label for="display_mode">Show results as</label>
+            <div class="toggle-wrapper">
+              <span id="display_mode_label">Nominal</span>
+              <label class="switch">
+                <input id="display_mode" type="checkbox" />
+                <span class="slider"></span>
+              </label>
+              <span id="display_mode_label_alt" class="hidden">Inflation-adjusted (real)</span>
+            </div>
+          </div>
+
+          <div id="real_explainer" class="callout hidden">
+            <h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 700;">Inflation-adjusted results</h3>
+            <p style="margin: 0; font-size: 13px; line-height: 1.5;">
+              Inflation-adjusted results express future values in today's dollars using 3.73% (the long-term average from Canadian CPI data from our <a href="/tools/inflation-tables/" target="_blank" rel="noopener noreferrer" style="color:var(--accent2);">Historical Inflation Rates (CPI)</a> tool).<br>
+              This does not change the math — only how results are displayed.
+            </p>
+          </div>
+        </article>
+
+        <!-- COLUMN 2: Extra Cash, Investing, Time Horizon, Slider -->
+        <article class="panel">
+          <h2 class="section-title">Monthly budget</h2>
+          <div class="field">
+            <label for="monthly_budget">Monthly budget ($)</label>
+            <input id="monthly_budget" type="number" inputmode="decimal" min="0" step="10" value="" />
+            <p class="help muted">
+              Your total monthly budget. This equals your mortgage payment plus extra cash available.
+            </p>
+          </div>
+
+          <hr class="sep" />
+
+          <h2 class="section-title">Extra cash available</h2>
+          <div class="field">
+            <label for="extra_cash">Extra cash available per month ($)</label>
+            <input id="extra_cash" type="number" inputmode="decimal" min="0" step="10" value="500" />
+            <p class="help muted">
+              This amount is allocated between mortgage paydown and investing based on the slider setting.
+            </p>
+          </div>
+
+          <hr class="sep" />
+
+          <h2 class="section-title">Investing</h2>
+
+          <div class="field">
+            <label for="expected_return">Expected annual return (%, before fees)</label>
+            <div class="inline">
+              <input id="expected_return" type="number" inputmode="decimal" step="0.1" value="7" />
+              <span class="unit">%</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="fees">Investment fees (%, annual)</label>
+            <div class="inline">
+              <input id="fees" type="number" inputmode="decimal" step="0.01" value="0" />
+              <span class="unit">%</span>
+            </div>
+          </div>
+
+          <hr class="sep" />
+
+          <div class="field">
+            <label for="time_horizon">Time horizon (years)</label>
+            <input id="time_horizon" type="number" inputmode="decimal" min="1" max="75" step="0.1" value="30" />
+            <p class="help muted">Enter a value between 1 and 75 years.</p>
+          </div>
+
+          <hr class="sep" />
+
+          <div class="field">
+            <label for="allocation_slider">Allocation: Extra cash to mortgage vs. investing</label>
+            <div class="slider-container">
+              <div class="slider-labels">
+                <span>100% Mortgage</span>
+                <span id="slider_value_display">50%</span>
+                <span>100% Invest</span>
+              </div>
+              <input id="allocation_slider" type="range" min="0" max="100" step="1" value="50" />
+            </div>
+            <p class="help muted">
+              The slider controls how your extra cash is allocated. Your regular mortgage payment always goes to the mortgage until it's paid off.
+            </p>
+          </div>
+
+        </article>
+
+        <!-- COLUMN 3: Outputs, Graph -->
+        <article class="panel">
+          <h2 class="section-title">Results</h2>
+
+          <div class="results">
+            <div class="result-card primary">
+              <div class="result-label">Net worth</div>
+              <div class="result-value highlight-value" id="net_worth">$—</div>
+            </div>
+
+            <div class="result-card">
+              <div class="result-label">Investment portfolio value</div>
+              <div class="result-value" id="invest_value">$—</div>
+            </div>
+
+            <div class="result-card">
+              <div class="result-label">Home value</div>
+              <div class="result-value" id="home_value">$—</div>
+            </div>
+
+            <div class="result-card">
+              <div class="result-label">Amount left owing on home</div>
+              <div class="result-value" id="mortgage_balance">$—</div>
+            </div>
+          </div>
+
+          <hr class="sep" />
+
+          <div class="chart-section">
+            <h3 style="margin: 0 0 12px; font-size: 14px; font-weight: 700;">Mortgage balance, investment portfolio, and net worth over time</h3>
+            <div class="chart-container">
+              <canvas id="chartCanvas"></canvas>
+            </div>
+            <div class="chart-legend">
+              <div class="legend-item">
+                <span class="legend-color" style="background: #E74C3C;"></span>
+                <span>Mortgage balance</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color" style="background: #3498DB;"></span>
+                <span>Investment portfolio</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color" style="background: #2ECC71;"></span>
+                <span>Net worth</span>
+              </div>
+            </div>
+          </div>
+
+        </article>
+      </div>
+    </div>
+
+    <!-- Related calculators links -->
+    <div style="margin-top: 24px; padding: 0 16px;">
+      <p style="margin: 0 0 8px; color: var(--text); font-size: 14px;">
+        For a more detailed and customizable mortgage analysis, see our <a href="/mortgage-calculator/" style="color: var(--accent2); text-decoration: none;">Mortgage Calculator — Payments, Interest, and Amortization</a>.
+      </p>
+      <p style="margin: 0; color: var(--text); font-size: 14px;">
+        For a more detailed and customizable investment analysis, see our <a href="/calculators/investment-calculator-inflation-adjusted/" style="color: var(--accent2); text-decoration: none;">Investment Calculator – Inflation Adjusted</a>.
+      </p>
+    </div>
+
+    <!-- Key facts section (full-width) -->
+    <section class="card" style="margin-top: 24px;">
+      <h2>Key facts</h2>
+      <div class="key-facts">
+        <div class="fact-row">
+          <p class="fact-text">If 100% of extra cash allocated to paying off mortgage faster, net worth is <strong class="fact-value" id="fact_100_mortgage">$—</strong> after <strong id="fact_horizon_1">—</strong> years.</p>
+        </div>
+        <div class="fact-row" style="margin-top: 12px;">
+          <p class="fact-text">If 100% of extra cash allocated to investing, net worth is <strong class="fact-value" id="fact_100_invest">$—</strong> after <strong id="fact_horizon_2">—</strong> years.</p>
+        </div>
+        <div class="fact-row" style="margin-top: 12px;">
+          <p class="fact-text">Total interest paid on mortgage under current assumptions: <strong class="fact-value" id="total_interest_paid">$—</strong></p>
+        </div>
+        <div class="fact-row">
+          <p class="fact-text">Total interest earned on investments under current assumptions: <strong class="fact-value" id="total_interest_earned">$—</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cash-flow-neutral rule section -->
+    <section class="card" style="margin-top: 16px;">
+      <h2>Cash-flow-neutral rule</h2>
+      <p>This calculator enforces identical monthly cash outflows in both strategies.</p>
+      <ul>
+        <li>While a mortgage exists, cash is allocated between mortgage payments and investing.</li>
+        <li>Once a mortgage is paid off, the full monthly budget is invested.</li>
+        <li>There is no period where one strategy "stops paying" while the other continues.</li>
+      </ul>
+    </section>
+
+    <!-- Important note -->
+    <section class="card" style="margin-top: 16px;">
+      <h2>Important note</h2>
+      <p>This tool does not predict housing prices or markets.</p>
+      <p>It shows arithmetic under your assumptions.</p>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+      <h2>FAQ</h2>
+
+      <div class="faq-item">
+        <h3>Should I pay off my mortgage or invest extra cash?</h3>
+        <p>This depends on interest rates, expected investment returns, time horizon, and how much cash you have available each month. This calculator compares both strategies using identical monthly cash outflows and shows the resulting net worth under your assumptions.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Is it better to invest or pay down a mortgage faster?</h3>
+        <p>There is no universally correct answer. Paying down a mortgage produces a guaranteed return equal to the mortgage rate, while investing introduces market risk. This tool shows how those trade-offs affect net worth when the same monthly cash is used in either strategy.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What does cash-flow neutral mean?</h3>
+        <p>Cash-flow neutral means both strategies spend the same amount of money every month. The difference is how that cash is allocated — toward mortgage payments or investments — not how much is spent.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What happens after the mortgage is paid off?</h3>
+        <p>Once the mortgage is fully paid off, the calculator assumes the entire monthly budget continues to be invested. This keeps cash outflows identical in both strategies and prevents distorted comparisons.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Does this calculator include home price growth?</h3>
+        <p>Home price growth can be included as an optional assumption. By default, results focus on mortgage balances, investments, and net worth under explicit inputs rather than housing price predictions.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Does this calculator account for taxes?</h3>
+        <p>This version uses a simplified investment account with no tax drag. The goal is to isolate the arithmetic of mortgage paydown versus investing before introducing jurisdiction-specific tax complexity.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Is paying off a mortgage a guaranteed return?</h3>
+        <p>Paying down a mortgage produces a return equal to the mortgage interest rate, after considering compounding. Unlike investments, this return is not subject to market volatility.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What is the break-even return shown in the results?</h3>
+        <p>The break-even return is the annual investment return required for investing to produce the same net worth as accelerated mortgage payoff, given the same monthly cash outflow.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Does this calculator predict markets or housing prices?</h3>
+        <p>No. This calculator does not predict future returns or prices. It shows arithmetic outcomes based on the assumptions you enter.</p>
+      </div>
+    </section>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> The calculators and tools at The Long Math are provided for educational purposes only
+        and are not intended to constitute financial or tax advice. Results are based on simplified
+        models and user-supplied assumptions. Users are recommended to complete their own due diligence.
+      </p>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+
+  <!-- Scripts -->
+  <script src="/calculators/pay-off-mortgage-vs-invest/engine.js"></script>
+  <script src="/calculators/pay-off-mortgage-vs-invest/ui.js"></script>
+</body>
+</html>
