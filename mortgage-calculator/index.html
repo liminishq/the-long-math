@@ -101,6 +101,13 @@
       color: var(--accent);
     }
 
+    .summary-subtext {
+      font-weight: 400;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
     .slider-selector {
       display: flex;
       gap: 8px;
@@ -437,9 +444,11 @@
         <div class="summary-sentence" id="summary_sentence">
           <div class="summary-title">With these inputs:</div>
           <ul class="summary-list">
-            <li><span class="summary-label">Mortgage is paid off in</span> <span id="summary_years" class="summary-value">–</span> <span class="summary-label">years</span></li>
-            <li><span id="summary_interest" class="summary-value">$–</span> <span class="summary-label">paid in interest</span></li>
-            <li><span id="summary_total" class="summary-value">$–</span> <span class="summary-label">paid in total mortgage payments (principal + interest)</span></li>
+            <li><span id="summary_down_payment" class="summary-value">$–</span> <span class="summary-label">paid upfront as a down payment</span></li>
+            <li><span id="summary_principal" class="summary-value">$–</span> <span class="summary-label">repaid in mortgage principal</span></li>
+            <li><span id="summary_interest" class="summary-value">$–</span> <span class="summary-label">paid in mortgage interest</span></li>
+            <li><span id="summary_total" class="summary-value">$–</span> <span class="summary-label">total cost of the home</span></li>
+            <li class="summary-subtext"><span class="summary-label">(down payment + principal + interest)</span></li>
           </ul>
         </div>
       </section>

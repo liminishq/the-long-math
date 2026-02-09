@@ -884,19 +884,22 @@ function updateOutputs(data) {
     document.getElementById('out_payoff_time').textContent = '—';
     
     // Restore summary sentence structure if it was replaced
-    if (!summarySentence.querySelector('#summary_years')) {
-      summarySentence.innerHTML = '<div class="summary-title">With these inputs:</div><ul class="summary-list"><li><span class="summary-label">Mortgage is paid off in</span> <span id="summary_years" class="summary-value">–</span> <span class="summary-label">years</span></li><li><span id="summary_interest" class="summary-value">$–</span> <span class="summary-label">paid in interest</span></li><li><span id="summary_total" class="summary-value">$–</span> <span class="summary-label">paid in total mortgage payments (principal + interest)</span></li></ul>';
+    if (!summarySentence.querySelector('#summary_down_payment')) {
+      summarySentence.innerHTML = '<div class="summary-title">With these inputs:</div><ul class="summary-list"><li><span id="summary_down_payment" class="summary-value">$–</span> <span class="summary-label">paid upfront as a down payment</span></li><li><span id="summary_principal" class="summary-value">$–</span> <span class="summary-label">repaid in mortgage principal</span></li><li><span id="summary_interest" class="summary-value">$–</span> <span class="summary-label">paid in mortgage interest</span></li><li><span id="summary_total" class="summary-value">$–</span> <span class="summary-label">total cost of the home</span></li><li class="summary-subtext"><span class="summary-label">(down payment + principal + interest)</span></li></ul>';
     }
     summarySentence.innerHTML = '<span class="error-state">Payment does not amortize the loan at this rate.</span>';
     return;
   }
   
   // Restore summary sentence structure if it was replaced by error
-  if (!summarySentence.querySelector('#summary_years')) {
-    summarySentence.innerHTML = '<div class="summary-title">With these inputs:</div><ul class="summary-list"><li><span class="summary-label">Mortgage is paid off in</span> <span id="summary_years" class="summary-value">–</span> <span class="summary-label">years</span></li><li><span id="summary_interest" class="summary-value">$–</span> <span class="summary-label">paid in interest</span></li><li><span id="summary_total" class="summary-value">$–</span> <span class="summary-label">paid in total mortgage payments (principal + interest)</span></li></ul>';
+  if (!summarySentence.querySelector('#summary_down_payment')) {
+    summarySentence.innerHTML = '<div class="summary-title">With these inputs:</div><ul class="summary-list"><li><span id="summary_down_payment" class="summary-value">$–</span> <span class="summary-label">paid upfront as a down payment</span></li><li><span id="summary_principal" class="summary-value">$–</span> <span class="summary-label">repaid in mortgage principal</span></li><li><span id="summary_interest" class="summary-value">$–</span> <span class="summary-label">paid in mortgage interest</span></li><li><span id="summary_total" class="summary-value">$–</span> <span class="summary-label">total cost of the home</span></li><li class="summary-subtext"><span class="summary-label">(down payment + principal + interest)</span></li></ul>';
   }
   
   const inputs = getInputs();
+  
+  // Calculate total home cost
+  const totalHomeCost = inputs.downPayment + inputs.loanAmount + (data.totalInterest || 0);
   
   // Handle zero loan amount case
   if (inputs.loanAmount === 0) {
@@ -906,9 +909,10 @@ function updateOutputs(data) {
     document.getElementById('out_total_paid').textContent = formatter.currency.format(0);
     document.getElementById('out_payoff_time').textContent = '0 years';
     
-    document.getElementById('summary_years').textContent = '0';
+    document.getElementById('summary_down_payment').textContent = formatter.currency.format(inputs.downPayment);
+    document.getElementById('summary_principal').textContent = formatter.currency.format(0);
     document.getElementById('summary_interest').textContent = formatter.currency.format(0);
-    document.getElementById('summary_total').textContent = formatter.currency.format(0);
+    document.getElementById('summary_total').textContent = formatter.currency.format(inputs.downPayment);
     return;
   }
   
@@ -923,10 +927,11 @@ function updateOutputs(data) {
   const payoffDisplay = payoffYears % 1 === 0 ? payoffYears.toString() : payoffYears.toFixed(1);
   document.getElementById('out_payoff_time').textContent = payoffDisplay + ' years';
   
-  // Update summary sentence
-  document.getElementById('summary_years').textContent = payoffDisplay;
+  // Update summary box with new format
+  document.getElementById('summary_down_payment').textContent = formatter.currency.format(inputs.downPayment);
+  document.getElementById('summary_principal').textContent = formatter.currency.format(inputs.loanAmount);
   document.getElementById('summary_interest').textContent = formatter.currency.format(data.totalInterest);
-  document.getElementById('summary_total').textContent = formatter.currency.format(data.totalPaid);
+  document.getElementById('summary_total').textContent = formatter.currency.format(totalHomeCost);
 }
 
 function updateGraph(scheduleResult) {
