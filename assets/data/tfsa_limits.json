@@ -1,0 +1,24 @@
+{
+  "currency": "CAD",
+  "source_note": "Annual TFSA dollar limits published by the Canada Revenue Agency (CRA).",
+  "limits": [
+    { "year": 2009, "limit": 5000 },
+    { "year": 2010, "limit": 5000 },
+    { "year": 2011, "limit": 5000 },
+    { "year": 2012, "limit": 5000 },
+    { "year": 2013, "limit": 5500 },
+    { "year": 2014, "limit": 5500 },
+    { "year": 2015, "limit": 10000 },
+    { "year": 2016, "limit": 5500 },
+    { "year": 2017, "limit": 5500 },
+    { "year": 2018, "limit": 5500 },
+    { "year": 2019, "limit": 6000 },
+    { "year": 2020, "limit": 6000 },
+    { "year": 2021, "limit": 6000 },
+    { "year": 2022, "limit": 6000 },
+    { "year": 2023, "limit": 6500 },
+    { "year": 2024, "limit": 7000 },
+    { "year": 2025, "limit": 7000 },
+    { "year": 2026, "limit": 7000 }
+  ]
+}

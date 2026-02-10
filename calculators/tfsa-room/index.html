@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TFSA Contribution Room Calculator (Canada) – The Long Math</title>
+  <meta name="description" content="Estimate available TFSA room using year-by-year TFSA limits and clear withdrawal timing rules. Withdrawals add room next year, not this year." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/tfsa-room/" />
+
+  <!-- Site-wide theme + styles -->
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  
+  <!-- Calculator-specific styles -->
+  <link rel="stylesheet" href="/calculators/tfsa-room/styles.css" />
+</head>
+
+<body>
+  <div id="site-header"></div>
+  
+  <div class="wrap">
+    <!-- Back link -->
+    <div style="margin-bottom: 16px;">
+      <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
+    </div>
+
+    <header>
+      <h1>TFSA Contribution Room Calculator (Canada)</h1>
+      <p class="lead">
+        Estimate your available TFSA contribution room using year-by-year arithmetic based on annual TFSA limits, contributions, and withdrawals.
+      </p>
+      <p class="lead">
+        This calculator models the key TFSA rule: withdrawals increase contribution room, but only starting January 1 of the following year.
+      </p>
+      <p class="lead" style="margin-top: 12px; font-weight: 600;">
+        <strong>No opinions. No hidden assumptions. Just arithmetic.</strong>
+      </p>
+    </header>
+
+    <div class="card">
+      <div class="calc-grid">
+        <!-- Inputs -->
+        <article class="panel">
+          <h2 class="section-title">Inputs</h2>
+
+          <div class="field">
+            <label for="birth_year">Birth year</label>
+            <input id="birth_year" type="number" min="1900" max="2010" step="1" />
+            <div class="help-text">Used to suggest eligibility start year (year you turned 18, or 2009 if later)</div>
+          </div>
+
+          <div class="field">
+            <label for="eligibility_start_year">Canadian TFSA eligibility start year</label>
+            <select id="eligibility_start_year"></select>
+            <div class="help-text">Default is year you turned 18. Adjust if you weren't eligible at 18 (e.g., immigration, non-residency periods). Eligibility depends on age and residency.</div>
+          </div>
+
+          <div class="field">
+            <label for="as_of_year">As of year</label>
+            <select id="as_of_year"></select>
+            <div class="help-text">The year for which you want to calculate available room</div>
+          </div>
+
+          <div class="field">
+            <label for="lifetime_contributions_total">Total TFSA contributions made (lifetime) (CAD)</label>
+            <input id="lifetime_contributions_total" type="text" inputmode="numeric" placeholder="0" />
+            <div class="help-text">All contributions made since you became eligible</div>
+          </div>
+
+          <div class="field">
+            <label for="withdrawals_prior_years_total">TFSA withdrawals made in prior years (up to Dec 31 last year) (CAD)</label>
+            <input id="withdrawals_prior_years_total" type="text" inputmode="numeric" placeholder="0" />
+            <div class="help-text">Withdrawals from previous years (already added back to room in their following years)</div>
+          </div>
+
+          <div class="field">
+            <label for="contributions_this_year">TFSA contributions made this year (CAD)</label>
+            <input id="contributions_this_year" type="text" inputmode="numeric" placeholder="0" />
+            <div class="help-text">Contributions made in the "as of year"</div>
+          </div>
+
+          <div class="field">
+            <label for="withdrawals_this_year">TFSA withdrawals made this year (CAD)</label>
+            <input id="withdrawals_this_year" type="text" inputmode="numeric" placeholder="0" />
+            <div class="help-text">Withdrawals made in the "as of year" (will add to room next year, not this year)</div>
+          </div>
+
+          <button id="reset_button" class="reset-button" type="button">Reset</button>
+        </article>
+
+        <!-- Results -->
+        <article class="panel">
+          <h2 class="section-title">Results</h2>
+
+          <div class="results">
+            <div class="result-row highlight">
+              <div class="label">Estimated available TFSA room (this year)</div>
+              <div class="value highlight-value" id="out_available_room">$–</div>
+            </div>
+
+            <div class="result-row">
+              <div class="label">Projected room next year (if no more contributions)</div>
+              <div class="value" id="out_projected_next_year">$–</div>
+            </div>
+          </div>
+
+          <div id="out_overcontribution"></div>
+
+          <div id="out_breakdown"></div>
+
+          <div class="explainer-box">
+            <p><strong>About this estimate:</strong></p>
+            <p>This tool provides an estimate of your TFSA contribution room based on year-by-year limits and your inputs. Room depends on eligibility (age + residency). If you weren't eligible at 18, adjust the eligibility start year.</p>
+            <p>Withdrawals do not create room again until January 1 of the next year.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <h3>How is TFSA contribution room calculated?</h3>
+        <p>TFSA contribution room is calculated as the sum of annual TFSA limits for each year you were eligible (starting from the year you turned 18, or 2009 if later), minus all contributions made, plus withdrawals from prior years (which add back to room in the following year). The annual limit varies by year and is set by the Canada Revenue Agency.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Do withdrawals increase TFSA room right away?</h3>
+        <p>No. Withdrawals from your TFSA do not immediately increase your contribution room. The amount withdrawn is added back to your contribution room starting January 1 of the following year. For example, if you withdraw $10,000 in 2024, that $10,000 is added to your contribution room on January 1, 2025, not in 2024.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What if I immigrated to Canada or wasn't eligible at 18?</h3>
+        <p>TFSA eligibility requires both being 18 years old and being a Canadian resident. If you immigrated to Canada after 2009, or if you were a non-resident for any period, you may not have been eligible in the year you turned 18. Use the "Canadian TFSA eligibility start year" field to set the correct first year you were eligible. This is the year you turned 18 AND were a Canadian resident, or 2009 if that was later.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Why might this differ from CRA My Account?</h3>
+        <p>This calculator is an estimate based on the information you provide. Your actual CRA contribution room may differ due to: timing of contributions and withdrawals (CRA processes transactions as they are reported), corrections or adjustments made by CRA, or incomplete information in your inputs. Always verify your actual contribution room using your CRA My Account statement before making contributions.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What are the annual TFSA contribution room limits by year?</h3>
+        <p>The annual TFSA contribution room limit is set by the Canada Revenue Agency and varies by year. The table below shows the contribution room available for each year since the TFSA program began in 2009. This table is updated annually when new limits are announced by CRA.</p>
+        <table class="tfsa-limits-table">
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Annual Limit (CAD)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>2009</td><td>$5,000</td></tr>
+            <tr><td>2010</td><td>$5,000</td></tr>
+            <tr><td>2011</td><td>$5,000</td></tr>
+            <tr><td>2012</td><td>$5,000</td></tr>
+            <tr><td>2013</td><td>$5,500</td></tr>
+            <tr><td>2014</td><td>$5,500</td></tr>
+            <tr><td>2015</td><td>$10,000</td></tr>
+            <tr><td>2016</td><td>$5,500</td></tr>
+            <tr><td>2017</td><td>$5,500</td></tr>
+            <tr><td>2018</td><td>$5,500</td></tr>
+            <tr><td>2019</td><td>$6,000</td></tr>
+            <tr><td>2020</td><td>$6,000</td></tr>
+            <tr><td>2021</td><td>$6,000</td></tr>
+            <tr><td>2022</td><td>$6,000</td></tr>
+            <tr><td>2023</td><td>$6,500</td></tr>
+            <tr><td>2024</td><td>$7,000</td></tr>
+            <tr><td>2025</td><td>$7,000</td></tr>
+            <tr><td>2026</td><td>$7,000</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top: 12px; font-size: 12px; color: var(--muted);"><em>Note: This table is updated annually when CRA announces new TFSA limits. Source: Canada Revenue Agency.</em></p>
+      </div>
+    </section>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> The calculators and tools at The Long Math are provided for educational purposes only
+        and are not intended to constitute financial or tax advice. Results are based on simplified
+        models and user-supplied assumptions. Users are recommended to complete their own due diligence.
+      </p>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+
+  <!-- Scripts -->
+  <script src="/calculators/tfsa-room/engine.js"></script>
+  <script src="/calculators/tfsa-room/ui.js"></script>
+</body>
+</html>
