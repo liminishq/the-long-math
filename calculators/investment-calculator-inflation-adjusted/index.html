@@ -19,12 +19,11 @@
 <body>
   <div id="site-header"></div>
   
-  <!-- Back link -->
-  <div style="max-width: 980px; margin: 0 auto; padding: 8px 16px 0;">
-    <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
-  </div>
-  
   <div class="wrap">
+    <!-- Back link -->
+    <div style="margin-bottom: 16px;">
+      <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
+    </div>
 
     <!-- Full-width intro section -->
     <header class="intro-section">
@@ -35,7 +34,8 @@
     </header>
 
     <!-- Two-column calculator section -->
-    <div class="calc-grid">
+    <div class="card">
+      <div class="calc-grid">
       <!-- Left column: Inputs -->
       <article class="panel">
         <h2 class="section-title">Inputs</h2>
@@ -187,6 +187,7 @@
           <button id="exportCSVButton" class="export-btn">Export CSV</button>
         </div>
       </article>
+      </div>
     </div>
 
     <!-- Assumptions block (full-width, collapsed by default) -->

@@ -25,7 +25,8 @@
 
 .calc-grid {
   display: grid !important;
-  grid-template-columns: 0.765fr 0.765fr 1.47fr !important;
+  /* Slightly narrow the Results column (card 3) by ~10% while keeping proportions similar */
+  grid-template-columns: 0.84fr 0.84fr 1.32fr !important;
   gap: 16px;
   margin-top: 16px;
 }

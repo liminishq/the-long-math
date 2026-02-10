@@ -1,0 +1,332 @@
+.loan-wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 16px 40px;
+}
+
+:root {
+  --chart-principal-line: #9CB3CB;              /* muted steel */
+  --chart-principal-fill: rgba(156, 179, 203, 0.35);
+
+  --chart-interest-line:  #D3C3B1;              /* warm neutral */
+  --chart-interest-fill:  rgba(211, 195, 177, 0.35);
+
+  --chart-grid:           rgba(255, 255, 255, 0.08);
+  --chart-axis:           rgba(255, 255, 255, 0.72);
+  --chart-axis-dim:       rgba(255, 255, 255, 0.50);
+}
+
+html[data-theme="light"] {
+  --chart-principal-line: #4E6E8E;               /* desaturated blue */
+  --chart-principal-fill: rgba(78, 110, 142, 0.22);
+
+  --chart-interest-line:  #8B6F54;               /* desaturated brown */
+  --chart-interest-fill:  rgba(139, 111, 84, 0.22);
+
+  --chart-grid:           rgba(0, 0, 0, 0.10);
+  --chart-axis:           rgba(0, 0, 0, 0.72);
+  --chart-axis-dim:       rgba(0, 0, 0, 0.52);
+}
+
+
+.loan-card {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  padding: 24px 20px 28px;
+  margin-top: 16px;
+  border: 1px solid var(--border);
+}
+
+.loan-schedule-card {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  padding: 18px 16px 22px;
+  margin-top: 20px;
+  border: 1px solid var(--border);
+}
+
+.loan-lead {
+  margin-top: 8px;
+  margin-bottom: 16px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.loan-intro-list {
+  margin: 8px 0 12px;
+  padding-left: 20px;
+}
+
+.loan-intro-list li {
+  margin-bottom: 4px;
+}
+
+.loan-calc-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.2fr) minmax(0, 1.6fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.loan-panel {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  padding: 16px 16px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.loan-section-title {
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.loan-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.loan-field label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.loan-field input,
+.loan-field select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.3);
+  color: inherit;
+  font-size: 14px;
+}
+
+.loan-field input:focus,
+.loan-field select:focus {
+  outline: none;
+  border-color: var(--accent2);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+html[data-theme="light"] .loan-field input,
+html[data-theme="light"] .loan-field select {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.loan-field-error input,
+.loan-field-error select {
+  border-color: #d94b4b;
+}
+
+.loan-field-error-message {
+  font-size: 12px;
+  color: #ff9b9b;
+}
+
+.loan-help {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.loan-results-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.loan-result-tile {
+  padding: 10px 10px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.loan-result-tile.highlight {
+  background: linear-gradient(135deg, rgba(185, 146, 67, 0.15) 0%, rgba(185, 146, 67, 0.08) 100%),
+              rgba(255, 255, 255, 0.06);
+  border-color: var(--accent2);
+}
+
+html[data-theme="light"] .loan-result-tile {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+html[data-theme="light"] .loan-result-tile.highlight {
+  background: linear-gradient(135deg, rgba(154, 119, 40, 0.12) 0%, rgba(154, 119, 40, 0.06) 100%),
+              rgba(255, 255, 255, 0.9);
+  border-color: var(--accent2);
+}
+
+.loan-result-label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.loan-result-value {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.loan-result-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.loan-results-caption {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.loan-charts {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+.loan-chart-container {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  height: 260px;
+}
+
+html[data-theme="light"] .loan-chart-container {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+#chart-balance,
+#chart-principal-interest,
+#chart-payment-composition {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.loan-chart-title {
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.loan-chart-note {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.loan-chart-subtitle {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--chart-axis-dim);
+}
+
+.loan-accordion {
+  margin-top: 18px;
+}
+
+.loan-accordion summary {
+  cursor: pointer;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.loan-accordion[open] summary {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.loan-accordion-body {
+  padding: 10px 12px 12px;
+  border: 1px solid var(--border);
+  border-top: none;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.loan-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.loan-table th,
+.loan-table td {
+  padding: 6px 4px;
+  text-align: right;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.loan-table th:first-child,
+.loan-table td:first-child {
+  text-align: left;
+}
+
+.loan-table tfoot td {
+  font-weight: 600;
+}
+
+.loan-table tfoot tr {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.loan-methods {
+  margin-top: 32px;
+}
+
+.loan-methods h2 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.loan-methods p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.loan-methods ul {
+  margin: 8px 0 12px;
+  padding-left: 20px;
+}
+
+.loan-methods li {
+  margin-bottom: 4px;
+}
+
+@media (max-width: 768px) {
+  .loan-card {
+    padding: 20px 14px 22px;
+  }
+
+  .loan-schedule-card {
+    padding: 16px 12px 20px;
+  }
+
+  .loan-calc-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .loan-charts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .loan-results-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+

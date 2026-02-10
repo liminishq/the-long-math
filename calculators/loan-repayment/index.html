@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Loan Repayment Calculator — See Your True Interest Cost Over Time | The Long Math</title>
+  <meta name="description" content="Calculate loan payments, total interest, and remaining balance over time using explicit assumptions and inspectable arithmetic for a standard fixed-rate loan." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/loan-repayment/" />
+
+  <!-- Site-wide theme + styles -->
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+
+  <!-- Calculator-specific styles -->
+  <link rel="stylesheet" href="/calculators/loan-repayment/styles.css" />
+
+  <!-- Chart library (reuse sitewide choice: Chart.js via existing mortgage calculator) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="loan-wrap wrap">
+    <!-- Back link -->
+    <div style="margin-bottom: 16px;">
+      <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
+    </div>
+
+    <header class="loan-header">
+      <h1>Loan Repayment Calculator — See Your True Interest Cost Over Time</h1>
+      <h2 style="margin-top: 8px; font-size: 18px;">Calculate loan payments, total interest, and remaining balance using explicit assumptions and inspectable arithmetic.</h2>
+
+      <p class="loan-lead">
+        Most loan calculators show you a payment and move on.<br />
+        This calculator shows where the money actually goes.
+      </p>
+
+      <p class="loan-lead">
+        Enter your loan amount, interest rate, term, and payment frequency to see:
+      </p>
+      <ul class="loan-intro-list">
+        <li>Your required payment per period</li>
+        <li>The total interest paid over the life of the loan</li>
+        <li>How your remaining balance declines over time</li>
+        <li>A full amortization table you can inspect line by line</li>
+      </ul>
+
+      <p class="loan-lead">
+        No advice. No optimization.<br />
+        Just the arithmetic behind a standard fixed-rate loan.
+      </p>
+    </header>
+
+    <div class="loan-card">
+      <div class="loan-calc-grid">
+        <!-- Card 1: Inputs -->
+        <article class="loan-panel">
+          <h2 class="loan-section-title">Inputs</h2>
+
+          <div class="loan-field" id="field-principal">
+            <label for="loanPrincipal">Loan amount (principal)</label>
+            <input id="loanPrincipal" type="number" inputmode="decimal" min="0" step="1000" value="300000" />
+            <p class="loan-field-error-message" id="error-principal" style="display:none;">Principal must be greater than zero.</p>
+          </div>
+
+          <div class="loan-field" id="field-rate">
+            <label for="annualRate">Annual interest rate</label>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <input id="annualRate" type="number" inputmode="decimal" step="0.1" value="6" />
+              <span style="font-size:13px;">%</span>
+            </div>
+            <p class="loan-field-error-message" id="error-rate" style="display:none;">Rate cannot be negative.</p>
+          </div>
+
+          <div class="loan-field" id="field-years">
+            <label for="loanYears">Amortization term (years)</label>
+            <input id="loanYears" type="number" inputmode="numeric" min="1" step="1" value="25" />
+            <p class="loan-field-error-message" id="error-years" style="display:none;">Term must be greater than zero.</p>
+          </div>
+
+          <div class="loan-field" id="field-frequency">
+            <label for="paymentFrequency">Payment frequency</label>
+            <select id="paymentFrequency">
+              <option value="12" selected>Monthly (12)</option>
+              <option value="26">Biweekly (26)</option>
+              <option value="52">Weekly (52)</option>
+            </select>
+          </div>
+
+          <p class="loan-help">
+            No start date, extra payments, fees, or taxes are modeled. This calculator focuses on the arithmetic of a standard fixed-rate, fully amortizing loan.
+          </p>
+        </article>
+
+        <!-- Card 2: Numerical Results -->
+        <article class="loan-panel">
+          <h2 class="loan-section-title">Results</h2>
+
+          <div class="loan-results-grid">
+            <div class="loan-result-tile highlight">
+              <div class="loan-result-label">Total paid</div>
+              <div class="loan-result-value" id="out-total-paid">$—</div>
+            </div>
+            <div class="loan-result-tile highlight">
+              <div class="loan-result-label">Total interest</div>
+              <div class="loan-result-value" id="out-total-interest">$—</div>
+            </div>
+            <div class="loan-result-tile">
+              <div class="loan-result-label">Payment per period</div>
+              <div class="loan-result-value" id="out-payment">$—</div>
+            </div>
+            <div class="loan-result-tile">
+              <div class="loan-result-label">Number of payments</div>
+              <div class="loan-result-value" id="out-num-payments">—</div>
+            </div>
+          </div>
+
+          <p class="loan-results-caption" id="results-caption">
+            With these inputs: a $P loan at r% annual interest over term years, paid frequency.
+          </p>
+        </article>
+
+        <!-- Card 3: Graphical Results -->
+        <article class="loan-panel loan-panel-graphs">
+          <h2 class="loan-section-title">Payment composition over time</h2>
+          <p class="loan-chart-subtitle">Shows how each payment splits between interest and principal across the loan term.</p>
+
+          <div class="loan-charts">
+            <div class="loan-chart-container">
+              <canvas id="chart-payment-composition"></canvas>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="loan-schedule-card">
+      <details class="loan-accordion" id="amortizationAccordion">
+        <summary>Amortization Schedule</summary>
+        <div class="loan-accordion-body">
+          <div style="max-height: 260px; overflow:auto;">
+            <table class="loan-table">
+              <thead>
+                <tr>
+                  <th>Period</th>
+                  <th>Payment</th>
+                  <th>Interest</th>
+                  <th>Principal</th>
+                  <th>Remaining balance</th>
+                </tr>
+              </thead>
+              <tbody id="amortization-body">
+                <!-- Populated by ui.js -->
+              </tbody>
+              <tfoot>
+                <tr id="amortization-totals-row">
+                  <td>Total</td>
+                  <td id="totals-payment">$—</td>
+                  <td id="totals-interest">$—</td>
+                  <td id="totals-principal">$—</td>
+                  <td id="totals-balance">$0.00</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <section class="loan-methods">
+      <h2>How this loan repayment calculator works</h2>
+      <p>This calculator models a fixed-rate, fully amortizing loan.</p>
+      <p>Each payment consists of:</p>
+      <ul>
+        <li>Interest, calculated on the remaining balance</li>
+        <li>Principal, which reduces the balance</li>
+      </ul>
+      <p>Early payments are mostly interest.</p>
+      <p>Later payments are mostly principal.</p>
+      <p>The total interest cost depends on rate, term, and payment frequency.</p>
+
+      <h2>The math used (no hidden assumptions)</h2>
+      <p>Let:</p>
+      <ul>
+        <li>P = loan amount (principal)</li>
+        <li>r = annual interest rate (as a decimal)</li>
+        <li>m = payments per year (12 monthly, 26 biweekly, 52 weekly)</li>
+        <li>i = r / m = interest rate per payment</li>
+        <li>N = years × m = total number of payments</li>
+      </ul>
+      <p>The payment per period is calculated as:</p>
+      <p>Payment = P * [ i(1+i)^N ] / [ (1+i)^N - 1 ]</p>
+      <p>If the interest rate is zero, payments are simply:</p>
+      <p>Payment = P / N</p>
+      <p>For each payment:</p>
+      <ul>
+        <li>Interest = remaining balance × i</li>
+        <li>Principal = payment − interest</li>
+        <li>New balance = old balance − principal</li>
+      </ul>
+      <p>The amortization table, charts, and totals are all derived from this same calculation.</p>
+
+      <h2>Assumptions and limitations</h2>
+      <ul>
+        <li>Fixed interest rate for the entire loan term</li>
+        <li>Interest compounds at the payment frequency selected</li>
+        <li>No fees, penalties, insurance, or taxes included</li>
+        <li>Payments are rounded to cents for display</li>
+        <li>Final balance is clamped to zero to avoid rounding noise</li>
+      </ul>
+      <p>This calculator does not give advice or recommendations.</p>
+      <p>It shows the arithmetic implied by your inputs.</p>
+    </section>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> The calculators and tools at The Long Math are provided for educational purposes only
+        and are not intended to constitute financial or tax advice. Results are based on simplified
+        models and user-supplied assumptions. Users are recommended to complete their own due diligence.
+      </p>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+
+  <script defer src="/calculators/loan-repayment/engine.js"></script>
+  <script defer src="/calculators/loan-repayment/ui.js"></script>
+</body>
+</html>
+
