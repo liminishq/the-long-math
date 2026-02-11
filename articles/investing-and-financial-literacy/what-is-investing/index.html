@@ -68,13 +68,11 @@
     }
 
     .article-content h2 {
-      margin-top: 2em;
-      margin-bottom: 1em;
+      margin: 0 0 0.75em;
     }
 
     .article-content h3 {
-      margin-top: 1.5em;
-      margin-bottom: 0.75em;
+      margin: 1.25em 0 0.5em;
     }
 
     .article-content ul {
@@ -87,7 +85,7 @@
     }
 
     .article-content p {
-      margin: 1em 0;
+      margin: 0.9em 0;
     }
 
     /* Intro block: first three lines tight, gap before last sentence */
@@ -98,12 +96,26 @@
       margin-top: 1em;
     }
 
-    .toc {
-      background: var(--surface);
+    /* Card styling for each section (match stock market article) */
+    .section-card {
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      margin: 2em 0;
+      border-radius: 18px;
+      padding: 18px 18px;
+      margin: 18px 0;
+      background: var(--card-bg, var(--surface, #fff));
+      box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+    }
+
+    .section-card.intro-card {
+      margin-top: 14px;
+    }
+
+    .section-card .toc {
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      margin: 0;
     }
 
     .toc h2 {
@@ -133,20 +145,15 @@
       text-decoration: underline;
     }
 
-    .related-articles {
-      margin-top: 3em;
-      padding-top: 2em;
-      border-top: 1px solid var(--border);
-    }
-
     .related-articles h2 {
-      margin-top: 0;
       font-size: 18px;
+      margin: 0 0 10px;
     }
 
     .related-articles ul {
       list-style: none;
       padding-left: 0;
+      margin: 0;
     }
 
     .related-articles li {
@@ -178,103 +185,124 @@
         <h1>What Is Investing?</h1>
       </header>
 
-      <div class="lede">
-        <p>Most people are taught how to spend money.</p>
-        <p>Some people are taught how to save money.</p>
-        <p>Very few people are taught how to invest money.</p>
-        <p>This article introduces that third skill.</p>
-      </div>
+      <!-- Intro card -->
+      <section class="section-card intro-card">
+        <div class="lede">
+          <p>Most people are taught how to spend money.</p>
+          <p>Some people are taught how to save money.</p>
+          <p>Very few people are taught how to invest money.</p>
+          <p>This article introduces that third skill.</p>
+        </div>
+      </section>
 
-      <!-- Table of Contents -->
-      <nav class="toc" aria-label="Table of Contents">
-        <h2>Table of Contents</h2>
+      <!-- Table of Contents card -->
+      <section class="section-card">
+        <nav class="toc" aria-label="Table of Contents">
+          <h2>Table of Contents</h2>
+          <ul>
+            <li><a href="#what-is-investing-definition">What Is Investing? (Simple Definition for Beginners and New Investors)</a></li>
+            <li><a href="#ways-people-invest">Ways People Invest Their Money</a></li>
+            <li><a href="#why-do-people-invest">Why Do People Invest?</a></li>
+            <li><a href="#dont-need-lot-of-money">You Don't Need a Lot of Money to Start Investing</a></li>
+            <li><a href="#why-investing-feels-mysterious">Why Investing Feels Mysterious</a></li>
+          </ul>
+        </nav>
+      </section>
+
+      <!-- What Is Investing? (definition) card -->
+      <section class="section-card" id="what-is-investing-definition">
+        <h2>What Is Investing? (Simple Definition for Beginners and New Investors)</h2>
+        <p>Investing is the process of putting money to work so it can grow over time.</p>
+        <p>That's the simplest definition.</p>
+        <p>Everyone understands spending money.</p>
+        <p>We spend money on:</p>
         <ul>
-          <li><a href="#what-is-investing-definition">What Is Investing? (Simple Definition for Beginners and New Investors)</a></li>
-          <li><a href="#ways-people-invest">Ways People Invest Their Money</a></li>
-          <li><a href="#why-do-people-invest">Why Do People Invest?</a></li>
-          <li><a href="#dont-need-lot-of-money">You Don't Need a Lot of Money to Start Investing</a></li>
-          <li><a href="#why-investing-feels-mysterious">Why Investing Feels Mysterious</a></li>
+          <li>needs (food, housing, transportation),</li>
+          <li>wants (things),</li>
+          <li>and experiences (travel, entertainment).</li>
         </ul>
-      </nav>
+        <p>Spending money has an obvious downside: once you spend it, it's gone. You no longer have that money to spend in the future.</p>
+        <p>The next concept is also familiar: saving money.</p>
+        <p>Saving money means setting it aside in a safe, accessible place so you can use it later. A savings account is a common example. Saving feels responsible, and for short-term needs or emergencies, it's essential.</p>
+        <p>But saving has a limitation that's easy to miss: inflation.</p>
+        <p>Over time, inflation reduces the buying power of your money. Prices for goods and services tend to rise year after year. That means the same amount of money usually buys less in the future than it does today.</p>
+        <p>(We explain this in more detail in our <a href="/articles/investing-and-financial-literacy/inflation/">article on inflation</a>.)</p>
+        <p>Investing can grow your money over time, helping to overcome and even outpace the loss of buying power caused by inflation.</p>
+        <p>If your money can grow while you're waiting to use it, you may reach your goals sooner than by saving alone.</p>
+        <p>In short: saving stores money. Investing grows money.</p>
+      </section>
 
-      <h2 id="what-is-investing-definition">What Is Investing? (Simple Definition for Beginners and New Investors)</h2>
-      <p>Investing is the process of putting money to work so it can grow over time.</p>
-      <p>That's the simplest definition.</p>
-      <p>Everyone understands spending money.</p>
-      <p>We spend money on:</p>
-      <ul>
-        <li>needs (food, housing, transportation),</li>
-        <li>wants (things),</li>
-        <li>and experiences (travel, entertainment).</li>
-      </ul>
-      <p>Spending money has an obvious downside: once you spend it, it's gone. You no longer have that money to spend in the future.</p>
-      <p>The next concept is also familiar: saving money.</p>
-      <p>Saving money means setting it aside in a safe, accessible place so you can use it later. A savings account is a common example. Saving feels responsible, and for short-term needs or emergencies, it's essential.</p>
-      <p>But saving has a limitation that's easy to miss: inflation.</p>
-      <p>Over time, inflation reduces the buying power of your money. Prices for goods and services tend to rise year after year. That means the same amount of money usually buys less in the future than it does today.</p>
-      <p>(We explain this in more detail in our <a href="/articles/investing-and-financial-literacy/inflation/">article on inflation</a>.)</p>
-      <p>Investing can grow your money over time, helping to overcome and even outpace the loss of buying power caused by inflation.</p>
-      <p>If your money can grow while you're waiting to use it, you may reach your goals sooner than by saving alone.</p>
-      <p>In short: saving stores money. Investing grows money.</p>
+      <!-- Ways People Invest Their Money card -->
+      <section class="section-card" id="ways-people-invest">
+        <h2>Ways People Invest Their Money</h2>
+        <p>There isn't just one way to invest.</p>
+        <p>People invest through many different types of assets, including:</p>
+        <ul>
+          <li>stocks,</li>
+          <li>bonds,</li>
+          <li>GICs,</li>
+          <li>real estate,</li>
+          <li>commodities like gold,</li>
+          <li>and others.</li>
+        </ul>
+        <p>Each of these works differently and comes with its own risks and benefits. You can read more in our <a href="/articles/investing-and-financial-literacy/asset-classes/">Asset Classes for Investing</a> guide.</p>
+      </section>
 
-      <h2 id="ways-people-invest">Ways People Invest Their Money</h2>
-      <p>There isn't just one way to invest.</p>
-      <p>People invest through many different types of assets, including:</p>
-      <ul>
-        <li>stocks,</li>
-        <li>bonds,</li>
-        <li>GICs,</li>
-        <li>real estate,</li>
-        <li>commodities like gold,</li>
-        <li>and others.</li>
-      </ul>
-      <p>Each of these works differently and comes with its own risks and benefits. We have separate articles that explain each of them in more detail. (Add a link here to Asset Classes for Investing.)</p>
+      <!-- Why Do People Invest? card -->
+      <section class="section-card" id="why-do-people-invest">
+        <h2>Why Do People Invest?</h2>
+        <p>People invest for many reasons, including:</p>
+        <ul>
+          <li>retirement,</li>
+          <li>buying a home,</li>
+          <li>financial independence,</li>
+          <li>or preserving purchasing power over time.</li>
+        </ul>
+        <p>One of the most common questions beginners ask is: why invest instead of just saving?</p>
+        <p>A simple way to understand this is to compare saving and investing toward a goal.</p>
+        <p>Imagine you're saving for a large future purchase. If you only set money aside in cash, progress depends entirely on how much you can save each year. If that money can grow while you're saving, the same goal may take less time to reach.</p>
+        <p>This is the key difference.</p>
+        <p>Saving is about storing money.</p>
+        <p>Investing is about allowing money to grow.</p>
+      </section>
 
-      <h2 id="why-do-people-invest">Why Do People Invest?</h2>
-      <p>People invest for many reasons, including:</p>
-      <ul>
-        <li>retirement,</li>
-        <li>buying a home,</li>
-        <li>financial independence,</li>
-        <li>or preserving purchasing power over time.</li>
-      </ul>
-      <p>One of the most common questions beginners ask is: why invest instead of just saving?</p>
-      <p>A simple way to understand this is to compare saving and investing toward a goal.</p>
-      <p>Imagine you're saving for a large future purchase. If you only set money aside in cash, progress depends entirely on how much you can save each year. If that money can grow while you're saving, the same goal may take less time to reach.</p>
-      <p>This is the key difference.</p>
-      <p>Saving is about storing money.</p>
-      <p>Investing is about allowing money to grow.</p>
+      <!-- You Don't Need a Lot of Money card -->
+      <section class="section-card" id="dont-need-lot-of-money">
+        <h2>You Don't Need a Lot of Money to Start Investing</h2>
+        <p>A common belief is that investing is only for people with large sums of money.</p>
+        <p>That isn't true.</p>
+        <p>Many people start investing with small, regular amounts and rely on time to do most of the work. Investing is less about how much you start with and more about:</p>
+        <ul>
+          <li>consistency,</li>
+          <li>patience,</li>
+          <li>and a long time horizon.</li>
+        </ul>
+        <p>Starting earlier, even with modest amounts, often matters more than starting later with more money. Time matters because of <a href="/articles/investing-and-financial-literacy/compound-interest/">compound interest</a>.</p>
 
-      <h2 id="dont-need-lot-of-money">You Don't Need a Lot of Money to Start Investing</h2>
-      <p>A common belief is that investing is only for people with large sums of money.</p>
-      <p>That isn't true.</p>
-      <p>Many people start investing with small, regular amounts and rely on time to do most of the work. Investing is less about how much you start with and more about:</p>
-      <ul>
-        <li>consistency,</li>
-        <li>patience,</li>
-        <li>and a long time horizon.</li>
-      </ul>
-      <p>Starting earlier, even with modest amounts, often matters more than starting later with more money. Time matters because of compound interest. (Add link to compound interest article here)</p>
+        <h3>Example: How Time Changes the Outcome</h3>
+        <p>To see how time affects investing, imagine investing $50 per month at an average 7% return.</p>
+        <p>After 15 years, the total would be about $15,555.</p>
+        <p>After 30 years, it would be about $58,473.</p>
+        <p>That means nearly three-quarters of the final amount was earned in the second half of the time period.</p>
+        <p>The contribution did not change.</p>
+        <p>The return did not change.</p>
+        <p>Only time changed.</p>
+        <p>Returns are never guaranteed and can vary year to year. This example simply shows how powerful time can be when money is allowed to grow.</p>
+        <p>You can experiment with different monthly amounts, time horizons, and return assumptions using our <a href="/calculators/investment-simple/">Simple Investment Calculator</a>.</p>
+      </section>
 
-      <h3>Example: How Time Changes the Outcome</h3>
-      <p>To see how time affects investing, imagine investing $50 per month at an average 7% return.</p>
-      <p>After 15 years, the total would be about $15,555.</p>
-      <p>After 30 years, it would be about $58,473.</p>
-      <p>That means nearly three-quarters of the final amount was earned in the second half of the time period.</p>
-      <p>The contribution did not change.</p>
-      <p>The return did not change.</p>
-      <p>Only time changed.</p>
-      <p>Returns are never guaranteed and can vary year to year. This example simply shows how powerful time can be when money is allowed to grow.</p>
-      <p>You can experiment with different monthly amounts, time horizons, and return assumptions using our Simple Investment Calculator. (Add link to the real calculator slug)</p>
+      <!-- Why Investing Feels Mysterious card -->
+      <section class="section-card" id="why-investing-feels-mysterious">
+        <h2>Why Investing Feels Mysterious</h2>
+        <p>Spending is visible. Saving is straightforward.</p>
+        <p>Investing is less familiar.</p>
+        <p>Prices move. Values change. Headlines are noisy. This can make investing feel confusing or risky, especially at the beginning.</p>
+        <p>Understanding how investing works reduces uncertainty and helps you make deliberate financial decisions.</p>
+        <p>The goal of this article is to make the basics understandable, so investing feels less like a black box and more like a tool you can evaluate and use deliberately.</p>
+      </section>
 
-      <h2 id="why-investing-feels-mysterious">Why Investing Feels Mysterious</h2>
-      <p>Spending is visible. Saving is straightforward.</p>
-      <p>Investing is less familiar.</p>
-      <p>Prices move. Values change. Headlines are noisy. This can make investing feel confusing or risky, especially at the beginning.</p>
-      <p>Understanding how investing works reduces uncertainty and helps you make deliberate financial decisions.</p>
-      <p>The goal of this article is to make the basics understandable, so investing feels less like a black box and more like a tool you can evaluate and use deliberately.</p>
-
-      <section class="related-articles">
+      <!-- Related Articles card -->
+      <section class="section-card related-articles">
         <h2>Related Articles to Consider Reading Next:</h2>
         <ul>
           <li><a href="/articles/investing-and-financial-literacy/what-is-the-stock-market/">What Is the Stock Market?</a></li>
