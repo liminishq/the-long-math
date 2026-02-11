@@ -78,13 +78,11 @@
     }
 
     .article-content h2 {
-      margin-top: 2em;
-      margin-bottom: 1em;
+      margin: 0 0 0.75em;
     }
 
     .article-content h3 {
-      margin-top: 1.5em;
-      margin-bottom: 0.75em;
+      margin: 1.25em 0 0.5em;
     }
 
     .article-content ul {
@@ -97,57 +95,59 @@
     }
 
     .article-content p {
-      margin: 1em 0;
+      margin: 0.9em 0;
     }
 
     .definition-block {
       font-weight: 700;
-      margin: 1em 0;
+      margin: 0;
     }
 
-    .related-articles {
-      margin-top: 3em;
-      padding-top: 2em;
-      border-top: 1px solid var(--border);
+    /* --- Card styling for each section --- */
+    .section-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 18px;
+      margin: 18px 0;
+      background: var(--card-bg, var(--surface, #fff));
+      box-shadow: 0 10px 24px rgba(0,0,0,0.04);
     }
 
+    /* Tighter first card spacing under H1 */
+    .section-card.intro-card {
+      margin-top: 14px;
+    }
+
+    /* Related articles styling (keep your existing behavior, but inside a card) */
     .related-articles h2 {
-      margin-top: 0;
       font-size: 18px;
+      margin: 0 0 10px;
     }
-
     .related-articles ul {
       list-style: none;
       padding-left: 0;
+      margin: 0;
     }
-
     .related-articles li {
       margin: 12px 0;
     }
-
     .related-articles a {
       color: var(--accent);
       text-decoration: none;
     }
-
     .related-articles a:hover {
       text-decoration: underline;
     }
 
-    .faq-section h2 {
-      margin-top: 2em;
-    }
-
+    /* FAQ styling (keep your existing look, but inside a card) */
     .faq-item {
       margin: 1.25em 0;
     }
-
     .faq-item h3 {
       margin: 0 0 0.5em;
       font-size: 1em;
       font-weight: 700;
     }
-
     .faq-item p {
       margin: 0;
       padding-left: 0;
@@ -169,21 +169,88 @@
         <h1>What Is the Stock Market?</h1>
       </header>
 
-      <p class="definition-block">In simple terms, the stock market is a system where investors buy and sell ownership shares in publicly traded companies. It works by matching buyers and sellers who agree on a price for partial ownership in a business. Over time, stock prices reflect changes in business performance and investor expectations.</p>
+      <!-- INTRO CARD -->
+      <section class="section-card intro-card" id="intro">
+        <p class="definition-block">In simple terms, the stock market is a system where investors buy and sell ownership shares in publicly traded companies. It works by matching buyers and sellers who agree on a price for partial ownership in a business. Over time, stock prices reflect changes in business performance and investor expectations.</p>
 
-      <h2 id="what-is-a-stock">What Is a Stock and How Does It Represent Ownership?</h2>
-      <p>A stock is a share of ownership in a company. When you buy a share, you own a small piece of that business. The stock market is where those shares are traded: investors who want to buy are matched with investors who want to sell.</p>
-      <p>Ownership is usually expressed in shares. One share is one unit of part-ownership. If a company has issued one million shares and you own one thousand, you have a part-ownership stake proportional to that. You don't run the company, but you have a claim on a fraction of its value and, in many cases, a share of profits paid out as dividends.</p>
+        <p>The stock market is often described as a place where people “trade stocks.” At its core, however, it is a system for buying and selling partial ownership in businesses.</p>
 
-      <h2 id="why-prices-move">Why Do Stock Prices Move? Price vs. Value Explained</h2>
-      <p>Stock prices change because buyers and sellers constantly reassess what they're willing to pay or accept. The stock market doesn't announce one "true" value; it reflects the latest agreed price between a buyer and a seller.</p>
-      <p>Price is what you pay today. Value is what you believe the company is worth over time—its future earnings, assets, and growth. When expectations about a company's future improve, more people want to buy and the price tends to rise. When expectations worsen, selling pressure can push the price down. So prices move as investors update their views on business performance and risk.</p>
+        <p>Some companies are private. This means members of the public cannot routinely buy or sell ownership stakes in those businesses. Other companies choose to “go public.” When a company goes public, it divides its ownership into many small pieces called shares. These shares can then be freely bought and sold in the marketplace commonly referred to as the stock market.</p>
 
-      <h2 id="why-markets-grow">Why Does the Stock Market Grow Over Time?</h2>
-      <p>Over long periods, the stock market can go up when the companies in it grow. Businesses that earn profits and reinvest them can become more valuable. As their earnings grow, the part-ownership stakes (shares) can become worth more, so the broad market can trend upward over time.</p>
-      <p>That doesn't mean every stock or every year is positive. Individual companies can fail; the market can fall in any given year. Over many years, though, the stock market has tended to reflect the growth of the economy and of corporate earnings. Inflation and fees can reduce your real return; we mention them only to acknowledge they exist—details are covered elsewhere on the site.</p>
+        <p>Individuals can participate in the stock market by purchasing shares and becoming shareholders. Large institutions also participate, seeking to earn returns by owning pieces of businesses they believe will grow or generate profits over time.</p>
 
-      <section class="faq-section" id="faq">
+        <p>Companies go public primarily to raise capital — money that can be used to expand operations, develop products, hire employees, reduce debt, or pursue other business goals. When you buy a share, you are purchasing a fractional ownership stake from an existing shareholder who is willing to sell. The price of a stock reflects what buyers and sellers agree that fraction of ownership is worth at that moment in time, and that price can fluctuate in response to many factors.</p>
+
+        <p>While stock prices move constantly, the underlying structure is simple: the stock market is a system for transferring part-ownership in businesses.</p>
+      </section>
+
+      <!-- SECTION 2 CARD -->
+      <section class="section-card" id="what-is-a-stock">
+        <h2>What Is a Stock and How Does It Represent Ownership?</h2>
+
+        <p>A stock represents fractional ownership of a company.</p>
+
+        <p>Suppose a company issues 1,000,000 shares at $1 per share, implying a total market value of $1,000,000. Each share represents 1/1,000,000 of the business. If you purchase one share for $1, you own one-millionth of the company. If you purchase five shares for $5, you own five-millionths.</p>
+
+        <p>As a part-owner, you have a proportional claim on the company’s assets and future profits.</p>
+
+        <p>If the company grows and becomes worth $2,000,000, each share may be worth more. If the business declines in value, each share may be worth less.</p>
+
+        <p>When you buy a stock in the stock market, you are not buying a ticker symbol or a chart. You are buying a small ownership interest in a real enterprise.</p>
+      </section>
+
+      <!-- SECTION 3 CARD -->
+      <section class="section-card" id="why-prices-move">
+        <h2>Why Do Stock Prices Move? Price vs. Value Explained</h2>
+
+        <p>The price of a stock in the stock market is the amount buyers and sellers agree upon at a specific moment. That price can change for many reasons.</p>
+
+        <p>Some changes are tied directly to measurable developments within the business. For example, if a company reports higher profits than expected, improves operational efficiency, or successfully launches a new product, investors may be willing to pay more for ownership. If profits decline, costs increase, or the company loses customers, investors may pay less.</p>
+
+        <p>Other price movements reflect changing expectations or investor sentiment rather than immediate changes in the business itself. Economic headlines, interest rate decisions, geopolitical events, and shifts in investor confidence can influence what buyers are willing to pay in the stock market.</p>
+
+        <p><strong>Price and value are related, but they are not the same thing.</strong></p>
+
+        <p>Over short periods, stock prices can fluctuate more dramatically than the underlying business changes. Over longer periods, sustained improvements or declines in business performance tend to play a larger role in determining a company’s value.</p>
+      </section>
+
+      <!-- SECTION 4 CARD -->
+      <section class="section-card" id="why-markets-grow">
+        <h2>Why Does the Stock Market Grow Over Time?</h2>
+
+        <p>Over extended periods, the stock market has often grown when the underlying businesses within it grow their earnings and profits.</p>
+
+        <p>When a company earns more than it spends, it generates surplus capital. That capital can be distributed to shareholders, or it can be reinvested into the business — for example, by expanding operations, developing new products, improving technology, or acquiring other companies.</p>
+
+        <p>If those investments are successful, the business may generate even greater profits in the future. Over time, this cycle of earning and reinvesting can lead to sustained growth in the company’s overall value.</p>
+
+        <p>When many businesses grow in this way, the broader stock market can rise over long periods as well. This process does not occur evenly or predictably month to month or even year to year. However, over extended time horizons, business growth has been a primary driver of long-term stock market expansion.</p>
+      </section>
+
+      <!-- SECTION 5 CARD -->
+      <section class="section-card" id="what-it-is-not">
+        <h2>What the Stock Market Is Not</h2>
+
+        <p>The stock market is not a guaranteed source of returns. Prices can decline, sometimes sharply.</p>
+
+        <p>It is not short-term predictable. Day-to-day movements in the stock market often reflect changing expectations and sentiment rather than permanent changes in business value.</p>
+
+        <p>It is not a savings account. Investors can experience volatility, and capital should not be committed to the stock market without an appropriate time horizon.</p>
+
+        <p>Understanding what the stock market is — and what it is not — helps distinguish long-term business ownership from short-term speculation.</p>
+      </section>
+
+      <!-- SECTION 6 CARD -->
+      <section class="section-card" id="other-factors">
+        <h2>Other Factors That Affect Investor Outcomes</h2>
+
+        <p>Long-term investor results in the stock market are influenced not only by business growth, but also by external factors such as inflation and investment costs. These do not change what the stock market is, but they can meaningfully affect the real outcomes investors experience over time.</p>
+
+        <p>These topics are explored separately in related articles and can be modeled directly using the calculators available on this site.</p>
+      </section>
+
+      <!-- FAQ CARD -->
+      <section class="section-card faq-section" id="faq">
         <h2>Frequently Asked Questions</h2>
 
         <div class="faq-item">
@@ -202,7 +269,8 @@
         </div>
       </section>
 
-      <section class="related-articles">
+      <!-- RELATED ARTICLES CARD -->
+      <section class="section-card related-articles" id="related">
         <h2>Related Articles to Consider Reading Next:</h2>
         <ul>
           <li><a href="/articles/investing-and-financial-literacy/what-is-investing/">What Is Investing?</a></li>
