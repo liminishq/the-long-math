@@ -68,6 +68,18 @@
     .related-articles li { margin: 12px 0; }
     .related-articles a { color: var(--accent); text-decoration: none; }
     .related-articles a:hover { text-decoration: underline; }
+    
+    /* Display formula styling (non-interactive, distinct from links) */
+    .lm-formula {
+      display: inline-block;
+      padding: 10px 14px;
+      border: 1px solid var(--accent, #d6b36a);
+      border-radius: 12px;
+      background: rgba(0,0,0,0.12);
+      color: var(--text, #ffffff);
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
   </style>
 </head>
 <body>
@@ -85,14 +97,14 @@
         <p>A stock is partial ownership in a company.</p>
         <p>When you buy a stock, you are buying a small piece of a real business. That ownership gives you a proportional claim on the company's assets and future profits.</p>
         <p>If you plan to invest, you should understand exactly what you own.</p>
+        <p>If you buy 100 shares of a company with 1,000,000 shares outstanding, you own 0.01% of the business — whether the stock price rises or falls tomorrow.</p>
         <p><strong>No opinions.  No hidden assumptions.  Just arithmetic.</strong></p>
       </section>
 
       <section class="section-card">
         <h2>What Does Owning a Stock Mean?</h2>
-        <p>Owning a stock means you own a fraction of a company.</p>
         <p>If a company has 1,000,000 shares outstanding and you own 1,000 shares:</p>
-        <pre><code>1,000 / 1,000,000 = 0.1%</code></pre>
+        <p><div class="lm-formula">1,000 / 1,000,000 = 0.1%</div></p>
         <p>You own 0.1% of the business.</p>
         <p>That percentage represents a proportional claim on:</p>
         <ul>
@@ -116,7 +128,7 @@
         <p>The number of shares outstanding determines how ownership is divided.</p>
         <p>If total company value is: $100,000,000</p>
         <p>And there are: 1,000,000 shares</p>
-        <pre><code>$100,000,000 / 1,000,000 = $100 per share</code></pre>
+        <p><div class="lm-formula">$100,000,000 / 1,000,000 = $100 per share</div></p>
         <p>Stock price reflects total company value divided by total shares outstanding.</p>
         <p>This is how stocks work at the most basic level.</p>
       </section>
@@ -128,10 +140,10 @@
           <li>Price appreciation</li>
           <li>Dividends</li>
         </ul>
-        <p>There are no other sources.</p>
+        <p>All stock returns ultimately reduce to those two sources.</p>
         <h3>1. Price Appreciation</h3>
         <p>If you buy at $50 and sell at $70:</p>
-        <pre><code>$70 - $50 = $20</code></pre>
+        <p><div class="lm-formula">$70 - $50 = $20</div></p>
         <p>That $20 difference is a capital gain.</p>
         <p>Stock prices rise when investors believe the company's future earnings will increase.</p>
         <p>Prices move because expectations change.</p>
@@ -142,7 +154,7 @@
         <h3>2. Dividends</h3>
         <p>Some companies distribute a portion of their profits directly to shareholders called dividends.</p>
         <p>If a company pays $2 per share annually and you own 100 shares:</p>
-        <pre><code>100 × 2 = $200</code></pre>
+        <p><div class="lm-formula">100 × 2 = $200</div></p>
         <p>You receive $200 in cash.<br>
         You still own the shares.</p>
         <p>Dividends are direct cash returns from company profits.</p>
@@ -157,12 +169,12 @@
         Shares outstanding: 1,000,000<br>
         Share price: $100</p>
         <p>If the company pays $2 per share:</p>
-        <pre><code>2 × 1,000,000 = $2,000,000</code></pre>
+        <p><div class="lm-formula">2 × 1,000,000 = $2,000,000</div></p>
         <p>The company distributes $2,000,000 in cash.</p>
         <p>New company value:</p>
-        <pre><code>$100,000,000 - $2,000,000 = $98,000,000</code></pre>
+        <p><div class="lm-formula">$100,000,000 - $2,000,000 = $98,000,000</div></p>
         <p>New share price:</p>
-        <pre><code>$98,000,000 / 1,000,000 = $98</code></pre>
+        <p><div class="lm-formula">$98,000,000 / 1,000,000 = $98</div></p>
         <p>After the dividend:</p>
         <ul>
           <li>You own shares worth approximately $98 each</li>
@@ -208,6 +220,7 @@
         <p>Stocks are not guaranteed.<br>
         Prices fluctuate daily.<br>
         Short-term volatility can be significant.</p>
+        <p>A stock can decline 30–50% in a single year and still represent ownership in a viable business.</p>
         <p>Long-term returns depend on:</p>
         <ul>
           <li>Earnings growth</li>
@@ -259,7 +272,7 @@
           <li>Dividends</li>
         </ul>
         <p>The arithmetic is simple.<br>
-        The discipline is not.</p>
+        The results follow the arithmetic.</p>
       </section>
 
       <section class="section-card related-articles">
