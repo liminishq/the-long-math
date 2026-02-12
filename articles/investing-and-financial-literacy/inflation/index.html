@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inflation: The Math That Makes Future Money Smaller | The Long Math</title>
+  <meta name="description" content="An arithmetic-based explanation of inflation, purchasing power, nominal vs real return, and why long-term financial plans must be inflation-adjusted." />
+  <link rel="canonical" href="https://thelongmath.com/articles/investing-and-financial-literacy/inflation/" />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Inflation: The Math That Makes Future Money Smaller",
+  "description": "An arithmetic-based explanation of inflation, purchasing power, nominal vs real return, and why long-term financial plans must be inflation-adjusted.",
+  "author": {
+    "@type": "Person",
+    "name": "Phil Evans"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "The Long Math",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://thelongmath.com/assets/logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://thelongmath.com/articles/investing-and-financial-literacy/inflation/"
+  },
+  "datePublished": "2026-02-12",
+  "dateModified": "2026-02-12"
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is inflation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Inflation is the sustained rise in the general price level over time. When inflation increases, each dollar buys fewer goods and services than it did previously. Inflation reduces purchasing power."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What has long-term inflation averaged in North America?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Since 1960, the long-term average annual inflation rate in Canada and the United States has been 3.75% per year based on historical CPI data."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How quickly does inflation reduce purchasing power?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Inflation reduces purchasing power exponentially. At 3.75% per year, purchasing power is cut in half in approximately 20 years."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between nominal and real return?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nominal return is the stated rate of investment growth before inflation. Real return adjusts for inflation using the formula: 1 + r_real = (1 + r_nominal) / (1 + i). Real return measures growth in purchasing power."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why must inflation be included in retirement planning?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Retirement income targets are typically expressed in today's dollars. Without adjusting for inflation, the nominal amount required in future years will be significantly underestimated. Long-term plans must be expressed in real (inflation-adjusted) terms."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do you calculate the future value of today's dollars under inflation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Future Cost = Cost Today × (1 + i)^t, where i is the inflation rate and t is time in years."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do you convert future dollars into today's purchasing power?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Present Value = Future Dollars / (1 + i)^t. This expresses future amounts in real (today's) dollars."
+      }
+    }
+  ]
+}
+  </script>
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script defer src="/assets/js/site.js"></script>
+
+  <style>
+    .article-content { max-width: 980px; margin: 0 auto; line-height: 1.7; font-size: 1.05rem; }
+    .article-content h2 { margin: 0 0 0.75em; }
+    .article-content h3 { margin: 1.25em 0 0.5em; }
+    .article-content ul, .article-content ol { margin: 1em 0; padding-left: 2em; }
+    .article-content li { margin: 0.5em 0; }
+    .article-content p { margin: 0.9em 0; }
+    
+    .section-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      margin: 18px 0;
+      background: var(--card-bg, var(--surface, #fff));
+      box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+    }
+    .section-card.intro-card { margin-top: 14px; }
+    
+    /* Graph container */
+    .graph-container {
+      margin: 2em auto;
+      max-width: 800px;
+    }
+    .graph-title {
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-bottom: 1em;
+      color: var(--text);
+    }
+    .graph-caption {
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 0.75em;
+    }
+    
+    .related-articles h2 { font-size: 18px; margin: 0 0 10px; }
+    .related-articles ul { list-style: none; padding-left: 0; margin: 0; }
+    .related-articles li { margin: 12px 0; }
+    .related-articles a { color: var(--accent); text-decoration: none; }
+    .related-articles a:hover { text-decoration: underline; }
+    
+    .faq-section h2 { margin-top: 0; }
+    .faq-item { margin: 1.5em 0; }
+    .faq-item h3 { margin: 0 0 0.5em; font-size: 1em; font-weight: 700; }
+    .faq-item p { margin: 0; }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <a href="/articles/investing-and-financial-literacy/" class="home-link">← Back to Investment and Financial Literacy</a>
+
+    <article class="article-content">
+      <header>
+        <h1>Inflation: The Math That Makes Future Money Smaller</h1>
+      </header>
+
+      <section class="section-card intro-card">
+        <p style="font-size: 1.75rem; font-weight: 600; color: var(--accent); text-align: center; margin: 1em 0;">$ = P(1 + r/n)^{nt}</p>
+      </section>
+
+      <section class="section-card">
+        <h2>The Problem Most Plans Don't Model</h2>
+        <p>Everyone conceptually grasps inflation.</p>
+        <p>It's 2%. Maybe 3%. Some years, 6%. Prices go up. Money buys less.</p>
+        <p>You've already factored it in.<br>
+        Or at least you think you have.</p>
+        <p>Since 1960, the long-term average inflation rate in Canada and the United States has been 3.75% per year. (<a href="/tools/inflation-tables/" style="color: var(--accent);">Full CPI dataset.</a>)</p>
+        <p>At 3.75% inflation, purchasing power is cut in half over 20 years.</p>
+        <p>Cut in half.</p>
+        <p>That means $1,000,000 saved today has the buying power of about $500,000 in two decades.</p>
+        <p>This is not a stress scenario. It is the long-term average.</p>
+        <p>Most financial plans model returns.<br>
+        Many model fees.<br>
+        Few model what inflation does over decades.</p>
+        <p>If you are building long-term projections in nominal dollars, the math is already wrong.</p>
+        <p>Inflation is not optional. It must be modeled.</p>
+        <p>This article shows the arithmetic.</p>
+	<p>No opinions. No hidden assumptions. <strong>Just arithmetic.</strong></p>
+      </section>
+
+      <section class="section-card">
+        <h2>Inflation Is Exponential</h2>
+        <p>Compounding grows a number by repeatedly multiplying by the same factor.</p>
+        <p>Inflation is exponential, not linear.</p>
+        <p>At 3.75% growth: <span style="color: var(--accent);">1 × 1.0375^20 ≈ 2.09</span></p>
+        <p>At 3.75% inflation: <span style="color: var(--accent);">1 ÷ 1.0375^20 ≈ 0.48</span></p>
+        <p>After 20 years at 3.75% inflation, $1 has roughly half the purchasing power it has today.</p>
+        <p>Same math. Opposite direction.</p>
+      </section>
+
+      <section class="section-card">
+        <h2>What Inflation Is</h2>
+        <p>Inflation is the sustained rise in the general price level over time.</p>
+        <p>When prices rise, each dollar buys fewer goods and services than it did previously.</p>
+        <p>Inflation does not reduce the number of dollars you hold.<br>
+        It reduces what those dollars can purchase.</p>
+        <p>That distinction matters.</p>
+      </section>
+
+      <section class="section-card">
+        <h2>The Core Equation</h2>
+        <p>There are two calculations that matter.</p>
+        <h3>1. Future Cost of Today's Dollars</h3>
+        <p><span style="color: var(--accent);">Future Cost = Cost Today × (1 + i)^t</span></p>
+        <p>Where i is the inflation rate and t is time in years.</p>
+        <p>This tells you what today's lifestyle costs in future dollars.</p>
+        <h3>2. Present Value of Future Dollars</h3>
+        <p><span style="color: var(--accent);">Present Value = Future Dollars ÷ (1 + i)^t</span></p>
+        <p>This tells you what future dollars are worth in today's purchasing power.</p>
+        <p>Everything else follows from these two equations.</p>
+      </section>
+
+      <section class="section-card">
+        <h2>A Concrete Example: Retirement Income</h2>
+        <p>Suppose you want $10,000 per month in today's dollars in retirement.</p>
+        <p>If inflation averages 3.75% and retirement begins 20 years from now:</p>
+        <p><span style="color: var(--accent);">10,000 × 1.0375^20 ≈ 20,900</span></p>
+        <p>That same lifestyle requires about $20,900 per month in 20-year dollars.</p>
+        <p>The number doubled because prices doubled.</p>
+        <p>The lifestyle did not change.</p>
+      </section>
+
+      <section class="section-card">
+        <h2>A Second Example: The Portfolio Target</h2>
+        <p>Assume you believe you need $3,000,000 in today's dollars to retire.</p>
+        <p>If retirement is 20 years away:</p>
+        <p><span style="color: var(--accent);">3,000,000 × 1.0375^20 ≈ 6,270,000</span></p>
+        <p>A "$3 million retirement target" becomes roughly $6.3 million in 20-year dollars.</p>
+        <p>The original $3 million was correct — in today's dollars.</p>
+        <p>Failing to inflate it does not make it more achievable.<br>
+        It only makes the math wrong.</p>
+      </section>
+
+      <section class="section-card">
+        <h2>Nominal vs Real Returns</h2>
+        <p>Investment returns are quoted in nominal terms.</p>
+        <p>What matters is real return — return after inflation.</p>
+        <p><span style="color: var(--accent);">1 + r_real = (1 + r_nominal) ÷ (1 + i)</span></p>
+        <p>If your portfolio earns 7% and inflation is 3.75%:</p>
+        <p><span style="color: var(--accent);">1.07 ÷ 1.0375 − 1 ≈ 3.13%</span></p>
+        <p>Your statement shows 7% growth.<br>
+        Purchasing power grows at 3.13%.</p>
+        <p>Over decades, that difference dominates outcomes.</p>
+        
+        <div class="graph-container">
+          <div class="graph-title">Nominal vs Real Portfolio Growth (7% Return, 3.75% Inflation)</div>
+          <svg viewBox="0 0 800 500" style="width: 100%; height: auto; max-width: 800px; display: block; margin: 0 auto;">
+            <!-- Light background for both light and dark mode -->
+            <rect x="0" y="0" width="800" height="500" fill="#ffffff"/>
+            
+            <!-- Y-axis and X-axis lines -->
+            <line x1="80" y1="40" x2="80" y2="440" stroke="#333" stroke-width="1.5"/>
+            <line x1="80" y1="440" x2="760" y2="440" stroke="#333" stroke-width="1.5"/>
+            
+            <!-- Horizontal gridlines (solid, light grey) -->
+            <line x1="80" y1="360" x2="760" y2="360" stroke="#e0e0e0" stroke-width="1"/>
+            <line x1="80" y1="280" x2="760" y2="280" stroke="#e0e0e0" stroke-width="1"/>
+            <line x1="80" y1="200" x2="760" y2="200" stroke="#e0e0e0" stroke-width="1"/>
+            <line x1="80" y1="120" x2="760" y2="120" stroke="#e0e0e0" stroke-width="1"/>
+            <line x1="80" y1="40" x2="760" y2="40" stroke="#e0e0e0" stroke-width="1"/>
+            
+            <!-- X-axis labels -->
+            <text x="80" y="460" text-anchor="middle" font-size="13" fill="#333">0</text>
+            <text x="420" y="460" text-anchor="middle" font-size="13" fill="#333">10</text>
+            <text x="760" y="460" text-anchor="middle" font-size="13" fill="#333">20</text>
+            <text x="420" y="485" text-anchor="middle" font-size="14" fill="#333">Years</text>
+            
+            <!-- Y-axis labels -->
+            <text x="70" y="445" text-anchor="end" font-size="13" fill="#333">$0</text>
+            <text x="70" y="365" text-anchor="end" font-size="13" fill="#333">$100k</text>
+            <text x="70" y="285" text-anchor="end" font-size="13" fill="#333">$200k</text>
+            <text x="70" y="205" text-anchor="end" font-size="13" fill="#333">$300k</text>
+            <text x="70" y="125" text-anchor="end" font-size="13" fill="#333">$400k</text>
+            <text x="70" y="45" text-anchor="end" font-size="13" fill="#333">$500k</text>
+            
+            <!-- Nominal line (solid blue) - 100000 * 1.07^t over 20 years -->
+            <polyline points="80,360 114,354 148,348 182,342 216,335 250,328 284,320 318,312 352,303 386,293 420,283 454,272 488,260 522,247 556,234 590,219 624,204 658,187 692,170 726,151 760,130" 
+                      fill="none" stroke="#2563eb" stroke-width="2.5"/>
+            
+            <!-- Real line (dashed orange) - nominal / 1.0375^t -->
+            <polyline points="80,360 114,358 148,355 182,352 216,350 250,347 284,344 318,341 352,338 386,335 420,331 454,328 488,324 522,321 556,317 590,314 624,310 658,306 692,302 726,298 760,293" 
+                      fill="none" stroke="#ea580c" stroke-width="2.5" stroke-dasharray="8,4"/>
+            
+            <!-- Line annotations at endpoints -->
+            <text x="760" y="115" text-anchor="end" font-size="13" fill="#2563eb" font-weight="600">Nominal</text>
+            <text x="760" y="100" text-anchor="end" font-size="12" fill="#333">≈ $387k</text>
+            
+            <text x="760" y="322" text-anchor="end" font-size="13" fill="#ea580c" font-weight="600">Real (today's dollars)</text>
+            <text x="760" y="337" text-anchor="end" font-size="12" fill="#333">≈ $185k</text>
+          </svg>
+          <div class="graph-caption"><span style="color: var(--accent);">Real value = Nominal ÷ (1.0375^t)</span></div>
+        </div>
+      </section>
+
+      <section class="section-card">
+        <h2>Final Framing</h2>
+        <p>Inflation is not dramatic.<br>
+        Its effects are.</p>
+        <p>It does not cause sudden collapse.<br>
+        It causes gradual distortion.</p>
+        <p>Plans built in nominal dollars create false confidence.<br>
+        Targets set without inflation drift from reality.<br>
+        Returns quoted without inflation adjustment mislead.</p>
+        <p>Over long periods, small annual differences become large structural errors.</p>
+        <p>Inflation compounds whether you account for it or not.</p>
+        <p>You can ignore it.<br>
+        You cannot escape it.</p>
+        <p>If your savings compound faster than inflation, purchasing power rises.<br>
+        If they compound more slowly, purchasing power falls.</p>
+        <p>There is no opinion in that statement.<br>
+        No hidden assumptions.<br>
+        Only arithmetic.</p>
+      </section>
+
+      <section class="section-card faq-section">
+        <h2>Frequently Asked Questions About Inflation</h2>
+        
+        <div class="faq-item">
+          <h3>What is inflation?</h3>
+          <p>Inflation is the sustained rise in the general price level over time. When inflation increases, each dollar buys fewer goods and services than it did previously. Inflation reduces purchasing power.</p>
+        </div>
+        
+        <div class="faq-item">
+          <h3>What has long-term inflation averaged in North America?</h3>
+          <p>Since 1960, the long-term average annual inflation rate in Canada and the United States has been 3.75% per year based on historical CPI data. (<a href="/tools/inflation-tables/" style="color: var(--accent);">Full CPI dataset.</a>)</p>
+        </div>
+        
+        <div class="faq-item">
+          <h3>How quickly does inflation reduce purchasing power?</h3>
+          <p>Inflation reduces purchasing power exponentially. At 3.75% per year, purchasing power is cut in half in approximately 20 years.</p>
+        </div>
+        
+        <div class="faq-item">
+          <h3>What is the difference between nominal and real return?</h3>
+          <p>Nominal return is the stated rate of investment growth before inflation.<br>
+          Real return adjusts for inflation using the formula:</p>
+          <p><span style="color: var(--accent);">1 + r_real = (1 + r_nominal) ÷ (1 + i)</span></p>
+          <p>Real return measures growth in purchasing power.</p>
+        </div>
+        
+        <div class="faq-item">
+          <h3>Why must inflation be included in retirement planning?</h3>
+          <p>Retirement income targets are typically expressed in today's dollars. Without adjusting for inflation, the nominal amount required in future years will be significantly underestimated. Long-term plans must be expressed in real (inflation-adjusted) terms.</p>
+        </div>
+        
+        <div class="faq-item">
+          <h3>How do you calculate the future value of today's dollars under inflation?</h3>
+          <p><span style="color: var(--accent);">Future Cost = Cost Today × (1 + i)^t</span></p>
+          <p>Where i is the inflation rate and t is time in years.</p>
+        </div>
+        
+        <div class="faq-item">
+          <h3>How do you convert future dollars into today's purchasing power?</h3>
+          <p><span style="color: var(--accent);">Present Value = Future Dollars ÷ (1 + i)^t</span></p>
+          <p>This expresses future amounts in real (today's) dollars.</p>
+        </div>
+      </section>
+
+      <section class="section-card related-articles">
+        <h2>Related Articles and Tools:</h2>
+        <ul>
+          <li><a href="/articles/investing-and-financial-literacy/what-is-investing/">What Is Investing?</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/compound-interest/">Compound Interest</a></li>
+          <li><a href="/calculators/investment-calculator-inflation-adjusted/">Investment Calculator – Inflation Adjusted</a></li>
+          <li><a href="/tools/inflation-tables/">Historical Inflation Rates (CPI)</a></li>
+        </ul>
+      </section>
+    </article>
+
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> The calculators and tools at The Long Math are provided for educational purposes only
+        and are not intended to constitute financial or tax advice. Results are based on simplified
+        models and user-supplied assumptions. Users are recommended to complete their own due diligence.
+      </p>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+</body>
+</html>
