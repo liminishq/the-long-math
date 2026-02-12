@@ -36,14 +36,24 @@
   <script defer src="/assets/js/site.js"></script>
 
   <style>
-    .article-content { max-width: 980px; margin: 0 auto; line-height: 1.7; }
+    .article-content { max-width: 980px; margin: 0 auto; line-height: 1.7; font-size: 1.05rem; }
     .article-content h2 { margin: 0 0 0.75em; }
     .article-content h3 { margin: 1.25em 0 0.5em; }
     .article-content ul, .article-content ol { margin: 1em 0; padding-left: 2em; }
     .article-content li { margin: 0.5em 0; }
     .article-content p { margin: 0.9em 0; }
-    .article-content pre { margin: 1em 0; padding: 12px; border: 1px solid var(--border); border-radius: 8px; overflow-x: auto; background: var(--surface); }
-    .article-content code { font-size: 0.95em; }
+    .article-content pre {
+      margin: 1em 0;
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow-x: auto;
+      background: var(--surface);
+      font-size: 1.125rem;
+      line-height: 1.6;
+      letter-spacing: 0.02em;
+    }
+    .article-content code { font-size: inherit; font-weight: 500; }
     .section-card {
       border: 1px solid var(--border);
       border-radius: 18px;
@@ -64,7 +74,7 @@
   <div id="site-header"></div>
 
   <div class="wrap">
-    <a href="/articles/" class="home-link">← Back to Articles</a>
+    <a href="/articles/investing-and-financial-literacy/" class="home-link">← Back to Investment and Financial Literacy</a>
 
     <article class="article-content">
       <header>
@@ -72,10 +82,10 @@
       </header>
 
       <section class="section-card intro-card">
-        <p><strong>A stock is partial ownership in a company.</strong></p>
+        <p>A stock is partial ownership in a company.</p>
         <p>When you buy a stock, you are buying a small piece of a real business. That ownership gives you a proportional claim on the company's assets and future profits.</p>
         <p>If you plan to invest, you should understand exactly what you own.</p>
-        <p><em>No opinions. No hidden assumptions. Just arithmetic.</em></p>
+        <p><strong>No opinions.  No hidden assumptions.  Just arithmetic.</strong></p>
       </section>
 
       <section class="section-card">
@@ -84,78 +94,172 @@
         <p>If a company has 1,000,000 shares outstanding and you own 1,000 shares:</p>
         <pre><code>1,000 / 1,000,000 = 0.1%</code></pre>
         <p>You own 0.1% of the business.</p>
+        <p>That percentage represents a proportional claim on:</p>
         <ul>
           <li>Company assets</li>
           <li>Company earnings</li>
           <li>Future growth</li>
         </ul>
-        <p>Ownership is mathematical.</p>
+        <p>Ownership is not symbolic.<br>
+        It is mathematical.</p>
       </section>
 
       <section class="section-card">
         <h2>What Is a Share of Stock?</h2>
         <p>A share is a unit of ownership in a company.</p>
-        <p>If total company value is: $100,000,000<br>
-        And there are: 1,000,000 shares</p>
+        <p>Companies divide ownership into shares so they can:</p>
+        <ul>
+          <li>Raise capital</li>
+          <li>Transfer ownership efficiently</li>
+          <li>Create liquidity through public markets</li>
+        </ul>
+        <p>The number of shares outstanding determines how ownership is divided.</p>
+        <p>If total company value is: $100,000,000</p>
+        <p>And there are: 1,000,000 shares</p>
         <pre><code>$100,000,000 / 1,000,000 = $100 per share</code></pre>
-        <p>Stock price reflects total company value divided by shares outstanding.</p>
+        <p>Stock price reflects total company value divided by total shares outstanding.</p>
+        <p>This is how stocks work at the most basic level.</p>
       </section>
 
       <section class="section-card">
         <h2>How Do Stocks Make Money?</h2>
         <p>Stocks generate returns in two ways:</p>
-        <ol>
+        <ul>
           <li>Price appreciation</li>
           <li>Dividends</li>
-        </ol>
+        </ul>
+        <p>There are no other sources.</p>
         <h3>1. Price Appreciation</h3>
         <p>If you buy at $50 and sell at $70:</p>
         <pre><code>$70 - $50 = $20</code></pre>
-        <p>This is a capital gain.</p>
+        <p>That $20 difference is a capital gain.</p>
+        <p>Stock prices rise when investors believe the company's future earnings will increase.</p>
+        <p>Prices move because expectations change.</p>
+        <p>The mechanism is supply and demand.<br>
+        The driver is expected future cash flow.</p>
+        <p>Markets do not price the past.<br>
+        They price the future.</p>
         <h3>2. Dividends</h3>
         <p>Some companies distribute a portion of their profits directly to shareholders called dividends.</p>
         <p>If a company pays $2 per share annually and you own 100 shares:</p>
         <pre><code>100 × 2 = $200</code></pre>
-        <p>You receive $200 in cash and still own the shares.</p>
+        <p>You receive $200 in cash.<br>
+        You still own the shares.</p>
+        <p>Dividends are direct cash returns from company profits.</p>
       </section>
 
       <section class="section-card">
         <h2>How Dividends Affect Stock Price</h2>
-        <p>Dividends redistribute existing value.</p>
-        <p>If a $100,000,000 company pays $2 per share across 1,000,000 shares:</p>
+        <p>Dividends do not create new value.<br>
+        They redistribute existing value.</p>
+        <p>Using the earlier example:</p>
+        <p>Company value: $100,000,000<br>
+        Shares outstanding: 1,000,000<br>
+        Share price: $100</p>
+        <p>If the company pays $2 per share:</p>
         <pre><code>2 × 1,000,000 = $2,000,000</code></pre>
-        <p>New company value becomes $98,000,000.</p>
-        <pre><code>$98,000,000 / 1,000,000 = $98 per share</code></pre>
+        <p>The company distributes $2,000,000 in cash.</p>
+        <p>New company value:</p>
+        <pre><code>$100,000,000 - $2,000,000 = $98,000,000</code></pre>
+        <p>New share price:</p>
+        <pre><code>$98,000,000 / 1,000,000 = $98</code></pre>
+        <p>After the dividend:</p>
+        <ul>
+          <li>You own shares worth approximately $98 each</li>
+          <li>You received $2 per share in cash</li>
+        </ul>
         <p>Total economic value remains unchanged.</p>
+        <p>Dividends are not extra money.<br>
+        They are part of your ownership being returned to you.</p>
+      </section>
+
+      <section class="section-card">
+        <h2>The Difference Between a Company and Its Stock Price</h2>
+        <p>A company produces goods or services.</p>
+        <p>A stock price reflects what investors believe that company is worth today based on current assets and debts, and expected future profits.</p>
+        <p>Stock prices reflect:</p>
+        <ul>
+          <li>Expected future earnings</li>
+          <li>An adjustment factor for what those future earnings are worth today</li>
+          <li>Continuous updating as new information arrives</li>
+        </ul>
+        <p>The business may be stable.<br>
+        The stock price may not be.</p>
+        <p>Business performance and market valuation are related — but not identical.</p>
       </section>
 
       <section class="section-card">
         <h2>Why Do Stock Prices Go Up and Down?</h2>
+        <p>Stock prices change when expectations change.</p>
+        <p>Common drivers include:</p>
         <ul>
           <li>Earnings reports</li>
           <li>Interest rate changes</li>
           <li>Economic conditions</li>
-          <li>Investor expectations</li>
+          <li>Industry developments</li>
+          <li>Investor sentiment</li>
         </ul>
-        <p>Stock prices reflect the present value of expected future cash flows.</p>
+        <p>Stock prices reflect what investors think the company will earn in the future, translated into today’s dollars.</p>
+        <p>Markets continuously update those expectations.</p>
       </section>
 
       <section class="section-card">
         <h2>Are Stocks Risky?</h2>
-        <p>Stocks fluctuate. Short-term volatility can be significant.</p>
-        <p>Long-term returns depend on growth, reinvestment, and time.</p>
+        <p>Stocks are not guaranteed.<br>
+        Prices fluctuate daily.<br>
+        Short-term volatility can be significant.</p>
+        <p>Long-term returns depend on:</p>
+        <ul>
+          <li>Earnings growth</li>
+          <li>Reinvestment of profits</li>
+          <li>Competitive advantage</li>
+          <li>Time</li>
+        </ul>
+        <p>Over long periods, compounding becomes the dominant force.</p>
+        <p>Time reduces the impact of short-term noise.</p>
       </section>
 
       <section class="section-card">
-        <h2>Summary</h2>
-        <p>A stock is partial ownership in a company.</p>
+        <h2>Stocks as an Asset Class</h2>
+        <p>Stocks are one of several major asset classes.</p>
+        <p>Other asset classes include:</p>
         <ul>
-          <li>Claim on assets</li>
-          <li>Claim on profits</li>
+          <li>Bonds</li>
+          <li>Real estate</li>
+          <li>Cash</li>
+          <li>Commodities</li>
+        </ul>
+        <p>Each asset class behaves differently in terms of risk and return.</p>
+        <p>Historically, stocks have produced higher long-term returns than cash or bonds — with greater volatility.</p>
+        <p>Higher expected return is compensation for bearing risk.</p>
+      </section>
+
+      <section class="section-card">
+        <h2>What Is the Stock Market?</h2>
+        <p>Stocks are bought and sold on exchanges.<br>
+        These exchanges form the stock market.<br>
+        The stock market does not create value.</p>
+        <p>It is the marketplace where buyers and sellers transfer ownership at agreed-upon prices.</p>
+        <p>The company creates value.<br>
+        The market assigns a price.</p>
+      </section>
+
+      <section class="section-card">
+        <h2>Summary: What Is a Stock?</h2>
+        <p>A stock is partial ownership in a company.</p>
+        <p>It gives you:</p>
+        <ul>
+          <li>A proportional claim on assets</li>
+          <li>A proportional claim on profits</li>
           <li>Exposure to future growth</li>
         </ul>
-        <p>Stocks generate returns through price appreciation and dividends.</p>
-        <p>The arithmetic is simple. The discipline is not.</p>
+        <p>Stocks generate returns through:</p>
+        <ul>
+          <li>Price appreciation</li>
+          <li>Dividends</li>
+        </ul>
+        <p>The arithmetic is simple.<br>
+        The discipline is not.</p>
       </section>
 
       <section class="section-card related-articles">
