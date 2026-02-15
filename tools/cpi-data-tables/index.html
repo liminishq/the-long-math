@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CPI Data Tables (by country) – The Long Math</title>
+  <meta name="description" content="Annual Consumer Price Index (CPI) data tables for Canada, United States, United Kingdom, and Australia, with source citations." />
+  <link rel="canonical" href="https://thelongmath.com/tools/cpi-data-tables/" />
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="/tools/cpi-data-tables/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+  <div class="wrap">
+    <div style="margin-bottom: 16px;">
+      <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
+    </div>
+    <header>
+      <h1>CPI Data Tables (by country)</h1>
+      <p class="lead">Annual Consumer Price Index (CPI) values by year for Canada, United States, United Kingdom, and Australia. Each table cites its official data source.</p>
+    </header>
+
+    <div id="tables-container">
+      <p class="loading-msg" id="loading-msg">Loading data…</p>
+    </div>
+  </div>
+  <div id="footerMount"></div>
+
+  <script>
+    (function () {
+      var ORDER = ["CAN", "USA", "GBR", "AUS"];
+      var container = document.getElementById("tables-container");
+      var loadingMsg = document.getElementById("loading-msg");
+
+      function formatValue(v) {
+        if (v == null || typeof v !== "number") return "–";
+        if (v % 1 === 0) return String(v);
+        return v.toFixed(3);
+      }
+
+      function buildTable(cpi) {
+        var years = Object.keys(cpi).map(Number).sort(function (a, b) { return a - b; });
+        var html = '<table class="cpi-table" aria-label="CPI by year">';
+        html += "<thead><tr><th>Year</th><th>CPI</th></tr></thead><tbody>";
+        years.forEach(function (y) {
+          html += "<tr><td>" + y + "</td><td>" + formatValue(cpi[String(y)]) + "</td></tr>";
+        });
+        html += "</tbody></table>";
+        return html;
+      }
+
+      function renderSection(data) {
+        var meta = data.meta || {};
+        var cpi = data.cpi || {};
+        var name = meta.name || "—";
+        var flag = meta.flag || "";
+        var sourceName = meta.source_name || "—";
+        var sourceUrl = meta.source_url || "#";
+        var start = meta.coverage_start_year != null ? meta.coverage_start_year : "—";
+        var end = meta.coverage_end_year != null ? meta.coverage_end_year : "—";
+
+        var section = document.createElement("section");
+        section.className = "card cpi-country-section";
+        section.innerHTML =
+          "<h2 class=\"section-title\">" + (flag ? flag + " " : "") + name + "</h2>" +
+          "<p class=\"cpi-source\">Source: <a href=\"" + sourceUrl + "\" rel=\"noopener\" target=\"_blank\">" + sourceName + "</a>. Coverage: " + start + "–" + end + ".</p>" +
+          "<div class=\"table-container\">" + buildTable(cpi) + "</div>";
+        container.appendChild(section);
+      }
+
+      function loadAll() {
+        var done = 0;
+        var total = ORDER.length;
+
+        function maybeFinish() {
+          done++;
+          if (done === total && loadingMsg && loadingMsg.parentNode) {
+            loadingMsg.parentNode.removeChild(loadingMsg);
+          }
+        }
+
+        ORDER.forEach(function (code) {
+          fetch("/data/cpi/" + code + ".json")
+            .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error("Failed to load " + code)); })
+            .then(function (data) {
+              renderSection(data);
+              maybeFinish();
+            })
+            .catch(function () {
+              var section = document.createElement("section");
+              section.className = "card cpi-country-section";
+              section.innerHTML = "<h2 class=\"section-title\">" + code + "</h2><p class=\"cpi-source\">Data could not be loaded.</p>";
+              container.appendChild(section);
+              maybeFinish();
+            });
+        });
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", loadAll);
+      } else {
+        loadAll();
+      }
+    })();
+  </script>
+</body>
+</html>

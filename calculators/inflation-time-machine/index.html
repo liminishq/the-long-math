@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inflation Time Machine (Then ↔ Now) – The Long Math</title>
+  <meta name="description" content="Convert a dollar amount between two years using annual CPI index ratios. Multi-country support: Canada, United States, Australia, United Kingdom. Whole dollars, no currency conversion." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/inflation-time-machine/" />
+
+  <!-- Site-wide theme + styles -->
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+
+  <!-- Calculator-specific styles -->
+  <link rel="stylesheet" href="/calculators/inflation-time-machine/styles.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Inflation Time Machine (Then ↔ Now)",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "description": "Convert a dollar amount between two years using annual CPI index ratios. Multi-country support."
+  }
+  </script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div style="margin-bottom: 16px;">
+      <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
+    </div>
+
+    <header>
+      <h1>Inflation Time Machine (Then ↔ Now)</h1>
+      <p class="lead">
+        Convert a dollar amount between two years using annual Consumer Price Index (CPI) ratios.
+        Choose a country and year range; see the equivalent amount in the other year and a comparison across all countries with data for that range.
+      </p>
+      <p class="lead">Whole dollars only. No currency conversion — each country uses its own domestic CPI.</p>
+    </header>
+
+    <div class="card">
+      <div class="calc-grid">
+        <article class="panel">
+          <h2 class="section-title">Inputs</h2>
+
+          <div class="field">
+            <label for="country_select">Country</label>
+            <select id="country_select" aria-label="Country"></select>
+            <div class="help-text">Countries are enabled only when they have full coverage for the selected year range.</div>
+          </div>
+
+          <div class="field">
+            <label for="start_year">Start year</label>
+            <select id="start_year" aria-label="Start year"></select>
+          </div>
+
+          <div class="field">
+            <label for="end_year">End year</label>
+            <select id="end_year" aria-label="End year"></select>
+          </div>
+
+          <div class="field">
+            <button id="swap_years_btn" type="button" class="swap-button" aria-label="Swap start and end years">⇄ Swap years</button>
+          </div>
+
+          <div class="field">
+            <label for="amount_input">Amount (whole dollars)</label>
+            <input id="amount_input" type="number" inputmode="numeric" min="0" step="1" value="100" aria-label="Amount in whole dollars" />
+          </div>
+        </article>
+
+        <article class="panel">
+          <h2 class="section-title">Result</h2>
+          <div class="results">
+            <p id="loading_primary" class="loading-inline" style="display: none;">Loading data…</p>
+            <p id="no_data_message" class="no-data-message" style="display: none;"></p>
+            <div class="result-row highlight">
+              <div class="value highlight-value" id="primary_result"></div>
+            </div>
+            <div id="stats_row" class="stats-row" style="display: none;">
+              <div class="result-row">
+                <div class="label">Total change (magnitude)</div>
+                <div class="value" id="total_change_magnitude"></div>
+              </div>
+              <div class="result-row">
+                <div class="label">Annualized inflation</div>
+                <div class="value" id="annualized_rate"></div>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="comparison-title">Comparison (all countries with data for selected years)</h3>
+          <div id="comparison_list" class="comparison-list"></div>
+        </article>
+      </div>
+    </div>
+
+    <section class="faq-section">
+      <h2>Assumptions &amp; FAQ</h2>
+
+      <div class="faq-item">
+        <h3>Data sources</h3>
+        <p>CPI data and coverage years by country (loaded from manifest):</p>
+        <ul id="data_sources_list">
+          <li>Loading…</li>
+        </ul>
+      </div>
+
+      <div class="faq-item">
+        <h3>CPI and currency</h3>
+        <p>This tool uses each country’s domestic CPI index. It does not perform foreign exchange conversion. Amounts are in that country’s local currency (e.g. CAD for Canada, USD for United States) and are comparable only within the same country.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>CPI Data Tables (by country)</h3>
+        <p>For detailed CPI tables by country, see <a href="/tools/cpi-data-tables/">CPI Data Tables (by country)</a>.</p>
+      </div>
+    </section>
+
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> The calculators and tools at The Long Math are provided for educational purposes only
+        and are not intended to constitute financial or tax advice. Results are based on simplified
+        models and user-supplied assumptions. Users are recommended to complete their own due diligence.
+      </p>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+
+  <script src="/calculators/inflation-time-machine/engine.js"></script>
+  <script src="/calculators/inflation-time-machine/ui.js"></script>
+  <script>
+    (function () {
+      function populateDataSources() {
+        var list = document.getElementById("data_sources_list");
+        if (!list) return;
+        fetch("/data/cpi/countries.json").then(function (r) { return r.json(); }).then(function (m) {
+          list.innerHTML = "";
+          (m.countries || []).forEach(function (c) {
+            var li = document.createElement("li");
+            li.innerHTML = c.flag + " " + c.name + ": " + c.startYear + "–" + c.endYear + ". Source: <a href=\"" + (c.sourceUrl || "#") + "\" rel=\"noopener\" target=\"_blank\">" + (c.sourceName || "—") + "</a>";
+            list.appendChild(li);
+          });
+        }).catch(function () {
+          list.innerHTML = "<li>Could not load sources.</li>";
+        });
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", populateDataSources);
+      else populateDataSources();
+    })();
+  </script>
+</body>
+</html>
