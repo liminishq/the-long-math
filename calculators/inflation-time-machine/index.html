@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Inflation Time Machine (Then ↔ Now) – The Long Math</title>
-  <meta name="description" content="Convert a dollar amount between two years using annual CPI index ratios. Multi-country support: Canada, United States, Australia, United Kingdom. Whole dollars, no currency conversion." />
+  <meta name="description" content="Convert a dollar amount between two years using official CPI data. Compare inflation across Canada, the United States, Australia, and the United Kingdom. Whole dollars only. No currency conversion." />
   <link rel="canonical" href="https://thelongmath.com/calculators/inflation-time-machine/" />
 
   <!-- Site-wide theme + styles -->
@@ -22,7 +22,7 @@
     "name": "Inflation Time Machine (Then ↔ Now)",
     "applicationCategory": "FinanceApplication",
     "operatingSystem": "Web",
-    "description": "Convert a dollar amount between two years using annual CPI index ratios. Multi-country support."
+    "description": "Convert a dollar amount between two years using official CPI data and compare results across countries. Whole dollars only. No currency conversion."
   }
   </script>
 </head>
@@ -37,10 +37,10 @@
     <header>
       <h1>Inflation Time Machine (Then ↔ Now)</h1>
       <p class="lead">
-        Convert a dollar amount between two years using annual Consumer Price Index (CPI) ratios.
-        Choose a country and year range; see the equivalent amount in the other year and a comparison across all countries with data for that range.
+        Convert a dollar amount between two years using official Consumer Price Index (CPI) data.</p>
+        Select a country and year range to see what money was worth then — and what it represents now.
       </p>
-      <p class="lead">Whole dollars only. No currency conversion — each country uses its own domestic CPI.</p>
+      <p class="lead">Whole dollars only. No currency conversion. Each country uses its own domestic CPI.</p>
     </header>
 
     <div class="card">
@@ -84,17 +84,17 @@
             </div>
             <div id="stats_row" class="stats-row" style="display: none;">
               <div class="result-row">
-                <div class="label">Total change (magnitude)</div>
+                <div class="label">Total price level change (magnitude)</div>
                 <div class="value" id="total_change_magnitude"></div>
               </div>
               <div class="result-row">
-                <div class="label">Annualized inflation</div>
+                <div class="label">Average annual inflation rate</div>
                 <div class="value" id="annualized_rate"></div>
               </div>
             </div>
           </div>
 
-          <h3 class="comparison-title">Comparison (all countries with data for selected years)</h3>
+          <h3 class="comparison-title">Comparison across available countries</h3>
           <div id="comparison_list" class="comparison-list"></div>
         </article>
       </div>
@@ -104,21 +104,65 @@
       <h2>Assumptions &amp; FAQ</h2>
 
       <div class="faq-item">
+        <h3>How this inflation calculator works</h3>
+        <p>
+          This tool converts an amount between two years using official Consumer Price Index (CPI) data.
+          It uses an index ratio: CPI(end year) ÷ CPI(start year). The result is the amount required in the end year
+          to match the purchasing power of the start-year amount (within the same country).
+        </p>
+        <p>
+          The “Average annual inflation rate” figure is the constant annual rate that would produce the same overall CPI change
+          across the selected time span. It is shown as a positive magnitude; the direction is conveyed by the year arrow
+          (start → end).
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What is CPI?</h3>
+        <p>
+          CPI (Consumer Price Index) is a published measure of how the prices of a representative basket of goods and services
+          change over time. Each country’s statistical agency defines and maintains its own basket and methodology.
+        </p>
+        <p>
+          CPI is not your personal inflation rate. It is a broad index designed to track economy-wide consumer price changes.
+          This tool uses CPI because it provides a standardized way to compare purchasing power across years.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Why results differ by country</h3>
+        <p>
+          Inflation differs across countries because price changes differ across economies and time periods, and because each country’s CPI
+          is constructed using its own basket weights and statistical methods.
+        </p>
+        <p>
+          This tool does not perform currency conversion. The comparison list shows each country’s domestic CPI-based conversion in that country’s
+          local currency. Comparisons across countries are about inflation dynamics, not exchange rates.
+        </p>
+      </div>
+
+      <div class="faq-item">
         <h3>Data sources</h3>
         <p>CPI data and coverage years by country (loaded from manifest):</p>
         <ul id="data_sources_list">
           <li>Loading…</li>
         </ul>
+        <p class="help-text" style="margin-top: 10px;">
+          Coverage years reflect the full annual datasets currently available.
+        </p>
       </div>
 
       <div class="faq-item">
         <h3>CPI and currency</h3>
-        <p>This tool uses each country’s domestic CPI index. It does not perform foreign exchange conversion. Amounts are in that country’s local currency (e.g. CAD for Canada, USD for United States) and are comparable only within the same country.</p>
+        <p>
+          This tool uses each country’s domestic CPI index. It does not perform foreign exchange conversion.
+          Amounts are in that country’s local currency (e.g. CAD for Canada, USD for United States) and are comparable only within the same country.
+        </p>
       </div>
 
       <div class="faq-item">
-        <h3>CPI Data Tables (by country)</h3>
-        <p>For detailed CPI tables by country, see <a href="/tools/cpi-data-tables/">CPI Data Tables (by country)</a>.</p>
+        <h3>CPI data tables</h3>
+        <p>For the exact CPI index values used in these calculations, see <a href="/tools/cpi-data-tables/">CPI Data Tables (by country)</a>.</p>
       </div>
     </section>
 
@@ -144,7 +188,14 @@
           list.innerHTML = "";
           (m.countries || []).forEach(function (c) {
             var li = document.createElement("li");
-            li.innerHTML = c.flag + " " + c.name + ": " + c.startYear + "–" + c.endYear + ". Source: <a href=\"" + (c.sourceUrl || "#") + "\" rel=\"noopener\" target=\"_blank\">" + (c.sourceName || "—") + "</a>";
+            li.innerHTML =
+              (c.flag ? c.flag + " " : "") +
+              (c.name || "—") +
+              ": " +
+              (c.startYear != null ? c.startYear : "—") +
+              "–" +
+              (c.endYear != null ? c.endYear : "—") +
+              ". Source: <a href=\"" + (c.sourceUrl || "#") + "\" rel=\"noopener\" target=\"_blank\">" + (c.sourceName || "—") + "</a>";
             list.appendChild(li);
           });
         }).catch(function () {
