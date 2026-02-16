@@ -59,14 +59,24 @@
   resize: vertical;
 }
 
-.turnstile-placeholder {
-  min-height: 0;
+.turnstile-wrap {
+  margin-bottom: 4px;
 }
 
 .form-actions {
   margin-top: 20px;
   margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
+
+.contact-status {
+  font-size: 13px;
+}
+.contact-status-success { color: var(--accent2); }
+.contact-status-error { color: var(--accent2); }
 
 .contact-privacy {
   font-size: 12px;
