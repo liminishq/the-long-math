@@ -83,12 +83,18 @@ function categoryLabel(category) {
 }
 
 async function sendMail(env, { name, email, category, message }, meta) {
-  const label = categoryLabel(category);
+  const categoryLabel = {
+    general: "General Feedback",
+    bug: "Calculator Bug",
+    correction: "Technical Correction",
+    media: "Media Inquiry",
+    partnership: "Partnership Inquiry",
+  }[category] || category;
 
   const body = [
     `Name: ${name}`,
     `Email: ${email}`,
-    `Category: ${label}`,
+    `Category: ${categoryLabel}`,
     "",
     "Message:",
     message,
@@ -96,20 +102,22 @@ async function sendMail(env, { name, email, category, message }, meta) {
     `Timestamp: ${meta.timestamp}`,
     `User-Agent: ${meta.userAgent}`,
     meta.ip ? `IP: ${meta.ip}` : "",
-  ]
-    .filter(Boolean)
-    .join("\n");
+  ].filter(Boolean).join("\n");
 
-  const resp = await fetch("https://api.mailchannels.net/tx/v1/send", {
+  // MailChannels via Cloudflare Worker email integration:
+  // Send by fetching a "mailto:" URL with the MailChannels JSON payload.
+  const payload = {
+    personalizations: [{ to: [{ email: env.CONTACT_TO_EMAIL }] }],
+    from: { email: "no-reply@thelongmath.com", name: "The Long Math Contact" },
+    reply_to: { email, name },
+    subject: `New Contact Form: ${categoryLabel}`,
+    content: [{ type: "text/plain", value: body }],
+  };
+
+  const resp = await fetch("mailto:" + encodeURIComponent(env.CONTACT_TO_EMAIL), {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      personalizations: [{ to: [{ email: env.CONTACT_TO_EMAIL }] }],
-      from: { email: "no-reply@thelongmath.com", name: "The Long Math Contact" },
-      reply_to: { email, name },
-      subject: `New Contact Form: ${label}`,
-      content: [{ type: "text/plain", value: body }],
-    }),
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(payload),
   });
 
   if (resp.ok) return { ok: true };
