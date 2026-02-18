@@ -761,3 +761,120 @@ html[data-theme="light"] .default-fee{
   border-color:var(--accent);
   text-decoration:none;
 }
+
+/* =========================
+   CALCULATORS LANDING PAGE
+   ========================= */
+.calc-landing-grid{
+  margin-top:18px;
+}
+
+.calc-landing-card{
+  display:flex;
+  flex-direction:column;
+}
+
+.calc-landing-card h3{
+  margin:0 0 8px;
+  font-size:18px;
+  font-weight:700;
+}
+
+.calc-landing-desc{
+  margin:0 0 12px;
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.45;
+}
+
+.calc-landing-questions{
+  margin:0 0 12px;
+  padding-left:18px;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.calc-landing-questions li{
+  margin-bottom:6px;
+}
+
+.calc-landing-questions a{
+  color:var(--accent);
+  text-decoration:none;
+}
+
+.calc-landing-questions a:hover{
+  text-decoration:underline;
+}
+
+.calc-landing-browse{
+  margin:0;
+  font-size:12px;
+}
+
+.calc-landing-browse a{
+  color:var(--muted);
+  text-decoration:none;
+}
+
+.calc-landing-browse a:hover{
+  color:var(--accent);
+  text-decoration:underline;
+}
+
+.calc-landing-teasers{
+  margin:0 0 10px;
+  padding-left:18px;
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.6;
+}
+
+.calc-landing-teasers li{
+  margin-bottom:8px;
+}
+
+.calc-dev-tag{
+  display:inline-block;
+  margin-left:6px;
+  padding:2px 8px;
+  font-size:11px;
+  color:var(--muted);
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:6px;
+}
+
+.calc-landing-muted{
+  margin:0;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.calc-landing-dev .calc-landing-desc{
+  margin-bottom:10px;
+}
+
+.calc-category-section{
+  margin-top:32px;
+  padding-top:24px;
+  border-top:1px solid var(--border);
+}
+
+.calc-category-section:first-of-type{
+  margin-top:32px;
+  padding-top:24px;
+  border-top:1px solid var(--border);
+}
+
+.calc-category-section h2{
+  margin:0 0 8px;
+  font-size:20px;
+  font-weight:700;
+}
+
+.calc-category-desc{
+  margin:0 0 14px;
+  font-size:13px;
+  color:var(--muted);
+}

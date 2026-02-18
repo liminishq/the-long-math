@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Canada Capital Gains Tax Calculator (Estimate Your Tax Owing) – The Long Math</title>
+  <meta name="description" content="Estimate Canadian capital gains tax using ACB, proceeds, inclusion rate, and marginal tax rate. Educational calculator with inspectable arithmetic." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/capital-gains-tax-canada/" />
+
+  <!-- Site-wide theme + styles -->
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+
+  <!-- Calculator-specific styles -->
+  <link rel="stylesheet" href="/calculators/capital-gains-tax-canada/styles.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Canada Capital Gains Tax Calculator",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "description": "Estimate Canadian capital gains tax using ACB, proceeds, inclusion rate, and marginal tax rate. Shows taxable gain, tax owing, and after-tax proceeds with inspectable arithmetic."
+  }
+  </script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div style="margin-bottom: 16px;">
+      <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
+    </div>
+
+    <header>
+      <h1>Canada Capital Gains Tax Calculator</h1>
+      <p class="lead">
+        Estimate capital gains tax on a Canadian asset sale. Enter proceeds, adjusted cost base (ACB),
+        inclusion rate, and marginal tax rate to see taxable gain, estimated tax owing, and after-tax proceeds.
+      </p>
+      <p class="lead">Amounts in CAD. Whole dollars. No opinions. Just arithmetic.</p>
+    </header>
+
+    <div class="card">
+      <div class="calc-grid">
+        <article class="panel">
+          <h2 class="section-title">Inputs</h2>
+
+          <div class="field">
+            <label for="proceeds">Proceeds of disposition (CAD)</label>
+            <input id="proceeds" type="text" inputmode="numeric" value="150000" placeholder="0" aria-label="Proceeds of disposition" />
+            <div class="help-text">Amount you received (or will receive) when you sold the asset</div>
+          </div>
+
+          <div class="field">
+            <label for="acb">Adjusted Cost Base (ACB) (CAD)</label>
+            <input id="acb" type="text" inputmode="numeric" value="100000" placeholder="0" aria-label="Adjusted cost base" />
+            <div class="help-text">Your cost to acquire (plus improvements), averaged for identical properties</div>
+          </div>
+
+          <div class="field">
+            <label for="inclusion_rate">Capital gains inclusion rate (%)</label>
+            <input id="inclusion_rate" type="text" inputmode="decimal" value="50" placeholder="50" aria-label="Inclusion rate" />
+            <div class="help-text">Portion of the gain that is taxable. Default is 50%.</div>
+          </div>
+
+          <div class="field">
+            <label for="marginal_tax_rate">Marginal tax rate (%)</label>
+            <input id="marginal_tax_rate" type="text" inputmode="decimal" value="40" placeholder="0" aria-label="Marginal tax rate" />
+            <div class="help-text">Your combined federal + provincial marginal rate on taxable income. For help determining your marginal tax rate, use the <a href="/longmath-tax-canada-2025/" target="_blank" rel="noopener noreferrer">Canada Personal Income Tax Calculator</a> (opens in a new tab).</div>
+          </div>
+
+          <div class="field">
+            <label for="province">Province (informational)</label>
+            <select id="province" aria-label="Province">
+              <option value="">Select province or territory</option>
+              <option value="AB">Alberta</option>
+              <option value="BC">British Columbia</option>
+              <option value="MB">Manitoba</option>
+              <option value="NB">New Brunswick</option>
+              <option value="NL">Newfoundland and Labrador</option>
+              <option value="NS">Nova Scotia</option>
+              <option value="NT">Northwest Territories</option>
+              <option value="NU">Nunavut</option>
+              <option value="ON">Ontario</option>
+              <option value="PE">Prince Edward Island</option>
+              <option value="QC">Quebec</option>
+              <option value="SK">Saskatchewan</option>
+              <option value="YT">Yukon</option>
+            </select>
+            <div class="help-text">For reference only in this version; tax is not computed by province</div>
+          </div>
+
+          <div class="field toggle-field">
+            <label class="toggle">
+              <input id="primary_residence_exemption" type="checkbox" aria-label="Primary residence exemption" />
+              <span>Primary residence exemption (educational only)</span>
+            </label>
+            <div class="help-text">When enabled, taxable gain = 0 and tax owing = 0. Raw gain still shown. Real eligibility depends on CRA rules; this toggle is not advice.</div>
+          </div>
+
+          <button id="reset_button" class="reset-button" type="button">Reset</button>
+        </article>
+
+        <article class="panel">
+          <h2 class="section-title">Results</h2>
+          <div class="results">
+            <div class="result-row">
+              <div class="label">Capital gain / loss</div>
+              <div class="value" id="out_gain">$–</div>
+            </div>
+            <div class="result-row">
+              <div class="label">Taxable capital gain</div>
+              <div class="value" id="out_taxable_gain">$–</div>
+            </div>
+            <div class="result-row highlight">
+              <div class="label">Estimated tax owing</div>
+              <div class="value highlight-value" id="out_tax_owing">$–</div>
+            </div>
+            <div class="result-row">
+              <div class="label">After-tax proceeds</div>
+              <div class="value" id="out_after_tax">$–</div>
+            </div>
+          </div>
+          <div id="out_capital_loss_message" class="capital-loss-message" style="display: none;"></div>
+          <div id="out_exemption_message" class="exemption-message" style="display: none;"></div>
+        </article>
+      </div>
+    </div>
+
+    <section class="show-math-section">
+      <h2>Show the math</h2>
+      <div id="show_math_content" class="show-math-content"></div>
+    </section>
+
+    <section class="faq-section">
+      <h2>FAQ</h2>
+
+      <details class="faq-accordion-item">
+        <summary>What is “Adjusted Cost Base (ACB)”?</summary>
+        <div class="faq-accordion-body">
+          <p>Adjusted Cost Base (ACB) is generally what you paid to acquire an asset, plus the cost of improvements, minus any returns of capital. For identical properties (e.g., shares of the same stock bought at different times), you must average the cost of all identical units to determine the ACB per unit. ACB is used to calculate your capital gain or loss when you sell.</p>
+        </div>
+      </details>
+
+      <details class="faq-accordion-item">
+        <summary>What is the capital gains inclusion rate?</summary>
+        <div class="faq-accordion-body">
+          <p>The capital gains inclusion rate is the percentage of a capital gain that is taxable. In Canada, 50% of a capital gain is typically included in income (the inclusion rate is 50%). This means only half of the gain is added to your taxable income and taxed at your marginal rate. The inclusion rate can change by law; this calculator lets you adjust it.</p>
+        </div>
+      </details>
+
+      <details class="faq-accordion-item">
+        <summary>What is marginal tax rate?</summary>
+        <div class="faq-accordion-body">
+          <p>Your marginal tax rate is the rate of tax you pay on your next dollar of taxable income. It combines federal and provincial/territorial rates and rises as income increases. To estimate tax on a capital gain, you apply your marginal rate to the taxable portion of the gain (inclusion rate × gain). You can use the <a href="/longmath-tax-canada-2025/">Canada Personal Income Tax Calculator 2025</a> to help estimate your marginal rate based on your income and province.</p>
+        </div>
+      </details>
+
+      <details class="faq-accordion-item">
+        <summary>What happens if I have a capital loss?</summary>
+        <div class="faq-accordion-body">
+          <p>If your proceeds are less than your ACB, you have a capital loss. Capital losses do not reduce tax on a per-sale basis; instead, they can be used to offset capital gains in the same year or carried back or forward to other years under CRA rules. This calculator treats a loss as: taxable gain = 0, tax owing = 0, and after-tax proceeds = proceeds (you keep the full amount you received).</p>
+        </div>
+      </details>
+
+      <details class="faq-accordion-item">
+        <summary>Primary residence exemption (educational only)</summary>
+        <div class="faq-accordion-body">
+          <p>The primary residence exemption can reduce or eliminate tax on a gain from selling your principal home. Real eligibility depends on CRA rules: you generally must have owned and inhabited the property as your principal residence for the years in question, subject to specific conditions and limitations. The toggle in this calculator is for educational illustration only and does not constitute tax advice. Consult CRA guidance or a tax professional to determine your actual eligibility.</p>
+        </div>
+      </details>
+    </section>
+
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> The calculators and tools at The Long Math are provided for educational purposes only
+        and are not intended to constitute financial or tax advice. Results are based on simplified
+        models and user-supplied assumptions. Users are recommended to complete their own due diligence.
+      </p>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+
+  <script src="/calculators/capital-gains-tax-canada/engine.js"></script>
+  <script src="/calculators/capital-gains-tax-canada/ui.js"></script>
+</body>
+</html>

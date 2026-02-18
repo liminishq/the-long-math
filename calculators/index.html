@@ -8,6 +8,7 @@
   <!-- Site-wide theme + styles -->
   <script src="/assets/js/theme-init.js"></script>
   <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/calculators/landing.css">
   <script defer src="/assets/js/site.js"></script>
 </head>
 <body>
@@ -24,89 +25,134 @@
     <header>
       <h1>Tools and Calculators</h1>
 
-      <p><strong>This page lists the interactive financial calculators currently available on The Long Math.</strong> Each calculator models a specific long-term financial question using explicit assumptions and inspectable arithmetic. Tools are updated independently and may differ in scope, inputs, and jurisdiction.</p>
+	<p><strong>This page lists the interactive financial calculators available on The Long Math.</strong> These tools help you estimate income tax, project investment growth, adjust for inflation, calculate mortgage costs, measure advisory fees, and compare long-term financial decisions using explicit assumptions and transparent arithmetic.</p>
 
-      <p>Some calculators are accompanied by explanatory articles that describe the arithmetic in more detail.</p>
+	<p>Each calculator models a specific financial question over time. Inputs, formulas, and outputs are visible and inspectable. Tools are updated independently and may differ in scope, inputs, and jurisdiction.</p>
 
+	<p>Unlike many online calculators, these tools do not embed hidden assumptions or prepackaged projections. Every result is derived directly from the inputs you provide and the formulas shown on the page — nothing more, nothing less.</p>
+
+      
       <div class="lede">
         <p>Arithmetic-first calculators with explicit assumptions and inspectable outputs.</p>
-        <p style="margin-top: 12px;"><strong>New calculators are in development and will be uploaded when available.</strong></p>
       </div>
     </header>
 
-    <!-- Calculator List -->
-    <section class="card">
-      <ul class="calculator-list">
-        <li class="calculator-card">
-          <h3><a href="/longmath-tax-canada-2025/" style="color:var(--accent2); text-decoration:none;">Canada Personal Income Tax Calculator 2025</a></h3>
-          <p>Estimates Canadian personal income tax with transparent breakdowns. Shows federal and provincial tax calculations, CPP/EI contributions, dividend gross-ups, capital gains inclusion, and detailed "show the math" sections.</p>
+    <!-- Income & Tax -->
+    <section class="calc-cat-card">
+      <h2>Income & Tax</h2>
+      <p class="calc-cat-desc">Estimate what you owe and understand the rules behind the numbers.</p>
+      <ul class="calc-cat-list">
+        <li class="calc-cat-item">
+          <a href="/longmath-tax-canada-2025/">Canada Personal Income Tax Calculator 2025</a>
+          <span class="calc-cat-item-desc">Estimates Canadian personal income tax with transparent breakdowns. Shows federal and provincial tax calculations, CPP/EI contributions, dividend gross-ups, capital gains inclusion, and detailed "show the math" sections.</span>
         </li>
-
-        <li class="calculator-card">
-          <h3><a href="/calculators/tfsa-room/" style="color:var(--accent2); text-decoration:none;">TFSA Contribution Room Calculator</a></h3>
-          <p>Estimate available TFSA room using explicit year-by-year limits and clear withdrawal timing rules.</p>
+        <li class="calc-cat-item">
+          <a href="/calculators/capital-gains-tax-canada/">Canada Capital Gains Tax Calculator</a>
+          <span class="calc-cat-item-desc">Estimate capital gains tax on a Canadian asset sale. Enter ACB, proceeds, inclusion rate, and marginal tax rate. Handles capital losses and optional primary residence exemption (educational only).</span>
         </li>
-
-        <li class="calculator-card">
-          <h3><a href="/calculator/" style="color:var(--accent2); text-decoration:none;">Cost of a Financial Advisor (AUM Model - most common)</a></h3>
-          <p>Quantifies the long-term impact of advisory fees and lost compounding using explicit assumptions and inspectable math.</p>
-        </li>
-
-        <li class="calculator-card">
-          <h3><a href="/calculators/flat-fee-or-hourly/" style="color:var(--accent2); text-decoration:none;">Flat-Fee or Hourly Advisor Cost</a></h3>
-          <p>Calculates the true cost of flat-fee or hourly advisor fees, including fees paid and lost compounding, with AUM-fee equivalent comparison.</p>
-        </li>
-
-        <li class="calculator-card">
-          <h3><a href="/calculators/investment-simple/" style="color:var(--accent2); text-decoration:none;">Simple Investment Calculator</a></h3>
-          <p>Quick compound growth estimates with recurring contributions and optional inflation adjustment for a first-pass view.</p>
-        </li>
-
-        <li class="calculator-card">
-          <h3><a href="/calculators/investment-calculator-inflation-adjusted/" style="color:var(--accent2); text-decoration:none;">Investment Calculator – Inflation Adjusted</a></h3>
-          <p>Estimate investment growth with monthly contributions and compounding, then compare inflation-adjusted (real) buying power to nominal dollars.</p>
-        </li>
-
-        <li class="calculator-card">
-          <h3><a href="/mortgage-calculator/" style="color:var(--accent2); text-decoration:none;">Mortgage Calculator — Payments, Interest, and Amortization</a></h3>
-          <p>Calculate mortgage payments, remaining balance, and total interest over the full amortization period. See how payments and costs evolve over time with interactive graphs.</p>
-        </li>
-
-        <li class="calculator-card">
-          <h3><a href="/calculators/loan-repayment/" style="color:var(--accent2); text-decoration:none;">Loan Repayment Calculator — See Your True Interest Cost Over Time</a></h3>
-          <p>Calculate fixed-rate loan payments, total interest, and remaining balance over time with a full amortization schedule and inspectable arithmetic.</p>
-        </li>
-
-        <li class="calculator-card">
-          <h3><a href="/calculators/pay-off-mortgage-vs-invest/" style="color:var(--accent2); text-decoration:none;">Pay Off Mortgage vs Invest</a></h3>
-          <p>Compare paying down a mortgage faster versus investing the same monthly cash under a strict cash-flow-neutral rule.</p>
-        </li>
-
-        <li class="calculator-card">
-          <h3><a href="/calculators/required-return-to-offset-fee/" style="color:var(--accent2); text-decoration:none;">How Much Extra Return Is Required to Offset Investment and Management Fees</a></h3>
-          <p>The additional annual return required to fully offset investment and management fees over time.</p>
-        </li>
-
-        <li class="calculator-card">
-          <h3><a href="/calculators/active-vs-passive-break-even/" style="color:var(--accent2); text-decoration:none;">Active vs Passive Break-Even</a></h3>
-          <p>Compares overall returns of active vs passive investments and real returns required to break even.</p>
-        </li>
-
-        <li class="calculator-card">
-          <h3><a href="/calculators/inflation-time-machine/" style="color:var(--accent2); text-decoration:none;">Inflation Time Machine (Then ↔ Now)</a></h3>
-          <p>Convert a dollar amount between two years using annual CPI index ratios. Multi-country: Canada, United States, Australia, United Kingdom. Whole dollars only.</p>
-        </li>
-
-        <li class="calculator-card">
-          <h3><a href="/tools/inflation-tables/" style="color:var(--accent2); text-decoration:none;">Historical Inflation Rates (CPI)</a></h3>
-          <p>Historical Consumer Price Index (CPI) inflation rates by year for Canada and the United States.</p>
-        </li>
-
-        <li class="calculator-card">
-          <h3><a href="/fees/" style="color:var(--accent2); text-decoration:none;">Fees Hub</a></h3>
-          <p>Four fee questions with short answers and links to the canonical calculators.</p>
+        <li class="calc-cat-item">
+          <a href="/tools/inflation-tables/">Historical Inflation Rates (CPI)</a>
+          <span class="calc-cat-item-desc">Historical Consumer Price Index (CPI) inflation rates by year for Canada and the United States.</span>
         </li>
       </ul>
+    </section>
+
+    <!-- Investing & Compounding -->
+    <section class="calc-cat-card">
+      <h2>Investing & Compounding</h2>
+      <p class="calc-cat-desc">See how money grows over time — in nominal dollars or inflation-adjusted buying power.</p>
+      <ul class="calc-cat-list">
+        <li class="calc-cat-item">
+          <a href="/calculators/investment-simple/">Simple Investment Calculator</a>
+          <span class="calc-cat-item-desc">Quick compound growth estimates with recurring contributions and optional inflation adjustment for a first-pass view.</span>
+        </li>
+        <li class="calc-cat-item">
+          <a href="/calculators/investment-calculator-inflation-adjusted/">Investment Calculator – Inflation Adjusted</a>
+          <span class="calc-cat-item-desc">Estimate investment growth with monthly contributions and compounding, then compare inflation-adjusted (real) buying power to nominal dollars.</span>
+        </li>
+        <li class="calc-cat-item">
+          <a href="/calculators/inflation-time-machine/">Inflation Time Machine (Then ↔ Now)</a>
+          <span class="calc-cat-item-desc">Convert a dollar amount between two years using annual CPI index ratios. Multi-country: Canada, United States, Australia, United Kingdom. Whole dollars only.</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Fees & Advisors -->
+    <section class="calc-cat-card">
+      <h2>Fees & Advisors</h2>
+      <p class="calc-cat-desc">Quantify how fees and advice costs compound over time.</p>
+      <ul class="calc-cat-list">
+        <li class="calc-cat-item">
+          <a href="/fees/">Fees Hub</a>
+          <span class="calc-cat-item-desc">Four fee questions with short answers and links to the canonical calculators.</span>
+        </li>
+        <li class="calc-cat-item">
+          <a href="/calculator/">Cost of a Financial Advisor (AUM Model - most common)</a>
+          <span class="calc-cat-item-desc">Quantifies the long-term impact of advisory fees and lost compounding using explicit assumptions and inspectable math.</span>
+        </li>
+        <li class="calc-cat-item">
+          <a href="/calculators/flat-fee-or-hourly/">Flat-Fee or Hourly Advisor Cost</a>
+          <span class="calc-cat-item-desc">Calculates the true cost of flat-fee or hourly advisor fees, including fees paid and lost compounding, with AUM-fee equivalent comparison.</span>
+        </li>
+        <li class="calc-cat-item">
+          <a href="/calculators/fee-cost-1percent/">Cost of a 1% annual fee</a>
+          <span class="calc-cat-item-desc">The long-term cost of a 1% annual investment fee versus no fee, with inspectable arithmetic.</span>
+        </li>
+        <li class="calc-cat-item">
+          <a href="/calculators/fee-cost-0-5percent/">Cost of a 0.5% annual fee</a>
+          <span class="calc-cat-item-desc">The long-term cost of a 0.5% annual investment fee versus no fee, with inspectable arithmetic.</span>
+        </li>
+        <li class="calc-cat-item">
+          <a href="/calculators/required-return-to-offset-fee/">How Much Extra Return Is Required to Offset Investment and Management Fees</a>
+          <span class="calc-cat-item-desc">The additional annual return required to fully offset investment and management fees over time.</span>
+        </li>
+        <li class="calc-cat-item">
+          <a href="/calculators/active-vs-passive-break-even/">Active vs Passive Break-Even</a>
+          <span class="calc-cat-item-desc">Compares overall returns of active vs passive investments and real returns required to break even.</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Mortgage & Debt -->
+    <section class="calc-cat-card">
+      <h2>Mortgage & Debt</h2>
+      <p class="calc-cat-desc">Understand the true cost of borrowing and payoff decisions.</p>
+      <ul class="calc-cat-list">
+        <li class="calc-cat-item">
+          <a href="/mortgage-calculator/">Mortgage Calculator — Payments, Interest, and Amortization</a>
+          <span class="calc-cat-item-desc">Calculate mortgage payments, remaining balance, and total interest over the full amortization period. See how payments and costs evolve over time with interactive graphs.</span>
+        </li>
+        <li class="calc-cat-item">
+          <a href="/calculators/loan-repayment/">Loan Repayment Calculator — See Your True Interest Cost Over Time</a>
+          <span class="calc-cat-item-desc">Calculate fixed-rate loan payments, total interest, and remaining balance over time with a full amortization schedule and inspectable arithmetic.</span>
+        </li>
+        <li class="calc-cat-item">
+          <a href="/calculators/pay-off-mortgage-vs-invest/">Pay Off Mortgage vs Invest</a>
+          <span class="calc-cat-item-desc">Compare paying down a mortgage faster versus investing the same monthly cash under a strict cash-flow-neutral rule.</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Account Strategy (Canada) -->
+    <section class="calc-cat-card">
+      <h2>Account Strategy (Canada)</h2>
+      <p class="calc-cat-desc">Choose accounts and contribution strategies with explicit rules.</p>
+      <ul class="calc-cat-list">
+        <li class="calc-cat-item">
+          <a href="/calculators/tfsa-room/">TFSA Contribution Room Calculator</a>
+          <span class="calc-cat-item-desc">Estimate available TFSA room using explicit year-by-year limits and clear withdrawal timing rules.</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- In Development -->
+    <section class="calc-cat-card calc-cat-dev">
+      <h2>In Development</h2>
+      <ul class="calc-cat-list calc-cat-dev-list">
+        <li class="calc-cat-dev-item">TFSA vs RRSP vs Non-Registered (apples-to-apples)</li>
+        <li class="calc-cat-dev-item">Historical Return Simulator</li>
+      </ul>
+      <p class="calc-cat-dev-note">Not live yet.  Currently working hard to create these high quality calculators with no opinions, no hidden assumptions, just arithmetic.</p>
     </section>
 
     <h2>Scope and limitations</h2>
