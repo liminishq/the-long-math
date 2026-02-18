@@ -4,7 +4,7 @@ const json = (obj, status = 200) =>
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
       'Cache-Control': 'no-store',
-    },
+    }, 
   });
 
 export async function onRequestGet(context) {
