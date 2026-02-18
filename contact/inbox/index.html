@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en-CA" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Inbox – The Long Math</title>
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script defer src="/assets/js/site.js"></script>
+
+  <style>
+    .inbox-wrap { max-width: 1100px; margin: 0 auto; }
+    .inbox-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    .inbox-table th, .inbox-table td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.08); vertical-align: top; }
+    .muted { opacity: 0.8; font-size: 0.95em; }
+    .msg { white-space: pre-wrap; }
+    .pill { display:inline-block; padding: 2px 8px; border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; font-size: 0.85em; }
+  </style>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap inbox-wrap">
+    <a class="home-link" href="/">← Back to Home</a>
+    <main>
+      <h1>Contact Inbox</h1>
+      <p class="muted">Private page. Requires a key in the URL.</p>
+
+      <div id="status" class="muted"></div>
+      <table class="inbox-table" id="tbl" hidden>
+        <thead>
+          <tr>
+            <th>When</th>
+            <th>Category</th>
+            <th>From</th>
+            <th>Message</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </main>
+
+    <div id="footerMount"></div>
+  </div>
+
+  <script>
+    (function () {
+      var statusEl = document.getElementById('status');
+      var tbl = document.getElementById('tbl');
+      var rowsEl = document.getElementById('rows');
+
+      var key = new URLSearchParams(location.search).get('key');
+      if (!key) {
+        statusEl.textContent = 'Missing key.';
+        return;
+      }
+
+      statusEl.textContent = 'Loading…';
+
+      fetch('/api/inbox?key=' + encodeURIComponent(key))
+        .then(function (res) {
+          if (!res.ok) throw new Error('Request failed: ' + res.status);
+          return res.json();
+        })
+        .then(function (data) {
+          if (!data.ok) throw new Error('Not authorized.');
+          var rows = data.rows || [];
+          if (!rows.length) {
+            statusEl.textContent = 'No messages yet.';
+            return;
+          }
+          statusEl.textContent = '';
+          tbl.hidden = false;
+
+          rowsEl.innerHTML = rows.map(function (r) {
+            return (
+              '<tr>' +
+                '<td class="muted">' + escapeHtml(r.created_at || '') + '</td>' +
+                '<td><span class="pill">' + escapeHtml(r.category || '') + '</span></td>' +
+                '<td>' +
+                  '<div>' + escapeHtml(r.name || '') + '</div>' +
+                  '<div class="muted">' + escapeHtml(r.email || '') + '</div>' +
+                '</td>' +
+                '<td class="msg">' + escapeHtml(r.message || '') + '</td>' +
+              '</tr>'
+            );
+          }).join('');
+        })
+        .catch(function () {
+          statusEl.textContent = 'Not authorized or error loading inbox.';
+        });
+
+      function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, function (c) {
+          return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
