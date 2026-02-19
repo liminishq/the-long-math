@@ -490,6 +490,33 @@ th{
   font-weight:600;
 }
 
+/* Report an Issue button (below calculator, right side, secondary button look) */
+.report-issue-wrap{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:12px;
+  margin-bottom:8px;
+}
+.report-issue-link{
+  font-size:13px;
+  font-weight:600;
+  color:var(--muted);
+  text-decoration:none;
+  border:1px solid var(--border);
+  background:var(--surface);
+  padding:8px 16px;
+  border-radius:8px;
+  display:inline-block;
+  transition:color .15s, border-color .15s, background .15s;
+  box-shadow:0 1px 2px rgba(0,0,0,.2);
+}
+.report-issue-link:hover{
+  color:var(--accent);
+  border-color:var(--accent);
+  background:var(--accentSoft);
+  text-decoration:none;
+}
+
 /* --- Methods layout to match “failed” version --- */
 
 .methods{
