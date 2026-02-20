@@ -1,0 +1,206 @@
+/* Intro note (site may not define .note) */
+.note {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.note p {
+  margin: 0;
+}
+
+/* Wrapper matches typical Long Math "calculator card" feel without inventing a new design language */
+.tool-card {
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 16px;
+  padding: 16px;
+  background: var(--panel, #fff);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.tool-card__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.tool-card__title {
+  margin: 0;
+}
+
+.muted {
+  opacity: 0.75;
+  font-size: 0.95rem;
+}
+
+/* Table UX: wide grid, horizontal scroll, sticky header and first column */
+.table-wrap {
+  overflow: auto;
+  max-height: 70vh;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 12px;
+}
+
+.mult-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: max-content; /* allow table to be wider than viewport */
+  min-width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+
+.mult-table th,
+.mult-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(0,0,0,0.10);
+  border-right: 1px solid rgba(0,0,0,0.08);
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* Header row */
+.mult-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--panel, #fff);
+  z-index: 3;
+  text-align: center;
+}
+
+/* First column (rate labels) sticky */
+.mult-table th.sticky-col,
+.mult-table td.sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: var(--panel, #fff);
+  text-align: left;
+  border-right: 1px solid rgba(0,0,0,0.16);
+}
+
+/* Corner cell gets highest z-index */
+.mult-table th.corner {
+  z-index: 4;
+}
+
+/* Subtle row hover improves scanning */
+.mult-table tbody tr:hover td {
+  background: rgba(0,0,0,0.03);
+}
+
+.methodology {
+  margin-top: 14px;
+}
+
+.methodology__content {
+  margin-top: 10px;
+}
+
+.tool-card .disclaimer {
+  margin-top: 14px;
+  opacity: 0.85;
+}
+/* =========================
+   Dark-mode readability fix
+   ========================= */
+
+/* 1) Define neutral defaults (light) */
+:root {
+  --mult-surface: #ffffff;
+  --mult-surface-2: #f7f7f7;     /* header / sticky surfaces */
+  --mult-text: #111827;          /* near-black */
+  --mult-text-muted: rgba(17, 24, 39, 0.75);
+  --mult-border: rgba(0, 0, 0, 0.12);
+  --mult-border-soft: rgba(0, 0, 0, 0.08);
+  --mult-hover: rgba(0, 0, 0, 0.03);
+}
+
+/* 2) Dark theme overrides
+   Try multiple selectors so it works regardless of how your site toggles theme. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --mult-surface: #0b1220;          /* deep slate */
+    --mult-surface-2: #0f1a2f;        /* slightly lighter for headers */
+    --mult-text: #e5e7eb;             /* near-white */
+    --mult-text-muted: rgba(229, 231, 235, 0.75);
+    --mult-border: rgba(255, 255, 255, 0.14);
+    --mult-border-soft: rgba(255, 255, 255, 0.10);
+    --mult-hover: rgba(255, 255, 255, 0.06);
+  }
+}
+
+/* If your theme uses an attribute/class, these will win even if prefers-color-scheme is different */
+html[data-theme="dark"],
+body[data-theme="dark"],
+html.dark,
+body.dark,
+.theme-dark {
+  --mult-surface: #0b1220;
+  --mult-surface-2: #0f1a2f;
+  --mult-text: #e5e7eb;
+  --mult-text-muted: rgba(229, 231, 235, 0.75);
+  --mult-border: rgba(255, 255, 255, 0.14);
+  --mult-border-soft: rgba(255, 255, 255, 0.10);
+  --mult-hover: rgba(255, 255, 255, 0.06);
+}
+
+/* 3) Apply variables to the actual elements */
+.note {
+  background: color-mix(in srgb, var(--mult-surface-2) 22%, transparent);
+  border: 1px solid var(--mult-border);
+  color: var(--mult-text);
+}
+
+.muted {
+  color: var(--mult-text-muted);
+  opacity: 1; /* stop double-dimming in dark mode */
+}
+
+.tool-card {
+  background: var(--mult-surface);
+  border-color: var(--mult-border);
+}
+
+.table-wrap {
+  border-color: var(--mult-border);
+  background: var(--mult-surface);
+}
+
+.mult-table {
+  background: var(--mult-surface);
+  color: var(--mult-text);
+}
+
+.mult-table th,
+.mult-table td {
+  color: var(--mult-text);
+  border-bottom: 1px solid var(--mult-border);
+  border-right: 1px solid var(--mult-border-soft);
+}
+
+/* Header row */
+.mult-table thead th {
+  background: var(--mult-surface-2);
+  border-bottom: 1px solid var(--mult-border);
+}
+
+/* Sticky first column (rate labels) */
+.mult-table th.sticky-col,
+.mult-table td.sticky-col {
+  background: var(--mult-surface-2);
+  border-right: 1px solid var(--mult-border);
+}
+
+/* Corner cell */
+.mult-table th.corner {
+  background: var(--mult-surface-2);
+}
+
+/* Hover */
+.mult-table tbody tr:hover td {
+  background: var(--mult-hover);
+}

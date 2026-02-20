@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <title>Compound Interest Multipliers Table (1%–15%, 0–50 Years) – The Long Math</title>
+  <meta name="description" content="A static table of compound interest multipliers: (1+r)^t for annual rates 1%–15% over 0–50 years. Transparent, inspectable arithmetic." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/compound-multipliers/" />
+
+  <!-- Site-wide theme + styles -->
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+
+  <!-- Tool-specific -->
+  <link rel="stylesheet" href="/calculators/compound-multipliers/styles.css" />
+  <script defer src="/calculators/compound-multipliers/script.js"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Compound Interest Multipliers Table (1%–15%, 0–50 Years)",
+    "description": "A static table of compound interest multipliers: (1+r)^t for annual rates 1%–15% over 0–50 years.",
+    "url": "https://thelongmath.com/calculators/compound-multipliers/"
+  }
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div style="margin-bottom: 16px;">
+      <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
+    </div>
+
+    <header>
+      <h1>Compound Interest Multipliers</h1>
+      <p class="lead">
+        Static table of compound interest multipliers using annual compounding.
+        Each cell is a growth factor for <strong>(1 + r)<sup>t</sup></strong>, where <strong>r</strong> is the annual rate and <strong>t</strong> is the number of years.
+      </p>
+
+      <p>
+        The result is a <strong>multiplier</strong>: how many times larger an amount becomes after compounding at a fixed annual rate.
+        Multiply any starting amount by the table value to compute its future value.
+      </p>
+
+      <div class="note">
+        <p><strong>How to read this:</strong> A multiplier of 2.00 means “double.” Multiply any starting amount by the multiplier to get the future value.</p>
+      </div>
+
+      <h2 style="margin-top: 18px;">What is a compound interest multiplier?</h2>
+      <p>
+        A compound interest multiplier is the growth factor produced by <strong>(1 + r)<sup>t</sup></strong>.
+        It tells you how many times larger an amount becomes after compounding at a fixed annual rate for a specified number of years.
+      </p>
+
+      <h2>How to use this table</h2>
+      <ol>
+        <li>Select an annual rate (left column).</li>
+        <li>Move across to the number of years (top row).</li>
+        <li>Multiply your starting amount by the multiplier.</li>
+      </ol>
+
+      <h2>Does this include inflation, taxes, or fees?</h2>
+      <p>
+        No. This is <strong>nominal</strong> growth under annual compounding only.
+        It does not account for inflation, taxes on gains, investment fees, or cash flows (contributions and withdrawals).
+      </p>
+
+      <h2>Why small rate differences matter</h2>
+      <p>
+        Compounding is exponential. Small differences in annual rate create modest gaps early on and large gaps over long horizons.
+        Time magnifies rate differences.
+      </p>
+    </header>
+
+    <section class="tool-card">
+      <div class="tool-card__top">
+        <h2 class="tool-card__title">Table</h2>
+        <div class="tool-card__meta">
+          <span id="tableSummary" class="muted"></span>
+        </div>
+      </div>
+
+      <div class="table-wrap" role="region" aria-label="Compound interest multipliers table" tabindex="0">
+        <table id="multTable" class="mult-table">
+          <thead id="multHead"></thead>
+          <tbody id="multBody"></tbody>
+        </table>
+      </div>
+
+      <details class="methodology">
+        <summary>Inspectable arithmetic (formula + assumptions)</summary>
+        <div class="methodology__content">
+          <h3>Formula</h3>
+          <p>
+            Multiplier at year <em>t</em> for annual rate <em>r</em> is:
+            <strong>(1 + r)<sup>t</sup></strong>
+          </p>
+
+          <h3>Assumptions</h3>
+          <ul>
+            <li>Annual compounding once per year.</li>
+            <li>No taxes, fees, inflation adjustment, or cash flows (this is a pure multiplier grid).</li>
+            <li>Rounded for display; the underlying calculation uses full precision.</li>
+          </ul>
+
+          <h3>Notes</h3>
+          <ul>
+            <li>This is intentionally “static”: no scenario modeling, no personalization—just the arithmetic table.</li>
+          </ul>
+        </div>
+      </details>
+
+      <section class="related" aria-label="Related Articles and Calculators" style="margin-top: 18px;">
+        <h2 style="margin-top: 0;">Related Articles and Calculators</h2>
+
+        <h3>Foundational articles</h3>
+        <ul>
+          <!-- Update these URLs to match your live article paths. -->
+          <li><a href="/articles/">Compound interest explained</a> (article)</li>
+          <li><a href="/articles/">What is inflation?</a> (article)</li>
+          <li><a href="/articles/">Investment fees over time (fee drag)</a> (article)</li>
+        </ul>
+
+        <h3>Interactive calculators</h3>
+        <ul>
+          <!-- Confirmed live tool path: /calculators/inflation-time-machine/ -->
+          <li><a href="/calculators/inflation-time-machine/">Inflation Time Machine</a></li>
+          <!-- Update these URLs to match your live calculator paths. -->
+          <li><a href="/calculators/">Simple investment calculator</a></li>
+          <li><a href="/calculators/">Pay off mortgage vs invest</a></li>
+          <li><a href="/calculators/">TFSA contribution room (Canada)</a></li>
+        </ul>
+
+        <p style="margin-bottom: 0;">
+          This page isolates the core growth engine: <strong>(1 + r)<sup>t</sup></strong>.
+          The related tools layer on cash flows, inflation, fees, and taxes.
+        </p>
+      </section>
+
+      <div class="disclaimer">
+        <p><strong>Disclaimer:</strong> Educational only. Not financial, legal, or tax advice.</p>
+      </div>
+    </section>
+
+    <div class="report-issue-wrap">
+      <a href="/contact/" class="report-issue-link">Report an Issue</a>
+    </div>
+
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> The calculators and tools at The Long Math are provided for educational purposes only
+        and are not intended to constitute financial or tax advice. Results are based on simplified
+        models and user-supplied assumptions. Users are recommended to complete their own due diligence.
+      </p>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+</body>
+</html>
