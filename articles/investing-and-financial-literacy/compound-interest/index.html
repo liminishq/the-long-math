@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Compound Interest: The Ultimate Wealth Builder – The Long Math</title>
+  <meta name="description" content="Learn what compound interest is, how it works, the compound interest formula, and why compounding accelerates over time with simple examples." />
+  <link rel="canonical" href="https://thelongmath.com/articles/investing-and-financial-literacy/compound-interest/" />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Compound Interest: The Ultimate Wealth Builder – The Long Math" />
+  <meta property="og:description" content="Learn what compound interest is, how it works, the compound interest formula, and why compounding accelerates over time with simple examples." />
+  <meta property="og:url" content="https://thelongmath.com/articles/investing-and-financial-literacy/compound-interest/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Compound Interest: The Ultimate Wealth Builder – The Long Math" />
+  <meta name="twitter:description" content="Learn what compound interest is, how it works, the compound interest formula, and why compounding accelerates over time with simple examples." />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://thelongmath.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Investment and Financial Literacy", "item": "https://thelongmath.com/articles/investing-and-financial-literacy/" },
+    { "@type": "ListItem", "position": 3, "name": "Compound Interest: The Ultimate Wealth Builder", "item": "https://thelongmath.com/articles/investing-and-financial-literacy/compound-interest/" }
+  ]
+}
+  </script>
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Compound Interest: The Ultimate Wealth Builder",
+  "description": "Learn what compound interest is, how it works, the compound interest formula, and why compounding accelerates over time with simple examples.",
+  "author": { "@type": "Person", "name": "Phil Evans" },
+  "publisher": {
+    "@type": "Organization",
+    "name": "The Long Math",
+    "logo": { "@type": "ImageObject", "url": "https://thelongmath.com/assets/logo.png" }
+  },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://thelongmath.com/articles/investing-and-financial-literacy/compound-interest/" },
+  "datePublished": "2026-02-20",
+  "dateModified": "2026-02-20"
+}
+  </script>
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is compound interest?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Compound interest is interest calculated on the initial principal and on the accumulated interest from previous periods. Over time, this causes growth to accelerate exponentially rather than linearly."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does compound interest work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Each period's interest is added to the principal, so the next period earns interest on a larger base. Each year's gain becomes next year's base; the base keeps expanding and growth accelerates."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between simple and compound interest?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Simple interest is paid only on the original principal each period. Compound interest is paid on the principal plus previously earned interest, so growth accelerates over time. Same rate and time can produce very different outcomes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the compound interest formula?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A = P(1 + r/n)^(nt), where A is the final amount, P is principal, r is the annual interest rate, n is the number of compounding periods per year, and t is time in years."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is compound interest powerful?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Because the base keeps expanding. Late-period growth can exceed early-period growth many times over. Time and rate are multiplicative; small sustained improvements dominate large brief ones."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often does interest compound?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It depends on the account or product: annually, semiannually, quarterly, monthly, or daily. The formula uses n to reflect how many times per year interest is compounded."
+      }
+    }
+  ]
+}
+  </script>
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script defer src="/assets/js/site.js"></script>
+
+  <style>
+    .article-content { max-width: 980px; margin: 0 auto; line-height: 1.7; font-size: 1.05rem; }
+    .article-content h2 { margin: 0 0 0.75em; }
+    .article-content h3 { margin: 1.25em 0 0.5em; }
+    .article-content ul, .article-content ol { margin: 1em 0; padding-left: 2em; }
+    .article-content li { margin: 0.5em 0; }
+    .article-content p { margin: 0.9em 0; }
+
+    .section-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      margin: 18px 0;
+      background: var(--card-bg, var(--surface, #fff));
+      box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+    }
+    .section-card.intro-card { margin-top: 14px; }
+
+    .definition-block { font-weight: 600; margin: 0.9em 0; }
+    .definition-block.put-simply { margin-top: 1em; font-weight: 700; }
+
+    .lm-formula {
+      display: inline-block;
+      padding: 10px 14px;
+      border: 1px solid var(--accent, #d6b36a);
+      border-radius: 12px;
+      background: rgba(0,0,0,0.12);
+      color: var(--text, #ffffff);
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .psychology-figure {
+      margin: 1.5em 0;
+      max-width: 560px;
+    }
+    @media (min-width: 640px) {
+      .psychology-wrap { display: flex; align-items: flex-start; gap: 1.5em; flex-wrap: wrap; }
+      .psychology-figure { flex: 0 0 380px; margin: 0 0 0 auto; }
+    }
+    .psychology-figure svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      overflow: visible; /* prevents any edge clipping */
+    }
+    .psychology-figure figcaption { font-size: 0.9rem; color: var(--muted); margin-top: 0.5em; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    .related-articles h2 { font-size: 18px; margin: 0 0 10px; }
+    .related-articles ul { list-style: none; padding-left: 0; margin: 0; }
+    .related-articles li { margin: 12px 0; }
+    .related-articles a { color: var(--accent); text-decoration: none; }
+    .related-articles a:hover { text-decoration: underline; }
+
+    .faq-section h2 { margin-top: 0; }
+    .faq-item { margin: 1.5em 0; }
+    .faq-item h3 { margin: 0 0 0.5em; font-size: 1em; font-weight: 700; }
+    .faq-item p { margin: 0; }
+  </style>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <a href="/articles/investing-and-financial-literacy/" class="home-link">← Back to Investment and Financial Literacy</a>
+
+    <article class="article-content">
+      <header>
+        <h1>Compound Interest: The Ultimate Wealth Builder</h1>
+      </header>
+
+      <section class="section-card intro-card">
+        <p>If you read only one article on this site, this is it.<br>
+        Understand compound interest.</p>
+
+        <p>Everything else builds on it.</p>
+      </section>
+
+      <section class="section-card">
+        <h2>What Is Compound Interest?</h2>
+
+        <p class="definition-block">
+          Compound interest is interest calculated on the initial principal and on the accumulated interest from previous periods.
+        </p>
+
+        <p>
+          Over time, this causes growth to accelerate exponentially rather than linearly.
+        </p>
+
+        <p class="definition-block put-simply">Put simply:</p>
+
+        <p>It is interest earned on your original money and on the interest it has already produced.<br>
+        It is growth that builds on prior growth.</p>
+      </section>
+
+      <section class="section-card">
+        <h2>How Does Compound Interest Work?</h2>
+        <h3>A Minimal Example</h3>
+
+        <p>Year 0: You invest $1.00<br>
+        At 10% annual growth:</p>
+
+        <p>
+          Year 1 → $1.10<br>
+          Year 2 → $1.21<br>
+          Year 3 → $1.33
+        </p>
+
+        <p>At this stage, the difference between earning on $1.00 and $1.10 feels irrelevant.</p>
+
+        <p>But follow it forward:</p>
+
+        <p>
+          Year 5 → $1.61<br>
+          Year 10 → $2.59<br>
+          Year 20 → $6.73<br>
+          Year 30 → $17.45
+        </p>
+
+        <p>Nothing dramatic happened in any single year.<br>
+        The original dollar did not just grow.<br>
+        It began generating capital that generated more capital.</p>
+
+        <p>Each year's gain becomes next year's base.<br>
+        That is the force multiplier.</p>
+      </section>
+
+      <section class="section-card">
+        <h2>The Core Formula</h2>
+
+        <p><span class="lm-formula">A = P(1 + r/n)<sup>nt</sup></span></p>
+
+        <ul>
+          <li><strong>A</strong> = final amount</li>
+          <li><strong>P</strong> = principal (initial amount)</li>
+          <li><strong>r</strong> = annual interest rate (as a decimal)</li>
+          <li><strong>n</strong> = number of compounding periods per year</li>
+          <li><strong>t</strong> = time in years</li>
+        </ul>
+
+        <p>This is not theory.<br>
+        This is arithmetic.<br>
+        <em>Crucial</em> arithmetic.</p>
+
+        <p>It governs every long-term financial outcome.</p>
+
+        <p>Everything on The Long Math that involves investing, inflation, debt, or opportunity cost flows from this structure.</p>
+      </section>
+
+      <section class="section-card">
+        <h2>Simple vs. Compound Interest</h2>
+        <h3>$10,000 at 8% for 30 Years</h3>
+
+        <p>Simple interest math:</p>
+        <ul>
+          <li>8% of $10,000 = $800 per year</li>
+          <li>$800 × 30 years = $24,000 in interest</li>
+          <li>Final value = $34,000</li>
+        </ul>
+
+        <p>Compound interest:</p>
+        <ul>
+          <li>$10,000 × (1.08)<sup>30</sup> ≈ $100,600</li>
+        </ul>
+
+        <p>Same rate.<br>
+        Same time.<br>
+        Only the structure changed.</p>
+
+        <p>This is not hype.<br>
+        It is math.</p>
+      </section>
+
+      <section class="section-card">
+        <h2>The Real Lever: Time</h2>
+
+        <ul>
+          <li>10 years → ~$21,600</li>
+          <li>20 years → ~$46,600</li>
+          <li>30 years → ~$100,600</li>
+          <li>40 years → ~$217,200</li>
+        </ul>
+
+        <p>The last decade adds more than the first two combined.</p>
+
+        <p>Compounding accelerates because the base keeps expanding.</p>
+      </section>
+
+      <section class="section-card">
+        <h2>The Quiet Multiplier</h2>
+
+        <p>Compound interest works in three domains:</p>
+        <ol>
+          <li><strong>Investing</strong> – wealth grows exponentially.</li>
+          <li><strong>Inflation</strong> – purchasing power erodes exponentially.</li>
+          <li><strong>Debt</strong> – interest compounds against you exponentially.</li>
+        </ol>
+
+        <p><span class="lm-formula">A = P(1 + r/n)<sup>nt</sup></span></p>
+
+        <p>The equation does not care which side you are on.</p>
+
+        <p>
+          To see this effect interactively, try the
+          <a href="/calculators/investment-simple/">Simple Investment Calculator</a>,
+          or explore inflation using the
+          <a href="/calculators/inflation-time-machine/">Inflation Time Machine (Then → Now)</a>.
+        </p>
+      </section>
+
+      <section class="section-card">
+        <h2>The Psychological Mistake</h2>
+
+        <div class="psychology-wrap">
+          <div>
+            <p>Humans think linearly.<br>
+            Compound interest is exponential.</p>
+
+            <p>Early growth feels slow.<br>
+            Mid-period growth feels reasonable.<br>
+            Late-period growth feels explosive.</p>
+
+            <p>Most people interrupt the process before it becomes powerful.</p>
+          </div>
+
+          <figure class="psychology-figure" aria-describedby="psych-caption">
+            <!-- UPDATED SVG: numerically correct (P=$1,000, r=9%, t=30), amber/ink scheme, label chips, axis titles, no clipping -->
+            <svg viewBox="0 0 420 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="ci-psych-title ci-psych-desc">
+              <title id="ci-psych-title">Simple interest versus compound interest over 30 years</title>
+              <desc id="ci-psych-desc">
+                Starting at $1,000 with a 9% annual return for 30 years. One line shows simple interest (linear growth),
+                the other shows compound interest (accelerating growth). Early, Mid, and Late phases are shown as vertical bands.
+              </desc>
+
+              <defs>
+                <style>
+                  :root { --lm-amber: var(--accent, #d6b36a); }
+
+                  .axis { stroke: currentColor; stroke-opacity: 0.55; stroke-width: 1.6; }
+                  .grid { stroke: currentColor; stroke-opacity: 0.08; stroke-width: 1; }
+
+                  .phase { fill: currentColor; fill-opacity: 0.045; }
+                  .phase-mid { fill-opacity: 0.060; }
+                  .phase-late { fill-opacity: 0.075; }
+
+                  .phaseText { fill: currentColor; fill-opacity: 0.55; font-size: 12px; font-weight: 400; letter-spacing: 0.12em; }
+                  .axisText  { fill: currentColor; fill-opacity: 0.55; font-size: 12px; font-weight: 400; letter-spacing: 0.12em; }
+
+                  .simple   { stroke: currentColor; stroke-opacity: 0.55; stroke-width: 2.4; }
+                  .compound { stroke: var(--lm-amber); stroke-opacity: 0.98; stroke-width: 3.0; }
+                  .curve { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+                  .chip text { font-size: 12px; font-weight: 300; letter-spacing: 0.22em; }
+                  .chip rect {
+                    fill: var(--card-bg, var(--surface, #fff));
+                    fill-opacity: 0.78;
+                    stroke: currentColor;
+                    stroke-opacity: 0.10;
+                    rx: 6; ry: 6;
+                  }
+                  .chip.compound text { fill: var(--lm-amber); }
+                  .chip.simple text { fill: currentColor; fill-opacity: 0.82; }
+
+                  .callout { stroke: currentColor; stroke-opacity: 0.22; stroke-width: 1.2; stroke-dasharray: 3 3; }
+                </style>
+
+                <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto" markerUnits="strokeWidth">
+                  <path d="M0,0 L10,5 L0,10 Z" fill="currentColor" opacity="0.55"></path>
+                </marker>
+              </defs>
+
+              <!-- Plot bounds: left=44, top=18, right=360, bottom=196 -->
+
+              <!-- Early / Mid / Late bands -->
+              <rect class="phase" x="44"  y="18" width="105" height="178"/>
+              <rect class="phase phase-mid" x="149" y="18" width="105" height="178"/>
+              <rect class="phase phase-late" x="254" y="18" width="106" height="178"/>
+
+              <!-- subtle horizontal gridlines -->
+              <line class="grid" x1="44" y1="196" x2="360" y2="196"/>
+              <line class="grid" x1="44" y1="151" x2="360" y2="151"/>
+              <line class="grid" x1="44" y1="106" x2="360" y2="106"/>
+              <line class="grid" x1="44" y1="61"  x2="360" y2="61"/>
+
+              <!-- axes -->
+              <line class="axis" x1="44" y1="196" x2="360" y2="196" marker-end="url(#arrow)"/>
+              <line class="axis" x1="44" y1="196" x2="44"  y2="18"  marker-end="url(#arrow)"/>
+
+              <!-- axis titles (subtle, no numbers) -->
+              <text class="axisText" x="202" y="232" text-anchor="middle">Years</text>
+              <text class="axisText" x="18" y="108" text-anchor="middle" transform="rotate(-90 18 108)">Amount</text>
+
+              <!-- phase labels -->
+              <text class="phaseText" x="96.5"  y="214" text-anchor="middle">Early</text>
+              <text class="phaseText" x="201.5" y="214" text-anchor="middle">Mid</text>
+              <text class="phaseText" x="307"   y="214" text-anchor="middle">Late</text>
+
+              <!-- Curves generated from real numbers:
+                   P=1000, r=0.09, t=0..30
+                   simple: 1000 + 1000*0.09*t
+                   compound: 1000*(1.09)^t
+                   scaled to compound@30 for vertical range
+              -->
+
+              <!-- Simple interest (linear) -->
+              <path class="curve simple"
+                    d="M 44.0 196.0 L 49.3 195.3 L 54.5 194.7 L 59.8 194.0 L 65.1 193.4 L 70.3 192.7 L 75.6 192.1 L 80.9 191.4 L 86.1 190.8 L 91.4 190.1 L 96.7 189.5 L 101.9 188.8 L 107.2 188.2 L 112.5 187.5 L 117.7 186.9 L 123.0 186.2 L 128.3 185.6 L 133.5 184.9 L 138.8 184.3 L 144.1 183.6 L 149.3 183.0 L 154.6 182.3 L 159.9 181.7 L 165.1 181.0 L 170.4 180.4 L 175.7 179.7 L 180.9 179.1 L 186.2 178.4 L 191.5 177.8 L 196.7 177.1 L 202.0 176.5 L 207.3 175.8 L 212.5 175.2 L 217.8 174.5 L 223.1 173.9 L 228.3 173.2 L 233.6 172.6 L 238.9 171.9 L 244.1 171.3 L 249.4 170.6 L 254.7 170.0 L 259.9 169.3 L 265.2 168.7 L 270.5 168.0 L 275.7 167.4 L 281.0 166.7 L 286.3 166.1 L 291.5 165.4 L 296.8 164.8 L 302.1 164.1 L 307.3 163.5 L 312.6 162.8 L 317.9 162.2 L 323.1 161.5 L 328.4 160.9 L 333.7 160.2 L 338.9 159.6 L 344.2 158.9 L 349.5 158.3 L 354.7 157.6 L 360.0 157.0" />
+
+              <!-- Compound interest (accelerating) -->
+              <path class="curve compound"
+                    d="M 44.0 196.0 L 49.3 195.4 L 54.5 194.7 L 59.8 194.0 L 65.1 193.3 L 70.3 192.5 L 75.6 191.7 L 80.9 190.9 L 86.1 190.0 L 91.4 189.1 L 96.7 188.1 L 101.9 187.1 L 107.2 186.0 L 112.5 184.9 L 117.7 183.7 L 123.0 182.5 L 128.3 181.2 L 133.5 179.8 L 138.8 178.4 L 144.1 176.9 L 149.3 175.4 L 154.6 173.8 L 159.9 172.1 L 165.1 170.3 L 170.4 168.5 L 175.7 166.6 L 180.9 164.6 L 186.2 162.5 L 191.5 160.4 L 196.7 158.1 L 202.0 155.8 L 207.3 153.4 L 212.5 150.9 L 217.8 148.3 L 223.1 145.5 L 228.3 142.7 L 233.6 139.8 L 238.9 136.8 L 244.1 133.6 L 249.4 130.4 L 254.7 127.0 L 259.9 123.5 L 265.2 119.9 L 270.5 116.1 L 275.7 112.2 L 281.0 108.2 L 286.3 104.0 L 291.5 99.7 L 296.8 95.2 L 302.1 90.6 L 307.3 85.8 L 312.6 80.9 L 317.9 75.8 L 323.1 70.5 L 328.4 65.1 L 333.7 59.4 L 338.9 53.6 L 344.2 47.6 L 349.5 41.4 L 354.7 35.0 L 360.0 28.4" />
+
+              <!-- label chips (so labels are never obscured by lines) -->
+              <g class="chip compound" transform="translate(238 56)">
+                <rect x="0" y="0" width="102" height="24"></rect>
+               <text x="12" y="11">Compound</text>
+              </g>
+
+              <g class="chip simple" transform="translate(238 118)">
+                <rect x="0" y="0" width="78" height="24"></rect>
+                <text x="12" y="11">Simple</text>
+              </g>
+
+              <!-- end-of-horizon callout (subtle) -->
+              <line class="callout" x1="360" y1="157" x2="360" y2="28.4"/>
+            </svg>
+
+            <figcaption id="psych-caption" class="visually-hidden">
+              Starting at $1,000 with a 9% annual return for 30 years. Simple interest grows linearly; compound interest accelerates. Early, Mid, and Late phases shown as vertical bands.
+            </figcaption>
+          </figure>
+        </div>
+
+        <p>The math does not change.<br>
+        Only perception does.</p>
+      </section>
+
+      <section class="section-card">
+        <h2>A Simple Comparison</h2>
+
+        <p>Investor A earns 9%.<br>
+        Investor B earns 6%.</p>
+
+        <p>Over one year:</p>
+        <ul>
+          <li>9% → $10,900</li>
+          <li>6% → $10,600</li>
+        </ul>
+
+        <p>The difference is $300.</p>
+
+        <p>Over 30 years:</p>
+        <ul>
+          <li>9% → ~$132,700</li>
+          <li>6% → ~$57,400</li>
+        </ul>
+
+        <p>More than double.</p>
+
+        <p>The gap is modest at the beginning.<br>
+        It becomes dominant at the end.</p>
+
+        <p>That is compounding.</p>
+      </section>
+
+      <section class="section-card">
+        <h2>The Hidden Consequence</h2>
+
+        <p>Fees compound.<br>
+        Taxes compound.<br>
+        Mistakes compound.<br>
+        Good decisions compound.</p>
+
+        <p>Everything scales.</p>
+
+        <p>A 1% advisory fee matters.<br>
+        A 2% difference in return matters.<br>
+        Starting five years earlier matters.</p>
+
+        <p>Not emotionally.<br>
+        Mathematically.</p>
+
+        <p>
+          See how even small fees compound over time in the
+          <a href="/calculators/fee-cost-1percent/">Cost of a 1% Annual Fee</a> calculator.
+        </p>
+      </section>
+
+      <section class="section-card">
+        <h2>Compound Interest Tables</h2>
+
+        <p>
+          For a static, year-by-year reference of exponential growth across rates, see:
+          <a href="/calculators/compound-multipliers/">Compound Interest Tables</a>.
+        </p>
+
+        <p>
+          These tables show how $1 grows over 10, 20, 30, or 50 years at different annual rates — making acceleration unmistakable.
+        </p>
+      </section>
+
+      <section class="section-card">
+        <h2>The Takeaway</h2>
+
+        <p><span class="lm-formula">A = P(1 + r/n)<sup>nt</sup></span></p>
+
+        <p>Time and rate are multiplicative.<br>
+        Small improvements, when sustained, dominate large improvements applied briefly.</p>
+
+        <p>Compound interest is not one topic on this site.<br>
+        It is the foundation.</p>
+
+        <p>If you understand this concept, the rest of The Long Math becomes obvious.</p>
+      </section>
+
+      <section class="section-card related-articles">
+        <h2>Related Articles and Tools</h2>
+        <ul>
+          <li><a href="/articles/investing-and-financial-literacy/what-is-investing/">What Is Investing?</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/inflation/">Inflation: The Math That Makes Future Money Smaller</a></li>
+          <li><a href="/calculators/investment-simple/">Simple Investment Calculator</a></li>
+          <li><a href="/calculators/inflation-time-machine/">Inflation Time Machine (Then → Now)</a></li>
+          <li><a href="/calculators/fee-cost-1percent/">Cost of a 1% Annual Fee</a></li>
+          <li><a href="/calculators/compound-multipliers/">Compound Interest Tables</a></li>
+        </ul>
+      </section>
+
+      <section class="section-card faq-section">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-item">
+          <h3>What is compound interest?</h3>
+          <p>Compound interest is interest calculated on the initial principal and on the accumulated interest from previous periods. Over time, this causes growth to accelerate exponentially rather than linearly.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>How does compound interest work?</h3>
+          <p>Each period's interest is added to the principal, so the next period earns interest on a larger base. Each year's gain becomes next year's base; the base keeps expanding and growth accelerates.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>What is the difference between simple and compound interest?</h3>
+          <p>Simple interest is paid only on the original principal each period. Compound interest is paid on the principal plus previously earned interest, so growth accelerates over time. Same rate and time can produce very different outcomes.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>What is the compound interest formula?</h3>
+          <p>A = P(1 + r/n)^(nt), where A is the final amount, P is principal, r is the annual interest rate, n is the number of compounding periods per year, and t is time in years.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Why is compound interest powerful?</h3>
+          <p>Because the base keeps expanding. Late-period growth can exceed early-period growth many times over. Time and rate are multiplicative; small sustained improvements dominate large brief ones.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>How often does interest compound?</h3>
+          <p>It depends on the account or product: annually, semiannually, quarterly, monthly, or daily. The formula uses n to reflect how many times per year interest is compounded.</p>
+        </div>
+      </section>
+    </article>
+
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> The calculators and tools at The Long Math are provided for educational purposes only
+        and are not intended to constitute financial or tax advice. Results are based on simplified
+        models and user-supplied assumptions. Users are recommended to complete their own due diligence.
+      </p>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+</body>
+</html>
