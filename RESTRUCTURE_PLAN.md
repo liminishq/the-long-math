@@ -25,7 +25,7 @@
 - mortgage-calculator/ -> ?
 - ccpc-tax-calculator-2025/ -> ?
 - longmath-tax-canada-2025/ -> ?
-- styles.css -> ?
+- styles.css -> /assets/css/styles.css (root copy removed)
 - theme.js -> ?
 
 ## Notes
