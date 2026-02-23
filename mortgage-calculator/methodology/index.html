@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspectable Arithmetic – Mortgage Calculator | The Long Math</title>
+  <meta name="description" content="Formulae, computational structure, and assumptions for the Mortgage Calculator." />
+  <link rel="canonical" href="https://thelongmath.com/mortgage-calculator/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <div style="margin-bottom: 20px;">
+        <a href="/mortgage-calculator/" class="home-link">← Back to Mortgage Calculator</a>
+      </div>
+
+      <h1>Inspectable Arithmetic for the Mortgage Calculator</h1>
+      <p class="methodology-meta">Version 1.0<br>Last updated: February 2026</p>
+
+      <p>
+        Transparent arithmetic is the operating system of this calculator.
+      </p>
+      <p>
+        This document publishes the formulae, computational structure, and assumptions used to generate the outputs displayed on the calculator page.
+      </p>
+      <p>
+        No opinions. No hidden assumptions. Just arithmetic.
+      </p>
+
+      <h2>Purpose</h2>
+      <p>
+        This calculator models fixed-rate mortgage amortization under constant interest assumptions. It computes payment amounts by frequency, an amortization schedule, total interest paid, total paid, and payoff time.
+      </p>
+
+      <h2>Definitions</h2>
+      <p>Let:</p>
+      <ul>
+        <li>H = home price</li>
+        <li>D = down payment</li>
+        <li>L = H − D = loan amount (principal)</li>
+        <li>r = nominal annual interest rate (APR, as entered)</li>
+        <li>n = payments per year (12, 26, or 52 depending on frequency)</li>
+        <li>T = amortization period in years</li>
+        <li>N = ⌊nT⌋ = maximum number of payment periods simulated</li>
+        <li>r<sub>p</sub> = r/(100n) = periodic interest rate</li>
+        <li>P<sub>m</sub> = standard monthly payment (monthly schedule basis)</li>
+        <li>P = payment amount for the selected frequency</li>
+        <li>B<sub>t</sub> = outstanding balance after payment t</li>
+      </ul>
+
+      <h2>Formulae</h2>
+
+      <h3 id="loan-amount">1. Loan Amount</h3>
+      <div class="formula-block">L = max(0, H − D)</div>
+      <p class="formula-meta">Down payment may be entered as a dollar amount or a percentage of home price.</p>
+
+      <h3 id="monthly-payment">2. Standard Monthly Payment (Base Payment)</h3>
+      <p>If r = 0:</p>
+      <div class="formula-block">P<sub>m</sub> = L / (12T)</div>
+      <p>Otherwise:</p>
+      <div class="formula-block">P<sub>m</sub> = L · r<sub>m</sub> / (1 − (1 + r<sub>m</sub>)<sup>−12T</sup>)<br>where r<sub>m</sub> = r / (100 · 12)</div>
+      <p class="formula-meta"><strong>Rationale:</strong> This is the standard fixed-rate fully amortizing payment formula for a monthly schedule.</p>
+      <p class="formula-meta"><strong>Limitation:</strong> Assumes constant APR and constant amortization horizon.</p>
+
+      <h3 id="payment-by-frequency">3. Payment Amount by Frequency</h3>
+      <p>Payment frequency options and payment amount conventions:</p>
+      <p><strong>Monthly (12/yr):</strong></p>
+      <div class="formula-block">P = P<sub>m</sub></div>
+      <p><strong>Bi-weekly (26/yr), “standard”:</strong></p>
+      <div class="formula-block">P = P<sub>m</sub> · 12/26</div>
+      <p><strong>Weekly (52/yr), “standard”:</strong></p>
+      <div class="formula-block">P = P<sub>m</sub> · 12/52</div>
+      <p><strong>Accelerated bi-weekly (26/yr):</strong></p>
+      <div class="formula-block">P = P<sub>m</sub> / 2</div>
+      <p><strong>Accelerated weekly (52/yr):</strong></p>
+      <div class="formula-block">P = P<sub>m</sub> / 4</div>
+      <p class="formula-meta"><strong>Rationale:</strong> Standard weekly/bi-weekly payments scale the monthly payment to preserve the same annual payment total. Accelerated schedules increase the annual payment total by using the “monthly fraction” convention (monthly/2 or monthly/4).</p>
+      <p class="formula-meta"><strong>Limitation:</strong> This models payment amount conventions, not lender-specific billing rules.</p>
+
+      <h3 id="periodic-interest-principal">4. Periodic Interest and Principal</h3>
+      <p>Periodic rate uses the selected payment frequency:</p>
+      <div class="formula-block">r<sub>p</sub> = r / (100n)</div>
+      <p>For each payment period t ≥ 1:</p>
+      <div class="formula-block">Interest<sub>t</sub> = B<sub>t−1</sub> · r<sub>p</sub><br>Principal<sub>t</sub> = P − Interest<sub>t</sub></div>
+      <p class="formula-meta"><strong>Limitation:</strong> Uses simple APR division by frequency. It does not apply jurisdiction-specific compounding conventions (e.g., Canadian nominal rate compounded semi-annually) unless explicitly implemented elsewhere.</p>
+
+      <h3 id="balance-update">5. Balance Update</h3>
+      <div class="formula-block">B<sub>t</sub> = B<sub>t−1</sub> − Principal<sub>t</sub><br>with B<sub>0</sub> = L</div>
+      <p class="formula-meta">If Principal<sub>t</sub> &gt; B<sub>t−1</sub>, the principal portion is capped so the balance does not go negative (final-payment clamp).</p>
+
+      <h3 id="total-interest-total-paid">6. Total Interest Paid and Total Paid</h3>
+      <div class="formula-block">TotalInterest = Σ Interest<sub>t</sub><br>TotalPaid = L + TotalInterest</div>
+
+      <h3 id="payoff-time">7. Payoff Time</h3>
+      <p>If the loan amortizes successfully, payoff time in years is:</p>
+      <div class="formula-block">PayoffYears = (number of payments made) / n</div>
+
+      <h2>Assumptions</h2>
+      <ol>
+        <li>The entered interest rate is treated as a nominal annual APR and converted to a periodic rate by dividing by payments per year.</li>
+        <li>Interest rate remains constant over the modeled horizon.</li>
+        <li>Payments occur at the selected frequency and remain constant under the payment convention listed above.</li>
+        <li>No prepayments, lump sums, refinancing, mortgage insurance, taxes, or penalties are modeled.</li>
+        <li>The amortization schedule is simulated period-by-period until the balance reaches zero (subject to rounding).</li>
+        <li>Rounding occurs at the display layer; internal calculations use floating-point arithmetic.</li>
+      </ol>
+
+      <h2>Implementation Notes</h2>
+      <ul>
+        <li>Payment amount is derived from a monthly base payment and then converted to the selected frequency using the formulas above.</li>
+        <li>The amortization schedule uses the selected frequency’s periodic rate r<sub>p</sub> = r/(100n).</li>
+        <li>The calculator detects non-amortizing inputs (when P ≤ B<sub>0</sub> · r<sub>p</sub>) and returns an error state rather than producing a schedule.</li>
+        <li>Tiny negative balances caused by floating-point error are clamped to zero.</li>
+      </ul>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between this documentation and the calculator output, the arithmetic here governs.
+      </p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>

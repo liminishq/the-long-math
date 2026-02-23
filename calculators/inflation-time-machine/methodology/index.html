@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspectable Arithmetic – Inflation Time Machine | The Long Math</title>
+  <meta name="description" content="Formulae, computational structure, and assumptions for the Inflation Time Machine (CPI conversion)." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/inflation-time-machine/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <div style="margin-bottom: 20px;">
+        <a href="/calculators/inflation-time-machine/" class="home-link">← Back to Inflation Time Machine</a>
+      </div>
+
+      <h1>Inspectable Arithmetic for the Inflation Time Machine</h1>
+      <p class="methodology-meta">Version 1.0<br>Last updated: February 2026</p>
+
+      <p>
+        Transparent arithmetic is the operating system of this calculator.
+      </p>
+      <p>
+        This document publishes the formulae, computational structure, and assumptions used to generate the outputs displayed on the calculator page.
+      </p>
+      <p>
+        No opinions. No hidden assumptions. Just arithmetic.
+      </p>
+
+      <h2>Purpose</h2>
+      <p>
+        This calculator converts a dollar amount between two years using official Consumer Price Index (CPI) data for a selected country. It computes purchasing power equivalence using index ratios.
+      </p>
+
+      <h2>Definitions</h2>
+      <p>Let:</p>
+      <ul>
+        <li>A = input amount (whole dollars)</li>
+        <li>CPI<sub>s</sub> = CPI index value in start year</li>
+        <li>CPI<sub>e</sub> = CPI index value in end year</li>
+        <li>Y<sub>s</sub> = start year</li>
+        <li>Y<sub>e</sub> = end year</li>
+        <li>n = Y<sub>e</sub> − Y<sub>s</sub> = number of years between dates</li>
+      </ul>
+      <p>All CPI values are annual index values for the selected country.</p>
+
+      <h2>Formulae</h2>
+
+      <h3 id="inflation-adjustment">1. Inflation Adjustment (Index Ratio Method)</h3>
+      <div class="formula-block">AdjustedAmount = A × (CPI<sub>e</sub> / CPI<sub>s</sub>)</div>
+      <p class="formula-meta"><strong>Rationale:</strong> CPI is an index; the ratio of two index values represents cumulative price level change between those years.</p>
+      <p class="formula-meta"><strong>Limitation:</strong> CPI measures changes in a representative basket of goods and services; it does not reflect individual consumption patterns.</p>
+
+      <h3 id="total-price-level-change">2. Total Price Level Change (Magnitude)</h3>
+      <div class="formula-block">TotalChange = (CPI<sub>e</sub> / CPI<sub>s</sub> − 1) × 100%</div>
+      <p class="formula-meta"><strong>Rationale:</strong> Expresses cumulative inflation over the selected time span as a percentage.</p>
+      <p class="formula-meta"><strong>Limitation:</strong> Directionality (inflation vs deflation) is determined by the index ratio; displayed magnitude does not imply steady inflation throughout the period.</p>
+
+      <h3 id="annualized-rate">3. Average Annual Inflation Rate (Annualized)</h3>
+      <div class="formula-block">AnnualizedRate = (CPI<sub>e</sub> / CPI<sub>s</sub>)<sup>1/n</sup> − 1</div>
+      <p class="formula-meta"><strong>Rationale:</strong> Computes the constant annual geometric growth rate that would produce the same cumulative CPI change over the period.</p>
+      <p class="formula-meta"><strong>Limitation:</strong> Assumes constant annual growth; actual year-to-year CPI changes vary.</p>
+
+      <h2>Assumptions</h2>
+      <ol>
+        <li>CPI values are annual index values for the selected country.</li>
+        <li>Index values are not rebased or normalized within the calculator.</li>
+        <li>No currency conversion is performed.</li>
+        <li>Amounts are expressed in the domestic currency of the selected country.</li>
+        <li>Results are computed using exact CPI index ratios; rounding occurs at the display layer only.</li>
+        <li>Years must fall within available dataset coverage for the selected country.</li>
+      </ol>
+
+      <h2>Implementation Notes</h2>
+      <ul>
+        <li>CPI data is loaded from static country-specific datasets.</li>
+        <li>Countries are enabled only when full coverage exists for the selected year range.</li>
+        <li>The direction of comparison (Then → Now or Now → Then) is determined by index ratio ordering.</li>
+        <li>All calculations use floating-point arithmetic; rounding occurs only for display.</li>
+      </ul>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between this documentation and the calculator output, the arithmetic here governs.
+      </p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>

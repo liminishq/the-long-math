@@ -123,6 +123,10 @@
          MAIN GRID (3 columns)
          ========================= -->
     <div class="card">
+      <div class="inspect-bar">
+        <a href="/calculators/pay-off-mortgage-vs-invest/methodology/" class="inspect-arithmetic-btn">Inspect the Arithmetic</a>
+        <a href="/calculators/pay-off-mortgage-vs-invest/data/" class="inspect-arithmetic-btn">Inspect the Data</a>
+      </div>
       <div class="calc-grid">
         <!-- COLUMN 1: Mortgage Inputs -->
         <article class="panel">
@@ -236,6 +240,14 @@
               Inflation-adjusted results express future values in today's dollars using 3.73% (the long-term average from Canadian CPI data from our <a href="/tools/inflation-tables/" target="_blank" rel="noopener noreferrer" style="color:var(--accent2);">Historical Inflation Rates (CPI)</a> tool).<br>
               This does not change the math — only how results are displayed.
             </p>
+            <div id="custom_inflation_wrap" class="field" style="margin-top: 12px;">
+              <label for="custom_inflation_rate">Custom inflation rate (%)</label>
+              <div class="inline">
+                <input id="custom_inflation_rate" type="number" inputmode="decimal" min="0" step="0.01" value="3.73" />
+                <span class="unit">%</span>
+              </div>
+              <p class="help muted">Default 3.73%. Positive numbers only, up to 2 decimal places. Use 0 for no inflation adjustment.</p>
+            </div>
           </div>
         </article>
 
@@ -358,6 +370,10 @@
           </div>
 
         </article>
+      </div>
+
+      <div class="summary-sentence-card">
+        <p id="summary_sentence_text" class="summary-sentence-text">With these inputs, mortgage will be paid off in — years and — months, and net worth will be $— at the end of your — year time horizon.</p>
       </div>
     </div>
 

@@ -41,8 +41,8 @@
     return (dec * 100).toFixed(1) + "%";
   }
 
-  // Canadian CPI long-term average
-  const INFLATION_RATE = 3.73 / 100;
+  // Canadian CPI long-term average (default when custom not set)
+  const DEFAULT_INFLATION_PCT = 3.73;
 
   // -----------------------------
   // Chart rendering
@@ -248,6 +248,11 @@
       ? 0 
       : clamp(num(homeGrowthInput), -10, 20);
     const isReal = $("display_mode").checked;
+    const customInflationEl = document.getElementById("custom_inflation_rate");
+    const rawInflation = customInflationEl ? num(customInflationEl.value) : DEFAULT_INFLATION_PCT;
+    const customInflationPct = Number.isFinite(rawInflation) && rawInflation >= 0
+      ? Math.round(clamp(rawInflation, 0, 100) * 100) / 100
+      : DEFAULT_INFLATION_PCT;
     const currentBalance = clamp(num($("current_balance").value), 0, 10000000);
     const currentRate = clamp(num($("current_rate").value), 0, 20);
     const currentHomePrice = clamp(num($("current_home_price").value), 0, 10000000);
@@ -262,6 +267,7 @@
       timeHorizon,
       homeGrowthRate,
       isReal,
+      customInflationPct,
       useCalculator,
       calcHomePrice,
       calcDownAmount,
@@ -323,9 +329,10 @@
     }
 
     // Apply inflation adjustment if real mode
+    const inflationRate = inp.customInflationPct / 100;
     const adjustForInflation = (value, isReal) => {
       if (!isReal) return value;
-      return value / Math.pow(1 + INFLATION_RATE, inp.timeHorizon);
+      return value / Math.pow(1 + inflationRate, inp.timeHorizon);
     };
 
     // Update primary output
@@ -364,6 +371,20 @@
     // Only recalculate scale when non-slider inputs change
     const isSliderChange = changeSource === 'slider';
     chart.setData(adjustedSeries, inp.timeHorizon, inp.isReal, !isSliderChange);
+
+    // Summary sentence: payoff time + net worth at horizon
+    const horizonYears = inp.timeHorizon;
+    const horizonLabel = horizonYears % 1 === 0 ? horizonYears + " year" + (horizonYears !== 1 ? "s" : "") : horizonYears.toFixed(1) + " years";
+    const netWorthDisplay = fmtCAD(netWorth);
+    let payoffText;
+    if (result.payoffMonth != null) {
+      const years = Math.floor(result.payoffMonth / 12);
+      const months = result.payoffMonth % 12;
+      payoffText = "mortgage will be paid off in " + years + " year" + (years !== 1 ? "s" : "") + (months > 0 ? " and " + months + " month" + (months !== 1 ? "s" : "") : "") + ",";
+    } else {
+      payoffText = "mortgage will not be paid off within your " + horizonLabel + " time horizon,";
+    }
+    $("summary_sentence_text").textContent = "With these inputs, " + payoffText + " and net worth will be " + netWorthDisplay + " at the end of your " + horizonLabel + " time horizon.";
   }
 
   // -----------------------------
@@ -455,6 +476,7 @@
     "fees",
     "time_horizon",
     "home_growth",
+    "custom_inflation_rate",
     "current_balance",
     "current_rate",
     "current_home_price",
@@ -493,6 +515,20 @@
     syncDisplayMode();
     debouncedRender();
   });
+
+  const customInflationEl = document.getElementById("custom_inflation_rate");
+  if (customInflationEl) {
+    customInflationEl.addEventListener("blur", () => {
+      const v = num(customInflationEl.value);
+      if (!Number.isFinite(v) || v < 0) {
+        customInflationEl.value = DEFAULT_INFLATION_PCT;
+      } else {
+        const clamped = Math.round(clamp(v, 0, 100) * 100) / 100;
+        customInflationEl.value = clamped;
+      }
+      debouncedRender();
+    });
+  }
 
   $("allocation_slider").addEventListener("input", () => {
     syncSlider();

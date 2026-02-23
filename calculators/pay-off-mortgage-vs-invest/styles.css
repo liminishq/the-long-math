@@ -1,5 +1,29 @@
 /* Calculator-specific styles; relies on global styles.css */
 
+.inspect-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.inspect-bar .inspect-arithmetic-btn {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  text-decoration: none;
+  border-radius: 10px;
+}
+.inspect-bar .inspect-arithmetic-btn:hover {
+  text-decoration: none;
+  color: var(--text);
+  border-color: var(--accent);
+  background: var(--accentSoft);
+}
+
 .panel {
   padding: 16px;
   border: 1px solid var(--border);
@@ -181,6 +205,22 @@ input:checked + .slider:before {
 .callout a {
   color: var(--accent2);
   text-decoration: underline;
+}
+
+/* Full-width summary sentence at bottom of main calculator card */
+.summary-sentence-card {
+  width: 100%;
+  margin-top: 20px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+.summary-sentence-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text);
 }
 
 /* Slider container */

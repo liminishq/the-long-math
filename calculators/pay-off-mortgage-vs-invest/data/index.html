@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspectable Data Source – Inflation Adjustment (Pay Off Mortgage vs Invest) | The Long Math</title>
+  <meta name="description" content="Data source and transformation rule for inflation-adjusted (real) mode in the Pay Off Mortgage vs Invest calculator." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/pay-off-mortgage-vs-invest/data/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <div style="margin-bottom: 20px;">
+        <a href="/calculators/pay-off-mortgage-vs-invest/" class="home-link">← Back to Pay Off Mortgage vs Invest Calculator</a>
+      </div>
+
+      <h1>Inspectable Data Source — Inflation Adjustment</h1>
+      <p class="methodology-meta">Pay Off Mortgage vs Invest Calculator<br>Version 1.0<br>Last updated: February 2026</p>
+
+      <p>
+        Transparent arithmetic is the operating system of this calculator.
+      </p>
+      <p>
+        This page publishes the data source and transformation rule used when “Inflation-adjusted (real)” mode is enabled in the Mortgage vs Invest calculator.
+      </p>
+      <p>
+        No opinions. No hidden assumptions. Just arithmetic.
+      </p>
+
+      <h2>Purpose</h2>
+      <p>
+        The Mortgage vs Invest calculator produces results in nominal dollars by default. When “Inflation-adjusted (real)” mode is enabled, those nominal values are converted into inflation-adjusted dollars using a long-term Canadian CPI average.
+      </p>
+      <p>
+        This page documents: the CPI dataset used, how the long-term inflation rate was derived, and how that rate is applied.
+      </p>
+
+      <h2>Data Source</h2>
+      <p>Inflation is derived from:</p>
+      <p><strong>Canada — Consumer Price Index (CPI)</strong><br>Source: Statistics Canada</p>
+      <p>The full CPI history used in this calculation is published here:</p>
+      <p><a href="/tools/inflation-tables/">Historical Inflation Rates (CPI) — Canada</a></p>
+      <p>The dataset currently begins in 1960 and includes annual CPI inflation rates from 1960 to the most recent available year.</p>
+
+      <h2>Method of Derivation</h2>
+      <p>Let:</p>
+      <ul>
+        <li>π<sub>t</sub> = published annual CPI inflation rate for year t</li>
+        <li>N = total number of years in the dataset (1960 through latest year)</li>
+      </ul>
+      <p>The inflation rate used in this calculator is the simple arithmetic mean of annual CPI inflation rates:</p>
+      <div class="formula-block">i = (1/N) Σ<sub>t=1960 to latest</sub> π<sub>t</sub></div>
+      <p>Using the current dataset, this produces:</p>
+      <div class="formula-block">i = 3.73% per year</div>
+      <p>This value represents the long-term historical average of Canadian CPI inflation since 1960.</p>
+
+      <h2>Default Inflation Rate</h2>
+      <p>The calculator’s default inflation assumption is:</p>
+      <p><strong>3.73% per year</strong></p>
+      <p>This value is defined in the calculator’s display layer and is used unless the user overrides it with a custom inflation rate.</p>
+
+      <h2>Custom Inflation Rate Override</h2>
+      <p>The calculator allows users to enter their own inflation rate.</p>
+      <ul>
+        <li>If a custom rate is entered, the custom rate replaces the 3.73% default.</li>
+        <li>Only the display conversion changes.</li>
+        <li>Mortgage amortization, investment growth, and home price compounding remain unchanged.</li>
+      </ul>
+
+      <h2>How Inflation Adjustment Is Applied</h2>
+      <p>Let:</p>
+      <ul>
+        <li>V = nominal dollar value (net worth, investment value, home value, mortgage balance, or interest totals)</li>
+        <li>T = selected time horizon in years</li>
+        <li>i = inflation rate (default 3.73%, or user-entered value)</li>
+      </ul>
+      <p>When real mode is enabled, the calculator displays:</p>
+      <div class="formula-block">V<sub>real</sub> = V / (1 + i)<sup>T</sup></div>
+      <p>This adjustment is applied to:</p>
+      <ul>
+        <li>Net worth</li>
+        <li>Investment portfolio value</li>
+        <li>Home value</li>
+        <li>Mortgage balance</li>
+        <li>Total interest paid</li>
+        <li>Total interest earned</li>
+        <li>All chart series values</li>
+      </ul>
+
+      <h2>Interpretation</h2>
+      <p>
+        The inflation-adjusted view answers: “What would this future value be worth in today’s dollars, assuming a long-run Canadian inflation rate of 3.73% (or the rate I choose)?”
+      </p>
+      <p>
+        This is not a forecast of future inflation. It is a contextual long-term adjustment based on historical CPI behavior.
+      </p>
+
+      <h2>Important Distinctions</h2>
+      <ul>
+        <li>The 3.73% figure is a simple average of annual CPI inflation rates.</li>
+        <li>It is not a CPI index CAGR.</li>
+        <li>It is not a weighted average.</li>
+        <li>It is not a forecast.</li>
+        <li>It is a historical long-run reference rate.</li>
+      </ul>
+
+      <h2>Limitations</h2>
+      <ul>
+        <li>Inflation is modeled as a constant annual rate.</li>
+        <li>Only Canadian CPI data is used.</li>
+        <li>Year-to-year inflation volatility is not modeled.</li>
+        <li>Real values are discounted using the full selected time horizon T.</li>
+      </ul>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between this documentation and the calculator output, the calculator implementation governs.
+      </p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>

@@ -374,6 +374,7 @@ function calculateMortgageVsInvest(inputs) {
     totalInterestPaid: currentResult.totalInterestPaid,
     totalInterestEarned: currentResult.totalInterestEarned,
     series: currentResult.series,
+    payoffMonth: currentResult.payoffMonth,
     fact100Mortgage: result100Mortgage.series[result100Mortgage.series.length - 1].netWorth,
     fact100Invest: result100Invest.series[result100Invest.series.length - 1].netWorth,
     fact100MortgageInterestPaid: result100Mortgage.totalInterestPaid,

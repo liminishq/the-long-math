@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspectable Arithmetic – Pay Off Mortgage vs Invest Calculator | The Long Math</title>
+  <meta name="description" content="Formulae, computational structure, and assumptions for the Pay Off Mortgage vs Invest (Cash-Flow Neutral) Calculator." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/pay-off-mortgage-vs-invest/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <div style="margin-bottom: 20px;">
+        <a href="/calculators/pay-off-mortgage-vs-invest/" class="home-link">← Back to Pay Off Mortgage vs Invest Calculator</a>
+      </div>
+
+      <h1>Inspectable Arithmetic for the Pay Off Mortgage vs Invest Calculator (Cash-Flow Neutral)</h1>
+      <p class="methodology-meta">Version 1.0<br>Last updated: February 2026</p>
+
+      <p>
+        Transparent arithmetic is the operating system of this calculator.
+      </p>
+      <p>
+        This document publishes the full formulae, computational structure, and assumptions used to generate the outputs displayed on the calculator page.
+      </p>
+      <p>
+        No opinions. No hidden assumptions. Just arithmetic.
+      </p>
+
+      <h2>Purpose</h2>
+      <p>
+        This calculator compares two strategies under a cash-flow-neutral rule: A fixed monthly cash budget is assumed. While a mortgage exists, cash is allocated between: mortgage payments (regular payment + optional extra paydown), and investment contributions. After the mortgage is paid off, the entire monthly budget is invested. The calculator reports mortgage balance, investment portfolio value, and net worth over time under constant return assumptions.
+      </p>
+
+      <h2>Definitions</h2>
+      <p>All quantities below are monthly.</p>
+
+      <h3>Inputs</h3>
+      <ul>
+        <li>B<sub>0</sub>: initial mortgage balance</li>
+        <li>P: regular mortgage payment per month</li>
+        <li>E: extra cash available per month</li>
+        <li>a: allocation slider (0–100) interpreted as % of extra cash allocated to investing</li>
+        <li>extra to mortgage: E<sub>M</sub> = (1 − a/100) E</li>
+        <li>extra to invest: E<sub>I</sub> = (a/100) E</li>
+        <li>r: mortgage interest rate (APR, annual, %)</li>
+        <li>R: expected investment return before fees (annual, %)</li>
+        <li>f: investment fees (annual, %)</li>
+        <li>g: home price growth rate (annual, %)</li>
+        <li>H<sub>0</sub>: current home value</li>
+        <li>T: time horizon in years</li>
+        <li>N = 12T: time horizon in months</li>
+      </ul>
+
+      <h3>Derived constants</h3>
+      <p>Mortgage monthly rate:</p>
+      <div class="formula-block">i = r / (100 · 12)</div>
+      <p>Net annual investment return (after fees):</p>
+      <div class="formula-block">R<sub>net</sub> = (R − f) / 100</div>
+      <p>Monthly geometric investment return:</p>
+      <div class="formula-block">μ = (1 + R<sub>net</sub>)<sup>1/12</sup> − 1</div>
+      <p class="formula-meta">(Clamped internally so that R<sub>net</sub> ≥ −0.999.)</p>
+      <p>Monthly budget (cash-flow neutral):</p>
+      <div class="formula-block">Budget = P + E</div>
+
+      <h2 id="mode-a">Mode A: Mortgage Payment Computed From Mortgage Inputs</h2>
+      <p>If “Use mortgage calculator” is enabled, the calculator computes the regular mortgage payment P using the standard amortization formula.</p>
+      <p>Let:</p>
+      <ul>
+        <li>L = H<sub>0</sub> − DownPayment</li>
+        <li>i = r/(100·12)</li>
+        <li>n = 12 · AmortYears</li>
+      </ul>
+      <p>Then:</p>
+      <div class="formula-block">P = L/n  if r = 0<br>P = L · i / (1 − (1+i)<sup>−n</sup>)  if r &gt; 0</div>
+      <p class="formula-meta">The simulation then proceeds using B<sub>0</sub> = L and that computed P.</p>
+
+      <h2 id="mode-b">Mode B: Mortgage Payment Entered Manually</h2>
+      <p>If “Use mortgage calculator” is disabled, the user supplies: B<sub>0</sub> (current mortgage balance), r (APR), P (monthly payment). The payoff time becomes whatever amortizes under those values.</p>
+      <p class="formula-meta">Fallback: If B<sub>0</sub> ≤ 0 in manual mode, the engine estimates a principal from payment using a rough default (25 years, 5% APR). This is a non-ideal fallback intended to keep the calculator functioning.</p>
+
+      <h2 id="core-simulation">Core Simulation (Monthly Recurrence)</h2>
+      <p>The simulation advances month-by-month for t = 1, 2, …, N.</p>
+
+      <h3>Home value</h3>
+      <p>Home value is compounded in monthly steps:</p>
+      <div class="formula-block">H<sub>t</sub> = H<sub>0</sub> · (1 + g/100)<sup>t/12</sup></div>
+
+      <h3>Equity and net worth (end of month)</h3>
+      <div class="formula-block">Equity<sub>t</sub> = max(0, H<sub>t</sub> − B<sub>t</sub>)<br>NetWorth<sub>t</sub> = Equity<sub>t</sub> + V<sub>t</sub></div>
+      <p class="formula-meta">where V<sub>t</sub> is investment portfolio value.</p>
+
+      <h3 id="case-1">Case 1: Mortgage Still Outstanding (B<sub>t−1</sub> &gt; 0)</h3>
+
+      <p><strong>Step 1 — Mortgage interest due</strong></p>
+      <div class="formula-block">InterestDue<sub>t</sub> = B<sub>t−1</sub> · i</div>
+
+      <p><strong>Step 2 — Intended mortgage payment</strong></p>
+      <p>Regular payment always goes to the mortgage, plus the allocated portion of extra cash:</p>
+      <div class="formula-block">M<sub>t</sub><sup>intended</sup> = P + E<sub>M</sub></div>
+      <p>But payment cannot exceed what is needed to close the mortgage this month:</p>
+      <div class="formula-block">M<sub>t</sub><sup>actual</sup> = min(M<sub>t</sub><sup>intended</sup>, B<sub>t−1</sub> + InterestDue<sub>t</sub>)</div>
+
+      <p><strong>Step 3 — Principal paid and new balance</strong></p>
+      <div class="formula-block">PrincipalPaid<sub>t</sub> = max(0, M<sub>t</sub><sup>actual</sup> − InterestDue<sub>t</sub>)<br>B<sub>t</sub> = max(0, B<sub>t−1</sub> − PrincipalPaid<sub>t</sub>)</div>
+      <p class="formula-meta">If M<sub>t</sub><sup>actual</sup> &gt; 0, interest paid increments by InterestDue<sub>t</sub>.</p>
+
+      <p><strong>Step 4 — Investment contribution while mortgage exists</strong></p>
+      <p>The investment contribution has two parts: the allocated investing portion of extra cash E<sub>I</sub>, and any remainder from an over-large intended mortgage payment in the final payoff month:</p>
+      <div class="formula-block">Remainder<sub>t</sub> = M<sub>t</sub><sup>intended</sup> − M<sub>t</sub><sup>actual</sup><br>C<sub>t</sub> = E<sub>I</sub> + Remainder<sub>t</sub></div>
+
+      <p><strong>Step 5 — Investment update (contribution first, then compound)</strong></p>
+      <div class="formula-block">V<sub>t</sub>′ = V<sub>t−1</sub> + C<sub>t</sub><br>InterestEarned<sub>t</sub> = V<sub>t</sub>′ · μ<br>V<sub>t</sub> = V<sub>t</sub>′ · (1 + μ)</div>
+      <p class="formula-meta">Investment value is clamped to never go below zero.</p>
+
+      <h3 id="case-2">Case 2: Mortgage Paid Off (B<sub>t−1</sub> ≤ 0)</h3>
+      <p>Once the mortgage balance reaches zero, the engine invests the entire monthly budget:</p>
+      <div class="formula-block">C<sub>t</sub> = Budget = P + E</div>
+      <p>Then applies the same “contribution first, then compound” update:</p>
+      <div class="formula-block">V<sub>t</sub>′ = V<sub>t−1</sub> + C<sub>t</sub><br>InterestEarned<sub>t</sub> = V<sub>t</sub>′ · μ<br>V<sub>t</sub> = V<sub>t</sub>′ · (1 + μ)</div>
+
+      <h2 id="reported-outputs">Reported Outputs</h2>
+      <p>At the end of the horizon t = N, the calculator reports:</p>
+      <ul>
+        <li>Mortgage balance: B<sub>N</sub></li>
+        <li>Investment portfolio value: V<sub>N</sub></li>
+        <li>Home value: H<sub>N</sub> = H<sub>0</sub>(1 + g/100)<sup>T</sup></li>
+        <li>Net worth: max(0, H<sub>N</sub> − B<sub>N</sub>) + V<sub>N</sub></li>
+        <li>Total interest paid: Σ InterestDue<sub>t</sub> over months where a mortgage payment is made</li>
+        <li>Total interest earned: Σ InterestEarned<sub>t</sub></li>
+      </ul>
+
+      <h2 id="key-facts">Key facts (extreme allocations)</h2>
+      <p>The “Key facts” section computes two additional full simulations using identical inputs: 100% mortgage allocation (a = 0) and 100% investing allocation (a = 100). Those outputs are produced by the same simulation logic above.</p>
+
+      <h2>Assumptions</h2>
+      <ol>
+        <li>All calculations are performed in monthly time steps.</li>
+        <li>Mortgage interest is modeled as APR/12 applied to the outstanding balance each month.</li>
+        <li>Investment returns are modeled as constant and deterministic.</li>
+        <li>Investment fees are modeled as a constant annual % subtracted from expected return, then converted to a monthly geometric return.</li>
+        <li>Contributions are applied before investment growth each month (beginning-of-period contributions).</li>
+        <li>Home price growth is modeled as constant compounding at rate g (no volatility).</li>
+        <li>Taxes, transaction costs, refinancing, prepayment penalties, and behavioral changes are not modeled unless explicitly added elsewhere.</li>
+      </ol>
+
+      <h2>Implementation Notes</h2>
+      <ul>
+        <li>The slider controls extra cash allocation only. The regular mortgage payment always goes to the mortgage until payoff.</li>
+        <li>In the payoff month, any portion of the intended mortgage payment not required to close the mortgage is automatically redirected into investing (“remainderFromMortgage”).</li>
+        <li>After payoff, the full monthly budget (P + E) is invested each month.</li>
+      </ul>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between this documentation and the calculator output, the arithmetic in the engine governs.
+      </p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>

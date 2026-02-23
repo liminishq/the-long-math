@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Data Sources and Verification – Inflation Time Machine | The Long Math</title>
+  <meta name="description" content="CPI datasets and source provenance for the Inflation Time Machine calculator." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/inflation-time-machine/data/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <div style="margin-bottom: 20px;">
+        <a href="/calculators/inflation-time-machine/" class="home-link">← Back to Inflation Time Machine</a>
+      </div>
+
+      <h1>Data Sources and Verification — Inflation Time Machine</h1>
+      <p class="methodology-meta">Version 1.0<br>Last updated: February 2026</p>
+
+      <p>
+        Transparent arithmetic includes transparent data.
+      </p>
+      <p>
+        This page documents the CPI datasets used by the Inflation Time Machine and their source provenance.
+      </p>
+
+      <h2>Data Structure</h2>
+      <p>
+        The calculator uses annual Consumer Price Index (CPI) index values for each supported country.
+      </p>
+      <p>Each country dataset consists of:</p>
+      <ul>
+        <li>Year</li>
+        <li>Annual CPI index value</li>
+      </ul>
+      <p>
+        No smoothing, rebasing, interpolation, or normalization is performed within the calculator. All calculations use the raw index values as stored in the dataset.
+      </p>
+
+      <h2>Supported Countries and Sources</h2>
+      <p>CPI datasets are loaded from static country-specific data files.</p>
+
+      <ul>
+        <li><strong>Canada</strong><br>Source: Statistics Canada<br>Coverage: 1914–2025</li>
+        <li><strong>United States</strong><br>Source: U.S. Bureau of Labor Statistics (BLS)<br>Coverage: 1913–2024</li>
+        <li><strong>Australia</strong><br>Source: Australian Bureau of Statistics (ABS)<br>Coverage: 1949–2022</li>
+        <li><strong>United Kingdom</strong><br>Source: Office for National Statistics (ONS)<br>Coverage: 1988–2025</li>
+      </ul>
+      <p>Coverage reflects the full annual datasets currently available.</p>
+
+      <h2>Data Usage</h2>
+      <p>For a selected country:</p>
+      <div class="formula-block">AdjustedAmount = Amount × (CPI<sub>end</sub> / CPI<sub>start</sub>)</div>
+      <ul>
+        <li>No currency conversion is performed.</li>
+        <li>Amounts remain in the domestic currency of the selected country.</li>
+      </ul>
+
+      <h2>Verification</h2>
+      <ul>
+        <li>CPI data is manually sourced from the official statistical agencies listed above.</li>
+        <li>Datasets are stored as static files within the project.</li>
+        <li>Calculator logic reads directly from those stored annual index values.</li>
+      </ul>
+      <p>For the full published CPI tables used by the calculator, see:</p>
+      <p><a href="/tools/cpi-data-tables/">CPI Data Tables (by country)</a></p>
+
+      <h2>Limitations</h2>
+      <ul>
+        <li>CPI reflects a standardized basket of goods and services and may not reflect individual consumption patterns.</li>
+        <li>Index methodologies differ slightly by country.</li>
+        <li>Historical revisions by statistical agencies may alter previously published values.</li>
+      </ul>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between the published CPI tables and calculator results, the index values in the dataset govern.
+      </p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>

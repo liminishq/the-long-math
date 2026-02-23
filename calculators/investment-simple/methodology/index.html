@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspectable Arithmetic – Simple Investment Calculator | The Long Math</title>
+  <meta name="description" content="Formulae, computational structure, and assumptions for the Simple Investment Calculator." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/investment-simple/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <div style="margin-bottom: 20px;">
+        <a href="/calculators/investment-simple/" class="home-link">← Back to Simple Investment Calculator</a>
+      </div>
+
+      <h1>Inspectable Arithmetic for the Simple Investment Calculator</h1>
+      <p class="methodology-meta">Version 1.0<br>Last updated: February 2026</p>
+
+      <p>
+        Transparent arithmetic is the operating system of this calculator.
+      </p>
+      <p>
+        This document publishes the full formulae, computational structure, and assumptions used to generate the outputs displayed on the calculator page.
+      </p>
+      <p>
+        No opinions. No hidden assumptions. Just arithmetic.
+      </p>
+
+      <h2>Purpose</h2>
+      <p>
+        This calculator models deterministic compound growth with periodic contributions and optional inflation adjustment under constant nominal return assumptions.
+      </p>
+
+      <h2>Formulae</h2>
+      <p>
+        The following equations define the computational structure of this calculator:
+      </p>
+
+      <h3 id="compound-growth">1. Compound Growth with Periodic Contributions</h3>
+      <div class="formula-block">FV = P(1 + r/n)<sup>nt</sup> + PMT × ((1 + r/n)<sup>nt</sup> − 1) / (r/n)</div>
+      <p class="formula-meta"><strong>Rationale:</strong> This is the standard closed-form future value equation for periodic contributions under constant compounding.</p>
+      <p class="formula-meta"><strong>Limitation:</strong> Assumes constant return and deterministic compounding; does not model volatility, sequence-of-returns risk, or varying contribution schedules.</p>
+
+      <h3 id="inflation-adjustment">2. Inflation Adjustment (Real Value)</h3>
+      <div class="formula-block">FV<sub>real</sub> = FV<sub>nominal</sub> / (1 + i)<sup>t</sup></div>
+      <p class="formula-meta"><strong>Rationale:</strong> Converts nominal future value to present purchasing power using a constant annual inflation rate.</p>
+      <p class="formula-meta"><strong>Limitation:</strong> Assumes steady inflation and does not model year-to-year CPI variability or regime changes.</p>
+
+      <h3 id="irr">3. Internal Rate of Return (If Displayed)</h3>
+      <div class="formula-block">NPV = Σ<sub>t=0 to T</sub> CF<sub>t</sub> / (1 + r)<sup>t</sup> = 0</div>
+      <p class="formula-meta"><strong>Rationale:</strong> Internal Rate of Return (IRR) represents the discount rate that sets net present value of all cash flows equal to zero.</p>
+      <p class="formula-meta"><strong>Limitation:</strong> Multiple IRR solutions can exist when cash flows change sign more than once; results assume conventional cash flow structure unless otherwise specified.</p>
+
+      <h2>Assumptions</h2>
+      <ol>
+        <li>Returns are modeled as constant and deterministic over the full investment horizon.</li>
+        <li>Contributions are applied at the end of each contribution period unless explicitly stated otherwise on the calculator page.</li>
+        <li>Compounding frequency matches the contribution frequency used in the calculation.</li>
+        <li>Inflation, when enabled, is modeled as a constant annual rate.</li>
+        <li>No taxes, fees, transaction costs, or behavioral changes are applied unless explicitly included on the calculator page.</li>
+        <li>Values may be rounded for display purposes; internal calculations use full numerical precision.</li>
+      </ol>
+
+      <h2>Implementation Notes</h2>
+      <ul>
+        <li>The periodic rate is derived as r/n.</li>
+        <li>Nominal future value is calculated before any inflation adjustment is applied.</li>
+        <li>Inflation adjustment is applied after full nominal growth has been computed.</li>
+        <li>All computations are performed using floating-point arithmetic; rounding occurs only at the display layer.</li>
+      </ul>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between this documentation and the calculator output, the arithmetic here governs.
+      </p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>

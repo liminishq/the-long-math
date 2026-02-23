@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspectable Arithmetic – Advisor Fee Calculator | The Long Math</title>
+  <meta name="description" content="Formulae, computational structure, and assumptions for the Advisor Fee Calculator (AUM model)." />
+  <link rel="canonical" href="https://thelongmath.com/calculator/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <div style="margin-bottom: 20px;">
+        <a href="/calculator/" class="home-link">← Back to Advisor Fee Calculator</a>
+      </div>
+
+      <h1>Inspectable Arithmetic for the Advisor Fee Calculator</h1>
+      <p class="methodology-meta">Version 1.0<br>Last updated: February 2026</p>
+
+      <p>
+        Transparent arithmetic is the operating system of this calculator.
+      </p>
+      <p>
+        This document publishes the formulae, computational structure, and assumptions used to generate the outputs displayed on the calculator page.
+      </p>
+      <p>
+        No opinions. No hidden assumptions. Just arithmetic.
+      </p>
+
+      <h2>Purpose</h2>
+      <p>
+        This calculator models the long-run effect of advisor fees and optional fund MERs charged as a percentage of assets under management (AUM), comparing portfolio outcomes with and without those costs under constant return and contribution assumptions.
+      </p>
+
+      <h2>Definitions</h2>
+      <p>Let:</p>
+      <ul>
+        <li>B<sub>t</sub> = portfolio balance at the end of month t</li>
+        <li>P = starting balance</li>
+        <li>C = monthly contribution</li>
+        <li>r = annual nominal return (gross, before fees)</li>
+        <li>f<sub>a</sub> = annual advisor fee rate</li>
+        <li>f<sub>m</sub> = annual MER rate (if enabled)</li>
+        <li>T = investment horizon in years</li>
+        <li>N = 12T = total number of months</li>
+      </ul>
+      <p>Monthly rates:</p>
+      <div class="formula-block">r<sub>m</sub> = r/12<br>f<sub>a,m</sub> = f<sub>a</sub>/12<br>f<sub>m,m</sub> = f<sub>m</sub>/12</div>
+
+      <h2>Formulae</h2>
+      <p>The portfolio is simulated month-by-month.</p>
+
+      <h3 id="growth-without-fees">1. Growth Without Advisor Fee or MER</h3>
+      <div class="formula-block">B<sub>t</sub> = (B<sub>t−1</sub> + C)(1 + r<sub>m</sub>)</div>
+      <p class="formula-meta"><strong>Rationale:</strong> Models deterministic monthly compounding with fixed contributions.</p>
+      <p class="formula-meta"><strong>Limitation:</strong> Assumes constant return and fixed contribution schedule; does not model volatility or sequence-of-returns risk.</p>
+
+      <h3 id="growth-with-fees">2. Growth With Advisor Fee and MER</h3>
+      <p>Gross monthly growth:</p>
+      <div class="formula-block">B<sub>t</sub><sup>gross</sup> = (B<sub>t−1</sub> + C)(1 + r<sub>m</sub>)</div>
+      <p>Total monthly cost rate:</p>
+      <div class="formula-block">f<sub>total,m</sub> = f<sub>a,m</sub> + f<sub>m,m</sub></div>
+      <p>Fee deducted:</p>
+      <div class="formula-block">Fee<sub>t</sub> = f<sub>total,m</sub> × B<sub>t</sub><sup>gross</sup></div>
+      <p>Net balance:</p>
+      <div class="formula-block">B<sub>t</sub> = B<sub>t</sub><sup>gross</sup> − Fee<sub>t</sub></div>
+      <p>Equivalent form:</p>
+      <div class="formula-block">B<sub>t</sub> = (B<sub>t−1</sub> + C)(1 + r<sub>m</sub>)(1 − f<sub>total,m</sub>)</div>
+      <p class="formula-meta"><strong>Rationale:</strong> Advisor fees and MERs are modeled as proportional deductions from assets under management.</p>
+      <p class="formula-meta"><strong>Limitation:</strong> Actual billing schedules may vary (e.g., quarterly billing, in arrears, average daily balance). This model applies a proportional monthly drag consistent with monthly compounding.</p>
+
+      <h3 id="default-tiered-schedule">3. Default Tiered Advisor Fee Schedule</h3>
+      <p>If “Use default advisor fee schedule” is enabled:</p>
+      <p>The annual advisor fee rate f<sub>a</sub> is determined each month based on the portfolio’s current AUM tier. The applicable annual rate for that tier is applied to the entire portfolio balance (non-blended schedule).</p>
+      <p class="formula-meta"><strong>Rationale:</strong> Many advisory platforms use declining percentage schedules based on AUM.</p>
+      <p class="formula-meta"><strong>Limitation:</strong> Some real-world fee schedules are blended marginal tiers; this model applies the single rate associated with the current tier.</p>
+
+      <h3 id="total-fees-paid">4. Total Fees Paid</h3>
+      <div class="formula-block">TotalFees = Σ<sub>t=1 to N</sub> Fee<sub>t</sub></div>
+      <p class="formula-meta"><strong>Rationale:</strong> Tracks cumulative dollar amount explicitly deducted from the portfolio due to advisor fees and any included MER.</p>
+      <p class="formula-meta"><strong>Limitation:</strong> Excludes trading costs, taxes, commissions, and other indirect costs.</p>
+
+      <h3 id="ending-values">5. Ending Values</h3>
+      <div class="formula-block">FV<sub>without</sub> = B<sub>N</sub><sup>no_fees</sup><br>FV<sub>with</sub> = B<sub>N</sub><sup>with_fees</sup></div>
+
+      <h3 id="lost-compounding">6. Lost Compounding</h3>
+      <div class="formula-block">LostCompounding = (FV<sub>without</sub> − FV<sub>with</sub>) − TotalFees</div>
+      <p class="formula-meta"><strong>Rationale:</strong> Separates direct fee dollars from the additional growth lost because those dollars were removed from the compounding base.</p>
+
+      <h3 id="total-calculated-cost">7. Total Calculated Cost</h3>
+      <div class="formula-block">TotalCost = FV<sub>without</sub> − FV<sub>with</sub></div>
+      <p>This equals:</p>
+      <div class="formula-block">TotalCost = TotalFees + LostCompounding</div>
+
+      <h3 id="break-even-performance">8. Break-Even Advisor Performance</h3>
+      <p>Break-even performance is the additional annual return Δr required such that:</p>
+      <div class="formula-block">FV<sub>with_fees_and_alpha</sub> = FV<sub>without</sub></div>
+      <p>This is solved numerically by adjusting return until:</p>
+      <div class="formula-block">FV<sub>difference</sub> = 0</div>
+      <p class="formula-meta"><strong>Rationale:</strong> Determines the constant annual outperformance required to offset the modeled fee drag.</p>
+      <p class="formula-meta"><strong>Limitation:</strong> Assumes consistent additional return each year; does not model risk-adjusted or volatility-adjusted performance.</p>
+
+      <h2>Assumptions</h2>
+      <ol>
+        <li>Returns are modeled as constant and deterministic.</li>
+        <li>Contributions occur monthly and remain constant.</li>
+        <li>Advisor fee and MER are applied proportionally each month.</li>
+        <li>The default tiered schedule applies a single rate to the entire portfolio based on current AUM.</li>
+        <li>No taxes, commissions, asset allocation changes, or behavioral responses are modeled.</li>
+        <li>Rounding occurs at the display layer; internal calculations use full numerical precision.</li>
+      </ol>
+
+      <h2>Implementation Notes</h2>
+      <ul>
+        <li>The model iterates month-by-month over the full horizon.</li>
+        <li>Fee dollars are tracked explicitly each month.</li>
+        <li>Break-even return is solved using an iterative numerical method.</li>
+        <li>All calculations use floating-point arithmetic; rounding occurs only for display.</li>
+      </ul>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between this documentation and the calculator output, the arithmetic here governs.
+      </p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>
