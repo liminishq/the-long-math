@@ -1,9 +1,40 @@
 /**
  * Pure tax calculation engine
  * No DOM dependencies - deterministic, unit-testable
+ * Supports opts.dataOverride for testing (federal, provinces, payroll, dividends).
  */
 
-import { getFederalData, getProvincialData, getPayrollData, getDividendsData } from './tax.data.js';
+import { getFederalData, getProvincesData, getProvincialData, getPayrollData, getDividendsData, normalizeProvince } from './tax.data.js';
+
+const DEFAULT_PROVINCIAL_STEPS = ['brackets', 'credits', 'surtax', 'minTax', 'dividendCredit', 'reduction', 'premiums'];
+
+/**
+ * Build data context from opts.dataOverride or from loaded tax data.
+ * If any required official value is missing, throws with a clear message.
+ */
+function buildDataContext(opts = {}) {
+  const override = opts?.dataOverride;
+  if (override?.federal && override?.provinces && override?.payroll && override?.dividends) {
+    return {
+      federal: override.federal,
+      provinces: override.provinces,
+      payroll: override.payroll,
+      dividends: override.dividends,
+      getProvince: (province) => {
+        const code = normalizeProvince(province);
+        if (!code || !override.provinces[code]) throw new Error(`Province "${province}" not found in data.`);
+        return override.provinces[code];
+      },
+    };
+  }
+  return {
+    federal: getFederalData(),
+    provinces: getProvincesData(),
+    payroll: getPayrollData(),
+    dividends: getDividendsData(),
+    getProvince: (province) => getProvincialData(province),
+  };
+}
 
 /**
  * Calculate tax for a single bracket
@@ -49,18 +80,51 @@ function calculateBracketTax(taxableIncome, brackets) {
 }
 
 /**
- * Calculate federal tax
+ * Ontario Health Premium – official 2025 schedule (ON428 / Ontario worksheet).
+ * Bands from official 2025 OHP table; premium added after tax, credits, surtax, DTC, reductions.
+ *
+ * @param {number} taxableIncome - Provincial taxable income
+ * @returns {number} Ontario Health Premium
+ */
+function calculateOntarioHealthPremium2025(taxableIncome) {
+  const income = Math.max(0, taxableIncome);
+  if (income <= 20000) return 0;
+
+  if (income <= 25000) {
+    return Math.min(0.06 * (income - 20000), 300);
+  }
+  if (income <= 36000) return 300;
+  if (income <= 38500) {
+    return Math.min(300 + 0.06 * (income - 36000), 450);
+  }
+  if (income <= 48000) return 450;
+  if (income <= 48600) {
+    return Math.min(450 + 0.25 * (income - 48000), 600);
+  }
+  if (income <= 72000) return 600;
+  if (income <= 72600) {
+    return Math.min(600 + 0.25 * (income - 72000), 750);
+  }
+  if (income < 200000) return 750;
+  // For taxable income >= 200,000, premium is capped at $900.
+  return 900;
+}
+
+/**
+ * Calculate federal tax. Mirrors Federal Schedule 1 ordering.
  * @param {number} taxableIncome - Taxable income
  * @param {number} cpp - CPP contribution
  * @param {number} ei - EI premium
- * @param {Object} data - Tax data object
+ * @param {number} employmentIncome - Employment income (for Canada Employment Amount eligibility)
+ * @param {Object} dividends - Pre-computed dividend amounts (eligibleDTCFed, nonEligibleDTCFed)
+ * @param {Object} federal - Federal tax data (brackets, credits)
  * @returns {Object} Federal tax breakdown
  */
-function calculateFederalTax(taxableIncome, cpp, ei, data) {
-  const federal = getFederalData();
+function calculateFederalTax(taxableIncome, cpp, ei, employmentIncome, dividends, federal) {
   const { bracketLines, baseTax } = calculateBracketTax(taxableIncome, federal.brackets);
 
-  // Calculate credits
+  // Step B — Federal non-refundable credits.
+  // Mirrors Federal Schedule 1 ordering: bracket tax → non-refundable credits → dividend tax credit.
   const credits = [];
   let totalCredits = 0;
 
@@ -78,7 +142,8 @@ function calculateFederalTax(taxableIncome, cpp, ei, data) {
   }
 
   // Canada Employment Amount (credit = amount × lowest tax rate)
-  if (federal.credits.canadaEmploymentAmount) {
+  // Must only apply when there is employment income (employmentIncome > 0).
+  if (federal.credits.canadaEmploymentAmount && employmentIncome > 0) {
     // Employment amount credit is calculated as amount × lowest federal tax rate (15%)
     // Use Math.min to be order-safe (don't assume brackets[0] is lowest)
     const lowestRate = Math.min(...federal.brackets.map(b => b.rate));
@@ -100,75 +165,98 @@ function calculateFederalTax(taxableIncome, cpp, ei, data) {
     totalCredits += credit;
   }
 
-  const netTax = Math.max(0, baseTax - totalCredits);
+  const taxAfterCredits = Math.max(0, baseTax - totalCredits);
+
+  // Step C — Federal dividend tax credit, applied after non-refundable credits.
+  // Mirrors Federal Schedule 1 ordering.
+  let federalDividendCredits = 0;
+  if (dividends) {
+    federalDividendCredits =
+      (dividends.eligibleDTCFed || 0) +
+      (dividends.nonEligibleDTCFed || 0);
+  }
+  const taxAfterDividendCredits = Math.max(0, taxAfterCredits - federalDividendCredits);
+
+  // Step D — Federal minimum tax adjustments (placeholder for future implementation).
+  const minimumTaxAdjustments = 0;
+
+  const netTax = Math.max(0, taxAfterDividendCredits + minimumTaxAdjustments);
 
   return {
     bracketLines,
     baseTax,
     credits,
+    taxAfterCredits,
+    federalDividendCredits,
+    taxAfterDividendCredits,
+    minimumTaxAdjustments,
     netTax
   };
 }
 
 /**
- * Calculate provincial tax
- * @param {number} taxableIncome - Taxable income
- * @param {string} province - Province code
- * @param {Object} data - Tax data object
- * @returns {Object} Provincial tax breakdown
+ * Generic provincial tax calculation for non-Ontario provinces.
+ * Flow: brackets → credits → surtax → minTax → dividendCredit → reduction → premiums.
  */
-function calculateProvincialTax(taxableIncome, province, data) {
-  const prov = getProvincialData(province);
+function calculateProvincialTaxGeneric(taxableIncome, prov, dividends) {
   const { bracketLines, baseTax } = calculateBracketTax(taxableIncome, prov.brackets);
 
-  // Calculate credits
+  // Non-refundable credits (BPA, etc.)
   const credits = [];
   let totalCredits = 0;
 
-  // Basic Personal Amount (credit = BPA × lowest provincial tax rate)
-  if (prov.credits.basicPersonalAmount) {
-    // BPA credit is calculated as BPA amount × lowest provincial tax rate
-    // Use Math.min to be order-safe (don't assume brackets[0] is lowest)
-    const lowestRate = Math.min(...prov.brackets.map(b => b.rate));
-    const credit = prov.credits.basicPersonalAmount.amount * lowestRate;
-    credits.push({
-      name: 'Basic Personal Amount',
-      amount: credit
-    });
+  if (prov.credits && prov.credits.basicPersonalAmount) {
+    const configuredRate = prov.credits.basicPersonalAmount.rate;
+    const creditRate = typeof configuredRate === 'number'
+      ? configuredRate
+      : Math.min(...prov.brackets.map(b => b.rate));
+    const credit = prov.credits.basicPersonalAmount.amount * creditRate;
+    credits.push({ name: 'Basic Personal Amount', amount: credit });
     totalCredits += credit;
   }
 
-  let netTax = Math.max(0, baseTax - totalCredits);
+  const taxAfterCredits = Math.max(0, baseTax - totalCredits);
 
-  // Calculate surtaxes
+  // Surtax (if any)
   const surtaxes = [];
+  let surtaxTotal = 0;
+  const surtaxBase = taxAfterCredits;
   for (const surtax of prov.surtaxes || []) {
-    if (surtax.threshold && netTax > surtax.threshold) {
+    if (surtax.threshold && surtaxBase > surtax.threshold) {
       let surtaxAmount = 0;
-      if (surtax.threshold2 && netTax > surtax.threshold2) {
-        // Two-tier surtax: first tier applies to range, second tier applies to excess
+      if (surtax.threshold2 && surtaxBase > surtax.threshold2) {
         const tier1Amount = (surtax.threshold2 - surtax.threshold) * surtax.rate;
-        const tier2Amount = (netTax - surtax.threshold2) * surtax.rate2;
+        const tier2Amount = (surtaxBase - surtax.threshold2) * surtax.rate2;
         surtaxAmount = tier1Amount + tier2Amount;
       } else {
-        // Single-tier surtax
-        surtaxAmount = (netTax - surtax.threshold) * surtax.rate;
+        surtaxAmount = (surtaxBase - surtax.threshold) * surtax.rate;
       }
       if (surtaxAmount > 0) {
-        surtaxes.push({
-          name: surtax.name,
-          amount: surtaxAmount
-        });
-        netTax += surtaxAmount;
+        surtaxes.push({ name: surtax.name, amount: surtaxAmount });
+        surtaxTotal += surtaxAmount;
       }
     }
   }
+  const taxAfterSurtax = taxAfterCredits + surtaxTotal;
 
-  // Calculate premiums (health premiums, etc.)
+  const minimumTaxAdjustments = 0;
+  const taxAfterMinimumTax = Math.max(0, taxAfterSurtax + minimumTaxAdjustments);
+
+  let provincialDividendCredits = 0;
+  if (dividends) {
+    provincialDividendCredits =
+      (dividends.eligibleDTCProv || 0) +
+      (dividends.nonEligibleDTCProv || 0);
+  }
+  const taxAfterDividendCredits = Math.max(0, taxAfterMinimumTax - provincialDividendCredits);
+
+  const provincialTaxReduction = 0;
+  const taxAfterReductions = Math.max(0, taxAfterDividendCredits - provincialTaxReduction);
+
   const premiums = [];
+  let premiumsTotal = 0;
   for (const premium of prov.premiums || []) {
     if (premium.brackets) {
-      // Income-based premium brackets
       let premiumAmount = 0;
       for (let i = premium.brackets.length - 1; i >= 0; i--) {
         const bracket = premium.brackets[i];
@@ -178,14 +266,13 @@ function calculateProvincialTax(taxableIncome, province, data) {
         }
       }
       if (premiumAmount > 0) {
-        premiums.push({
-          name: premium.name,
-          amount: premiumAmount
-        });
-        netTax += premiumAmount;
+        premiums.push({ name: premium.name, amount: premiumAmount });
+        premiumsTotal += premiumAmount;
       }
     }
   }
+
+  const netTax = taxAfterReductions + premiumsTotal;
 
   return {
     bracketLines,
@@ -193,29 +280,136 @@ function calculateProvincialTax(taxableIncome, province, data) {
     credits,
     surtaxes,
     premiums,
-    netTax
+    taxAfterCredits,
+    surtaxTotal,
+    taxAfterSurtax,
+    minimumTaxAdjustments,
+    provincialDividendCredits,
+    taxAfterDividendCredits,
+    provincialTaxReduction,
+    taxAfterReductions,
+    netTax,
   };
 }
 
 /**
- * Calculate dividend gross-up and tax credits
- * @param {number} eligibleDividends - Eligible dividend amount
- * @param {number} nonEligibleDividends - Non-eligible dividend amount
- * @param {string} province - Province code
- * @returns {Object} Dividend calculations
+ * Ontario-specific provincial tax calculation, mirroring ON428 ordering exactly:
+ * 1. brackets → basic tax
+ * 2. subtract non-refundable credits (BPA etc.), clamp at 0
+ * 3. compute surtax on post-credit tax
+ * 4. add surtax
+ * 5. subtract dividend tax credit (after surtax), clamp at 0
+ * 6. add Ontario Health Premium (piecewise, capped at $900)
  */
-function calculateDividends(eligibleDividends, nonEligibleDividends, province) {
-  const dividends = getDividendsData();
+function calculateOntarioTax(taxableIncome, prov, dividends) {
+  const { bracketLines, baseTax } = calculateBracketTax(taxableIncome, prov.brackets);
 
-  // Eligible dividends
-  const eligibleGrossUp = eligibleDividends * (dividends.eligible.grossUpRate - 1);
-  const eligibleDTCFed = eligibleDividends * dividends.eligible.grossUpRate * dividends.eligible.dtcFederal;
-  const eligibleDTCProv = eligibleDividends * dividends.eligible.grossUpRate * (dividends.eligible.provinces[province] || 0);
+  // Step 2: Ontario non-refundable credits (currently BPA only), credit = amount × rate.
+  const credits = [];
+  let creditTotal = 0;
+  if (prov.credits && prov.credits.basicPersonalAmount) {
+    const rate = prov.credits.basicPersonalAmount.rate;
+    const credit = prov.credits.basicPersonalAmount.amount * rate;
+    credits.push({ name: 'Basic Personal Amount', amount: credit });
+    creditTotal += credit;
+  }
+  const taxAfterCredits = Math.max(0, baseTax - creditTotal);
 
-  // Non-eligible dividends
-  const nonEligibleGrossUp = nonEligibleDividends * (dividends.nonEligible.grossUpRate - 1);
-  const nonEligibleDTCFed = nonEligibleDividends * dividends.nonEligible.grossUpRate * dividends.nonEligible.dtcFederal;
-  const nonEligibleDTCProv = nonEligibleDividends * dividends.nonEligible.grossUpRate * (dividends.nonEligible.provinces[province] || 0);
+  // Step 3: Ontario surtax on taxAfterCredits (not reduced by dividend credits).
+  let surtax = 0;
+  const surtaxes = [];
+  const s = (prov.surtaxes && prov.surtaxes[0]) || null;
+  if (s && s.threshold) {
+    if (taxAfterCredits > s.threshold) {
+      const amount = 0.20 * (taxAfterCredits - s.threshold);
+      surtax += amount;
+      surtaxes.push({ name: `${s.name} 20%`, amount });
+    }
+    if (s.threshold2 && taxAfterCredits > s.threshold2) {
+      const amount = 0.36 * (taxAfterCredits - s.threshold2);
+      surtax += amount;
+      surtaxes.push({ name: `${s.name} 36%`, amount });
+    }
+  }
+
+  // Step 4: Add surtax.
+  const taxWithSurtax = taxAfterCredits + surtax;
+
+  // Step 5: Ontario dividend tax credit AFTER surtax.
+  // For eligible dividends: credit = grossed_up_eligible × 0.10 (encoded in dividends.eligibleDTCProv).
+  let provincialDividendCredits = 0;
+  if (dividends) {
+    provincialDividendCredits =
+      (dividends.eligibleDTCProv || 0) +
+      (dividends.nonEligibleDTCProv || 0);
+  }
+  const taxAfterDividendCredits = Math.max(0, taxWithSurtax - provincialDividendCredits);
+
+  // Step 6: Ontario Health Premium on taxableIncome, added after credits, surtax, and DTC.
+  const premiums = [];
+  const healthPremium = calculateOntarioHealthPremium2025(taxableIncome);
+  if (healthPremium > 0) {
+    premiums.push({ name: 'Ontario Health Premium', amount: healthPremium });
+  }
+
+  const provincialTaxReduction = 0;
+  const minimumTaxAdjustments = 0;
+  const taxAfterReductions = taxAfterDividendCredits; // no reductions implemented yet
+  const netTax = taxAfterReductions + healthPremium;
+
+  return {
+    bracketLines,
+    baseTax,
+    credits,
+    surtaxes,
+    premiums,
+    taxAfterCredits,
+    surtaxTotal: surtax,
+    taxAfterSurtax: taxWithSurtax,
+    minimumTaxAdjustments,
+    provincialDividendCredits,
+    taxAfterDividendCredits,
+    provincialTaxReduction,
+    taxAfterReductions,
+    netTax,
+  };
+}
+
+/**
+ * Compute DTC amount from explicit schema: base ("cash" | "grossed_up") and rate.
+ * No assumptions; missing province or invalid schema throws.
+ */
+function dtcAmount(cashAmount, grossUpRate, creditConfig, provinceCode) {
+  if (!creditConfig || (creditConfig.base !== 'cash' && creditConfig.base !== 'grossed_up')) {
+    throw new Error('Dividend credit must specify base "cash" or "grossed_up" and rate.');
+  }
+  const baseAmount = creditConfig.base === 'grossed_up' ? cashAmount * grossUpRate : cashAmount;
+  const rate = typeof creditConfig.rate === 'number' ? creditConfig.rate : (creditConfig.provinces && creditConfig.provinces[provinceCode]);
+  if (rate == null || typeof rate !== 'number') {
+    throw new Error(`Missing dividend tax credit rate for province "${provinceCode}". Check dividends.json.`);
+  }
+  return baseAmount * rate;
+}
+
+/**
+ * Calculate dividend gross-up and tax credits from explicit schema (base + rate per credit).
+ * @param {number} eligibleDividends - Eligible dividend (cash) amount
+ * @param {number} nonEligibleDividends - Non-eligible dividend (cash) amount
+ * @param {string} provinceCode - Two-letter province code
+ * @param {Object} dividendsData - dividends.json shape (eligible/nonEligible with credits.federal, credits.provincial)
+ * @returns {Object} Gross-up amounts and federal/provincial DTC amounts
+ */
+function calculateDividends(eligibleDividends, nonEligibleDividends, provinceCode, dividendsData) {
+  const el = dividendsData.eligible;
+  const ne = dividendsData.nonEligible;
+
+  const eligibleGrossUp = eligibleDividends * (el.grossUpRate - 1);
+  const nonEligibleGrossUp = nonEligibleDividends * (ne.grossUpRate - 1);
+
+  const eligibleDTCFed = dtcAmount(eligibleDividends, el.grossUpRate, el.credits.federal, null);
+  const eligibleDTCProv = dtcAmount(eligibleDividends, el.grossUpRate, el.credits.provincial, provinceCode);
+  const nonEligibleDTCFed = dtcAmount(nonEligibleDividends, ne.grossUpRate, ne.credits.federal, null);
+  const nonEligibleDTCProv = dtcAmount(nonEligibleDividends, ne.grossUpRate, ne.credits.provincial, provinceCode);
 
   return {
     eligibleGrossUp,
@@ -223,17 +417,17 @@ function calculateDividends(eligibleDividends, nonEligibleDividends, province) {
     eligibleDTCFed,
     eligibleDTCProv,
     nonEligibleDTCFed,
-    nonEligibleDTCProv
+    nonEligibleDTCProv,
   };
 }
 
 /**
  * Calculate CPP contribution (CPP1 + CPP2)
  * @param {number} employmentIncome - Employment income
+ * @param {Object} payroll - Payroll data (cpp, cpp2)
  * @returns {Object} CPP calculation
  */
-function calculateCPP(employmentIncome) {
-  const payroll = getPayrollData();
+function calculateCPP(employmentIncome, payroll) {
   
   // CPP1: Base CPP on earnings up to YMPE
   const pensionableEarnings = Math.max(0, Math.min(employmentIncome, payroll.cpp.maxPensionableEarnings) - payroll.cpp.basicExemption);
@@ -269,10 +463,10 @@ function calculateCPP(employmentIncome) {
 /**
  * Calculate EI premium
  * @param {number} employmentIncome - Employment income
+ * @param {Object} payroll - Payroll data (ei)
  * @returns {Object} EI calculation
  */
-function calculateEI(employmentIncome) {
-  const payroll = getPayrollData();
+function calculateEI(employmentIncome, payroll) {
   const insurableEarnings = Math.min(employmentIncome, payroll.ei.maxInsurableEarnings);
   const ei = Math.min(insurableEarnings * payroll.ei.rate, payroll.ei.maxPremium);
 
@@ -288,39 +482,93 @@ function calculateEI(employmentIncome) {
   };
 }
 
+const MARGINAL_DELTA = 1;
+
 /**
- * Calculate marginal tax rate using finite difference
- * Must match main tax flow: brackets → credits → surtaxes → premiums
- * @param {number} taxableIncome - Current taxable income
- * @param {string} province - Province code
- * @param {number} cpp - CPP contribution (for credit calculation)
- * @param {number} ei - EI premium (for credit calculation)
- * @returns {number} Combined marginal tax rate
+ * Compute marginal tax rates by perturbing the actual input type (not taxableIncome).
+ * Returns federal+provincial additional tax per $1 of each income type.
  */
-function calculateMarginalRate(taxableIncome, province, cpp, ei) {
-  // Use finite difference: calculate full tax at taxableIncome and taxableIncome + $1
-  const delta = 1;
-  
-  // Calculate full federal tax at base income (matching main flow)
-  const fedBaseResult = calculateFederalTax(taxableIncome, cpp, ei, {});
-  const fedBaseNetTax = fedBaseResult.netTax;
-  
-  // Calculate full federal tax at base + delta
-  const fedDeltaResult = calculateFederalTax(taxableIncome + delta, cpp, ei, {});
-  const fedDeltaNetTax = fedDeltaResult.netTax;
-  const fedMarginal = (fedDeltaNetTax - fedBaseNetTax) / delta;
+function computeMarginalRatesByType(input, dataCtx) {
+  const base = runFullCalculation(input, dataCtx);
+  const baseTax = base.totalIncomeTax;
 
-  // Calculate full provincial tax at base income (matching main flow: brackets → credits → surtaxes → premiums)
-  const provBaseResult = calculateProvincialTax(taxableIncome, province, {});
-  const provBaseNetTax = provBaseResult.netTax;
-  
-  // Calculate full provincial tax at base + delta
-  const provDeltaResult = calculateProvincialTax(taxableIncome + delta, province, {});
-  const provDeltaNetTax = provDeltaResult.netTax;
-  const provMarginal = (provDeltaNetTax - provBaseNetTax) / delta;
+  const marginal = (deltaInput) => {
+    const perturbed = runFullCalculation({ ...input, ...deltaInput }, dataCtx);
+    return (perturbed.totalIncomeTax - baseTax) / MARGINAL_DELTA;
+  };
 
-  const combinedMarginal = fedMarginal + provMarginal;
-  return combinedMarginal;
+  const employment = marginal({ employmentIncome: (input.employmentIncome || 0) + MARGINAL_DELTA });
+  const eligibleDividends = marginal({ eligibleDividends: (input.eligibleDividends || 0) + MARGINAL_DELTA });
+  const nonEligibleDividends = marginal({ nonEligibleDividends: (input.nonEligibleDividends || 0) + MARGINAL_DELTA });
+  const capitalGains = marginal({ capitalGains: (input.capitalGains || 0) + MARGINAL_DELTA });
+
+  const combined = input.employmentIncome > 0 ? employment
+    : input.eligibleDividends > 0 ? eligibleDividends
+    : input.nonEligibleDividends > 0 ? nonEligibleDividends
+    : input.capitalGains > 0 ? capitalGains
+    : employment;
+
+  return { employment, eligibleDividends, nonEligibleDividends, capitalGains, combined };
+}
+
+/**
+ * Run full tax calculation (internal). Used by computePersonalTax and marginal rate.
+ */
+function runFullCalculation(input, dataCtx) {
+  const {
+    employmentIncome = 0,
+    selfEmploymentIncome = 0,
+    otherIncome = 0,
+    eligibleDividends = 0,
+    nonEligibleDividends = 0,
+    capitalGains = 0,
+    rrspDeduction = 0,
+    fhsaDeduction = 0,
+    estimatedDeductions = 0,
+  } = input;
+  const provinceCode = normalizeProvince(input.province);
+  if (!provinceCode) throw new Error(`Unrecognized province "${input.province}".`);
+  const prov = dataCtx.getProvince(input.province);
+
+  const dividendsData = dataCtx.dividends;
+  const dividends = calculateDividends(eligibleDividends, nonEligibleDividends, provinceCode, dividendsData);
+  const grossedUpEligible = eligibleDividends * dividendsData.eligible.grossUpRate;
+  const grossedUpNonEligible = nonEligibleDividends * dividendsData.nonEligible.grossUpRate;
+  const capitalGainsInclusionRate = 0.50;
+  const taxableCapitalGains = capitalGains * capitalGainsInclusionRate;
+  const taxableIncome = Math.max(0,
+    employmentIncome + selfEmploymentIncome + otherIncome +
+    grossedUpEligible + grossedUpNonEligible + taxableCapitalGains -
+    rrspDeduction - fhsaDeduction - estimatedDeductions
+  );
+
+  const cppCalc = calculateCPP(employmentIncome, dataCtx.payroll);
+  const eiCalc = calculateEI(employmentIncome, dataCtx.payroll);
+  const cpp = cppCalc.cpp;
+  const ei = eiCalc.ei;
+
+  const federal = calculateFederalTax(taxableIncome, cpp, ei, employmentIncome, dividends, dataCtx.federal);
+  const provincial = (provinceCode === 'ON'
+    ? calculateOntarioTax(taxableIncome, prov, dividends)
+    : calculateProvincialTaxGeneric(taxableIncome, prov, dividends));
+  const totalIncomeTax = federal.netTax + provincial.netTax;
+  return {
+    totalIncomeTax,
+    totalIncome: employmentIncome + selfEmploymentIncome + otherIncome + eligibleDividends + nonEligibleDividends + capitalGains,
+    taxableIncome,
+    federal,
+    provincial,
+    cpp,
+    ei,
+    cppCalc,
+    eiCalc,
+    dividends,
+    dividendGrossUp: dividends.eligibleGrossUp + dividends.nonEligibleGrossUp,
+    grossedUpEligible,
+    grossedUpNonEligible,
+    capitalGainsInclusionRate,
+    taxableCapitalGains,
+  };
 }
 
 /**
@@ -340,8 +588,7 @@ function calculateMarginalRate(taxableIncome, province, cpp, ei) {
  * @param {Object} data - Pre-loaded tax data (optional, will load if not provided)
  * @returns {Object} Complete tax calculation result
  */
-export function computePersonalTax(input, data = {}) {
-  // Extract inputs
+export function computePersonalTax(input, opts = {}) {
   const {
     year = 2025,
     province,
@@ -357,68 +604,49 @@ export function computePersonalTax(input, data = {}) {
     taxPaid = 0
   } = input;
 
-  // Calculate total income (for display purposes - includes full dividends and capital gains)
-  const totalIncome = employmentIncome + selfEmploymentIncome + otherIncome + 
-                     eligibleDividends + nonEligibleDividends + capitalGains;
+  const dataCtx = buildDataContext(opts);
+  const result = runFullCalculation(input, dataCtx);
+  const {
+    totalIncome,
+    taxableIncome,
+    federal,
+    provincial,
+    cpp,
+    ei,
+    cppCalc,
+    eiCalc,
+    dividends,
+    dividendGrossUp,
+    capitalGainsInclusionRate,
+    taxableCapitalGains,
+  } = result;
 
-  // Calculate dividends gross-up
-  const dividends = calculateDividends(eligibleDividends, nonEligibleDividends, province);
-  const dividendGrossUp = dividends.eligibleGrossUp + dividends.nonEligibleGrossUp;
-  // Grossed-up dividend amount for tax calculation
-  const dividendsData = getDividendsData();
-  const grossedUpEligible = eligibleDividends * dividendsData.eligible.grossUpRate;
-  const grossedUpNonEligible = nonEligibleDividends * dividendsData.nonEligible.grossUpRate;
-
-  // Capital gains inclusion (default 50%)
-  const capitalGainsInclusionRate = 0.50;
-  const taxableCapitalGains = capitalGains * capitalGainsInclusionRate;
-
-  // Calculate taxable income
-  // Note: Dividends are replaced by their grossed-up amounts, capital gains use inclusion rate
-  // Estimated deductions are subtracted from taxable income (user-provided estimate of additional deductions)
-  const taxableIncome = Math.max(0, 
-    employmentIncome + 
-    selfEmploymentIncome + 
-    otherIncome + 
-    grossedUpEligible + 
-    grossedUpNonEligible + 
-    taxableCapitalGains - 
-    rrspDeduction - 
-    fhsaDeduction - 
-    estimatedDeductions
-  );
-
-  // Calculate CPP and EI (only on employment income for v1)
-  const cppCalc = calculateCPP(employmentIncome);
-  const eiCalc = calculateEI(employmentIncome);
-  const cpp = cppCalc.cpp;
-  const ei = eiCalc.ei;
-
-  // Calculate federal tax
-  const federal = calculateFederalTax(taxableIncome, cpp, ei, data);
-
-  // Calculate provincial tax
-  const provincial = calculateProvincialTax(taxableIncome, province, data);
-
-  // Apply dividend tax credits (reduce tax)
-  const totalDTCFed = dividends.eligibleDTCFed + dividends.nonEligibleDTCFed;
-  const totalDTCProv = dividends.eligibleDTCProv + dividends.nonEligibleDTCProv;
-  
-  const federalTax = Math.max(0, federal.netTax - totalDTCFed);
-  const provTax = Math.max(0, provincial.netTax - totalDTCProv);
-
+  const federalTax = federal.netTax;
+  const provTax = provincial.netTax;
   const totalIncomeTax = federalTax + provTax;
   const totalBurden = totalIncomeTax + cpp + ei;
   const afterTaxIncome = totalIncome - totalIncomeTax;
   const takeHomeAfterPayroll = totalIncome - totalBurden;
   const avgRate = totalIncome > 0 ? totalIncomeTax / totalIncome : 0;
 
-  // Calculate marginal rate (before DTC applied, use netTax for surtax calculation)
-  // Calculate marginal rate (must match main flow: includes credits, surtaxes, premiums)
-  const marginalRate = calculateMarginalRate(taxableIncome, province, cpp, ei);
+  const marginalRates = computeMarginalRatesByType(input, dataCtx);
+  const marginalRate = marginalRates.combined;
 
-  // Refund or balance owing
   const refundOrOwing = taxPaid - totalIncomeTax;
+
+  if (opts?.validationMode) {
+    const isOnDividendTestCase =
+      year === 2025 && province === 'ON' &&
+      employmentIncome === 0 && selfEmploymentIncome === 0 && otherIncome === 0 &&
+      nonEligibleDividends === 0 && capitalGains === 0 &&
+      rrspDeduction === 0 && fhsaDeduction === 0 && estimatedDeductions === 0 &&
+      taxPaid === 0 && eligibleDividends === 160000;
+    if (isOnDividendTestCase) {
+      console.assert(Math.abs(federalTax - 13570) < 1, 'Federal tax validation failed for ON eligible dividend test case.');
+      console.assert(Math.abs(provTax - 6898) < 1, 'Ontario tax validation failed for ON eligible dividend test case.');
+      console.assert(Math.abs(totalIncomeTax - 20470) < 1, 'Total tax validation failed for ON eligible dividend test case.');
+    }
+  }
 
   return {
     totals: {
@@ -434,29 +662,15 @@ export function computePersonalTax(input, data = {}) {
       takeHomeAfterPayroll,
       avgRate,
       marginalRate,
-      refundOrOwing
+      refundOrOwing,
     },
     breakdown: {
-      federal: {
-        ...federal,
-        dtcApplied: totalDTCFed
-      },
-      provincial: {
-        ...provincial,
-        dtcApplied: totalDTCProv
-      },
-      dividends: {
-        ...dividends,
-        totalGrossUp: dividendGrossUp
-      },
-      capitalGains: {
-        inclusionRate: capitalGainsInclusionRate,
-        taxableCapitalGains
-      },
-      payroll: {
-        cpp: cppCalc,
-        ei: eiCalc
-      }
-    }
+      federal: { ...federal, dtcApplied: federal.federalDividendCredits || 0 },
+      provincial: { ...provincial, dtcApplied: provincial.provincialDividendCredits || 0 },
+      dividends: { ...dividends, totalGrossUp: dividendGrossUp },
+      capitalGains: { inclusionRate: capitalGainsInclusionRate, taxableCapitalGains },
+      payroll: { cpp: cppCalc, ei: eiCalc },
+      marginalRates,
+    },
   };
 }

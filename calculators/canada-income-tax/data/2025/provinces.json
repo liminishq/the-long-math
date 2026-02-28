@@ -11,7 +11,7 @@
     "credits": {
       "basicPersonalAmount": {
         "amount": 21385,
-        "rate": 1.0
+        "rate": 0.10
       }
     },
     "surtaxes": [],
@@ -31,7 +31,7 @@
     "credits": {
       "basicPersonalAmount": {
         "amount": 12580,
-        "rate": 1.0
+        "rate": 0.0506
       }
     },
     "surtaxes": [],
@@ -47,7 +47,7 @@
     "credits": {
       "basicPersonalAmount": {
         "amount": 15000,
-        "rate": 1.0
+        "rate": 0.108
       }
     },
     "surtaxes": [],
@@ -64,7 +64,7 @@
     "credits": {
       "basicPersonalAmount": {
         "amount": 12580,
-        "rate": 1.0
+        "rate": 0.094
       }
     },
     "surtaxes": [],
@@ -82,7 +82,7 @@
     "credits": {
       "basicPersonalAmount": {
         "amount": 12580,
-        "rate": 1.0
+        "rate": 0.087
       }
     },
     "surtaxes": [],
@@ -100,7 +100,7 @@
     "credits": {
       "basicPersonalAmount": {
         "amount": 12580,
-        "rate": 1.0
+        "rate": 0.0879
       }
     },
     "surtaxes": [],
@@ -117,7 +117,7 @@
     "credits": {
       "basicPersonalAmount": {
         "amount": 16593,
-        "rate": 1.0
+        "rate": 0.059
       }
     },
     "surtaxes": [],
@@ -134,7 +134,7 @@
     "credits": {
       "basicPersonalAmount": {
         "amount": 17809,
-        "rate": 1.0
+        "rate": 0.04
       }
     },
     "surtaxes": [],
@@ -142,40 +142,33 @@
   },
   "ON": {
     "name": "Ontario",
+    "computationSteps": ["brackets", "credits", "surtax", "minTax", "dividendCredit", "reduction", "premiums"],
     "brackets": [
       { "threshold": 0, "rate": 0.0505 },
-      { "threshold": 51446, "rate": 0.0915 },
-      { "threshold": 102894, "rate": 0.1116 },
+      { "threshold": 52886, "rate": 0.0915 },
+      { "threshold": 105775, "rate": 0.1116 },
       { "threshold": 150000, "rate": 0.1216 },
       { "threshold": 220000, "rate": 0.1316 }
     ],
     "credits": {
       "basicPersonalAmount": {
-        "amount": 12580,
-        "rate": 1.0
+        "amount": 12747,
+        "rate": 0.0505
       }
     },
     "surtaxes": [
       {
         "name": "Ontario Surtax",
-        "threshold": 5500,
+        "threshold": 5710,
         "rate": 0.20,
-        "threshold2": 9000,
+        "threshold2": 7307,
         "rate2": 0.36
       }
     ],
     "premiums": [
       {
         "name": "Ontario Health Premium",
-        "brackets": [
-          { "threshold": 0, "amount": 0 },
-          { "threshold": 20000, "amount": 0 },
-          { "threshold": 25000, "amount": 300 },
-          { "threshold": 36000, "amount": 450 },
-          { "threshold": 48000, "amount": 600 },
-          { "threshold": 72000, "amount": 750 },
-          { "threshold": 200000, "amount": 900 }
-        ]
+        "formula": "ontarioHealthPremium"
       }
     ]
   },
@@ -191,7 +184,7 @@
     "credits": {
       "basicPersonalAmount": {
         "amount": 12580,
-        "rate": 1.0
+        "rate": 0.098
       }
     },
     "surtaxes": [],
@@ -208,7 +201,7 @@
     "credits": {
       "basicPersonalAmount": {
         "amount": 18056,
-        "rate": 1.0
+        "rate": 0.14
       }
     },
     "surtaxes": [],
@@ -224,7 +217,7 @@
     "credits": {
       "basicPersonalAmount": {
         "amount": 18065,
-        "rate": 1.0
+        "rate": 0.105
       }
     },
     "surtaxes": [],
@@ -242,7 +235,7 @@
     "credits": {
       "basicPersonalAmount": {
         "amount": 15705,
-        "rate": 1.0
+        "rate": 0.064
       }
     },
     "surtaxes": [],

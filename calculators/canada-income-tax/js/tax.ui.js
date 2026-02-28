@@ -116,6 +116,9 @@ function attachEventListeners() {
   // Text inputs get both input and change events
   const textInputs = document.querySelectorAll('input[type="text"]');
   textInputs.forEach(input => {
+    // Ensure no artificial character-length truncation; validation is numeric/range-based.
+    input.removeAttribute('maxlength');
+
     input.addEventListener('input', calculate);
     input.addEventListener('change', calculate);
   });
@@ -177,19 +180,70 @@ function resetAllInputs() {
  * Get all input values from the form
  */
 function getInputs() {
-  return {
-    year: parseInt(document.getElementById('year').value) || 2025,
+  const raw = {
+    year: document.getElementById('year').value,
     province: document.getElementById('province').value,
-    employmentIncome: parseInput(document.getElementById('employmentIncome').value),
-    selfEmploymentIncome: parseInput(document.getElementById('selfEmploymentIncome').value),
-    otherIncome: parseInput(document.getElementById('otherIncome').value),
-    eligibleDividends: parseInput(document.getElementById('eligibleDividends').value),
-    nonEligibleDividends: parseInput(document.getElementById('nonEligibleDividends').value),
-    capitalGains: parseInput(document.getElementById('capitalGains').value),
-    rrspDeduction: parseInput(document.getElementById('rrspDeduction').value),
-    fhsaDeduction: parseInput(document.getElementById('fhsaDeduction').value),
-    estimatedDeductions: parseInput(document.getElementById('estimatedDeductions').value),
-    taxPaid: parseInput(document.getElementById('taxPaid').value)
+    employmentIncome: document.getElementById('employmentIncome').value,
+    selfEmploymentIncome: document.getElementById('selfEmploymentIncome').value,
+    otherIncome: document.getElementById('otherIncome').value,
+    eligibleDividends: document.getElementById('eligibleDividends').value,
+    nonEligibleDividends: document.getElementById('nonEligibleDividends').value,
+    capitalGains: document.getElementById('capitalGains').value,
+    rrspDeduction: document.getElementById('rrspDeduction').value,
+    fhsaDeduction: document.getElementById('fhsaDeduction').value,
+    estimatedDeductions: document.getElementById('estimatedDeductions').value,
+    taxPaid: document.getElementById('taxPaid').value
+  };
+
+  // Development-only debug guard: log raw strings before parsing to confirm no truncation.
+  // Safe to remove or wrap in an environment flag later.
+  console.debug('Raw input values before parsing:', {
+    eligibleDividends: raw.eligibleDividends
+  });
+
+  const MAX_INPUT = 1e9;
+
+  const parsed = {
+    year: parseInt(raw.year) || 2025,
+    province: raw.province,
+    employmentIncome: parseInput(raw.employmentIncome),
+    selfEmploymentIncome: parseInput(raw.selfEmploymentIncome),
+    otherIncome: parseInput(raw.otherIncome),
+    eligibleDividends: parseInput(raw.eligibleDividends),
+    nonEligibleDividends: parseInput(raw.nonEligibleDividends),
+    capitalGains: parseInput(raw.capitalGains),
+    rrspDeduction: parseInput(raw.rrspDeduction),
+    fhsaDeduction: parseInput(raw.fhsaDeduction),
+    estimatedDeductions: parseInput(raw.estimatedDeductions),
+    taxPaid: parseInput(raw.taxPaid)
+  };
+
+  // Numeric range validation: clamp is not applied, but values beyond MAX_INPUT
+  // will be flagged so the user sees a validation error instead of silent truncation.
+  const numericFields = [
+    'employmentIncome',
+    'selfEmploymentIncome',
+    'otherIncome',
+    'eligibleDividends',
+    'nonEligibleDividends',
+    'capitalGains',
+    'rrspDeduction',
+    'fhsaDeduction',
+    'estimatedDeductions',
+    'taxPaid'
+  ];
+
+  let hasRangeError = false;
+  numericFields.forEach(field => {
+    if (parsed[field] > MAX_INPUT) {
+      hasRangeError = true;
+      console.warn(`Value for ${field} exceeds maximum supported amount (${MAX_INPUT}). Raw:`, raw[field]);
+    }
+  });
+
+  return {
+    ...parsed,
+    _hasRangeError: hasRangeError
   };
 }
 
@@ -246,6 +300,13 @@ function calculate() {
       if (placeholder) {
         placeholder.remove();
       }
+    }
+
+    // Numeric range validation: if any numeric input is beyond supported range,
+    // surface a user-facing error instead of silently truncating.
+    if (inputs._hasRangeError) {
+      showError('One or more amounts exceed the maximum supported value. Please reduce the input and try again.');
+      return;
     }
 
     const result = computePersonalTax(inputs);
