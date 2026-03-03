@@ -161,6 +161,9 @@ function normalizeAndValidateProvinces(raw) {
   const out = {};
 
   for (const [key, provObj] of Object.entries(raw)) {
+    // Allow metadata keys (e.g., "_source") without treating them as provinces.
+    if (String(key).startsWith("_")) continue;
+
     const code = normalizeProvinceKey(key);
     assert(code, `provinces.json: unrecognized province key "${key}" (expected ON/BC/... or full name)`);
     // If duplicates collide (e.g., "ON" and "Ontario"), prefer the explicit 2-letter key.
