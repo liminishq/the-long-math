@@ -1,0 +1,527 @@
+{
+  "year": 2025,
+  "referenceIncome": 160000,
+  "source": "the-long-math",
+  "rows": [
+    {
+      "province": "AB",
+      "incomeType": "salary",
+      "incomeTypeLabel": "Salary",
+      "totalTax": 42565.16,
+      "federalTax": 28463.66,
+      "provTax": 14101.5,
+      "taxableIncome": 160000,
+      "marginalRatePct": 38
+    },
+    {
+      "province": "AB",
+      "incomeType": "capitalGains",
+      "incomeTypeLabel": "Capital gains",
+      "totalTax": 16479.79,
+      "federalTax": 10618.3,
+      "provTax": 5861.5,
+      "taxableIncome": 80000,
+      "marginalRatePct": 15.25
+    },
+    {
+      "province": "AB",
+      "incomeType": "eligibleDividends",
+      "incomeTypeLabel": "Eligible dividends",
+      "totalTax": 13438.58,
+      "federalTax": 13438.58,
+      "provTax": 0,
+      "taxableIncome": 220800,
+      "marginalRatePct": 19.29
+    },
+    {
+      "province": "AB",
+      "incomeType": "otherIncome",
+      "incomeTypeLabel": "Other income",
+      "totalTax": 43608.8,
+      "federalTax": 29507.3,
+      "provTax": 14101.5,
+      "taxableIncome": 160000,
+      "marginalRatePct": 38
+    },
+    {
+      "province": "BC",
+      "incomeType": "salary",
+      "incomeTypeLabel": "Salary",
+      "totalTax": 42205.11,
+      "federalTax": 28463.66,
+      "provTax": 13741.45,
+      "taxableIncome": 160000,
+      "marginalRatePct": 40.7
+    },
+    {
+      "province": "BC",
+      "incomeType": "capitalGains",
+      "incomeTypeLabel": "Capital gains",
+      "totalTax": 14876.75,
+      "federalTax": 10618.3,
+      "provTax": 4258.45,
+      "taxableIncome": 80000,
+      "marginalRatePct": 14.1
+    },
+    {
+      "province": "BC",
+      "incomeType": "eligibleDividends",
+      "incomeTypeLabel": "Eligible dividends",
+      "totalTax": 13438.58,
+      "federalTax": 13438.58,
+      "provTax": 0,
+      "taxableIncome": 220800,
+      "marginalRatePct": 19.29
+    },
+    {
+      "province": "BC",
+      "incomeType": "otherIncome",
+      "incomeTypeLabel": "Other income",
+      "totalTax": 43248.75,
+      "federalTax": 29507.3,
+      "provTax": 13741.45,
+      "taxableIncome": 160000,
+      "marginalRatePct": 40.7
+    },
+    {
+      "province": "MB",
+      "incomeType": "salary",
+      "incomeTypeLabel": "Salary",
+      "totalTax": 49117.66,
+      "federalTax": 28463.66,
+      "provTax": 20654,
+      "taxableIncome": 160000,
+      "marginalRatePct": 43.4
+    },
+    {
+      "province": "MB",
+      "incomeType": "capitalGains",
+      "incomeTypeLabel": "Capital gains",
+      "totalTax": 18282.29,
+      "federalTax": 10618.3,
+      "provTax": 7664,
+      "taxableIncome": 80000,
+      "marginalRatePct": 16.63
+    },
+    {
+      "province": "MB",
+      "incomeType": "eligibleDividends",
+      "incomeTypeLabel": "Eligible dividends",
+      "totalTax": 20383.58,
+      "federalTax": 13438.58,
+      "provTax": 6945,
+      "taxableIncome": 220800,
+      "marginalRatePct": 28.12
+    },
+    {
+      "province": "MB",
+      "incomeType": "otherIncome",
+      "incomeTypeLabel": "Other income",
+      "totalTax": 50161.3,
+      "federalTax": 29507.3,
+      "provTax": 20654,
+      "taxableIncome": 160000,
+      "marginalRatePct": 43.4
+    },
+    {
+      "province": "NB",
+      "incomeType": "salary",
+      "incomeTypeLabel": "Salary",
+      "totalTax": 48584.14,
+      "federalTax": 28463.66,
+      "provTax": 20120.48,
+      "taxableIncome": 160000,
+      "marginalRatePct": 42
+    },
+    {
+      "province": "NB",
+      "incomeType": "capitalGains",
+      "incomeTypeLabel": "Capital gains",
+      "totalTax": 18337.78,
+      "federalTax": 10618.3,
+      "provTax": 7719.48,
+      "taxableIncome": 80000,
+      "marginalRatePct": 17.25
+    },
+    {
+      "province": "NB",
+      "incomeType": "eligibleDividends",
+      "incomeTypeLabel": "Eligible dividends",
+      "totalTax": 13627.06,
+      "federalTax": 13438.58,
+      "provTax": 188.48,
+      "taxableIncome": 220800,
+      "marginalRatePct": 26.88
+    },
+    {
+      "province": "NB",
+      "incomeType": "otherIncome",
+      "incomeTypeLabel": "Other income",
+      "totalTax": 49627.77,
+      "federalTax": 29507.3,
+      "provTax": 20120.48,
+      "taxableIncome": 160000,
+      "marginalRatePct": 42
+    },
+    {
+      "province": "NL",
+      "incomeType": "salary",
+      "incomeTypeLabel": "Salary",
+      "totalTax": 49107.2,
+      "federalTax": 28463.66,
+      "provTax": 20643.54,
+      "taxableIncome": 160000,
+      "marginalRatePct": 43.3
+    },
+    {
+      "province": "NL",
+      "incomeType": "capitalGains",
+      "incomeTypeLabel": "Capital gains",
+      "totalTax": 18617.84,
+      "federalTax": 10618.3,
+      "provTax": 7999.54,
+      "taxableIncome": 80000,
+      "marginalRatePct": 17.5
+    },
+    {
+      "province": "NL",
+      "incomeType": "eligibleDividends",
+      "incomeTypeLabel": "Eligible dividends",
+      "totalTax": 20361.12,
+      "federalTax": 13438.58,
+      "provTax": 6922.54,
+      "taxableIncome": 220800,
+      "marginalRatePct": 29.37
+    },
+    {
+      "province": "NL",
+      "incomeType": "otherIncome",
+      "incomeTypeLabel": "Other income",
+      "totalTax": 50150.84,
+      "federalTax": 29507.3,
+      "provTax": 20643.54,
+      "taxableIncome": 160000,
+      "marginalRatePct": 43.3
+    },
+    {
+      "province": "NS",
+      "incomeType": "salary",
+      "incomeTypeLabel": "Salary",
+      "totalTax": 52095.88,
+      "federalTax": 28463.66,
+      "provTax": 23632.22,
+      "taxableIncome": 160000,
+      "marginalRatePct": 47
+    },
+    {
+      "province": "NS",
+      "incomeType": "capitalGains",
+      "incomeTypeLabel": "Capital gains",
+      "totalTax": 20008.51,
+      "federalTax": 10618.3,
+      "provTax": 9390.22,
+      "taxableIncome": 80000,
+      "marginalRatePct": 18.59
+    },
+    {
+      "province": "NS",
+      "incomeType": "eligibleDividends",
+      "incomeTypeLabel": "Eligible dividends",
+      "totalTax": 32174.79,
+      "federalTax": 13438.58,
+      "provTax": 18736.22,
+      "taxableIncome": 220800,
+      "marginalRatePct": 37.23
+    },
+    {
+      "province": "NS",
+      "incomeType": "otherIncome",
+      "incomeTypeLabel": "Other income",
+      "totalTax": 53139.51,
+      "federalTax": 29507.3,
+      "provTax": 23632.22,
+      "taxableIncome": 160000,
+      "marginalRatePct": 47
+    },
+    {
+      "province": "NT",
+      "incomeType": "salary",
+      "incomeTypeLabel": "Salary",
+      "totalTax": 42272.67,
+      "federalTax": 28463.66,
+      "provTax": 13809.01,
+      "taxableIncome": 160000,
+      "marginalRatePct": 40.05
+    },
+    {
+      "province": "NT",
+      "incomeType": "capitalGains",
+      "incomeTypeLabel": "Capital gains",
+      "totalTax": 15214.31,
+      "federalTax": 10618.3,
+      "provTax": 4596.01,
+      "taxableIncome": 80000,
+      "marginalRatePct": 14.55
+    },
+    {
+      "province": "NT",
+      "incomeType": "eligibleDividends",
+      "incomeTypeLabel": "Eligible dividends",
+      "totalTax": 13438.58,
+      "federalTax": 13438.58,
+      "provTax": 0,
+      "taxableIncome": 220800,
+      "marginalRatePct": 19.29
+    },
+    {
+      "province": "NT",
+      "incomeType": "otherIncome",
+      "incomeTypeLabel": "Other income",
+      "totalTax": 43316.31,
+      "federalTax": 29507.3,
+      "provTax": 13809.01,
+      "taxableIncome": 160000,
+      "marginalRatePct": 40.05
+    },
+    {
+      "province": "NU",
+      "incomeType": "salary",
+      "incomeTypeLabel": "Salary",
+      "totalTax": 38840.3,
+      "federalTax": 28463.66,
+      "provTax": 10376.64,
+      "taxableIncome": 160000,
+      "marginalRatePct": 37.5
+    },
+    {
+      "province": "NU",
+      "incomeType": "capitalGains",
+      "incomeTypeLabel": "Capital gains",
+      "totalTax": 14055.94,
+      "federalTax": 10618.3,
+      "provTax": 3437.64,
+      "taxableIncome": 80000,
+      "marginalRatePct": 13.75
+    },
+    {
+      "province": "NU",
+      "incomeType": "eligibleDividends",
+      "incomeTypeLabel": "Eligible dividends",
+      "totalTax": 21975.22,
+      "federalTax": 13438.58,
+      "provTax": 8536.64,
+      "taxableIncome": 220800,
+      "marginalRatePct": 29.64
+    },
+    {
+      "province": "NU",
+      "incomeType": "otherIncome",
+      "incomeTypeLabel": "Other income",
+      "totalTax": 39883.94,
+      "federalTax": 29507.3,
+      "provTax": 10376.64,
+      "taxableIncome": 160000,
+      "marginalRatePct": 37.5
+    },
+    {
+      "province": "ON",
+      "incomeType": "salary",
+      "incomeTypeLabel": "Salary",
+      "totalTax": 45749.65,
+      "federalTax": 28463.66,
+      "provTax": 17285.99,
+      "taxableIncome": 160000,
+      "marginalRatePct": 44.97
+    },
+    {
+      "province": "ON",
+      "incomeType": "capitalGains",
+      "incomeTypeLabel": "Capital gains",
+      "totalTax": 15876.57,
+      "federalTax": 10618.3,
+      "provTax": 5258.28,
+      "taxableIncome": 80000,
+      "marginalRatePct": 14.83
+    },
+    {
+      "province": "ON",
+      "incomeType": "eligibleDividends",
+      "incomeTypeLabel": "Eligible dividends",
+      "totalTax": 20340.13,
+      "federalTax": 13438.58,
+      "provTax": 6901.55,
+      "taxableIncome": 220800,
+      "marginalRatePct": 33.82
+    },
+    {
+      "province": "ON",
+      "incomeType": "otherIncome",
+      "incomeTypeLabel": "Other income",
+      "totalTax": 46793.29,
+      "federalTax": 29507.3,
+      "provTax": 17285.99,
+      "taxableIncome": 160000,
+      "marginalRatePct": 44.97
+    },
+    {
+      "province": "PE",
+      "incomeType": "salary",
+      "incomeTypeLabel": "Salary",
+      "totalTax": 51465.82,
+      "federalTax": 28463.66,
+      "provTax": 23002.16,
+      "taxableIncome": 160000,
+      "marginalRatePct": 44
+    },
+    {
+      "province": "PE",
+      "incomeType": "capitalGains",
+      "incomeTypeLabel": "Capital gains",
+      "totalTax": 19545.46,
+      "federalTax": 10618.3,
+      "provTax": 8927.16,
+      "taxableIncome": 80000,
+      "marginalRatePct": 18.6
+    },
+    {
+      "province": "PE",
+      "incomeType": "eligibleDividends",
+      "incomeTypeLabel": "Eligible dividends",
+      "totalTax": 25304.74,
+      "federalTax": 13438.58,
+      "provTax": 11866.16,
+      "taxableIncome": 220800,
+      "marginalRatePct": 30.33
+    },
+    {
+      "province": "PE",
+      "incomeType": "otherIncome",
+      "incomeTypeLabel": "Other income",
+      "totalTax": 52509.46,
+      "federalTax": 29507.3,
+      "provTax": 23002.16,
+      "taxableIncome": 160000,
+      "marginalRatePct": 44
+    },
+    {
+      "province": "QC",
+      "incomeType": "salary",
+      "incomeTypeLabel": "Salary",
+      "totalTax": 57314.82,
+      "federalTax": 28463.66,
+      "provTax": 28851.16,
+      "taxableIncome": 160000,
+      "marginalRatePct": 51.75
+    },
+    {
+      "province": "QC",
+      "incomeType": "capitalGains",
+      "incomeTypeLabel": "Capital gains",
+      "totalTax": 20716.46,
+      "federalTax": 10618.3,
+      "provTax": 10098.16,
+      "taxableIncome": 80000,
+      "marginalRatePct": 19.75
+    },
+    {
+      "province": "QC",
+      "incomeType": "eligibleDividends",
+      "incomeTypeLabel": "Eligible dividends",
+      "totalTax": 32001.74,
+      "federalTax": 13438.58,
+      "provTax": 18563.16,
+      "taxableIncome": 220800,
+      "marginalRatePct": 38.61
+    },
+    {
+      "province": "QC",
+      "incomeType": "otherIncome",
+      "incomeTypeLabel": "Other income",
+      "totalTax": 58358.46,
+      "federalTax": 29507.3,
+      "provTax": 28851.16,
+      "taxableIncome": 160000,
+      "marginalRatePct": 51.75
+    },
+    {
+      "province": "SK",
+      "incomeType": "salary",
+      "incomeTypeLabel": "Salary",
+      "totalTax": 45751.83,
+      "federalTax": 28463.66,
+      "provTax": 17288.18,
+      "taxableIncome": 160000,
+      "marginalRatePct": 40.5
+    },
+    {
+      "province": "SK",
+      "incomeType": "capitalGains",
+      "incomeTypeLabel": "Capital gains",
+      "totalTax": 17680.47,
+      "federalTax": 10618.3,
+      "provTax": 7062.18,
+      "taxableIncome": 80000,
+      "marginalRatePct": 16.5
+    },
+    {
+      "province": "SK",
+      "incomeType": "eligibleDividends",
+      "incomeTypeLabel": "Eligible dividends",
+      "totalTax": 15254.75,
+      "federalTax": 13438.58,
+      "provTax": 1816.18,
+      "taxableIncome": 220800,
+      "marginalRatePct": 24.12
+    },
+    {
+      "province": "SK",
+      "incomeType": "otherIncome",
+      "incomeTypeLabel": "Other income",
+      "totalTax": 46795.47,
+      "federalTax": 29507.3,
+      "provTax": 17288.18,
+      "taxableIncome": 160000,
+      "marginalRatePct": 40.5
+    },
+    {
+      "province": "YT",
+      "incomeType": "salary",
+      "incomeTypeLabel": "Salary",
+      "totalTax": 41322.54,
+      "federalTax": 28463.66,
+      "provTax": 12858.88,
+      "taxableIncome": 160000,
+      "marginalRatePct": 36.9
+    },
+    {
+      "province": "YT",
+      "incomeType": "capitalGains",
+      "incomeTypeLabel": "Capital gains",
+      "totalTax": 15360.18,
+      "federalTax": 10618.3,
+      "provTax": 4741.88,
+      "taxableIncome": 80000,
+      "marginalRatePct": 14.75
+    },
+    {
+      "province": "YT",
+      "incomeType": "eligibleDividends",
+      "incomeTypeLabel": "Eligible dividends",
+      "totalTax": 13438.58,
+      "federalTax": 13438.58,
+      "provTax": 0,
+      "taxableIncome": 220800,
+      "marginalRatePct": 19.29
+    },
+    {
+      "province": "YT",
+      "incomeType": "otherIncome",
+      "incomeTypeLabel": "Other income",
+      "totalTax": 42366.18,
+      "federalTax": 29507.3,
+      "provTax": 12858.88,
+      "taxableIncome": 160000,
+      "marginalRatePct": 36.9
+    }
+  ]
+}

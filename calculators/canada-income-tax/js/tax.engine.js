@@ -40,9 +40,11 @@ function buildDataContext(opts = {}) {
  * Calculate tax for a single bracket
  * @param {number} taxableIncome - Taxable income
  * @param {Array} brackets - Array of {threshold, rate} objects
+ * @param {{ roundToDollar?: boolean }} opts - If roundToDollar is true (default), round each bracket tax per CRA Schedule 1
  * @returns {Array} Array of bracket calculations
  */
-function calculateBracketTax(taxableIncome, brackets) {
+function calculateBracketTax(taxableIncome, brackets, opts = {}) {
+  const roundToDollar = opts.roundToDollar !== false;
   const bracketLines = [];
   let remainingIncome = taxableIncome;
   let totalTax = 0;
@@ -64,15 +66,16 @@ function calculateBracketTax(taxableIncome, brackets) {
 
     const incomeInBracket = Math.min(remainingIncome, bracketTop - bracket.threshold);
     const taxInBracket = incomeInBracket * bracket.rate;
+    const tax = roundToDollar ? Math.round(taxInBracket) : taxInBracket;
 
     bracketLines.push({
       threshold: bracket.threshold,
       rate: bracket.rate,
       taxableInBracket: incomeInBracket,
-      tax: taxInBracket
+      tax
     });
 
-    totalTax += taxInBracket;
+    totalTax += tax;
     remainingIncome -= incomeInBracket;
   }
 
@@ -120,8 +123,8 @@ function calculateOntarioHealthPremium2025(taxableIncome) {
  * @param {Object} federal - Federal tax data (brackets, credits)
  * @returns {Object} Federal tax breakdown
  */
-function calculateFederalTax(taxableIncome, cpp, ei, employmentIncome, dividends, federal) {
-  const { bracketLines, baseTax } = calculateBracketTax(taxableIncome, federal.brackets);
+function calculateFederalTax(taxableIncome, cpp, ei, employmentIncome, dividends, federal, opts = {}) {
+  const { bracketLines, baseTax } = calculateBracketTax(taxableIncome, federal.brackets, opts);
 
   // Step B — Federal non-refundable credits.
   // Mirrors Federal Schedule 1 ordering: bracket tax → non-refundable credits → dividend tax credit.
@@ -198,8 +201,8 @@ function calculateFederalTax(taxableIncome, cpp, ei, employmentIncome, dividends
  * Generic provincial tax calculation for non-Ontario provinces.
  * Flow: brackets → credits → surtax → minTax → dividendCredit → reduction → premiums.
  */
-function calculateProvincialTaxGeneric(taxableIncome, prov, dividends) {
-  const { bracketLines, baseTax } = calculateBracketTax(taxableIncome, prov.brackets);
+function calculateProvincialTaxGeneric(taxableIncome, prov, dividends, opts = {}) {
+  const { bracketLines, baseTax } = calculateBracketTax(taxableIncome, prov.brackets, opts);
 
   // Non-refundable credits (BPA, etc.)
   const credits = [];
@@ -301,8 +304,8 @@ function calculateProvincialTaxGeneric(taxableIncome, prov, dividends) {
  * 5. subtract dividend tax credit (after surtax), clamp at 0
  * 6. add Ontario Health Premium (piecewise, capped at $900)
  */
-function calculateOntarioTax(taxableIncome, prov, dividends) {
-  const { bracketLines, baseTax } = calculateBracketTax(taxableIncome, prov.brackets);
+function calculateOntarioTax(taxableIncome, prov, dividends, opts = {}) {
+  const { bracketLines, baseTax } = calculateBracketTax(taxableIncome, prov.brackets, opts);
 
   // Step 2: Ontario non-refundable credits (currently BPA only), credit = amount × rate.
   const credits = [];
@@ -484,37 +487,114 @@ function calculateEI(employmentIncome, payroll) {
 
 const MARGINAL_DELTA = 1;
 
+/** Normalize numeric input from form (may be string). */
+function num(input, field) {
+  const v = input[field];
+  if (v == null || v === '') return 0;
+  const n = Number(v);
+  return isNaN(n) ? 0 : n;
+}
+
 /**
- * Compute marginal tax rates by perturbing the actual input type (not taxableIncome).
- * Returns federal+provincial additional tax per $1 of each income type.
+ * Deep copy input for perturbation (only top-level number fields matter).
+ * Ensures numeric fields are numbers so marginal logic and runFullCalculation see consistent types.
+ */
+function cloneInput(input) {
+  return {
+    year: input.year,
+    province: input.province,
+    employmentIncome: num(input, 'employmentIncome'),
+    selfEmploymentIncome: num(input, 'selfEmploymentIncome'),
+    otherIncome: num(input, 'otherIncome'),
+    eligibleDividends: num(input, 'eligibleDividends'),
+    nonEligibleDividends: num(input, 'nonEligibleDividends'),
+    capitalGains: num(input, 'capitalGains'),
+    rrspDeduction: num(input, 'rrspDeduction'),
+    fhsaDeduction: num(input, 'fhsaDeduction'),
+    estimatedDeductions: num(input, 'estimatedDeductions'),
+    taxPaid: num(input, 'taxPaid'),
+  };
+}
+
+/**
+ * Marginal tax rate = exact definition: delta tax per $1 of income type X.
+ * baseline = fullTax(inputs); clone = inputs, clone.X += 1; newTax = fullTax(clone);
+ * marginalRate = newTax.totalIncomeTax - baseline.totalIncomeTax. No division.
+ * Perturbation uses the exact field: employmentIncome, eligibleDividends, otherIncome, capitalGains (cash).
+ * If multiple income types exist, "combined" uses employment first, then eligible dividends, then other income, etc.
  */
 function computeMarginalRatesByType(input, dataCtx) {
-  const base = runFullCalculation(input, dataCtx);
-  const baseTax = base.totalIncomeTax;
+  // Use unrounded bracket tax so $1 perturbation gives true marginal rate (not 0 when rounding hides the change)
+  const roundOpts = { roundToDollar: false };
+  const baseline = runFullCalculation(input, dataCtx, roundOpts);
+  const baseTax = baseline.totalIncomeTax;
 
-  const marginal = (deltaInput) => {
-    const perturbed = runFullCalculation({ ...input, ...deltaInput }, dataCtx);
-    return (perturbed.totalIncomeTax - baseTax) / MARGINAL_DELTA;
+  const marginalFor = (field, currentValue) => {
+    const clone = cloneInput(input);
+    clone[field] = (currentValue ?? 0) + MARGINAL_DELTA;
+    const newResult = runFullCalculation(clone, dataCtx, roundOpts);
+    const marginalRate = newResult.totalIncomeTax - baseTax;
+    if (marginalRate < 0 || marginalRate > 1) {
+      console.warn('Marginal rate out of expected bounds:', marginalRate, `(field: ${field})`);
+    }
+    return marginalRate;
   };
 
-  const employment = marginal({ employmentIncome: (input.employmentIncome || 0) + MARGINAL_DELTA });
-  const eligibleDividends = marginal({ eligibleDividends: (input.eligibleDividends || 0) + MARGINAL_DELTA });
-  const nonEligibleDividends = marginal({ nonEligibleDividends: (input.nonEligibleDividends || 0) + MARGINAL_DELTA });
-  const capitalGains = marginal({ capitalGains: (input.capitalGains || 0) + MARGINAL_DELTA });
+  const employment = marginalFor('employmentIncome', num(input, 'employmentIncome'));
+  const eligibleDividendsMarg = marginalFor('eligibleDividends', num(input, 'eligibleDividends'));
+  const nonEligibleDividendsMarg = marginalFor('nonEligibleDividends', num(input, 'nonEligibleDividends'));
+  const otherIncomeMarg = marginalFor('otherIncome', num(input, 'otherIncome'));
+  const capitalGainsMarg = marginalFor('capitalGains', num(input, 'capitalGains'));
 
-  const combined = input.employmentIncome > 0 ? employment
-    : input.eligibleDividends > 0 ? eligibleDividends
-    : input.nonEligibleDividends > 0 ? nonEligibleDividends
-    : input.capitalGains > 0 ? capitalGains
+  // Which income type is "active" (priority order: employment, eligible div, other, non-eligible div, capital gains).
+  // Use num() so form string "160000" is treated as 160000.
+  const hasEmployment = num(input, 'employmentIncome') > 0;
+  const hasEligibleDiv = num(input, 'eligibleDividends') > 0;
+  const hasOtherIncome = num(input, 'otherIncome') > 0;
+  const hasNonEligibleDiv = num(input, 'nonEligibleDividends') > 0;
+  const hasCapitalGains = num(input, 'capitalGains') > 0;
+
+  let combined =
+    hasEmployment ? employment
+    : hasEligibleDiv ? eligibleDividendsMarg
+    : hasOtherIncome ? otherIncomeMarg
+    : hasNonEligibleDiv ? nonEligibleDividendsMarg
+    : hasCapitalGains ? capitalGainsMarg
     : employment;
 
-  return { employment, eligibleDividends, nonEligibleDividends, capitalGains, combined };
+  // Never show an impossible marginal to the user (CRA-style marginals are 0–100%).
+  // If the chosen marginal is out of bounds, use the first in-bounds marginal for an active type.
+  const inBounds = (r) => typeof r === 'number' && !isNaN(r) && r >= 0 && r <= 1;
+  if (!inBounds(combined)) {
+    console.warn('Marginal rate out of expected bounds:', combined, '(combined); using first in-bounds active type.');
+    if (hasEmployment && inBounds(employment)) combined = employment;
+    else if (hasEligibleDiv && inBounds(eligibleDividendsMarg)) combined = eligibleDividendsMarg;
+    else if (hasOtherIncome && inBounds(otherIncomeMarg)) combined = otherIncomeMarg;
+    else if (hasNonEligibleDiv && inBounds(nonEligibleDividendsMarg)) combined = nonEligibleDividendsMarg;
+    else if (hasCapitalGains && inBounds(capitalGainsMarg)) combined = capitalGainsMarg;
+    else if (inBounds(employment)) combined = employment;
+    else if (inBounds(eligibleDividendsMarg)) combined = eligibleDividendsMarg;
+    else if (inBounds(otherIncomeMarg)) combined = otherIncomeMarg;
+    else if (inBounds(nonEligibleDividendsMarg)) combined = nonEligibleDividendsMarg;
+    else if (inBounds(capitalGainsMarg)) combined = capitalGainsMarg;
+    else combined = 0; // fallback to 0% rather than show -22455%
+  }
+
+  return {
+    employment,
+    eligibleDividends: eligibleDividendsMarg,
+    nonEligibleDividends: nonEligibleDividendsMarg,
+    otherIncome: otherIncomeMarg,
+    capitalGains: capitalGainsMarg,
+    combined,
+  };
 }
 
 /**
  * Run full tax calculation (internal). Used by computePersonalTax and marginal rate.
+ * @param {Object} runOpts - Optional. { roundToDollar: false } to use exact bracket tax (for marginal rate calculation).
  */
-function runFullCalculation(input, dataCtx) {
+function runFullCalculation(input, dataCtx, runOpts = {}) {
   const {
     employmentIncome = 0,
     selfEmploymentIncome = 0,
@@ -547,10 +627,11 @@ function runFullCalculation(input, dataCtx) {
   const cpp = cppCalc.cpp;
   const ei = eiCalc.ei;
 
-  const federal = calculateFederalTax(taxableIncome, cpp, ei, employmentIncome, dividends, dataCtx.federal);
+  const calcOpts = runOpts.roundToDollar === false ? { roundToDollar: false } : {};
+  const federal = calculateFederalTax(taxableIncome, cpp, ei, employmentIncome, dividends, dataCtx.federal, calcOpts);
   const provincial = (provinceCode === 'ON'
-    ? calculateOntarioTax(taxableIncome, prov, dividends)
-    : calculateProvincialTaxGeneric(taxableIncome, prov, dividends));
+    ? calculateOntarioTax(taxableIncome, prov, dividends, calcOpts)
+    : calculateProvincialTaxGeneric(taxableIncome, prov, dividends, calcOpts));
   const totalIncomeTax = federal.netTax + provincial.netTax;
   return {
     totalIncomeTax,
@@ -589,6 +670,8 @@ function runFullCalculation(input, dataCtx) {
  * @returns {Object} Complete tax calculation result
  */
 export function computePersonalTax(input, opts = {}) {
+  // Normalize so form strings like "160000" become numbers; ensures correct arithmetic and marginal choice.
+  const normalizedInput = cloneInput(input);
   const {
     year = 2025,
     province,
@@ -602,10 +685,10 @@ export function computePersonalTax(input, opts = {}) {
     fhsaDeduction = 0,
     estimatedDeductions = 0,
     taxPaid = 0
-  } = input;
+  } = normalizedInput;
 
   const dataCtx = buildDataContext(opts);
-  const result = runFullCalculation(input, dataCtx);
+  const result = runFullCalculation(normalizedInput, dataCtx);
   const {
     totalIncome,
     taxableIncome,
@@ -629,7 +712,7 @@ export function computePersonalTax(input, opts = {}) {
   const takeHomeAfterPayroll = totalIncome - totalBurden;
   const avgRate = totalIncome > 0 ? totalIncomeTax / totalIncome : 0;
 
-  const marginalRates = computeMarginalRatesByType(input, dataCtx);
+  const marginalRates = computeMarginalRatesByType(normalizedInput, dataCtx);
   const marginalRate = marginalRates.combined;
 
   const refundOrOwing = taxPaid - totalIncomeTax;
