@@ -112,6 +112,29 @@ export function test_ON_2025_employment_only_160k() {
 }
 
 /**
+ * 2025 ON: $160k employment — CRA-derived federal (Schedule 1 step-by-step), provincial from an external comparator tax tool.
+ * Ensures we stay within tolerance of cra-expected.2025.json.
+ */
+export function test_ON_2025_employment_160k_CRA_expected() {
+  const data = getDataOverride();
+  const craExpectedPath = join(DATA_DIR, 'cra-expected.2025.json');
+  const cra = JSON.parse(readFileSync(craExpectedPath, 'utf8'));
+  const scenario = cra.scenarios.find(s => s.id === 'ON_employment_160k');
+  if (!scenario) throw new Error('CRA expected scenario ON_employment_160k not found');
+
+  const input = { year: 2025, ...scenario.input, fhsaDeduction: 0, estimatedDeductions: 0, taxPaid: 0 };
+  const result = computePersonalTax(input, { dataOverride: data });
+
+  const tolFed = scenario.toleranceFederal ?? 10;
+  const tolProv = scenario.toleranceProvincial ?? 600;
+  const tolTotal = scenario.toleranceTotal ?? 650;
+  assertApprox(result.totals.federalTax, scenario.expected.federalTax, tolFed, 'federalTax (CRA Schedule 1)');
+  assertApprox(result.totals.provTax, scenario.expected.provTax, tolProv, 'provTax');
+  assertApprox(result.totals.totalIncomeTax, scenario.expected.totalIncomeTax, tolTotal, 'totalIncomeTax');
+  return true;
+}
+
+/**
  * 2025 AB: eligible dividends only (small amount to get non-zero provincial tax).
  */
 export function test_AB_2025_eligible_dividends_only() {
@@ -150,6 +173,7 @@ function runAll() {
   const tests = [
     ['ON 2025 eligible dividends $160k', test_ON_2025_eligible_dividends_only_160k],
     ['ON 2025 employment $160k', test_ON_2025_employment_only_160k],
+    ['ON 2025 employment $160k (CRA expected)', test_ON_2025_employment_160k_CRA_expected],
     ['AB 2025 eligible dividends $100k', test_AB_2025_eligible_dividends_only],
   ];
   let passed = 0;

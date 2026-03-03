@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
  * Run the-long-math calculator for $160,000 in each income type, for every province/territory.
- * Use as baseline to compare with TurboTax (manual or via turbotax-baseline.2025.160k.json).
+ * Use as baseline to compare with an external comparator tax tool (manual or via external-baseline.2025.160k.json).
  *
  * Usage (from repo root):
  *   node tools/tests/run-160k-comparison.js [--year=2025] [--out=results.json]
  *
- * Income types: salary (employment), capitalGains, eligibleDividends, otherIncome.
+ * Income types: salary (employment), capitalGains, eligibleDividends, nonEligibleDividends, otherIncome.
  */
 
 import { readFileSync, writeFileSync } from 'fs';
@@ -21,9 +21,10 @@ const DATA_DIR = join(ROOT, 'calculators/canada-income-tax/data/2025');
 const PROVINCES = ['AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT'];
 
 const INCOME_TYPES = [
-  { id: 'salary', label: 'Salary', field: 'employmentIncome' },
+  { id: 'salary', label: 'Salary (employment income)', field: 'employmentIncome' },
   { id: 'capitalGains', label: 'Capital gains', field: 'capitalGains' },
   { id: 'eligibleDividends', label: 'Eligible dividends', field: 'eligibleDividends' },
+  { id: 'nonEligibleDividends', label: 'Non-eligible dividends', field: 'nonEligibleDividends' },
   { id: 'otherIncome', label: 'Other income', field: 'otherIncome' },
 ];
 
@@ -98,6 +99,7 @@ function run() {
         const r = computePersonalTax(input, { dataOverride });
         const t = r.totals;
         const marginalPct = t.marginalRate != null ? (t.marginalRate * 100).toFixed(1) : '–';
+        const avgRatePct = t.avgRate != null ? Math.round(t.avgRate * 10000) / 100 : null;
         row = {
           province,
           incomeType: it.id,
@@ -107,6 +109,7 @@ function run() {
           provTax: Math.round(t.provTax * 100) / 100,
           taxableIncome: Math.round(t.taxableIncome * 100) / 100,
           marginalRatePct: t.marginalRate != null ? Math.round(t.marginalRate * 10000) / 100 : null,
+          avgRatePct: avgRatePct,
         };
         results.rows.push(row);
         tableRows.push([
@@ -140,7 +143,7 @@ function run() {
     const fullPath = join(__dirname, outPath);
     writeFileSync(fullPath, JSON.stringify(results, null, 2), 'utf8');
     console.log('Wrote: ' + fullPath);
-    console.log('To compare with TurboTax, create turbotax-baseline.2025.160k.json with same structure and run: node tools/tests/compare-with-turbotax.js');
+    console.log('To compare with an external comparator tax tool, create external-baseline.2025.160k.json with the same structure and run: node tools/tests/compare-with-external-baseline.js');
   }
 }
 

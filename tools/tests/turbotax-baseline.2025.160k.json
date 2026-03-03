@@ -1,7 +1,0 @@
-{
-  "year": 2025,
-  "referenceIncome": 160000,
-  "source": "TurboTax",
-  "instructions": "Copy our-results.2025.160k.json here and replace totalTax, federalTax, provTax with TurboTax values for each row. Then run: node tools/tests/compare-with-turbotax.js",
-  "rows": []
-}

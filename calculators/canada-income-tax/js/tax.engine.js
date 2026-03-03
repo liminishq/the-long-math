@@ -131,12 +131,10 @@ function calculateFederalTax(taxableIncome, cpp, ei, employmentIncome, dividends
   const credits = [];
   let totalCredits = 0;
 
-  // Basic Personal Amount (credit = BPA × lowest tax rate)
+  // Basic Personal Amount (credit = BPA × rate). Schedule 1 uses 15% for credits, not effective first-bracket rate.
+  const creditRate = federal.credits.lowestRateForCredits ?? Math.min(...federal.brackets.map(b => b.rate));
   if (federal.credits.basicPersonalAmount) {
-    // BPA credit is calculated as BPA amount × lowest federal tax rate (15%)
-    // Use Math.min to be order-safe (don't assume brackets[0] is lowest)
-    const lowestRate = Math.min(...federal.brackets.map(b => b.rate));
-    const credit = federal.credits.basicPersonalAmount.amount * lowestRate;
+    const credit = federal.credits.basicPersonalAmount.amount * creditRate;
     credits.push({
       name: 'Basic Personal Amount',
       amount: credit
@@ -144,13 +142,9 @@ function calculateFederalTax(taxableIncome, cpp, ei, employmentIncome, dividends
     totalCredits += credit;
   }
 
-  // Canada Employment Amount (credit = amount × lowest tax rate)
-  // Must only apply when there is employment income (employmentIncome > 0).
+  // Canada Employment Amount (credit = amount × credit rate). Must only apply when employment income > 0.
   if (federal.credits.canadaEmploymentAmount && employmentIncome > 0) {
-    // Employment amount credit is calculated as amount × lowest federal tax rate (15%)
-    // Use Math.min to be order-safe (don't assume brackets[0] is lowest)
-    const lowestRate = Math.min(...federal.brackets.map(b => b.rate));
-    const credit = federal.credits.canadaEmploymentAmount.amount * lowestRate;
+    const credit = federal.credits.canadaEmploymentAmount.amount * creditRate;
     credits.push({
       name: 'Canada Employment Amount',
       amount: credit
