@@ -3,6 +3,23 @@
   "use strict";
 
   // -------------------------
+  // Google Analytics (site-wide; skip if already in page)
+  // -------------------------
+  (function injectGA() {
+    if (document.querySelector('script[src*="googletagmanager.com/gtag/js"]')) return;
+    var id = "G-4KPJPTHY30";
+    var s1 = document.createElement("script");
+    s1.async = true;
+    s1.src = "https://www.googletagmanager.com/gtag/js?id=" + id;
+    document.head.appendChild(s1);
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    window.gtag = gtag;
+    gtag("js", new Date());
+    gtag("config", id, { anonymize_ip: true });
+  })();
+
+  // -------------------------
   // Theme toggle
   // -------------------------
   function getTheme() {
