@@ -139,19 +139,38 @@
       text-decoration: underline;
     }
 
-    /* FAQ styling (keep your existing look, but inside a card) */
-    .faq-item {
-      margin: 1.25em 0;
+    /* FAQ accordion */
+    .faq-accordion { margin: 0; }
+    .faq-accordion details {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin: 10px 0;
+      overflow: hidden;
     }
-    .faq-item h3 {
-      margin: 0 0 0.5em;
-      font-size: 1em;
+    .faq-accordion details[open] { border-color: var(--accent, #d6b36a); }
+    .faq-accordion summary {
+      padding: 14px 18px;
       font-weight: 700;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
-    .faq-item p {
-      margin: 0;
-      padding-left: 0;
+    .faq-accordion summary::-webkit-details-marker { display: none; }
+    .faq-accordion summary::after {
+      content: "+";
+      font-size: 1.2em;
+      color: var(--accent);
+      flex-shrink: 0;
     }
+    .faq-accordion details[open] summary::after { content: "−"; }
+    .faq-accordion .faq-answer {
+      padding: 0 18px 16px;
+    }
+    .faq-accordion .faq-answer p { margin: 0 0 0.9em 0; }
+    .faq-accordion .faq-answer p:last-child { margin-bottom: 0; }
   </style>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
@@ -260,20 +279,25 @@
       <!-- FAQ CARD -->
       <section class="section-card faq-section" id="faq">
         <h2>Frequently Asked Questions</h2>
-
-        <div class="faq-item">
-          <h3>What is the stock market in simple terms?</h3>
-          <p>The stock market is a marketplace where investors buy and sell shares of publicly traded companies, representing partial ownership in those businesses.</p>
-        </div>
-
-        <div class="faq-item">
-          <h3>How does the stock market actually work?</h3>
-          <p>The stock market works by matching buyers and sellers who agree on a price for shares. Stock prices change as investors update their expectations about a company's future performance.</p>
-        </div>
-
-        <div class="faq-item">
-          <h3>Why does the stock market go up over time?</h3>
-          <p>Over long periods, the stock market can rise when the businesses within it grow their earnings and reinvest profits successfully.</p>
+        <div class="faq-accordion">
+          <details>
+            <summary>What is the stock market in simple terms?</summary>
+            <div class="faq-answer">
+              <p>The stock market is a marketplace where investors buy and sell shares of publicly traded companies, representing partial ownership in those businesses.</p>
+            </div>
+          </details>
+          <details>
+            <summary>How does the stock market actually work?</summary>
+            <div class="faq-answer">
+              <p>The stock market works by matching buyers and sellers who agree on a price for shares. Stock prices change as investors update their expectations about a company's future performance.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Why does the stock market go up over time?</summary>
+            <div class="faq-answer">
+              <p>Over long periods, the stock market can rise when the businesses within it grow their earnings and reinvest profits successfully.</p>
+            </div>
+          </details>
         </div>
       </section>
 

@@ -186,6 +186,7 @@ a:hover{ text-decoration:underline; }
   font-weight:900;
   letter-spacing:.4px;
   line-height:1.05;
+  color:var(--text);
 }
 
 .sigil{

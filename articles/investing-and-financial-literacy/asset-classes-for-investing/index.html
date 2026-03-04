@@ -176,37 +176,38 @@
       margin-top: 14px;
     }
 
-    .faq-accordion {
-      margin: 1em 0;
+    /* FAQ accordion */
+    .faq-accordion { margin: 0; }
+    .faq-accordion details {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin: 10px 0;
+      overflow: hidden;
     }
-
+    .faq-accordion details[open] { border-color: var(--accent, #d6b36a); }
     .faq-accordion summary {
+      padding: 14px 18px;
+      font-weight: 700;
       cursor: pointer;
-      padding: 10px 12px;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      font-weight: 600;
-      font-size: 15px;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
-
-    .faq-accordion[open] summary {
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
+    .faq-accordion summary::-webkit-details-marker { display: none; }
+    .faq-accordion summary::after {
+      content: "+";
+      font-size: 1.2em;
+      color: var(--accent);
+      flex-shrink: 0;
     }
-
-    .faq-accordion .faq-accordion-body {
-      padding: 12px 12px 14px;
-      border: 1px solid var(--border);
-      border-top: none;
-      border-bottom-left-radius: 8px;
-      border-bottom-right-radius: 8px;
-      background: rgba(0, 0, 0, 0.02);
+    .faq-accordion details[open] summary::after { content: "−"; }
+    .faq-accordion .faq-answer {
+      padding: 0 18px 16px;
     }
-
-    .faq-accordion .faq-accordion-body p {
-      margin: 0;
-    }
+    .faq-accordion .faq-answer p { margin: 0 0 0.9em 0; }
+    .faq-accordion .faq-answer p:last-child { margin-bottom: 0; }
 
     .related-articles h2 {
       font-size: 18px;
@@ -455,30 +456,32 @@
 
       <section class="section-card" id="faq">
         <h2>Frequently Asked Questions About Asset Classes</h2>
-        <details class="faq-accordion">
-          <summary>What are the main asset classes?</summary>
-          <div class="faq-accordion-body">
-            <p>The four major asset classes are stocks (equities), bonds (fixed income), cash (or cash equivalents), and real assets such as real estate and commodities. Each has different return drivers and risk characteristics.</p>
-          </div>
-        </details>
-        <details class="faq-accordion">
-          <summary>Which asset class has the highest long-term return?</summary>
-          <div class="faq-accordion-body">
-            <p>Historically, diversified stock portfolios have produced the highest long-term average returns. However, they also experience greater short-term volatility than bonds or cash.</p>
-          </div>
-        </details>
-        <details class="faq-accordion">
-          <summary>Are asset classes the same as individual investments?</summary>
-          <div class="faq-accordion-body">
-            <p>No. An asset class is a category. Individual investments—such as a specific stock, ETF, bond fund, or rental property—fit within an asset class.</p>
-          </div>
-        </details>
-        <details class="faq-accordion">
-          <summary>Why do investors diversify across asset classes?</summary>
-          <div class="faq-accordion-body">
-            <p>Different asset classes respond differently to economic conditions. Diversification reduces concentration risk by spreading exposure across multiple return drivers.</p>
-          </div>
-        </details>
+        <div class="faq-accordion">
+          <details>
+            <summary>What are the main asset classes?</summary>
+            <div class="faq-answer">
+              <p>The four major asset classes are stocks (equities), bonds (fixed income), cash (or cash equivalents), and real assets such as real estate and commodities. Each has different return drivers and risk characteristics.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Which asset class has the highest long-term return?</summary>
+            <div class="faq-answer">
+              <p>Historically, diversified stock portfolios have produced the highest long-term average returns. However, they also experience greater short-term volatility than bonds or cash.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Are asset classes the same as individual investments?</summary>
+            <div class="faq-answer">
+              <p>No. An asset class is a category. Individual investments—such as a specific stock, ETF, bond fund, or rental property—fit within an asset class.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Why do investors diversify across asset classes?</summary>
+            <div class="faq-answer">
+              <p>Different asset classes respond differently to economic conditions. Diversification reduces concentration risk by spreading exposure across multiple return drivers.</p>
+            </div>
+          </details>
+        </div>
       </section>
 
       <section class="section-card related-articles">

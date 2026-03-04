@@ -147,9 +147,39 @@
     .related-articles a:hover { text-decoration: underline; }
     
     .faq-section h2 { margin-top: 0; }
-    .faq-item { margin: 1.5em 0; }
-    .faq-item h3 { margin: 0 0 0.5em; font-size: 1em; font-weight: 700; }
-    .faq-item p { margin: 0; }
+    
+    /* FAQ accordion */
+    .faq-accordion { margin: 0; }
+    .faq-accordion details {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+    .faq-accordion details[open] { border-color: var(--accent, #d6b36a); }
+    .faq-accordion summary {
+      padding: 14px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .faq-accordion summary::-webkit-details-marker { display: none; }
+    .faq-accordion summary::after {
+      content: "+";
+      font-size: 1.2em;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .faq-accordion details[open] summary::after { content: "−"; }
+    .faq-accordion .faq-answer {
+      padding: 0 18px 16px;
+    }
+    .faq-accordion .faq-answer p { margin: 0 0 0.9em 0; }
+    .faq-accordion .faq-answer p:last-child { margin-bottom: 0; }
     
     /* Display formula styling (non-interactive, distinct from links) */
     .lm-formula {
@@ -345,45 +375,54 @@
 
       <section class="section-card faq-section">
         <h2>Frequently Asked Questions About Inflation</h2>
-        
-        <div class="faq-item">
-          <h3>What is inflation?</h3>
-          <p>Inflation is the sustained rise in the general price level over time. When inflation increases, each dollar buys fewer goods and services than it did previously. Inflation reduces purchasing power.</p>
-        </div>
-        
-        <div class="faq-item">
-          <h3>What has long-term inflation averaged in North America?</h3>
-          <p>Since 1960, the long-term average annual inflation rate in Canada and the United States has been 3.75% per year based on historical CPI data. (<a href="/tools/inflation-tables/" style="color: var(--accent);">Full CPI dataset.</a>)</p>
-        </div>
-        
-        <div class="faq-item">
-          <h3>How quickly does inflation reduce purchasing power?</h3>
-          <p>Inflation reduces purchasing power exponentially. At 3.75% per year, purchasing power is cut in half in approximately 20 years.</p>
-        </div>
-        
-        <div class="faq-item">
-          <h3>What is the difference between nominal and real return?</h3>
-          <p>Nominal return is the stated rate of investment growth before inflation.<br>
-          Real return adjusts for inflation using the formula:</p>
-          <p><div class="lm-formula">1 + r_real = (1 + r_nominal) ÷ (1 + i)</div></p>
-          <p>Real return measures growth in purchasing power.</p>
-        </div>
-        
-        <div class="faq-item">
-          <h3>Why must inflation be included in retirement planning?</h3>
-          <p>Retirement income targets are typically expressed in today's dollars. Without adjusting for inflation, the nominal amount required in future years will be significantly underestimated. Long-term plans must be expressed in real (inflation-adjusted) terms.</p>
-        </div>
-        
-        <div class="faq-item">
-          <h3>How do you calculate the future value of today's dollars under inflation?</h3>
-          <p><div class="lm-formula">Future Cost = Cost Today × (1 + i)^t</div></p>
-          <p>Where i is the inflation rate and t is time in years.</p>
-        </div>
-        
-        <div class="faq-item">
-          <h3>How do you convert future dollars into today's purchasing power?</h3>
-          <p><div class="lm-formula">Present Value = Future Dollars ÷ (1 + i)^t</div></p>
-          <p>This expresses future amounts in real (today's) dollars.</p>
+        <div class="faq-accordion">
+          <details>
+            <summary>What is inflation?</summary>
+            <div class="faq-answer">
+              <p>Inflation is the sustained rise in the general price level over time. When inflation increases, each dollar buys fewer goods and services than it did previously. Inflation reduces purchasing power.</p>
+            </div>
+          </details>
+          <details>
+            <summary>What has long-term inflation averaged in North America?</summary>
+            <div class="faq-answer">
+              <p>Since 1960, the long-term average annual inflation rate in Canada and the United States has been 3.75% per year based on historical CPI data. (<a href="/tools/inflation-tables/" style="color: var(--accent);">Full CPI dataset.</a>)</p>
+            </div>
+          </details>
+          <details>
+            <summary>How quickly does inflation reduce purchasing power?</summary>
+            <div class="faq-answer">
+              <p>Inflation reduces purchasing power exponentially. At 3.75% per year, purchasing power is cut in half in approximately 20 years.</p>
+            </div>
+          </details>
+          <details>
+            <summary>What is the difference between nominal and real return?</summary>
+            <div class="faq-answer">
+              <p>Nominal return is the stated rate of investment growth before inflation.<br>
+              Real return adjusts for inflation using the formula:</p>
+              <p><div class="lm-formula">1 + r_real = (1 + r_nominal) ÷ (1 + i)</div></p>
+              <p>Real return measures growth in purchasing power.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Why must inflation be included in retirement planning?</summary>
+            <div class="faq-answer">
+              <p>Retirement income targets are typically expressed in today's dollars. Without adjusting for inflation, the nominal amount required in future years will be significantly underestimated. Long-term plans must be expressed in real (inflation-adjusted) terms.</p>
+            </div>
+          </details>
+          <details>
+            <summary>How do you calculate the future value of today's dollars under inflation?</summary>
+            <div class="faq-answer">
+              <p><div class="lm-formula">Future Cost = Cost Today × (1 + i)^t</div></p>
+              <p>Where i is the inflation rate and t is time in years.</p>
+            </div>
+          </details>
+          <details>
+            <summary>How do you convert future dollars into today's purchasing power?</summary>
+            <div class="faq-answer">
+              <p><div class="lm-formula">Present Value = Future Dollars ÷ (1 + i)^t</div></p>
+              <p>This expresses future amounts in real (today's) dollars.</p>
+            </div>
+          </details>
         </div>
       </section>
 

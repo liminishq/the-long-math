@@ -228,37 +228,38 @@
       text-decoration: underline;
     }
 
-    .faq-accordion {
-      margin: 1em 0;
+    /* FAQ accordion */
+    .faq-accordion { margin: 0; }
+    .faq-accordion details {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin: 10px 0;
+      overflow: hidden;
     }
-
+    .faq-accordion details[open] { border-color: var(--accent, #d6b36a); }
     .faq-accordion summary {
+      padding: 14px 18px;
+      font-weight: 700;
       cursor: pointer;
-      padding: 10px 12px;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      font-weight: 600;
-      font-size: 15px;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
-
-    .faq-accordion[open] summary {
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
+    .faq-accordion summary::-webkit-details-marker { display: none; }
+    .faq-accordion summary::after {
+      content: "+";
+      font-size: 1.2em;
+      color: var(--accent);
+      flex-shrink: 0;
     }
-
-    .faq-accordion .faq-accordion-body {
-      padding: 12px 12px 14px;
-      border: 1px solid var(--border);
-      border-top: none;
-      border-bottom-left-radius: 8px;
-      border-bottom-right-radius: 8px;
-      background: rgba(0, 0, 0, 0.02);
+    .faq-accordion details[open] summary::after { content: "−"; }
+    .faq-accordion .faq-answer {
+      padding: 0 18px 16px;
     }
-
-    .faq-accordion .faq-accordion-body p {
-      margin: 0;
-    }
+    .faq-accordion .faq-answer p { margin: 0 0 0.9em 0; }
+    .faq-accordion .faq-answer p:last-child { margin-bottom: 0; }
   </style>
 
   <!-- Google tag (gtag.js) -->
@@ -526,64 +527,58 @@
         <p>The optimal answer is not a preference. It is a function of marginal rates, eligibility, and time horizon. (<a href="/calculators/canada-income-tax/">Canada Personal Income Tax Calculator 2025</a>.)</p>
       </section>
 
-      <section class="section-card">
-        <h2>Frequently Asked Questions (Accordion + FAQPage JSON-LD)</h2>
-
-        <details class="faq-accordion">
-          <summary>What is better: RRSP, TFSA, or FHSA?</summary>
-          <div class="faq-accordion-body">
-            <p>It depends on your situation. FHSA is typically best for eligible first-time home buyers in a moderate or high tax bracket. RRSP wins when your current rate substantially exceeds your expected retirement rate. TFSA is best when rates are stable, expected to rise, or when flexibility matters.</p>
-          </div>
-        </details>
-
-        <details class="faq-accordion">
-          <summary>Is FHSA better than RRSP?</summary>
-          <div class="faq-accordion-body">
-            <p>For qualifying first-time buyers, yes — the FHSA provides both a contribution deduction and a tax-free withdrawal, which no other registered account normally offers. After maximizing FHSA room, the RRSP vs TFSA decision depends entirely on your tax rate trajectory.</p>
-          </div>
-        </details>
-
-        <details class="faq-accordion">
-          <summary>Should I max FHSA before RRSP?</summary>
-          <div class="faq-accordion-body">
-            <p>If you're eligible, maximizing your FHSA contribution room first is generally the rational move. It structurally dominates both other accounts under qualifying conditions. Once FHSA room is exhausted, revert to the RRSP vs TFSA decision based on your expected retirement income.</p>
-          </div>
-        </details>
-
-        <details class="faq-accordion">
-          <summary>Is TFSA or RRSP better for high-income earners?</summary>
-          <div class="faq-accordion-body">
-            <p>High-income earners often favour the RRSP if they expect significantly lower income in retirement. But if retirement income will remain high — from rental income, business income, or investment withdrawals — the TFSA may produce equal or better results with more flexibility.</p>
-          </div>
-        </details>
-
-        <details class="faq-accordion">
-          <summary>Can I contribute to RRSP, TFSA, and FHSA at the same time?</summary>
-          <div class="faq-accordion-body">
-            <p>Yes, provided you have available contribution room in each account and meet FHSA eligibility requirements. Using all three simultaneously is a legitimate strategy for those with sufficient cash flow.</p>
-          </div>
-        </details>
-
-        <details class="faq-accordion">
-          <summary>What happens to unused FHSA room if I don't buy a home?</summary>
-          <div class="faq-accordion-body">
-            <p>Unused FHSA funds can be transferred to an RRSP or RRIF without affecting your existing RRSP contribution room. This makes the FHSA a low-risk account to open early — even if your home-buying plans are uncertain — provided you meet the eligibility criteria at the time of opening.</p>
-          </div>
-        </details>
-
-        <details class="faq-accordion">
-          <summary>How does the TFSA contribution room work after a withdrawal?</summary>
-          <div class="faq-accordion-body">
-            <p>TFSA withdrawals restore your contribution room on January 1st of the following year. This means you can re-contribute the withdrawn amount the next calendar year without penalty — a feature unique to the TFSA among registered accounts.</p>
-          </div>
-        </details>
-
-        <details class="faq-accordion">
-          <summary>What is the RRSP contribution deadline?</summary>
-          <div class="faq-accordion-body">
-            <p>RRSP contributions must be made within 60 days of the end of the tax year to count toward that year's deduction. For most years, this means a deadline in late February or early March of the following calendar year.</p>
-          </div>
-        </details>
+      <section class="section-card" id="faq">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-accordion">
+          <details>
+            <summary>What is better: RRSP, TFSA, or FHSA?</summary>
+            <div class="faq-answer">
+              <p>It depends on your situation. FHSA is typically best for eligible first-time home buyers in a moderate or high tax bracket. RRSP wins when your current rate substantially exceeds your expected retirement rate. TFSA is best when rates are stable, expected to rise, or when flexibility matters.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Is FHSA better than RRSP?</summary>
+            <div class="faq-answer">
+              <p>For qualifying first-time buyers, yes — the FHSA provides both a contribution deduction and a tax-free withdrawal, which no other registered account normally offers. After maximizing FHSA room, the RRSP vs TFSA decision depends entirely on your tax rate trajectory.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Should I max FHSA before RRSP?</summary>
+            <div class="faq-answer">
+              <p>If you're eligible, maximizing your FHSA contribution room first is generally the rational move. It structurally dominates both other accounts under qualifying conditions. Once FHSA room is exhausted, revert to the RRSP vs TFSA decision based on your expected retirement income.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Is TFSA or RRSP better for high-income earners?</summary>
+            <div class="faq-answer">
+              <p>High-income earners often favour the RRSP if they expect significantly lower income in retirement. But if retirement income will remain high — from rental income, business income, or investment withdrawals — the TFSA may produce equal or better results with more flexibility.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Can I contribute to RRSP, TFSA, and FHSA at the same time?</summary>
+            <div class="faq-answer">
+              <p>Yes, provided you have available contribution room in each account and meet FHSA eligibility requirements. Using all three simultaneously is a legitimate strategy for those with sufficient cash flow.</p>
+            </div>
+          </details>
+          <details>
+            <summary>What happens to unused FHSA room if I don't buy a home?</summary>
+            <div class="faq-answer">
+              <p>Unused FHSA funds can be transferred to an RRSP or RRIF without affecting your existing RRSP contribution room. This makes the FHSA a low-risk account to open early — even if your home-buying plans are uncertain — provided you meet the eligibility criteria at the time of opening.</p>
+            </div>
+          </details>
+          <details>
+            <summary>How does the TFSA contribution room work after a withdrawal?</summary>
+            <div class="faq-answer">
+              <p>TFSA withdrawals restore your contribution room on January 1st of the following year. This means you can re-contribute the withdrawn amount the next calendar year without penalty — a feature unique to the TFSA among registered accounts.</p>
+            </div>
+          </details>
+          <details>
+            <summary>What is the RRSP contribution deadline?</summary>
+            <div class="faq-answer">
+              <p>RRSP contributions must be made within 60 days of the end of the tax year to count toward that year's deduction. For most years, this means a deadline in late February or early March of the following calendar year.</p>
+            </div>
+          </details>
+        </div>
       </section>
 
       <section class="section-card related-articles">
