@@ -1,19 +1,23 @@
 <header class="sitehead">
-  <a href="/" class="brandstack" aria-label="The Long Math home">
-    <div class="brand">The Long Math</div>
+  <a href="/" class="brandstack" data-locale-path="/" aria-label="The Long Math home" data-i18n-attr="aria-label:common.brand.homeAria">
+    <div class="brand" data-i18n="common.brand.name">The Long Math</div>
     <div class="sigil">$ = P(1 + r/n)<sup>nt</sup></div>
   </a>
 
   <div class="head-actions">
     <div class="themebox">
-      <div class="tlabel" id="theme_label">Dark</div>
-      <label class="switch" aria-label="Toggle light/dark mode">
+      <div class="tlabel" id="theme_label" data-i18n="common.theme.dark">Dark</div>
+      <label class="switch" aria-label="Toggle light/dark mode" data-i18n-attr="aria-label:common.theme.toggle">
         <input id="theme_toggle" type="checkbox" />
         <span class="knob"></span>
       </label>
     </div>
 
-    <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="menuPanel" aria-label="Open menu">
+    <div class="lang-switcher" aria-label="Language">
+      <a id="lang-link-en" href="#">English</a><span class="lang-sep" aria-hidden="true"> | </span><a id="lang-link-fr" href="#">Français</a>
+    </div>
+
+    <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="menuPanel" aria-label="Open menu" data-i18n-attr="aria-label:common.nav.openMenu">
       ☰
     </button>
   </div>
@@ -21,13 +25,13 @@
 
 <div id="menuOverlay" class="menu-overlay"></div>
 
-<nav id="menuPanel" class="menu-panel" aria-label="Site menu">
+<nav id="menuPanel" class="menu-panel" aria-label="Site menu" data-i18n-attr="aria-label:common.nav.menu">
   <div class="menu-top">
-    <div class="menu-title">Menu</div>
-    <button id="menuClose" class="menu-close" aria-label="Close menu">×</button>
+    <div class="menu-title" data-i18n="common.nav.menu">Menu</div>
+    <button id="menuClose" class="menu-close" aria-label="Close menu" data-i18n-attr="aria-label:common.nav.closeMenu">×</button>
   </div>
 
-  <a class="menu-link" href="/">Home</a>
-  <a class="menu-link" href="/about/">About</a>
-  <a class="menu-link" href="/contact/">Contact</a>
+  <a class="menu-link" href="/" data-locale-path="/" data-i18n="common.nav.home">Home</a>
+  <a class="menu-link" href="/about/" data-locale-path="/about/" data-i18n="common.nav.about">About</a>
+  <a class="menu-link" href="/contact/" data-locale-path="/contact/" data-i18n="common.nav.contact">Contact</a>
 </nav>

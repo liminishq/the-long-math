@@ -27,15 +27,13 @@
   }
 
   function fmtCAD(n) {
+    if (window.TLM && window.TLM.format) return window.TLM.format.currency(n, window.TLM.i18n && window.TLM.i18n.getLang && window.TLM.i18n.getLang());
     if (!Number.isFinite(n)) return "$–";
-    return Math.round(n).toLocaleString("en-CA", {
-      style: "currency",
-      currency: "CAD",
-      maximumFractionDigits: 0,
-    });
+    return Math.round(n).toLocaleString("en-CA", { style: "currency", currency: "CAD", maximumFractionDigits: 0 });
   }
 
   function fmtPct(dec) {
+    if (window.TLM && window.TLM.format) return window.TLM.format.percent(dec, { decimals: 2 }, window.TLM.i18n && window.TLM.i18n.getLang && window.TLM.i18n.getLang());
     if (!Number.isFinite(dec)) return "–";
     return (dec * 100).toFixed(2) + "%";
   }
@@ -101,7 +99,7 @@
 
     // Calculate via engine (must exist globally)
     if (typeof window.calculateLongMath !== "function") {
-      $("out_meta").textContent = "Error: calculateLongMath(...) not found.";
+      $("out_meta").textContent = (window.TLM && window.TLM.i18n && window.TLM.i18n.t) ? window.TLM.i18n.t("calculators.advisorFee.errorNoEngine") : "Error: calculateLongMath(...) not found.";
       return;
     }
 
@@ -116,7 +114,7 @@
 
     $("out_breakeven").textContent = fmtPct(result.break_even_return);
 
-    $("out_meta").textContent = "Calculated using the assumptions shown above.";
+    $("out_meta").textContent = (window.TLM && window.TLM.i18n && window.TLM.i18n.t) ? window.TLM.i18n.t("calculators.advisorFee.metaLine") : "Calculated using the assumptions shown above.";
   }
 
   // -----------------------------
@@ -128,7 +126,7 @@
     const snapped = Math.round(n / AR.step) * AR.step;
     const clamped = clamp(snapped, AR.min, AR.max);
     $("annual_return_slider").value = String(clamped);
-    $("annual_return_label").textContent = clamped.toFixed(2) + "%";
+    $("annual_return_label").textContent = (window.TLM && window.TLM.format) ? window.TLM.format.percent(clamped / 100, { decimals: 2 }, window.TLM.i18n && window.TLM.i18n.getLang && window.TLM.i18n.getLang()) : clamped.toFixed(2) + "%";
   }
 
   function syncAnnualReturnFromSlider() {
@@ -136,7 +134,7 @@
     if (!Number.isFinite(n)) return;
     const clamped = clamp(n, AR.min, AR.max);
     $("annual_return").value = String(clamped);
-    $("annual_return_label").textContent = clamped.toFixed(2) + "%";
+    $("annual_return_label").textContent = (window.TLM && window.TLM.format) ? window.TLM.format.percent(clamped / 100, { decimals: 2 }, window.TLM.i18n && window.TLM.i18n.getLang && window.TLM.i18n.getLang()) : clamped.toFixed(2) + "%";
   }
 
   function setMEREnabledUI() {
@@ -185,7 +183,7 @@
     $("annual_return_slider").max = String(AR.max);
     $("annual_return_slider").step = String(AR.step);
     $("annual_return_slider").value = String(p.annual_return_pct);
-    $("annual_return_label").textContent = Number(p.annual_return_pct).toFixed(2) + "%";
+    $("annual_return_label").textContent = (window.TLM && window.TLM.format) ? window.TLM.format.percent(Number(p.annual_return_pct) / 100, { decimals: 2 }, window.TLM.i18n && window.TLM.i18n.getLang && window.TLM.i18n.getLang()) : Number(p.annual_return_pct).toFixed(2) + "%";
 
     setAdvisorOverrideEnabledUI();
     setMEREnabledUI();

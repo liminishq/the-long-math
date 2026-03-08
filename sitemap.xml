@@ -93,6 +93,21 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://thelongmath.com/what-is-a-tfsa/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/tfsa-withdrawal-rules-over-contribution-penalties/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/tfsa-over-contribution-penalty-calculator/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://thelongmath.com/calculators/tfsa-room/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

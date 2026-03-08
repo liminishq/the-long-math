@@ -33,26 +33,26 @@
     try { localStorage.setItem("tlm_theme", t); } catch (e) {}
   }
 
+  function themeLabel(theme) {
+    if (window.TLM && window.TLM.i18n && window.TLM.i18n.t) {
+      return theme === "light" ? window.TLM.i18n.t("common.theme.light") : window.TLM.i18n.t("common.theme.dark");
+    }
+    return theme === "light" ? "Light" : "Dark";
+  }
+
   function initThemeToggle() {
-    // Support both "themeToggle" and "theme_toggle" IDs
     const toggle = document.getElementById("themeToggle") || document.getElementById("theme_toggle");
-    if (!toggle) return; // page may not have toggle
+    if (!toggle) return;
 
     const label = document.getElementById("theme_label");
-    
-    // Sync UI with current theme
     const currentTheme = getTheme();
     toggle.checked = currentTheme === "light";
-    if (label) {
-      label.textContent = currentTheme === "light" ? "Light" : "Dark";
-    }
+    if (label) label.textContent = themeLabel(currentTheme);
 
     toggle.addEventListener("change", function () {
-      const nextTheme = toggle.checked ? "light" : "dark";
-      setTheme(nextTheme);
-      if (label) {
-        label.textContent = nextTheme === "light" ? "Light" : "Dark";
-      }
+      const next = toggle.checked ? "light" : "dark";
+      setTheme(next);
+      if (label) label.textContent = themeLabel(next);
     });
   }
 
@@ -93,65 +93,112 @@
     });
   }
 
-// Load header
-(function () {
-  const headerMount = document.getElementById("site-header");
-  if (headerMount) {
-    fetch("/assets/partials/header.html")
-      .then(res => res.text())
-      .then(html => {
-        // Find the wrap div and inject header at the beginning
+  // -------------------------
+  // Load i18n if not present, then load header/footer and apply translations
+  // -------------------------
+  function loadI18nThenRun() {
+    return new Promise(function (resolve) {
+      if (window.TLM && window.TLM.i18n) {
+        resolve(window.TLM.i18n.ready);
+        return;
+      }
+      var s = document.createElement("script");
+      s.src = "/assets/js/i18n.js";
+      s.onload = function () {
+        resolve(window.TLM.i18n.ready);
+      };
+      s.onerror = function () { resolve(Promise.resolve()); };
+      document.head.appendChild(s);
+    });
+  }
+
+  function runAfterHeaderFooter() {
+    const headerMount = document.getElementById("site-header");
+    const footerMount = document.getElementById("footerMount");
+
+    const headerPromise = headerMount
+      ? fetch("/assets/partials/header.html").then(function (r) { return r.text(); }).catch(function () { return ""; })
+      : Promise.resolve("");
+    const footerPromise = footerMount
+      ? fetch("/assets/partials/footer.html").then(function (r) { return r.text(); }).catch(function () { return ""; })
+      : Promise.resolve("");
+
+    loadI18nThenRun().then(function (readyPromise) {
+      return Promise.all([readyPromise, headerPromise, footerPromise]);
+    }).then(function (results) {
+      const ready = results[0];
+      const headerHtml = results[1];
+      const footerHtml = results[2];
+
+      if (headerMount && headerHtml) {
         const wrap = document.querySelector(".wrap");
         if (wrap) {
-          // Create a temporary container to parse the HTML
           const temp = document.createElement("div");
-          temp.innerHTML = html;
-          // Insert all children at the beginning of wrap
+          temp.innerHTML = headerHtml;
           while (temp.firstChild) {
             wrap.insertBefore(temp.firstChild, wrap.firstChild);
           }
-          // Remove the empty headerMount div
-          if (headerMount.parentNode) {
-            headerMount.parentNode.removeChild(headerMount);
-          }
+          if (headerMount.parentNode) headerMount.parentNode.removeChild(headerMount);
         } else {
-          // Fallback: inject into headerMount if no wrap found
-          headerMount.innerHTML = html;
+          headerMount.innerHTML = headerHtml;
         }
-        // Re-initialize menu after header loads
-        setTimeout(function() {
-          initMenu();
-          initThemeToggle();
-        }, 0);
-      })
-      .catch(err => {
-        console.warn("Header failed to load:", err);
-      });
-  }
-})();
+      }
 
-// Load footer
-(function () {
-  const mount = document.getElementById("footerMount");
-  if (!mount) return;
+      if (footerMount && footerHtml) footerMount.innerHTML = footerHtml;
 
-  fetch("/assets/partials/footer.html")
-    .then(res => res.text())
-    .then(html => {
-      mount.innerHTML = html;
-    })
-    .catch(err => {
-      console.warn("Footer failed to load:", err);
+      if (window.TLM && window.TLM.i18n) {
+        window.TLM.i18n.applyToDocument();
+        window.TLM.i18n.setLanguageSwitcherLinks();
+      }
+
+      setTimeout(function () {
+        initThemeToggle();
+        initMenu();
+      }, 0);
+    }).catch(function (err) {
+      console.warn("Header/footer load failed:", err);
+      initThemeToggle();
+      initMenu();
     });
-})();
+  }
 
+  if (document.getElementById("site-header") || document.getElementById("footerMount")) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", runAfterHeaderFooter);
+    } else {
+      runAfterHeaderFooter();
+    }
+  }
 
   // -------------------------
-  // Boot
+  // Article reading time (one-liner at start of article)
   // -------------------------
+  function initReadingTime() {
+    var article = document.querySelector("article.article-content");
+    if (!article) return;
+
+    var text = article.innerText || article.textContent || "";
+    var words = text.trim().split(/\s+/).filter(Boolean);
+    var wpm = 200;
+    var minutes = Math.max(1, Math.round(words.length / wpm));
+    var label = minutes === 1 ? "1 minute read" : minutes + " minute read";
+
+    var el = document.createElement("p");
+    el.className = "reading-time";
+    el.setAttribute("aria-hidden", "true");
+    el.textContent = label;
+
+    var header = article.querySelector("header");
+    if (header) {
+      header.appendChild(el);
+    } else {
+      article.insertBefore(el, article.firstChild);
+    }
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
-    // Only init if elements exist (may be loaded via header partial)
     initThemeToggle();
     initMenu();
+    initReadingTime();
   });
 })();

@@ -121,6 +121,15 @@ a:hover{ text-decoration:underline; }
   font-weight:400;
   margin:0 0 1em;
 }
+
+/* Article reading time (non-distracting one-liner under title) */
+.reading-time{
+  font-size:13px;
+  color:var(--muted);
+  margin:0.35em 0 0;
+  font-weight:400;
+}
+
 .methodology-content .formula-block{
   font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Courier New",monospace;
   font-size:14px;
