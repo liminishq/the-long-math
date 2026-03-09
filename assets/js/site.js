@@ -177,6 +177,9 @@
     var article = document.querySelector("article.article-content");
     if (!article) return;
 
+    var header = article.querySelector("header");
+    if (header && (header.querySelector(".read-time") || header.querySelector(".reading-time"))) return;
+
     var text = article.innerText || article.textContent || "";
     var words = text.trim().split(/\s+/).filter(Boolean);
     var wpm = 200;
@@ -196,9 +199,40 @@
     }
   }
 
+  // -------------------------
+  // Last updated (educational articles only; under read time)
+  // -------------------------
+  function initLastUpdated() {
+    var path = window.location.pathname || "";
+    if (path.indexOf("/articles/") === -1 || path.indexOf("/calculators/") !== -1) return;
+
+    var article = document.querySelector("article.article-content");
+    if (!article) return;
+
+    var meta = document.querySelector('meta[name="article:modified"]');
+    var content = meta && meta.getAttribute("content");
+    if (!content || !content.trim()) return;
+
+    var header = article.querySelector("header");
+    if (!header) return;
+
+    var after = header.querySelector(".reading-time") || header.querySelector(".read-time");
+    var p = document.createElement("p");
+    p.className = "last-updated";
+    p.setAttribute("aria-hidden", "true");
+    p.textContent = "Last updated " + content.trim();
+
+    if (after) {
+      after.parentNode.insertBefore(p, after.nextSibling);
+    } else {
+      header.appendChild(p);
+    }
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initThemeToggle();
     initMenu();
     initReadingTime();
+    initLastUpdated();
   });
 })();
