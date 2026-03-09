@@ -1,0 +1,231 @@
+/* Capital Gains Tax Canada — minimal local styles; relies on global styles.css */
+
+.calc-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+@media (max-width: 900px) {
+  .calc-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.field {
+  margin: 12px 0;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface, rgba(255, 255, 255, 0.04));
+  color: var(--text);
+  font-size: 14px;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.field .help-text {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.toggle-field .toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.toggle-field .toggle input {
+  width: auto;
+  margin-top: 3px;
+}
+
+.toggle-field .toggle span {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.result-row .label {
+  opacity: 0.85;
+  font-size: 14px;
+}
+
+.result-row .value {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.result-row.highlight {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent);
+}
+
+.result-row .value.highlight-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.capital-loss-message,
+.exemption-message {
+  margin-top: 12px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.reset-button {
+  margin-top: 16px;
+  padding: 10px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.reset-button:hover {
+  background: var(--surface2);
+  border-color: var(--accent);
+}
+
+.show-math-section {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.show-math-section h2 {
+  margin: 0 0 16px;
+  font-size: 20px;
+  color: var(--text);
+}
+
+.show-math-content {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.show-math-block {
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.show-math-block p {
+  margin: 0 0 10px;
+}
+
+.show-math-block p:last-child {
+  margin-bottom: 0;
+}
+
+.faq-section {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.faq-section h2 {
+  margin: 0 0 20px;
+  font-size: 20px;
+  color: var(--text);
+}
+
+.faq-accordion-item {
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.faq-accordion-item summary {
+  cursor: pointer;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--accent2);
+}
+
+.faq-accordion-item summary:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.faq-accordion-item[open] summary {
+  border-bottom: 1px solid var(--border);
+}
+
+.faq-accordion-body {
+  padding: 16px;
+  background: var(--surface);
+}
+
+.faq-accordion-body p {
+  margin: 0 0 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.faq-accordion-body p:last-child {
+  margin-bottom: 0;
+}
+
+.faq-accordion-body a {
+  color: var(--accent);
+}
+
+.disclaimer {
+  margin-top: 24px;
+  font-size: 12.5px;
+  color: var(--muted);
+}

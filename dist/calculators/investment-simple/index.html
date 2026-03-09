@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simple Investment Calculator | The Long Math</title>
+  <meta name="description" content="Quick compound growth estimates with recurring contributions and optional inflation adjustment for a first-pass view." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/investment-simple/" />
+
+  <!-- Site-wide theme + styles -->
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  
+  <!-- Calculator-specific styles -->
+  <link rel="stylesheet" href="/calculators/investment-simple/investment-simple.css" />
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+  
+  <div class="wrap">
+    <div style="margin-bottom: 16px;">
+      <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
+    </div>
+
+    <header>
+      <h1>Simple Investment Calculator</h1>
+      <p class="lead">
+        A simplified investment calculator for quick, first-pass estimates of compound growth with recurring contributions.
+      </p>
+    </header>
+
+    <div class="card">
+      <div class="calc-grid">
+        <!-- Inputs -->
+        <article class="panel">
+          <h2 class="section-title">Inputs</h2>
+
+          <div class="field">
+            <label for="startingAmount">Starting amount</label>
+            <input id="startingAmount" type="number" inputmode="decimal" min="0" step="100" value="10000" />
+          </div>
+
+          <div class="field">
+            <label for="contribFreq">Contribution frequency</label>
+            <select id="contribFreq">
+              <option value="52">Weekly</option>
+              <option value="26">Biweekly</option>
+              <option value="12" selected>Monthly</option>
+              <option value="1">Annually</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="contribAmount">Contribution amount (per period)</label>
+            <input id="contribAmount" type="number" inputmode="decimal" min="0" step="10" value="500" />
+          </div>
+
+          <div class="field">
+            <label for="years">Time horizon (years)</label>
+            <input id="years" type="number" inputmode="numeric" min="0" step="1" value="25" />
+          </div>
+
+          <div class="field">
+            <label for="annualReturn">Expected annual return (nominal)</label>
+            <div class="inline">
+              <input id="annualReturn" type="number" inputmode="decimal" step="0.1" value="7" />
+              <span class="unit">%</span>
+            </div>
+          </div>
+
+          <hr class="sep" />
+
+          <div class="field checkbox">
+            <input id="realToggle" type="checkbox" />
+            <label for="realToggle">Show inflation-adjusted (real) results</label>
+          </div>
+
+          <div id="inflationWrap" class="field hidden">
+            <label for="inflationRate">Inflation rate</label>
+            <div class="inline">
+              <input id="inflationRate" type="number" inputmode="decimal" step="0.1" value="2.5" />
+              <span class="unit">%</span>
+            </div>
+            <p class="help muted">
+              Real return is computed as: (1 + nominal) / (1 + inflation) − 1.
+            </p>
+          </div>
+
+          <div class="callout" style="margin-top: 16px;">
+            <h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 700;">About this calculator</h3>
+            <p style="margin: 0 0 12px; font-size: 13px; line-height: 1.5;">
+              This is a simplified investment calculator intended for quick, first-pass estimates.
+              Inflation adjustment here is handled in a basic way and does not reflect how contributions, purchasing power, or assumptions interact over long time horizons.
+            </p>
+            <p style="margin: 0; font-size: 13px; line-height: 1.5;">
+              For a more complete and assumption-explicit analysis, use the <a href="/calculators/investment-calculator-inflation-adjusted/" style="color:var(--accent2);">Inflation-Adjusted Investment Calculator (advanced)</a>.
+            </p>
+          </div>
+
+          <p class="help muted">
+            Assumes contributions happen at the <em>end</em> of each period and growth compounds once per contribution period.
+          </p>
+        </article>
+
+        <!-- Outputs -->
+        <article class="panel">
+          <div class="results-panel-header">
+            <h2 class="section-title">Results</h2>
+            <a href="/calculators/investment-simple/methodology/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">Inspect the Arithmetic</a>
+          </div>
+
+          <div class="results">
+            <div class="result-row highlight">
+              <div class="label">Final balance</div>
+              <div class="value highlight-value" id="finalBalance">$—</div>
+            </div>
+            <div class="result-row">
+              <div class="label">Total capital invested</div>
+              <div class="value" id="totalInvested">$—</div>
+            </div>
+            <div class="result-row">
+              <div class="label">Interest earned</div>
+              <div class="value" id="interestEarned">$—</div>
+            </div>
+            <div class="result-row highlight">
+              <div class="label">IRR (money-weighted, annualized)</div>
+              <div class="value highlight-value" id="irr">—</div>
+            </div>
+          </div>
+
+          <hr class="sep" />
+
+          <div class="milestones">
+            <h3 style="margin: 0 0 10px; font-size: 14px;">Balance at milestones</h3>
+            <table class="milestones-table">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th>Total contributed</th>
+                  <th>Balance</th>
+                </tr>
+              </thead>
+              <tbody id="milestonesBody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div id="realExplainer" class="callout hidden">
+            <h3 style="margin: 0 0 8px; font-size: 14px;">Inflation-adjusted results (real dollars)</h3>
+            <p style="margin: 0; font-size: 13px; line-height: 1.5;">
+              Nominal results are shown in future dollars. Inflation-adjusted (real) results are shown in today's dollars — they estimate purchasing power after inflation.<br><br>
+              This calculator converts your nominal expected return into a real return using:<br>
+              <strong>real = (1 + nominal) / (1 + inflation) − 1</strong><br><br>
+              When real mode is on, the projection uses the real return for compounding. Contribution amounts you enter are not automatically increased for inflation.
+            </p>
+          </div>
+
+          <hr class="sep" />
+
+          <div class="assumptions">
+            <h3>Assumptions shown</h3>
+            <ul>
+              <li><span class="muted">Compounding:</span> per contribution period</li>
+              <li><span class="muted">Contributions:</span> end of each period</li>
+              <li><span class="muted">Fees:</span> none</li>
+              <li><span class="muted">Taxes:</span> not modeled</li>
+            </ul>
+          </div>
+
+          <p class="disclaimer muted">
+            Educational math only. Verify with your own assumptions and professional advice if needed.
+          </p>
+        </article>
+      </div>
+
+    </div>
+
+    <div class="report-issue-wrap">
+      <a href="/contact/" class="report-issue-link">Report an Issue</a>
+    </div>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <h3>What is the difference between nominal and real returns?</h3>
+        <p>Nominal returns include the effect of inflation. If your investment grows 7% per year and inflation is 2.5%, your nominal return is 7%. Your real return (purchasing power) is approximately 4.4% after adjusting for inflation. Real returns show what your money can actually buy in today's dollars.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What does "inflation-adjusted" mean in this calculator?</h3>
+        <p>Inflation-adjusted (real) results are shown in today's dollars. They estimate the purchasing power of your future balance after accounting for inflation. This helps you understand what your investment will actually be worth in terms of what you can buy, not just the dollar amount.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Why does inflation adjustment matter over long horizons?</h3>
+        <p>Inflation compounds silently over time. Over 25 years, even moderate inflation (2-3% annually) can significantly erode purchasing power. A $1 million balance in 25 years might only have the purchasing power of $500,000-$600,000 in today's dollars. Real returns help you see the true long-term impact.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>How is the money-weighted IRR calculated here?</h3>
+        <p>The money-weighted IRR (Internal Rate of Return) is calculated from the actual cash flows: your starting deposit (outflow at time 0), each contribution (outflows at end of each period), and the final balance (inflow at the end). It finds the annualized return rate that makes the net present value of all cash flows equal to zero. This gives you the actual return earned on your money, accounting for the timing of contributions.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What assumptions does this calculator make?</h3>
+        <p>This calculator assumes: a constant expected return (no volatility), fixed contribution amounts, contributions occur at the end of each period, compounding happens once per contribution period, no fees or taxes, and (when real mode is enabled) a constant inflation rate. These are simplified assumptions for educational purposes — real investments have volatility, fees, and taxes that affect outcomes.</p>
+      </div>
+    </section>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
+      </p>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+
+  <script src="/calculators/investment-simple/investment-simple.js"></script>
+</body>
+</html>

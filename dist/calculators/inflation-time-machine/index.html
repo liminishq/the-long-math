@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inflation Time Machine (Then ↔ Now) – The Long Math</title>
+  <meta name="description" content="Convert a dollar amount between two years using official CPI data. Compare inflation across Canada, the United States, Australia, and the United Kingdom. Whole dollars only. No currency conversion." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/inflation-time-machine/" />
+
+  <!-- Site-wide theme + styles -->
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+
+  <!-- Calculator-specific styles -->
+  <link rel="stylesheet" href="/calculators/inflation-time-machine/styles.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Inflation Time Machine (Then ↔ Now)",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "description": "Convert a dollar amount between two years using official CPI data and compare results across countries. Whole dollars only. No currency conversion."
+  }
+  </script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div style="margin-bottom: 16px;">
+      <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
+    </div>
+
+    <header>
+      <h1>Inflation Time Machine (Then ↔ Now)</h1>
+      <p class="lead">
+        Convert a dollar amount between two years using official Consumer Price Index (CPI) data.</p>
+        Select a country and year range to see what money was worth then — and what it represents now.
+      </p>
+      <p class="lead">Whole dollars only. No currency conversion. Each country uses its own domestic CPI.</p>
+    </header>
+
+    <div class="card">
+      <div class="calc-grid">
+        <article class="panel">
+          <h2 class="section-title">Inputs</h2>
+
+          <div class="field">
+            <label for="country_select">Country</label>
+            <select id="country_select" aria-label="Country"></select>
+            <div class="help-text">Countries are enabled only when they have full coverage for the selected year range.</div>
+          </div>
+
+          <div class="field">
+            <label for="start_year">Start year</label>
+            <select id="start_year" aria-label="Start year"></select>
+          </div>
+
+          <div class="field">
+            <label for="end_year">End year</label>
+            <select id="end_year" aria-label="End year"></select>
+          </div>
+
+          <div class="field">
+            <button id="swap_years_btn" type="button" class="swap-button" aria-label="Swap start and end years">⇄ Swap years</button>
+          </div>
+
+          <div class="field">
+            <label for="amount_input">Amount (whole dollars)</label>
+            <input id="amount_input" type="number" inputmode="numeric" min="0" step="1" value="100" aria-label="Amount in whole dollars" />
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="results-panel-header">
+            <h2 class="section-title">Result</h2>
+            <div class="inspect-buttons">
+              <a href="/calculators/inflation-time-machine/methodology/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">Inspect the Arithmetic</a>
+              <a href="/calculators/inflation-time-machine/data/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">Inspect the Data</a>
+            </div>
+          </div>
+          <div class="results">
+            <p id="loading_primary" class="loading-inline" style="display: none;">Loading data…</p>
+            <p id="no_data_message" class="no-data-message" style="display: none;"></p>
+            <div class="result-row highlight">
+              <div class="value highlight-value" id="primary_result"></div>
+            </div>
+            <div id="stats_row" class="stats-row" style="display: none;">
+              <div class="result-row">
+                <div class="label">Total price level change (magnitude)</div>
+                <div class="value" id="total_change_magnitude"></div>
+              </div>
+              <div class="result-row">
+                <div class="label">Average annual inflation rate</div>
+                <div class="value" id="annualized_rate"></div>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="comparison-title">Comparison across available countries</h3>
+          <div id="comparison_list" class="comparison-list"></div>
+        </article>
+      </div>
+    </div>
+
+    <div class="report-issue-wrap">
+      <a href="/contact/" class="report-issue-link">Report an Issue</a>
+    </div>
+
+    <section class="faq-section">
+      <h2>Assumptions &amp; FAQ</h2>
+
+      <div class="faq-item">
+        <h3>How this inflation calculator works</h3>
+        <p>
+          This tool converts an amount between two years using official Consumer Price Index (CPI) data.
+          It uses an index ratio: CPI(end year) ÷ CPI(start year). The result is the amount required in the end year
+          to match the purchasing power of the start-year amount (within the same country).
+        </p>
+        <p>
+          The “Average annual inflation rate” figure is the constant annual rate that would produce the same overall CPI change
+          across the selected time span. It is shown as a positive magnitude; the direction is conveyed by the year arrow
+          (start → end).
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What is CPI?</h3>
+        <p>
+          CPI (Consumer Price Index) is a published measure of how the prices of a representative basket of goods and services
+          change over time. Each country’s statistical agency defines and maintains its own basket and methodology.
+        </p>
+        <p>
+          CPI is not your personal inflation rate. It is a broad index designed to track economy-wide consumer price changes.
+          This tool uses CPI because it provides a standardized way to compare purchasing power across years.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Why results differ by country</h3>
+        <p>
+          Inflation differs across countries because price changes differ across economies and time periods, and because each country’s CPI
+          is constructed using its own basket weights and statistical methods.
+        </p>
+        <p>
+          This tool does not perform currency conversion. The comparison list shows each country’s domestic CPI-based conversion in that country’s
+          local currency. Comparisons across countries are about inflation dynamics, not exchange rates.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Data sources</h3>
+        <p>CPI data and coverage years by country (loaded from manifest):</p>
+        <ul id="data_sources_list">
+          <li>Loading…</li>
+        </ul>
+        <p class="help-text" style="margin-top: 10px;">
+          Coverage years reflect the full annual datasets currently available.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>CPI and currency</h3>
+        <p>
+          This tool uses each country’s domestic CPI index. It does not perform foreign exchange conversion.
+          Amounts are in that country’s local currency (e.g. CAD for Canada, USD for United States) and are comparable only within the same country.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>CPI data tables</h3>
+        <p>For the exact CPI index values used in these calculations, see <a href="/tools/cpi-data-tables/">CPI Data Tables (by country)</a>.</p>
+      </div>
+    </section>
+
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
+      </p>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+
+  <script src="/calculators/inflation-time-machine/engine.js"></script>
+  <script src="/calculators/inflation-time-machine/ui.js"></script>
+  <script>
+    (function () {
+      function populateDataSources() {
+        var list = document.getElementById("data_sources_list");
+        if (!list) return;
+        fetch("/data/cpi/countries.json").then(function (r) { return r.json(); }).then(function (m) {
+          list.innerHTML = "";
+          (m.countries || []).forEach(function (c) {
+            var li = document.createElement("li");
+            li.innerHTML =
+              (c.flag ? c.flag + " " : "") +
+              (c.name || "—") +
+              ": " +
+              (c.startYear != null ? c.startYear : "—") +
+              "–" +
+              (c.endYear != null ? c.endYear : "—") +
+              ". Source: <a href=\"" + (c.sourceUrl || "#") + "\" rel=\"noopener\" target=\"_blank\">" + (c.sourceName || "—") + "</a>";
+            list.appendChild(li);
+          });
+        }).catch(function () {
+          list.innerHTML = "<li>Could not load sources.</li>";
+        });
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", populateDataSources);
+      else populateDataSources();
+    })();
+  </script>
+</body>
+</html>

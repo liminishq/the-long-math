@@ -1,0 +1,95 @@
+/* CPI Data Tables (by country) — page styles */
+
+.loading-msg {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.cpi-country-section {
+  margin-top: 24px;
+}
+
+.cpi-country-section:first-of-type {
+  margin-top: 0;
+}
+
+.cpi-country-section .section-title {
+  margin: 0 0 8px;
+  font-size: 20px;
+  color: var(--text);
+}
+
+.cpi-source {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.cpi-source a {
+  color: var(--accent2);
+  text-decoration: none;
+}
+
+.cpi-source a:hover {
+  text-decoration: underline;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 8px;
+}
+
+.cpi-table {
+  width: 100%;
+  min-width: 200px;
+  border-collapse: collapse;
+  font-size: 14px;
+  background: var(--surface);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cpi-table thead {
+  background: var(--surface2);
+}
+
+.cpi-table th {
+  text-align: left;
+  padding: 8px 12px;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  border-bottom: 2px solid var(--border);
+}
+
+.cpi-table th:last-child {
+  text-align: right;
+}
+
+.cpi-table tbody tr {
+  border-bottom: 1px solid var(--border);
+}
+
+.cpi-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.cpi-table td {
+  padding: 8px 12px;
+}
+
+.cpi-table td:last-child {
+  text-align: right;
+}
+
+@media (max-width: 600px) {
+  .cpi-table {
+    font-size: 13px;
+  }
+  .cpi-table th,
+  .cpi-table td {
+    padding: 6px 8px;
+  }
+}

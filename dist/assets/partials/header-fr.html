@@ -1,0 +1,37 @@
+<header class="sitehead">
+  <a href="/fr/" class="brandstack" aria-label="Accueil The Long Math">
+    <div class="brand">The Long Math</div>
+    <div class="sigil">$ = P(1 + r/n)<sup>nt</sup></div>
+  </a>
+
+  <div class="head-actions">
+    <div class="themebox">
+      <div class="tlabel" id="theme_label">Sombre</div>
+      <label class="switch" aria-label="Basculer mode clair/sombre">
+        <input id="theme_toggle" type="checkbox" />
+        <span class="knob"></span>
+      </label>
+    </div>
+
+    <div class="lang-switcher" aria-label="Language">
+      <a id="lang-link-en" href="#">English</a><span class="lang-sep" aria-hidden="true"> | </span><a id="lang-link-fr" href="#">Français</a>
+    </div>
+
+    <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="menuPanel" aria-label="Ouvrir le menu">
+      ☰
+    </button>
+  </div>
+</header>
+
+<div id="menuOverlay" class="menu-overlay"></div>
+
+<nav id="menuPanel" class="menu-panel" aria-label="Menu">
+  <div class="menu-top">
+    <div class="menu-title">Menu</div>
+    <button id="menuClose" class="menu-close" aria-label="Fermer le menu">×</button>
+  </div>
+
+  <a class="menu-link" href="/fr/">Accueil</a>
+  <a class="menu-link" href="/fr/about/">À propos</a>
+  <a class="menu-link" href="/fr/contact/">Contact</a>
+</nav>

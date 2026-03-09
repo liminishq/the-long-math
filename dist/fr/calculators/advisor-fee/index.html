@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculateur du coût d&#39;un conseiller financier – The Long Math</title>
+  <meta name="description" content="Quantifier l&#39;impact à long terme des frais de conseil et des intérêts composés perdus, avec des hypothèses explicites et des calculs vérifiables." />
+  <link rel="canonical" href="https://thelongmath.com/fr/calculators/advisor-fee/" />
+  
+  <link rel="alternate" hreflang="en" href="https://thelongmath.com/calculators/advisor-fee/" />
+  
+  <link rel="alternate" hreflang="fr" href="https://thelongmath.com/fr/calculators/advisor-fee/" />
+  
+  <link rel="alternate" hreflang="x-default" href="https://thelongmath.com/calculators/advisor-fee/" />
+  
+
+  <script src="/assets/js/theme-init.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script defer src="/assets/js/site.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+<body>
+  <header class="sitehead">
+  <a href="/fr/" class="brandstack" aria-label="Accueil The Long Math">
+    <div class="brand">The Long Math</div>
+    <div class="sigil">$ = P(1 + r/n)<sup>nt</sup></div>
+  </a>
+
+  <div class="head-actions">
+    <div class="themebox">
+      <div class="tlabel" id="theme_label">Sombre</div>
+      <label class="switch" aria-label="Basculer mode clair/sombre">
+        <input id="theme_toggle" type="checkbox" />
+        <span class="knob"></span>
+      </label>
+    </div>
+
+    <div class="lang-switcher" aria-label="Language">
+      <a id="lang-link-en" href="#">English</a><span class="lang-sep" aria-hidden="true"> | </span><a id="lang-link-fr" href="#">Français</a>
+    </div>
+
+    <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="menuPanel" aria-label="Ouvrir le menu">
+      ☰
+    </button>
+  </div>
+</header>
+
+<div id="menuOverlay" class="menu-overlay"></div>
+
+<nav id="menuPanel" class="menu-panel" aria-label="Menu">
+  <div class="menu-top">
+    <div class="menu-title">Menu</div>
+    <button id="menuClose" class="menu-close" aria-label="Fermer le menu">×</button>
+  </div>
+
+  <a class="menu-link" href="/fr/">Accueil</a>
+  <a class="menu-link" href="/fr/about/">À propos</a>
+  <a class="menu-link" href="/fr/contact/">Contact</a>
+</nav>
+
+  <div class="wrap">
+    
+<a href="/fr/calculators/" class="home-link">← Retour aux outils et calculateurs</a>
+<header>
+  <h1>Le vrai coût calculé d&#39;un conseiller financier (modèle AUM)</h1>
+  <div class="lede">
+    <p>De nombreux conseillers financiers facturent des frais en pourcentage des actifs qu&#39;ils gèrent.</p>
+    <p>Les conseillers peuvent aussi recommander ou vendre des produits d&#39;investissement (fonds communs et FNB) qui comportent des frais de gestion supplémentaires, ce qui réduit encore les rendements nets au fil du temps.</p>
+    <p>Sur de longues périodes, le coût réel de cette structure de frais ne se limite pas aux frais payés. Il inclut aussi le coût d&#39;opportunité de ne plus pouvoir faire fructifier ces frais.</p>
+    <p>Ce calculateur tient compte des deux composantes — les frais directs et les intérêts composés perdus — pour estimer le coût à long terme réel de faire appel à un conseiller avec une structure de frais fondée sur les actifs sous gestion (AUM).</p>
+    <p>Plus rarement, les conseillers peuvent facturer des frais annuels forfaitaires ou horaires au lieu de pourcentages AUM. Comme ces frais ne varient pas avec la taille du portefeuille, ils sont généralement moins coûteux à long terme. Un calculateur décrivant ces structures est disponible <a href="/fr/calculators/flat-fee-or-hourly/" class="inline-link">ici</a>.</p>
+    <p><strong>Pas d&#39;opinions. Pas d&#39;hypothèses cachées. Juste l&#39;arithmétique.</strong></p>
+  </div>
+</header>
+<div class="calc-grid">
+  <section class="card">
+    <h2 class="section-title">Entrées</h2>
+    <div class="btns">
+      <button id="preset-starting" type="button">Début de carrière</button>
+      <button id="preset-mid" type="button">Milieu de carrière</button>
+      <button id="preset-retire" type="button">Proche de la retraite</button>
+    </div>
+    <p class="hint">Les préréglages reflètent des situations courantes. Ajustez les hypothèses ci-dessous au besoin.</p>
+    <div class="row">
+      <label for="starting_balance">Solde initial ($)</label>
+      <input id="starting_balance" type="number" />
+    </div>
+    <div class="row">
+      <label for="monthly_contribution">Cotisation mensuelle ($/mois)</label>
+      <input id="monthly_contribution" type="number" />
+    </div>
+    <div class="row">
+      <label for="horizon_years">Horizon (années)</label>
+      <input id="horizon_years" type="number" />
+    </div>
+    <div class="row">
+      <label for="annual_return">Rendement annuel attendu (%)</label>
+      <input id="annual_return" type="text" placeholder="p. ex. 7 ou 4,5" />
+    </div>
+    <div class="slider-block">
+      <div class="slider-top">
+        <div class="lbl">Curseur du rendement annuel attendu</div>
+        <div class="val" id="annual_return_label">–</div>
+      </div>
+      <input id="annual_return_slider" type="range" />
+    </div>
+    <div class="toggle">
+      <input id="use_default_fee" type="checkbox" checked />
+      <label for="use_default_fee">Utiliser l&#39;échelle de frais conseiller par défaut</label>
+    </div>
+    <p class="helper">Si décoché, un pourcentage annuel forfaitaire saisi ci-dessous est appliqué.</p>
+    <div class="row">
+      <label for="custom_advisor_fee">Frais conseiller (%/an)</label>
+      <input id="custom_advisor_fee" type="text" placeholder="p. ex. 1,0" />
+    </div>
+    <div class="toggle">
+      <input id="include_mer" type="checkbox" checked />
+      <label for="include_mer">Inclure les frais de gestion (FGR) des fonds / FNB</label>
+    </div>
+    <p class="helper">Fonds communs typiques ~2 % et plus. FNB indiciels souvent ≤ 0,30 %.</p>
+    <div class="row">
+      <label for="mer_pct">FGR (%/an)</label>
+      <input id="mer_pct" type="text" placeholder="p. ex. 2,0" />
+    </div>
+  </section>
+  <section class="card">
+    <div class="results-panel-header">
+      <h2 class="section-title">Résultats calculés</h2>
+      <a href="/fr/calculators/advisor-fee/methodology/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">Voir le détail des calculs</a>
+    </div>
+    <div class="results">
+      <div class="result prominent">
+        <p class="k">Coût total calculé</p>
+        <p class="v" id="out_total_cost">$–</p>
+        <p class="subl">Frais payés + intérêts composés perdus</p>
+      </div>
+      <div class="result">
+        <p class="k">Rendement conseiller pour atteindre le seuil de rentabilité</p>
+        <p class="v" id="out_breakeven">–</p>
+      </div>
+      <div class="result">
+        <p class="k">Valeur finale (avec conseiller)</p>
+        <p class="v" id="out_with">$–</p>
+      </div>
+      <div class="result">
+        <p class="k">Valeur finale (sans conseiller)</p>
+        <p class="v" id="out_without">$–</p>
+      </div>
+      <div class="result">
+        <p class="k">Frais payés</p>
+        <p class="v" id="out_fees">$–</p>
+      </div>
+      <div class="result">
+        <p class="k">Intérêts composés perdus</p>
+        <p class="v" id="out_lost">$–</p>
+      </div>
+    </div>
+    <p class="meta" id="out_meta">Calculé selon les hypothèses indiquées ci-dessus.</p>
+  </section>
+</div>
+<div class="report-issue-wrap">
+  <a href="/fr/contact/" class="report-issue-link">Signaler un problème</a>
+</div>
+<section class="methods" id="methods">
+  <div class="methods-card">
+    <h2>Méthode et hypothèses</h2>
+    <div class="default-fee">
+      <div>
+        <h3>Modèle de frais conseiller (par défaut)</h3>
+        <p>Utilise une échelle de pourcentage des actifs (AUM) par paliers, cohérente avec celles des grandes institutions canadiennes (style des cinq grandes banques) et des plateformes similaires. Les frais sont appliqués aux actifs investis au fil du temps.</p>
+        <p class="default-note">À titre indicatif (votre calcul utilise cette échelle lorsque « Utiliser l&#39;échelle de frais conseiller par défaut » est coché).</p>
+      </div>
+      <div>
+        <table class="fee-table">
+          <thead>
+            <tr>
+              <th>Actifs sous gestion (CAD)</th>
+              <th>Frais annuels (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>$0 – $250,000</td><td>2.00%</td></tr>
+            <tr><td>$250,000 – $500,000</td><td>1.75%</td></tr>
+            <tr><td>$500,000 – $1,000,000</td><td>1.50%</td></tr>
+            <tr><td>$1,000,000 – $2,000,000</td><td>1.25%</td></tr>
+            <tr><td>Over $2,000,000</td><td>1.00%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="method-list">
+      <div class="method-item">
+        <strong>Frais conseiller (saisie manuelle)</strong>
+        <div>Si l&#39;échelle par défaut est désactivée, un seul pourcentage annuel forfaitaire des actifs — saisi par l&#39;utilisateur — est appliqué à la place.</div>
+      </div>
+      <div class="method-item">
+        <strong>Coûts des produits (FGR)</strong>
+        <div>
+          <span>Le FGR (frais de gestion des fonds) est le frais facturé par chaque fonds commun pour couvrir les frais de transaction, les salaires et autres dépenses des gestionnaires. Lorsqu&#39;il est activé, le FGR s&#39;applique aux actifs investis en plus des frais de conseil.</span><br><br>
+          <span>Le FGR est généralement facturé en plus des frais de votre conseiller, ce qui alourdit encore les rendements. Parfois, une partie des frais du conseiller peut être incluse dans le FGR d&#39;un produit qu&#39;il vous vend. Les FGR varient beaucoup — souvent entre 2 % et 6 % pour les fonds communs — mais sont bien moins élevés pour les FNB, souvent &lt; 0,3 %.</span><br><br>
+          <span>Nous supposons 2 % par défaut dans ce calculateur. Ajustez selon votre portefeuille.</span><br><br>
+          <span class="inline-note"><strong>Note : le FGR influence sensiblement les résultats. Une analyse attentive est nécessaire pour déterminer les vrais coûts dans votre situation.</strong></span>
+        </div>
+      </div>
+      <div class="method-item">
+        <strong>Frais payés</strong>
+        <div>Le montant cumulatif en dollars déduit du portefeuille au titre des frais de conseil (et du FGR, si inclus).</div>
+      </div>
+      <div class="method-item">
+        <strong>Intérêts composés perdus</strong>
+        <div>La réduction de la valeur finale due aux frais qui ne restent plus investis et ne composent plus.</div>
+      </div>
+      <div class="method-item">
+        <strong>Coût total calculé</strong>
+        <div>Frais payés plus intérêts composés perdus, incluant les frais de conseil et le FGR si applicable.</div>
+      </div>
+      <div class="method-item">
+        <strong>Rendement conseiller pour atteindre le seuil de rentabilité</strong>
+        <div>
+          <span>Le rendement annuel moyen requis pour qu&#39;un portefeuille géré par un conseiller atteigne la même valeur finale que sans conseiller, selon les hypothèses choisies.</span><br><br>
+          <strong>Exemple :</strong>
+          <span>Exemple : le scénario « Début de carrière » suppose un rendement de 7 % sur votre portefeuille. Si ce même portefeuille était géré par un conseiller avec l&#39;échelle par défaut et le FGR supposé de 2 %, le conseiller devrait obtenir un rendement annuel de 10,71 % pour égaler un portefeuille non géré (sans FGR) à 7 %. Si vous utilisez l&#39;échelle par défaut mais désactivez le FGR (adapté à un portefeuille sans fonds communs/FNB), le portefeuille doit rapporter 8,65 % par an pour égaler le cas sans conseiller.</span>
+        </div>
+      </div>
+      <div class="method-item">
+        <strong>Note de portée</strong>
+        <div>Les commissions de transaction, les impôts et autres coûts propres au compte ne sont pas inclus.</div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="disclaimer">
+  <p>Avertissement : tout le contenu de The Long Math — articles, essais, calculateurs, outils ou tout autre matériel — est fourni uniquement à des fins éducatives et informatives et ne constitue pas un conseil financier, fiscal, juridique ou en investissement. Les résultats ou projections reposent sur des modèles simplifiés, des hypothèses et des données fournies par l&#39;utilisateur et peuvent ne pas refléter les résultats réels. Vous êtes responsable d&#39;évaluer l&#39;exactitude et l&#39;applicabilité des informations fournies et d&#39;effectuer votre propre diligence raisonnable. Consultez un professionnel qualifié avant de prendre des décisions financières.</p>
+</div>
+
+  </div>
+  <footer class="site-footer">
+  <p>The Long Math est un site indépendant qui publie des calculateurs financiers interactifs, des outils et des explications sur thelongmath.com.</p>
+  <p>© 2026 The Long Math.</p>
+  <p>Ce site, y compris les textes, la mise en page, la conception, les calculateurs et les outils, est une œuvre originale et la propriété intellectuelle de The Long Math.</p>
+</footer>
+
+  
+<script defer src="/assets/js/calculator.engine.js"></script>
+<script defer src="/assets/js/calculator.ui.js"></script>
+<script src="/assets/js/theme.js"></script>
+
+  <div id="footerMount"></div>
+</body>
+</html>

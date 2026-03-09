@@ -1,0 +1,18 @@
+{
+  "source": "Bank of Canada / Statistics Canada",
+  "frequency": "monthly",
+  "start": "1914-01",
+  "end": "2024-12",
+  "description": "Canada Consumer Price Index (CPI), all-items",
+  "series": [
+    {
+      "date": "1914-01",
+      "value": 9.8
+    },
+    {
+      "date": "1914-02",
+      "value": 9.9
+    }
+  ],
+  "note": "This is a placeholder file. Replace with actual Canada CPI data from Bank of Canada or Statistics Canada."
+}

@@ -1,0 +1,29 @@
+{
+  "year": 2025,
+  "brackets": [
+    { "threshold": 0, "rate": 0.145, "_note": "2025 effective rate (14% from July 1 = 14.5% full-year)" },
+    { "threshold": 57375, "rate": 0.205 },
+    { "threshold": 114750, "rate": 0.26 },
+    { "threshold": 177882, "rate": 0.29 },
+    { "threshold": 253414, "rate": 0.33 }
+  ],
+  "credits": {
+    "lowestRateForCredits": 0.15,
+    "_noteLowestRate": "Schedule 1: BPA and Canada employment credit use 15% (statutory), not the effective first-bracket rate.",
+    "basicPersonalAmount": {
+      "amount": 16129,
+      "_note": "2025 CRA-indexed BPA. Credit = amount × lowestRateForCredits (15%). Phases out above net income $177,882 (not implemented here)."
+    },
+    "canadaEmploymentAmount": {
+      "amount": 1471,
+      "_note": "2025 CRA indexation: Canada employment amount (maximum). Credit = amount × lowestRateForCredits."
+    },
+    "cppEiCredit": {
+      "rate": 0.15
+    }
+  },
+  "rrspRoomRate": 0.18,
+  "rrspDollarMax": 32490,
+  "_source": "CRA: canada.ca/en/revenue-agency/.../canadian-income-tax-rates-individuals-current-previous-years.html and .../adjustment-personal-income-tax-benefit-amounts.html",
+  "_note": "2025 CRA-indexed brackets and BPA ($16,129). Canada employment amount $1,471 (CRA indexation table). RRSP 2025: 18% of prior-year earned income, max $32,490."
+}

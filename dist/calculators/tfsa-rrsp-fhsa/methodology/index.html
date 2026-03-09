@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspectable Arithmetic – TFSA vs RRSP vs FHSA Calculator | The Long Math</title>
+  <meta name="description" content="Formulae, computational structure, and assumptions for the TFSA vs RRSP vs FHSA (Canada) calculator." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/tfsa-rrsp-fhsa/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <div style="margin-bottom: 20px;">
+        <a href="/calculators/tfsa-rrsp-fhsa/" class="home-link">← Back to TFSA vs RRSP vs FHSA Calculator</a>
+      </div>
+
+      <h1>Inspectable Arithmetic for the TFSA vs RRSP vs FHSA Calculator (Canada)</h1>
+      <p class="methodology-meta">Version 1.0<br>Last updated: March 2026</p>
+
+      <p>
+        Transparent arithmetic is the operating system of this calculator.
+      </p>
+      <p>
+        This document publishes the formulae, computational structure, and assumptions used to generate the outputs displayed on the calculator page.
+      </p>
+      <p>
+        No opinions. No hidden assumptions. Just arithmetic.
+      </p>
+
+      <h2>Purpose</h2>
+      <p>
+        This calculator compares the after-tax future value of contributing a fixed cash amount to different Canadian registered accounts:
+        TFSA, RRSP, and FHSA. It models recurring or lump-sum contributions, simple net investment growth, and explicit tax treatment on
+        contribution and withdrawal under user-supplied marginal tax rates.
+      </p>
+
+      <h2>Definitions</h2>
+      <p>Let:</p>
+      <ul>
+        <li>C = contribution amount per period (monthly, annual, or one-time lump)</li>
+        <li>T = investment horizon in years</li>
+        <li>r = expected annual return before fees (percent)</li>
+        <li>f = annual fee drag (percent)</li>
+        <li>i = annual inflation rate (percent, optional)</li>
+        <li>t<sub>now</sub> = current marginal tax rate on contributions (percent)</li>
+        <li>t<sub>ret</sub> = marginal tax rate at withdrawal (percent)</li>
+        <li>r<sub>net</sub> = (r − f)/100 (net nominal annual return, decimal)</li>
+        <li>i<sub>d</sub> = i/100 (annual inflation in decimal form)</li>
+        <li>r<sub>m</sub> = monthly nominal rate</li>
+        <li>r<sub>m,real</sub> = monthly real rate (if real mode enabled)</li>
+        <li>B<sub>TFSA,t</sub>, B<sub>RRSP,t</sub>, B<sub>FHSA,t</sub> = account balances at month t</li>
+        <li>B<sub>refund,t</sub> = refund bucket balance at month t (when refunds are reinvested)</li>
+      </ul>
+
+      <h2>Core Equations</h2>
+
+      <h3 id="net-return">1. Net return and monthly rate</h3>
+      <p>Net annual nominal return (after fees):</p>
+      <div class="formula-block">
+        r<sub>net</sub> = (r − f) / 100
+      </div>
+      <p>Nominal monthly rate:</p>
+      <div class="formula-block">
+        r<sub>m</sub> = (1 + r<sub>net</sub>)<sup>1/12</sup> − 1
+      </div>
+      <p>If “Show results in real dollars” is enabled, the calculator converts to a real annual rate first:</p>
+      <div class="formula-block">
+        r<sub>real</sub> = \(\dfrac{1 + r_{\text{net}}}{1 + i_d}\) − 1
+      </div>
+      <p>and then to a real monthly rate:</p>
+      <div class="formula-block">
+        r<sub>m,real</sub> = (1 + r<sub>real</sub>)<sup>1/12</sup> − 1
+      </div>
+      <p class="formula-meta">
+        The engine uses a single monthly rate for all accounts. There is no asset-location modeling (no different returns per account).
+      </p>
+
+      <h3 id="contributions">2. Contributions and horizon</h3>
+      <p>Time horizon in months:</p>
+      <div class="formula-block">
+        N = 12T
+      </div>
+      <p>Contribution schedule:</p>
+      <ul>
+        <li>Monthly mode: C is contributed each month (C per month).</li>
+        <li>Annual mode: C per year, internally modeled as C/12 contributed each month.</li>
+        <li>Lump-sum mode: a single contribution C at month t = 0; no further contributions.</li>
+      </ul>
+
+      <h3 id="refund">3. Refund arithmetic</h3>
+      <p>For any RRSP or FHSA deposit d in a month, the modeled refund is:</p>
+      <div class="formula-block">
+        refund = d × t<sub>now</sub>/100
+      </div>
+      <p>Refund handling modes:</p>
+      <ul>
+        <li><strong>Spend refund (default):</strong> refund is ignored in the projection (treated as consumed).</li>
+        <li><strong>Reinvest refund:</strong> refund is added to a global refund bucket B<sub>refund</sub> for that strategy in the month it occurs and compounds at the same monthly rate as other balances.</li>
+      </ul>
+      <p class="formula-meta">
+        There is one refund bucket per strategy. The calculator does not separately label which portion of B<sub>refund</sub> originated from RRSP vs FHSA contributions.
+      </p>
+
+      <h3 id="evolution">4. Monthly evolution (per strategy)</h3>
+      <p>For each month t = 0,…,N−1, the engine:</p>
+      <ol>
+        <li>Computes the intended gross contribution G<sub>t</sub> for that month based on mode (monthly, annual/12, or lump at t = 0).</li>
+        <li>Allocates G<sub>t</sub> between TFSA, RRSP, and FHSA according to the strategy and FHSA annual room constraints (see next section).</li>
+        <li>Applies refunds on RRSP/FHSA deposits into the refund bucket when “reinvest refund” is selected.</li>
+        <li>Applies growth to all balances using the monthly rate.</li>
+      </ol>
+      <p>Growth step (using either r<sub>m</sub> or r<sub>m,real</sub>):</p>
+      <div class="formula-block">
+        B<sub>TFSA,t+1</sub> = B<sub>TFSA,t</sub>(1 + r<sub>m</sub>)<br>
+        B<sub>RRSP,t+1</sub> = B<sub>RRSP,t</sub>(1 + r<sub>m</sub>)<br>
+        B<sub>FHSA,t+1</sub> = B<sub>FHSA,t</sub>(1 + r<sub>m</sub>)<br>
+        B<sub>refund,t+1</sub> = B<sub>refund,t</sub>(1 + r<sub>m</sub>)
+      </div>
+
+      <h2>FHSA Room and Allocation Rules</h2>
+
+      <h3 id="fhsa-room">5. FHSA annual room</h3>
+      <p>Let:</p>
+      <ul>
+        <li>R<sub>0</sub> = FHSA annual room in year 1 (user input; default 8,000)</li>
+        <li>R = FHSA annual room in subsequent years (same as input by default)</li>
+      </ul>
+      <p>For each simulation year y = 1,…,⌈T⌉, FHSA room at the start of the year is:</p>
+      <div class="formula-block">
+        room<sub>1</sub> = R<sub>0</sub><br>
+        room<sub>y</sub> = R  &nbsp; for y ≥ 2
+      </div>
+      <p>At each month in year y, any amount assigned to FHSA reduces room<sub>y</sub>. If a monthly allocation would exceed room<sub>y</sub>, the engine:</p>
+      <ol>
+        <li>Contributes up to room<sub>y</sub> to FHSA.</li>
+        <li>Spills the remainder of that month’s contribution to TFSA or RRSP, depending on the strategy.</li>
+      </ol>
+      <p class="formula-meta">
+        FHSA lifetime caps and carry-forward rules are not modeled in this version. Only the annual room you specify is enforced.
+      </p>
+
+      <h3 id="strategies">6. Strategies</h3>
+      <p>The engine simulates several deterministic strategies:</p>
+      <ul>
+        <li><strong>ALL_TFSA:</strong> All contributions go to TFSA.</li>
+        <li><strong>ALL_RRSP:</strong> All contributions go to RRSP.</li>
+        <li><strong>ALL_FHSA (if FHSA eligible):</strong> Contributions go to FHSA until room<sub>y</sub> is exhausted each year; remainder goes to TFSA.</li>
+        <li><strong>FHSA_FIRST_THEN_TFSA (if FHSA eligible):</strong> FHSA first up to room<sub>y</sub>, then TFSA with any remainder.</li>
+        <li><strong>FHSA_FIRST_THEN_RRSP (if FHSA eligible):</strong> FHSA first up to room<sub>y</sub>, then RRSP with any remainder.</li>
+      </ul>
+      <p>The <strong>OPTIMAL</strong> strategy is defined as:</p>
+      <ul>
+        <li>If FHSA is not eligible: the better of ALL_TFSA and ALL_RRSP (by final after-tax value).</li>
+        <li>If FHSA is eligible: the better of FHSA_FIRST_THEN_TFSA and FHSA_FIRST_THEN_RRSP (by final after-tax value), with ALL_TFSA, ALL_RRSP, and ALL_FHSA still reported for comparison.</li>
+      </ul>
+
+      <h2>Withdrawals and After-Tax Values</h2>
+
+      <h3 id="withdrawals">7. Withdrawal tax treatment at horizon</h3>
+      <p>At the end of the horizon (month N), balances are:</p>
+      <div class="formula-block">
+        B<sub>TFSA,N</sub>, B<sub>RRSP,N</sub>, B<sub>FHSA,N</sub>, B<sub>refund,N</sub>
+      </div>
+      <p>After-tax values by account:</p>
+      <ul>
+        <li><strong>TFSA:</strong> tax-free withdrawals</li>
+      </ul>
+      <div class="formula-block">
+        V<sub>TFSA</sub> = B<sub>TFSA,N</sub>
+      </div>
+      <ul>
+        <li><strong>RRSP:</strong> withdrawals taxed at t<sub>ret</sub></li>
+      </ul>
+      <div class="formula-block">
+        V<sub>RRSP</sub> = B<sub>RRSP,N</sub>(1 − t<sub>ret</sub>/100)
+      </div>
+      <ul>
+        <li><strong>FHSA:</strong></li>
+      </ul>
+      <div class="formula-block">
+        \(\displaystyle
+        V_{\text{FHSA}} =
+        \begin{cases}
+          B_{\text{FHSA},N} & \text{if FHSA is eligible and “plan to buy using FHSA” is checked (home-qualified)} \\
+          B_{\text{FHSA},N}(1 - t_{\text{ret}}/100) & \text{otherwise (FHSA behaves like RRSP)}
+        \end{cases}
+        \)
+      </div>
+      <ul>
+        <li><strong>Refund bucket:</strong> always treated as tax-free in this version</li>
+      </ul>
+      <div class="formula-block">
+        V<sub>refund</sub> = B<sub>refund,N</sub>
+      </div>
+
+      <p>Total after-tax value for a given strategy is:</p>
+      <div class="formula-block">
+        V_{\text{total}} = V_{\text{TFSA}} + V_{\text{RRSP}} + V_{\text{FHSA}} + V_{\text{refund}}
+      </div>
+
+      <h2>Allocation Summary</h2>
+
+      <p>The calculator reports a human-readable “optimal split” sentence based on the simulated strategy that maximizes V<sub>total</sub>:</p>
+      <ul>
+        <li><strong>annualContribution:</strong> annualized contribution amount under the selected mode (12 × monthly for monthly mode, C for annual, C for lump treated as a one-year contribution).</li>
+        <li><strong>fhsaUsedAnnual:</strong> estimated FHSA dollar amount used in year 1 (capped at the modeled annual FHSA room).</li>
+        <li><strong>remainderAnnual:</strong> annualContribution − fhsaUsedAnnual.</li>
+        <li><strong>remainderDestination:</strong> “TFSA” or “RRSP”, depending on which account receives the modeled remainder in the optimal FHSA-first strategy.</li>
+      </ul>
+
+      <h2>Worked Example (Using Your Last Inputs)</h2>
+
+      <p>The example below substitutes the last inputs you used on the calculator page (if available from this browser). Values are rounded for readability.</p>
+
+      <div class="callout" id="workedExample">
+        <p id="exampleFallback" class="muted">
+          Open the TFSA vs RRSP vs FHSA calculator, enter your assumptions, and then click “Inspect the Arithmetic” to see a worked example here with your values.
+        </p>
+        <div id="exampleContent" class="hidden">
+          <p>
+            Horizon T ≈ <span id="exT"></span> years,
+            nominal return r ≈ <span id="exR"></span>,
+            fees f ≈ <span id="exF"></span>,
+            so net annual r<sub>net</sub> ≈ <span id="exRNet"></span>.
+          </p>
+          <p>
+            Monthly rate used in the simulation:
+            <br>
+            <span id="exRmLine"></span>
+          </p>
+          <p>
+            With contribution mode <span id="exMode"></span> and contribution amount C ≈ <span id="exC"></span>,
+            the engine simulates N = 12T ≈ <span id="exN"></span> monthly steps and allocates up to
+            <span id="exFhsaRoom"></span> per year to FHSA before spilling the remainder to
+            <span id="exDest"></span>.
+          </p>
+        </div>
+      </div>
+
+      <h2>Assumptions and Limitations</h2>
+      <ol>
+        <li>All simulations use monthly time steps with deterministic compounding and fixed contribution schedules.</li>
+        <li>Investment returns, fees, and (optionally) inflation are modeled as constant over the full horizon.</li>
+        <li>RRSP and FHSA refunds are either treated as immediately spent (default) or reinvested in a TFSA-like bucket; actual tax timing and withholding are more complex in practice.</li>
+        <li>Tax rates t<sub>now</sub> and t<sub>ret</sub> are user-supplied and held constant; the calculator does not derive marginal rates from taxable income.</li>
+        <li>FHSA modeling uses only the annual room you specify; lifetime FHSA contribution caps, carry-forward mechanics, and detailed withdrawal conditions are not modeled.</li>
+        <li>Non-registered (taxable) accounts are not included in this version; it is an account-to-account comparison between registered options.</li>
+        <li>All results are rounded for display; internal calculations use full floating-point precision.</li>
+      </ol>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between this documentation and the calculator output, the arithmetic in the engine governs.
+      </p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+
+  <script>
+    (function () {
+      try {
+        const raw = window.localStorage.getItem("tlm_tfsa_rrsp_fhsa_lastInputs");
+        if (!raw) return;
+        const inputs = JSON.parse(raw);
+        if (!inputs || typeof inputs !== "object") return;
+
+        const T = Number(inputs.horizonYears) || 0;
+        const r = Number(inputs.annualReturn) || 0;
+        const f = Number(inputs.annualFees) || 0;
+        const rNet = r - f;
+        const N = Math.round(T * 12);
+
+        document.getElementById("exampleFallback").classList.add("hidden");
+        document.getElementById("exampleContent").classList.remove("hidden");
+
+        document.getElementById("exT").textContent = T.toFixed(1);
+        document.getElementById("exR").textContent = r.toFixed(1) + "%";
+        document.getElementById("exF").textContent = f.toFixed(2) + "%";
+        document.getElementById("exRNet").textContent = rNet.toFixed(2) + "%";
+
+        const modeMap = {
+          monthly: "monthly",
+          annual: "annual",
+          lump: "one-time lump sum"
+        };
+        document.getElementById("exMode").textContent = modeMap[inputs.contributionMode] || inputs.contributionMode;
+        document.getElementById("exC").textContent = Number(inputs.contributionAmount || 0).toLocaleString("en-CA", {
+          style: "currency",
+          currency: "CAD",
+          maximumFractionDigits: 0
+        });
+        document.getElementById("exN").textContent = String(N);
+
+        const fhsaRoom = Number(inputs.fhsaAnnualRoom || 0);
+        document.getElementById("exFhsaRoom").textContent = fhsaRoom.toLocaleString("en-CA", {
+          style: "currency",
+          currency: "CAD",
+          maximumFractionDigits: 0
+        });
+
+        const dest = inputs.fhsaEligible ? "TFSA or RRSP (whichever is optimal in your run)" : "TFSA or RRSP (FHSA unavailable in your run)";
+        document.getElementById("exDest").textContent = dest;
+
+        const useReal = !!inputs.useRealDollars;
+        let line = "";
+        if (!useReal) {
+          line = "Nominal monthly rate r_m is computed as (1 + (r−f)/100)^(1/12) − 1 using your inputs.";
+        } else {
+          line = "Real monthly rate is computed by first converting (r−f) to a real annual rate using your inflation i, then taking the 12th root.";
+        }
+        document.getElementById("exRmLine").textContent = line;
+      } catch (e) {
+        // If anything fails, leave the generic fallback text.
+      }
+    })();
+  </script>
+</body>
+</html>
+

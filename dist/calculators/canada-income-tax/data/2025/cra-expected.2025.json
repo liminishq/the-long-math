@@ -1,0 +1,34 @@
+{
+  "year": 2025,
+  "_source": "CRA Schedule 1 step-by-step (bracket tax round per line, BPA/employment/CPP-EI credit at 15%). Provincial from external comparator tool until form-verified.",
+  "scenarios": [
+    {
+      "id": "ON_employment_160k",
+      "name": "Ontario, $160,000 employment only",
+      "input": {
+        "province": "ON",
+        "employmentIncome": 160000,
+        "selfEmploymentIncome": 0,
+        "otherIncome": 0,
+        "eligibleDividends": 0,
+        "nonEligibleDividends": 0,
+        "capitalGains": 0,
+        "rrspDeduction": 0,
+        "fhsaDeduction": 0,
+        "estimatedDeductions": 0,
+        "taxPaid": 0
+      },
+      "expected": {
+        "federalTax": 28380,
+        "federalTax_note": "Schedule 1: bracket 31846 - BPA 2419.35 - employment 220.65 - CPP/EI credit 826.14 = 28379.86",
+        "provTax": 16732,
+        "provTax_note": "External comparator ON 160k employment (form-verify with ON428 when needed)",
+        "totalIncomeTax": 45105,
+        "totalIncomeTax_note": "External comparator total (federal + provincial income tax only)"
+      },
+      "toleranceFederal": 10,
+      "toleranceProvincial": 600,
+      "toleranceTotal": 650
+    }
+  ]
+}

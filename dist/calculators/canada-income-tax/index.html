@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Canada Personal Income Tax Calculator 2025 – The Long Math</title>
+  <link rel="canonical" href="https://thelongmath.com/calculators/canada-income-tax/" />
+
+  <!-- Site-wide theme + styles -->
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script defer src="/assets/js/site.js"></script>
+
+  <!-- Page-local styles -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+<body>
+  <div id="site-header"></div>
+  
+  <!-- Back link -->
+  <div style="max-width: 980px; margin: 0 auto; padding: 8px 16px 0;">
+    <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
+  </div>
+  
+  <div class="wrap">
+
+    <div class="card">
+      <h1>Canada Personal Income Tax Calculator (2025)</h1>
+      <p class="lead">
+        Calculate income tax by province and type of income. This calculator allows you to estimate federal and provincial income tax, calculate average and marginal income tax rates, estimate how much income tax you owe or your tax refund, see how deductions affect your taxable income and tax rate, and calculate your after-tax income (take-home pay).
+      </p>
+      <p class="lead" style="margin-top: 8px;">
+        It supports employment income, business income, dividends, capital gains, CPP and EI contributions, and common deductions. Enter your numbers to see how your income is taxed in Canada.
+      </p>
+      <p class="long-math-tagline" style="margin-top: 12px; font-size: 13px; color: var(--muted);">
+        <em>No opinions. No hidden assumptions. Just arithmetic.</em>
+      </p>
+
+      <!-- MAIN GRID (2 columns) -->
+      <div class="calc-grid">
+
+      <!-- INPUTS -->
+      <section class="panel">
+        <h2 class="section-title">Inputs</h2>
+
+        <div style="margin-bottom: 16px;">
+          <button id="resetButton" type="button" style="padding: 10px 16px; font-size: 13px;">Reset All Inputs</button>
+        </div>
+
+        <div class="field">
+          <label for="year">Tax Year</label>
+          <select id="year">
+            <option value="2025">2025</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="province" class="req-select">Province/Territory of Residence</label>
+          <select id="province" class="req-select" tabindex="0">
+            <option value="">Select...</option>
+          </select>
+          <div id="provinceWarning" class="inline-warning" aria-live="polite" style="display: none;"></div>
+        </div>
+
+        <div class="field">
+          <label for="employmentIncome">Employment Income</label>
+          <input type="text" id="employmentIncome" placeholder="0" value="" inputmode="decimal">
+        </div>
+
+        <div class="field">
+          <label for="selfEmploymentIncome">Self-Employment Income</label>
+          <input type="text" id="selfEmploymentIncome" placeholder="0" value="" inputmode="decimal">
+        </div>
+
+        <div class="field">
+          <label for="otherIncome">Other Income</label>
+          <input type="text" id="otherIncome" placeholder="0" value="" inputmode="decimal">
+        </div>
+
+        <div class="field">
+          <label for="eligibleDividends">Eligible Dividends</label>
+          <input type="text" id="eligibleDividends" placeholder="0" value="" inputmode="decimal">
+        </div>
+
+        <div class="field">
+          <label for="nonEligibleDividends">Non-Eligible Dividends</label>
+          <input type="text" id="nonEligibleDividends" placeholder="0" value="" inputmode="decimal">
+        </div>
+
+        <div class="field">
+          <label for="capitalGains">Capital Gains</label>
+          <input type="text" id="capitalGains" placeholder="0" value="" inputmode="decimal">
+        </div>
+
+        <div class="field">
+          <label for="rrspDeduction">RRSP Deduction</label>
+          <input type="text" id="rrspDeduction" placeholder="0" value="" inputmode="decimal">
+          <div class="field-help">
+            RRSP deductions are limited by your available contribution room.
+            <a href="#rrsp-limits">RRSP limit details ↓</a>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="fhsaDeduction">FHSA Contribution (Deduction Claimed This Year)</label>
+          <input type="text" id="fhsaDeduction" placeholder="0" value="" inputmode="decimal">
+          <div class="field-help">
+            Enter the FHSA deduction you are claiming for this tax year. Contribution room and carry-forward are not calculated here.
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="taxPaid">Income Tax Already Paid (Withheld)</label>
+          <input type="text" id="taxPaid" placeholder="0" value="" inputmode="decimal">
+        </div>
+
+        <div style="margin-top: 20px; padding: 14px; border: 1px solid rgba(217,180,106,.35); border-radius: 12px; background: linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,.04));">
+          <p style="margin: 0; font-size: 13px; color: var(--text); font-weight: 600; margin-bottom: 8px;">Important Note:</p>
+          <p style="margin: 0 0 12px; font-size: 12px; color: var(--muted); line-height: 1.5;">
+            These calculations are <strong style="color: var(--text);">before</strong> individual deductions you may be eligible to claim, such as:
+            home office expenses, medical expenses, charitable donations, tuition and education credits, childcare expenses,
+            moving expenses, and other personal tax credits or deductions that may reduce your taxable income or tax payable.
+          </p>
+          <p style="margin: 0; font-size: 12px; color: var(--muted); line-height: 1.5;">
+            <strong style="color: var(--text);">This calculator cannot determine which deductions apply to you.</strong> If you have an estimate of your total deductions, you may include it below to see the impact on the results. Always confirm final numbers with your accountant or tax professional.
+          </p>
+        </div>
+
+        <div class="field" style="margin-top: 16px;">
+          <label for="estimatedDeductions">Estimated Additional Deductions</label>
+          <input type="text" id="estimatedDeductions" placeholder="0" value="" inputmode="decimal">
+          <div class="helper" style="margin-top: 6px;">Optional: Enter your estimated total of additional deductions (medical, home office, donations, etc.)</div>
+        </div>
+      </section>
+
+      <!-- RESULTS -->
+      <section class="panel">
+        <h2 class="section-title">Results</h2>
+
+        <div class="results">
+          <div class="result">
+            <p class="k">Total Income</p>
+            <p class="v" id="totalIncome">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Taxable Income</p>
+            <p class="v" id="taxableIncome">$–</p>
+          </div>
+
+          <div class="result prominent">
+            <p class="k">Total Tax Burden</p>
+            <p class="v" id="totalBurden">$–</p>
+            <p class="subl">Income tax + CPP + EI</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Federal Income Tax</p>
+            <p class="v" id="federalTax">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Provincial / Territorial Income Tax</p>
+            <p class="v" id="provTax">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">CPP Contributions</p>
+            <p class="v" id="cpp">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">EI Contributions</p>
+            <p class="v" id="ei">$–</p>
+          </div>
+
+          <div class="result prominent">
+            <p class="k">Total Take-Home Pay</p>
+            <p class="v" id="takeHomeAfterPayroll">$–</p>
+            <p class="subl">Taxable income minus income tax, CPP, and EI</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Average Tax Rate</p>
+            <p class="v" id="avgRate">–%</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Marginal Tax Rate</p>
+            <p class="v" id="marginalRate">–%</p>
+          </div>
+
+          <div class="result" id="refundOrOwingResult">
+            <p class="k" id="refundOrOwingLabel">Balance Owing / Refund</p>
+            <p class="v" id="refundOrOwing">$–</p>
+          </div>
+        </div>
+      </section>
+      </div>
+    </div>
+
+    <div class="report-issue-wrap">
+      <a href="/contact/" class="report-issue-link">Report an Issue</a>
+    </div>
+
+    <!-- SHOW THE MATH (full width) -->
+    <section class="methods">
+      <div class="methods-card">
+        <h2>Show the Math</h2>
+
+        <div class="method-list">
+          <details class="method-item">
+            <summary><strong>Federal Tax Calculation</strong></summary>
+            <div id="federalBrackets" class="breakdown-content"></div>
+          </details>
+
+          <details class="method-item">
+            <summary><strong>Provincial/Territorial Tax Calculation</strong></summary>
+            <div id="provincialBrackets" class="breakdown-content"></div>
+          </details>
+
+          <details class="method-item">
+            <summary><strong>Dividend Gross-Up and Tax Credits</strong></summary>
+            <div id="dividendsBreakdown" class="breakdown-content"></div>
+          </details>
+
+          <details class="method-item">
+            <summary><strong>Capital Gains Inclusion</strong></summary>
+            <div id="capitalGainsBreakdown" class="breakdown-content"></div>
+          </details>
+
+          <details class="method-item">
+            <summary><strong>CPP and EI Calculations</strong></summary>
+            <div id="payrollBreakdown" class="breakdown-content"></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+      <div class="methods-card">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-list">
+          <div class="faq-item">
+            <h3 id="rrsp-limits">How much can I contribute to an RRSP?</h3>
+            <p>Your RRSP contribution limit is generally 18% of your prior-year earned income, up to an annual maximum set by the CRA, plus any unused room carried forward (and adjusted for pension contributions).</p>
+            <p id="rrsp-max-text">For the 2025 tax year, the annual RRSP contribution maximum is <span id="rrsp-max-value">$32,490</span>.</p>
+            <p>Your exact available contribution room appears on your CRA Notice of Assessment.</p>
+            <p>This calculator accepts an RRSP deduction input; it does not compute contribution room; it does not model CRA penalties or over-contribution rules.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3>Why might my results differ from the CRA?</h3>
+            <p>This calculator models federal/provincial brackets, common credits, and payroll contributions. It does not include every possible credit/deduction/special rule.</p>
+            <p>Examples of items not included: medical expenses, tuition credits, charitable donations, pension adjustments, prior-year losses, and CRA-specific rounding methods.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3>Does this calculator provide tax advice?</h3>
+            <p>No. This calculator provides arithmetic only. No recommendations. Educational/comparative use.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
+      </p>
+    </div>
+
+    <div id="footerMount"></div>
+
+  </div>
+
+  <script type="module">
+    import { initUI } from './js/tax.ui.js';
+    initUI();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Investment Fees — Common Long-Term Cost Questions | The Long Math</title>
+  <meta name="description" content="Four common fee questions, answered clearly with explicit default assumptions, with links to the full interactive calculators." />
+
+  <!-- Update to your final public URL when live -->
+  <link rel="canonical" href="https://thelongmath.com/fees/" />
+
+  <!-- Site-wide theme + styles -->
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script defer src="/assets/js/site.js"></script>
+
+  <style>
+    /* Fees Hub specific overrides */
+    .tagline{margin:10px 0 0; color:var(--text); opacity:.9; font-weight:600}
+
+    .grid{display:grid; grid-template-columns:1fr; gap:14px; margin-top:18px}
+    .card h2{margin:0 0 10px; font-size:18px; letter-spacing:-.01em}
+    .q{margin:0 0 8px; font-size:15px; font-weight:700}
+    .answer{
+      margin:0 0 10px; padding:10px 12px;
+      border:1px solid rgba(147,197,253,.25);
+      background:rgba(147,197,253,.08);
+      border-radius:12px;
+    }
+    .answer .label{
+      display:block; font-size:12px; color:var(--muted);
+      margin-bottom:4px; letter-spacing:.02em; text-transform:uppercase;
+    }
+    .answer .text{margin:0; font-size:14px; font-weight:650}
+    .assump{margin:10px 0 12px; padding-left:18px; color:var(--muted); font-size:13px}
+    .assump li{margin:4px 0}
+    .ctaRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:8px}
+    .btn{
+      display:inline-block; padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      font-size:14px; font-weight:650;
+      text-decoration:none;
+    }
+    .btn:hover{background:rgba(255,255,255,.10); text-decoration:none}
+    .btnPrimary{border-color:rgba(147,197,253,.35); background:rgba(147,197,253,.12)}
+    .note{margin-top:14px; color:var(--muted); font-size:13px}
+  </style>
+
+  <!-- AI/SEO-friendly: FAQ structured data -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {
+        "@type":"Question",
+        "name":"What is the long-term cost of a 1% investment fee?",
+        "acceptedAnswer":{"@type":"Answer","text":"Using default assumptions, a 1% annual fee reduces the ending value over 30 years versus no fee. Open the calculator to see the exact dollar impact and adjust inputs."}
+      },
+      {
+        "@type":"Question",
+        "name":"How much does a 0.5% fee reduce returns over 30 years?",
+        "acceptedAnswer":{"@type":"Answer","text":"Using default assumptions, a 0.5% annual fee reduces the ending value over 30 years versus no fee. Open the calculator to see the exact dollar impact and adjust inputs."}
+      },
+      {
+        "@type":"Question",
+        "name":"How much extra return is required to overcome a 1% annual fee?",
+        "acceptedAnswer":{"@type":"Answer","text":"The required extra return is near the fee as a first approximation; the exact break-even depends on compounding, contributions, and horizon. Open the calculator to compute it under your inputs."}
+      },
+      {
+        "@type":"Question",
+        "name":"At what fee level does active management stop outperforming passive investing?",
+        "acceptedAnswer":{"@type":"Answer","text":"Active management breaks even when the required excess return equals the fee difference after compounding. Open the calculator to compute the break-even alpha under your inputs."}
+      }
+    ]
+  }
+  </script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+  <div class="wrap">
+
+    <!-- Back link -->
+    <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
+
+    <!-- Header -->
+    <header>
+      <h1>Investment Fees: Common Long-Term Cost Questions</h1>
+
+      <div class="lede">
+        <p>This hub summarizes four fee questions with explicit default assumptions and short answers. Each answer links to a dedicated calculator page where the full math is shown and inputs can be changed.</p>
+        <p class="tagline">Clear questions. Clear answers. Inspectable arithmetic.</p>
+      </div>
+    </header>
+
+    <main class="grid" role="main">
+      <section class="card" aria-labelledby="q1">
+        <h2 id="q1">1) Cost of a 1% annual fee</h2>
+        <p class="q">Question: What is the long-term cost of a 1% investment fee?</p>
+        <div class="answer" role="note" aria-label="Short Answer">
+          <span class="label">Short answer</span>
+          <p class="text">Using default assumptions, a 1% annual fee reduces the ending value over 30 years versus no fee.</p>
+        </div>
+        <ul class="assump" aria-label="Default assumptions">
+          <li>Starting balance: <strong>$500,000</strong></li>
+          <li>Gross return (before fee): <strong>6%</strong></li>
+          <li>Horizon: <strong>30 years</strong></li>
+          <li>Annual contribution: <strong>$0</strong></li>
+        </ul>
+        <div class="ctaRow">
+          <a class="btn btnPrimary" href="/calculators/fee-cost-1percent/" aria-label="Open 1% fee cost calculator">Open the 1% fee cost calculator</a>
+          <a class="btn" href="/calculators/" aria-label="Browse calculators">Browse all calculators</a>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="q2">
+        <h2 id="q2">2) Cost of a 0.5% annual fee</h2>
+        <p class="q">Question: How much does a 0.5% fee reduce returns over 30 years?</p>
+        <div class="answer" role="note" aria-label="Short Answer">
+          <span class="label">Short answer</span>
+          <p class="text">Using default assumptions, a 0.5% annual fee reduces the ending value over 30 years versus no fee.</p>
+        </div>
+        <ul class="assump" aria-label="Default assumptions">
+          <li>Starting balance: <strong>$500,000</strong></li>
+          <li>Gross return (before fee): <strong>6%</strong></li>
+          <li>Horizon: <strong>30 years</strong></li>
+          <li>Annual contribution: <strong>$0</strong></li>
+        </ul>
+        <div class="ctaRow">
+          <a class="btn btnPrimary" href="/calculators/fee-cost-0-5percent/" aria-label="Open 0.5% fee cost calculator">Open the 0.5% fee cost calculator</a>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="q3">
+        <h2 id="q3">3) Required excess return to offset a fee</h2>
+        <p class="q">Question: How much extra return is required to overcome a 1% annual fee?</p>
+        <div class="answer" role="note" aria-label="Short Answer">
+          <span class="label">Short answer</span>
+          <p class="text">The required extra return is near the fee as a first approximation; the exact break-even depends on compounding, contributions, and horizon.</p>
+        </div>
+        <ul class="assump" aria-label="Default assumptions">
+          <li>Starting balance: <strong>$500,000</strong></li>
+          <li>Gross return baseline: <strong>6%</strong></li>
+          <li>Fee: <strong>1.0%</strong></li>
+          <li>Horizon: <strong>30 years</strong></li>
+          <li>Annual contribution: <strong>$0</strong></li>
+        </ul>
+        <div class="ctaRow">
+          <a class="btn btnPrimary" href="/calculators/required-return-to-offset-fee/" aria-label="Open extra return calculator">Open the extra return calculator</a>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="q4">
+        <h2 id="q4">4) Break-even: active vs passive fees</h2>
+        <p class="q">Question: At what fee level does active management stop outperforming passive investing?</p>
+        <div class="answer" role="note" aria-label="Short Answer">
+          <span class="label">Short answer</span>
+          <p class="text">Active management breaks even when the required excess return equals the fee difference after compounding over the chosen horizon.</p>
+        </div>
+        <ul class="assump" aria-label="Default assumptions">
+          <li>Starting balance: <strong>$500,000</strong></li>
+          <li>Return baseline: <strong>6%</strong></li>
+          <li>Passive fee: <strong>0.10%</strong></li>
+          <li>Active fee: <strong>1.00%</strong></li>
+          <li>Horizon: <strong>30 years</strong></li>
+          <li>Annual contribution: <strong>$0</strong></li>
+        </ul>
+        <div class="ctaRow">
+          <a class="btn btnPrimary" href="/calculators/active-vs-passive-break-even/" aria-label="Open active vs passive break-even calculator">Open the break-even calculator</a>
+        </div>
+      </section>
+
+      <section class="card" aria-label="Notes">
+        <h2>Notes</h2>
+        <p class="note">
+          This hub is intentionally shallow: it provides clean questions, clean short answers, and links to canonical calculator pages where the math is shown and inputs can be changed.
+        </p>
+      </section>
+    </main>
+
+    <div class="report-issue-wrap">
+      <a href="/contact/" class="report-issue-link">Report an Issue</a>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
+      </p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+
+  <!-- Theme toggle -->
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const toggle = document.getElementById("theme_toggle");
+      const label = document.getElementById("theme_label");
+
+      const theme = root.getAttribute("data-theme") || "dark";
+      toggle.checked = theme === "light";
+      label.textContent = theme === "light" ? "Light" : "Dark";
+
+      toggle.addEventListener("change", () => {
+        const next = toggle.checked ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem("tlm_theme", next);
+        label.textContent = next === "light" ? "Light" : "Dark";
+      });
+    })();
+  </script>
+
+</body>
+</html>

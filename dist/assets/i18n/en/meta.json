@@ -1,0 +1,28 @@
+{
+  "home": {
+    "title": "The Long Math",
+    "description": "Interactive financial calculators, tools, and explanations for long-term personal and small-business financial trade-offs.",
+    "manifesto1": "The Long Math is a growing collection of interactive financial calculators, tools, and explanations designed to make long-term personal and small-business financial trade-offs visible.",
+    "manifesto2": "Most financial decisions are presented as stories. This site focuses on arithmetic. It examines how fees, taxes, compounding, and incentives interact over decades, using transparent assumptions and explicit calculations that can be inspected and verified.",
+    "manifesto3": "No opinions. No hidden assumptions. Just arithmetic.",
+    "featuredSectionTitle": "Featured tool",
+    "featuredTitle": "Cost of a Financial Advisor",
+    "featuredDesc": "Quantifies the long-term impact of advisory fees and lost compounding using explicit assumptions and inspectable math.",
+    "openCalculator": "Open calculator",
+    "featuredExample": "An example of what this looks like in practice.",
+    "card1Title": "Investment & Financial Literacy",
+    "card1Desc": "Educational content on markets, asset classes, portfolio construction, incentives, and long-horizon thinking.",
+    "card1Tagline": "This is where understanding is built.",
+    "card2Title": "Beyond The Numbers",
+    "card2ComingSoon": "Coming soon",
+    "card2Desc": "Essays on a life and career in medicine through a personal and business finance lens.",
+    "card2Tagline": "This is where lived experiences make the numbers real.",
+    "card3Title": "Tools and Calculators",
+    "card3Desc": "Interactive financial calculators that quantify long-term financial trade-offs using explicit assumptions and inspectable arithmetic.",
+    "card3Tagline": "This is where the math is made visible."
+  },
+  "advisorFee": {
+    "title": "Financial Advisor Cost Calculator – The Long Math",
+    "description": "Quantify the long-term impact of advisory fees and lost compounding using explicit assumptions and inspectable math."
+  }
+}

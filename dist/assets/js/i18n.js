@@ -123,8 +123,8 @@
 
   /**
    * Apply translations to the document (or a given element).
-   * Static page content is now pre-rendered at build time; this is kept only for
-   * runtime-only strings (e.g. calculator dynamic messages) and backwards compatibility.
+   * Elements with data-i18n="key" get textContent = t(key).
+   * data-i18n-attr="href:common.links.foo" sets attribute from t(key).
    */
   function applyToDocument(root) {
     const el = root || document.body;

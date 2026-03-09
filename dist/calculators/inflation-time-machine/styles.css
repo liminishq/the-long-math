@@ -1,0 +1,187 @@
+/* Inflation Time Machine — minimal local styles; relies on global styles.css */
+
+.calc-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+@media (max-width: 900px) {
+  .calc-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.field {
+  margin: 12px 0;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface, rgba(255, 255, 255, 0.04));
+  color: var(--text);
+  font-size: 14px;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.field .help-text {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.swap-button {
+  padding: 10px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.swap-button:hover {
+  background: var(--surface2);
+  border-color: var(--accent);
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.result-row .label {
+  opacity: 0.85;
+  font-size: 14px;
+}
+
+.result-row .value {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.result-row.highlight {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent);
+}
+
+.result-row .value.highlight-value {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.stats-row .result-row .value {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.loading-inline,
+.no-data-message {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.comparison-title {
+  margin: 20px 0 10px;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.comparison-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.comparison-row {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.comparison-row-selected {
+  border-color: var(--accent);
+  background: var(--accentSoft, rgba(255, 255, 255, 0.06));
+}
+
+.faq-section {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.faq-section h2 {
+  margin: 0 0 20px;
+  font-size: 20px;
+  color: var(--text);
+}
+
+.faq-item {
+  margin-bottom: 24px;
+}
+
+.faq-item h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: var(--accent2);
+  font-weight: 700;
+}
+
+.faq-item p,
+.faq-item ul {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.faq-item ul {
+  padding-left: 20px;
+  margin-top: 8px;
+}
+
+.disclaimer {
+  margin-top: 24px;
+  font-size: 12.5px;
+  color: var(--muted);
+}

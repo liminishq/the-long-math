@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "frequency": "annual",
+  "generated_on": "2026-02-15",
+  "countries": [
+    {
+      "code": "USA",
+      "name": "United States",
+      "flag": "🇺🇸",
+      "startYear": 1913,
+      "endYear": 2024,
+      "dataPath": "/data/cpi/USA.json",
+      "sourceName": "U.S. Bureau of Labor Statistics (BLS)",
+      "sourceUrl": "https://www.bls.gov/cpi/",
+      "sourceId": "CUUR0000SA0"
+    },
+    {
+      "code": "CAN",
+      "name": "Canada",
+      "flag": "🇨🇦",
+      "startYear": 1914,
+      "endYear": 2025,
+      "dataPath": "/data/cpi/CAN.json",
+      "sourceName": "Statistics Canada",
+      "sourceUrl": "https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1810000501",
+      "sourceId": "18-10-0005-01"
+    },
+    {
+      "code": "AUS",
+      "name": "Australia",
+      "flag": "🇦🇺",
+      "startYear": 1949,
+      "endYear": 2022,
+      "dataPath": "/data/cpi/AUS.json",
+      "sourceName": "Australian Bureau of Statistics (ABS)",
+      "sourceUrl": "https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia/mar-quarter-2023/640101.xlsx",
+      "sourceId": "A2325846C"
+    },
+    {
+      "code": "GBR",
+      "name": "United Kingdom",
+      "flag": "🇬🇧",
+      "startYear": 1988,
+      "endYear": 2025,
+      "dataPath": "/data/cpi/GBR.json",
+      "sourceName": "Office for National Statistics (ONS)",
+      "sourceUrl": "https://www.ons.gov.uk/economy/inflationandpriceindices/timeseries/d7bt/mm23",
+      "sourceId": "D7BT"
+    }
+  ]
+}

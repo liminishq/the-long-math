@@ -1,0 +1,10 @@
+{
+  "eligibleDiv160k": {
+    "totalTax": 20470,
+    "federal": 13570,
+    "provincial": 6898,
+    "taxableIncome": 220800,
+    "toleranceTax": 2700,
+    "toleranceIncome": 2
+  }
+}

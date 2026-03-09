@@ -1,0 +1,31 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact",
+    "menu": "Menu",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "theme": {
+    "dark": "Dark",
+    "light": "Light",
+    "toggle": "Toggle light/dark mode"
+  },
+  "brand": {
+    "name": "The Long Math",
+    "homeAria": "The Long Math home"
+  },
+  "langSwitcher": {
+    "en": "English",
+    "fr": "Français"
+  },
+  "footer": {
+    "tagline": "The Long Math is an independent website publishing interactive financial calculators, tools, and explanations at thelongmath.com.",
+    "copyright": "© 2026 The Long Math.",
+    "legal": "This site, including its text, layout, design, calculators and tools are original work and the intellectual property of The Long Math."
+  },
+  "links": {
+    "reportIssue": "Report an Issue"
+  }
+}

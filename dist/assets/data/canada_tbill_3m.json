@@ -1,0 +1,18 @@
+{
+  "source": "Bank of Canada",
+  "frequency": "monthly",
+  "start": "1934-01",
+  "end": "2024-12",
+  "description": "Canada 3-month T-bill yield, monthly average",
+  "series": [
+    {
+      "date": "1934-01",
+      "value": 2.50
+    },
+    {
+      "date": "1934-02",
+      "value": 2.55
+    }
+  ],
+  "note": "This is a placeholder file. Replace with actual Bank of Canada 3-month T-bill yield data (series V39051 or equivalent)."
+}

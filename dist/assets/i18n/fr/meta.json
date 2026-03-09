@@ -1,0 +1,28 @@
+{
+  "home": {
+    "title": "The Long Math",
+    "description": "Calculateurs financiers interactifs, outils et explications pour les choix financiers à long terme des particuliers et des petites entreprises.",
+    "manifesto1": "The Long Math est une collection grandissante de calculateurs financiers interactifs, d'outils et d'explications conçus pour rendre visibles les choix financiers à long terme des particuliers et des petites entreprises.",
+    "manifesto2": "La plupart des décisions financières sont présentées comme des récits. Ce site se concentre sur l'arithmétique. Il examine comment les frais, les impôts, les intérêts composés et les incitations interagissent sur des décennies, avec des hypothèses transparentes et des calculs explicites que l'on peut vérifier.",
+    "manifesto3": "Pas d'opinions. Pas d'hypothèses cachées. Juste l'arithmétique.",
+    "featuredSectionTitle": "Outil vedette",
+    "featuredTitle": "Coût d'un conseiller financier",
+    "featuredDesc": "Quantifie l'impact à long terme des frais de conseil et des intérêts composés perdus, avec des hypothèses explicites et des calculs vérifiables.",
+    "openCalculator": "Ouvrir le calculateur",
+    "featuredExample": "Un exemple concret de ce que cela donne.",
+    "card1Title": "Investissement et littératie financière",
+    "card1Desc": "Contenu éducatif sur les marchés, les classes d'actifs, la construction de portefeuille, les incitations et la pensée à long terme.",
+    "card1Tagline": "C'est là que se construit la compréhension.",
+    "card2Title": "Au-delà des chiffres",
+    "card2ComingSoon": "Bientôt disponible",
+    "card2Desc": "Essais sur une vie et une carrière en médecine à travers le prisme de la finance personnelle et professionnelle.",
+    "card2Tagline": "C'est là que l'expérience donne vie aux chiffres.",
+    "card3Title": "Outils et calculateurs",
+    "card3Desc": "Calculateurs financiers interactifs qui quantifient les choix financiers à long terme avec des hypothèses explicites et une arithmétique vérifiable.",
+    "card3Tagline": "C'est là que les calculs deviennent visibles."
+  },
+  "advisorFee": {
+    "title": "Calculateur du coût d'un conseiller financier – The Long Math",
+    "description": "Quantifier l'impact à long terme des frais de conseil et des intérêts composés perdus, avec des hypothèses explicites et des calculs vérifiables."
+  }
+}
