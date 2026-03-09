@@ -1,0 +1,180 @@
+{% extends "layout.njk" %}
+{% block content %}
+<a href="{{ pathPrefix }}/calculators/" class="home-link">{{ t('calculators.backToTools') }}</a>
+<header>
+  <h1>{{ t('calculators.advisorFee.h1') }}</h1>
+  <div class="lede">
+    <p>{{ t('calculators.advisorFee.lede1') }}</p>
+    <p>{{ t('calculators.advisorFee.lede2') }}</p>
+    <p>{{ t('calculators.advisorFee.lede3') }}</p>
+    <p>{{ t('calculators.advisorFee.lede4') }}</p>
+    <p>{{ t('calculators.advisorFee.lede5') }} <a href="{{ pathPrefix }}/calculators/flat-fee-or-hourly/" class="inline-link">{{ t('calculators.advisorFee.lede5Link') }}</a>.</p>
+    <p><strong>{{ t('calculators.advisorFee.lede6') }}</strong></p>
+  </div>
+</header>
+<div class="calc-grid">
+  <section class="card">
+    <h2 class="section-title">{{ t('calculators.advisorFee.inputs') }}</h2>
+    <div class="btns">
+      <button id="preset-starting" type="button">{{ t('calculators.advisorFee.presetStarting') }}</button>
+      <button id="preset-mid" type="button">{{ t('calculators.advisorFee.presetMid') }}</button>
+      <button id="preset-retire" type="button">{{ t('calculators.advisorFee.presetRetire') }}</button>
+    </div>
+    <p class="hint">{{ t('calculators.advisorFee.presetHint') }}</p>
+    <div class="row">
+      <label for="starting_balance">{{ t('calculators.advisorFee.startingBalance') }}</label>
+      <input id="starting_balance" type="number" />
+    </div>
+    <div class="row">
+      <label for="monthly_contribution">{{ t('calculators.advisorFee.monthlyContribution') }}</label>
+      <input id="monthly_contribution" type="number" />
+    </div>
+    <div class="row">
+      <label for="horizon_years">{{ t('calculators.advisorFee.timeHorizon') }}</label>
+      <input id="horizon_years" type="number" />
+    </div>
+    <div class="row">
+      <label for="annual_return">{{ t('calculators.advisorFee.annualReturn') }}</label>
+      <input id="annual_return" type="text" placeholder="{{ t('calculators.advisorFee.annualReturnPlaceholder') }}" />
+    </div>
+    <div class="slider-block">
+      <div class="slider-top">
+        <div class="lbl">{{ t('calculators.advisorFee.annualReturnSlider') }}</div>
+        <div class="val" id="annual_return_label">–</div>
+      </div>
+      <input id="annual_return_slider" type="range" />
+    </div>
+    <div class="toggle">
+      <input id="use_default_fee" type="checkbox" checked />
+      <label for="use_default_fee">{{ t('calculators.advisorFee.useDefaultFee') }}</label>
+    </div>
+    <p class="helper">{{ t('calculators.advisorFee.defaultFeeHelper') }}</p>
+    <div class="row">
+      <label for="custom_advisor_fee">{{ t('calculators.advisorFee.advisorFeePct') }}</label>
+      <input id="custom_advisor_fee" type="text" placeholder="{{ t('calculators.advisorFee.advisorFeePlaceholder') }}" />
+    </div>
+    <div class="toggle">
+      <input id="include_mer" type="checkbox" checked />
+      <label for="include_mer">{{ t('calculators.advisorFee.includeMer') }}</label>
+    </div>
+    <p class="helper">{{ t('calculators.advisorFee.merHelper') }}</p>
+    <div class="row">
+      <label for="mer_pct">{{ t('calculators.advisorFee.merPct') }}</label>
+      <input id="mer_pct" type="text" placeholder="{{ t('calculators.advisorFee.merPlaceholder') }}" />
+    </div>
+  </section>
+  <section class="card">
+    <div class="results-panel-header">
+      <h2 class="section-title">{{ t('calculators.advisorFee.results') }}</h2>
+      <a href="{{ pathPrefix }}/calculators/advisor-fee/methodology/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">{{ t('calculators.advisorFee.inspectArithmetic') }}</a>
+    </div>
+    <div class="results">
+      <div class="result prominent">
+        <p class="k">{{ t('calculators.advisorFee.totalCost') }}</p>
+        <p class="v" id="out_total_cost">$–</p>
+        <p class="subl">{{ t('calculators.advisorFee.totalCostSubl') }}</p>
+      </div>
+      <div class="result">
+        <p class="k">{{ t('calculators.advisorFee.breakeven') }}</p>
+        <p class="v" id="out_breakeven">–</p>
+      </div>
+      <div class="result">
+        <p class="k">{{ t('calculators.advisorFee.endingWith') }}</p>
+        <p class="v" id="out_with">$–</p>
+      </div>
+      <div class="result">
+        <p class="k">{{ t('calculators.advisorFee.endingWithout') }}</p>
+        <p class="v" id="out_without">$–</p>
+      </div>
+      <div class="result">
+        <p class="k">{{ t('calculators.advisorFee.feesPaid') }}</p>
+        <p class="v" id="out_fees">$–</p>
+      </div>
+      <div class="result">
+        <p class="k">{{ t('calculators.advisorFee.lostCompounding') }}</p>
+        <p class="v" id="out_lost">$–</p>
+      </div>
+    </div>
+    <p class="meta" id="out_meta">{{ t('calculators.advisorFee.metaLine') }}</p>
+  </section>
+</div>
+<div class="report-issue-wrap">
+  <a href="{{ pathPrefix }}/contact/" class="report-issue-link">{{ t('common.links.reportIssue') }}</a>
+</div>
+<section class="methods" id="methods">
+  <div class="methods-card">
+    <h2>{{ t('calculators.advisorFee.methodTitle') }}</h2>
+    <div class="default-fee">
+      <div>
+        <h3>{{ t('calculators.advisorFee.defaultFeeModel') }}</h3>
+        <p>{{ t('calculators.advisorFee.defaultFeeDesc') }}</p>
+        <p class="default-note">{{ t('calculators.advisorFee.defaultFeeNote') }}</p>
+      </div>
+      <div>
+        <table class="fee-table">
+          <thead>
+            <tr>
+              <th>{{ t('calculators.advisorFee.feeTableAssets') }}</th>
+              <th>{{ t('calculators.advisorFee.feeTableRate') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>$0 – $250,000</td><td>2.00%</td></tr>
+            <tr><td>$250,000 – $500,000</td><td>1.75%</td></tr>
+            <tr><td>$500,000 – $1,000,000</td><td>1.50%</td></tr>
+            <tr><td>$1,000,000 – $2,000,000</td><td>1.25%</td></tr>
+            <tr><td>Over $2,000,000</td><td>1.00%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="method-list">
+      <div class="method-item">
+        <strong>{{ t('calculators.advisorFee.methodAdvisorOverride') }}</strong>
+        <div>{{ t('calculators.advisorFee.methodAdvisorOverrideDesc') }}</div>
+      </div>
+      <div class="method-item">
+        <strong>{{ t('calculators.advisorFee.methodMer') }}</strong>
+        <div>
+          <span>{{ t('calculators.advisorFee.methodMerDesc') }}</span><br><br>
+          <span>{{ t('calculators.advisorFee.methodMerDesc2') }}</span><br><br>
+          <span>{{ t('calculators.advisorFee.methodMerDesc3') }}</span><br><br>
+          <span class="inline-note"><strong>{{ t('calculators.advisorFee.methodMerNote') }}</strong></span>
+        </div>
+      </div>
+      <div class="method-item">
+        <strong>{{ t('calculators.advisorFee.methodFeesPaid') }}</strong>
+        <div>{{ t('calculators.advisorFee.methodFeesPaidDesc') }}</div>
+      </div>
+      <div class="method-item">
+        <strong>{{ t('calculators.advisorFee.methodLostCompounding') }}</strong>
+        <div>{{ t('calculators.advisorFee.methodLostCompoundingDesc') }}</div>
+      </div>
+      <div class="method-item">
+        <strong>{{ t('calculators.advisorFee.methodTotalCost') }}</strong>
+        <div>{{ t('calculators.advisorFee.methodTotalCostDesc') }}</div>
+      </div>
+      <div class="method-item">
+        <strong>{{ t('calculators.advisorFee.methodBreakeven') }}</strong>
+        <div>
+          <span>{{ t('calculators.advisorFee.methodBreakevenDesc') }}</span><br><br>
+          <strong>{{ t('calculators.advisorFee.methodBreakevenExampleLabel') }}</strong>
+          <span>{{ t('calculators.advisorFee.methodBreakevenExample') }}</span>
+        </div>
+      </div>
+      <div class="method-item">
+        <strong>{{ t('calculators.advisorFee.methodScope') }}</strong>
+        <div>{{ t('calculators.advisorFee.methodScopeDesc') }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="disclaimer">
+  <p>{{ t('calculators.advisorFee.disclaimer') }}</p>
+</div>
+{% endblock %}
+{% block footScripts %}
+<script defer src="/assets/js/calculator.engine.js"></script>
+<script defer src="/assets/js/calculator.ui.js"></script>
+<script src="/assets/js/theme.js"></script>
+{% endblock %}

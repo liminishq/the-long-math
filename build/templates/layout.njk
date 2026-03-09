@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ title }}</title>
+  <meta name="description" content="{{ description }}" />
+  <link rel="canonical" href="{{ canonical }}" />
+  {% for link in hreflangLinks %}
+  <link rel="alternate" hreflang="{{ link.hreflang }}" href="{{ link.url }}" />
+  {% endfor %}
+
+  <script src="/assets/js/theme-init.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script defer src="/assets/js/site.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+<body>
+  {% include "partials/header.njk" %}
+  <div class="wrap">
+    {% block content %}{% endblock %}
+  </div>
+  {% include "partials/footer.njk" %}
+  {% block footScripts %}{% endblock %}
+  <div id="footerMount"></div>
+</body>
+</html>

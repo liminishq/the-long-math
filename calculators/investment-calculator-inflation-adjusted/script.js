@@ -12,7 +12,8 @@
   const inflationRate = el("inflationRate");
   const contributionFrequency = el("contributionFrequency");
   const contributionTiming = el("contributionTiming");
-  
+  const contributionLabel = el("contributionLabel");
+
   // Verify required elements exist
   if (!startingAmount || !monthlyContribution || !timeHorizon || !expectedReturn || 
       !inflationRate || !contributionFrequency || !contributionTiming) {
@@ -55,6 +56,12 @@
   // Get contribution periods per year
   function getContributionPeriodsPerYear(){
     return contributionFrequency.value === "monthly" ? 12 : 1;
+  }
+
+  function updateContributionLabel(){
+    if (contributionLabel) {
+      contributionLabel.textContent = contributionFrequency.value === "monthly" ? "Monthly contribution" : "Yearly contribution";
+    }
   }
 
   // Period-by-period simulation
@@ -329,6 +336,13 @@
     contributionTiming
   ].filter(node => node !== null).forEach((node) => node.addEventListener("input", updateDisplay));
 
+  if (contributionFrequency) {
+    contributionFrequency.addEventListener("change", () => {
+      updateContributionLabel();
+      updateDisplay();
+    });
+  }
+
   scheduleViewRadios.forEach(radio => {
     radio.addEventListener("change", () => {
       updateDisplay();
@@ -340,6 +354,7 @@
   if (printButton) printButton.addEventListener("click", printResults);
   if (exportCSVButton) exportCSVButton.addEventListener("click", exportCSV);
 
-  // Initial calculation
+  // Initial calculation and label
+  updateContributionLabel();
   updateDisplay();
 })();

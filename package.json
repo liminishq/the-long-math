@@ -1,0 +1,11 @@
+{
+  "name": "the-long-math",
+  "private": true,
+  "description": "Static site with build-time i18n generation",
+  "scripts": {
+    "build": "node build/build.js"
+  },
+  "devDependencies": {
+    "nunjucks": "^3.2.4"
+  }
+}
