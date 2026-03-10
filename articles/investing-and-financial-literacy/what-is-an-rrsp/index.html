@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>What Is an RRSP? Registered Retirement Savings Plan Explained (Canada) – The Long Math</title>
+  <meta name="description" content="A clear explanation of the Canadian RRSP: how the tax deduction works, why tax-sheltered growth matters, and how to think about RRSP vs TFSA using actual arithmetic." />
+  <link rel="canonical" href="https://thelongmath.com/articles/investing-and-financial-literacy/what-is-an-rrsp/" />
+  <meta name="article:modified" content="March 2026" />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="What Is an RRSP? Registered Retirement Savings Plan Explained (Canada) – The Long Math" />
+  <meta property="og:description" content="A clear explanation of the Canadian RRSP: how the tax deduction works, why tax-sheltered growth matters, and how to think about RRSP vs TFSA using actual arithmetic." />
+  <meta property="og:url" content="https://thelongmath.com/articles/investing-and-financial-literacy/what-is-an-rrsp/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="What Is an RRSP? Registered Retirement Savings Plan Explained (Canada) – The Long Math" />
+  <meta name="twitter:description" content="A clear explanation of the Canadian RRSP: how the tax deduction works, why tax-sheltered growth matters, and how to think about RRSP vs TFSA using actual arithmetic." />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://thelongmath.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Investment and Financial Literacy", "item": "https://thelongmath.com/articles/investing-and-financial-literacy/" },
+    { "@type": "ListItem", "position": 3, "name": "What Is an RRSP? Registered Retirement Savings Plan Explained (Canada)", "item": "https://thelongmath.com/articles/investing-and-financial-literacy/what-is-an-rrsp/" }
+  ]
+}
+  </script>
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "What Is an RRSP? Registered Retirement Savings Plan Explained (Canada)",
+  "description": "A clear explanation of the Canadian RRSP: how the tax deduction works, why tax-sheltered growth matters, and how to think about RRSP vs TFSA using actual arithmetic.",
+  "author": { "@type": "Organization", "name": "The Long Math" },
+  "publisher": { "@type": "Organization", "name": "The Long Math" },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://thelongmath.com/articles/investing-and-financial-literacy/what-is-an-rrsp/" }
+}
+  </script>
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is an RRSP in simple terms?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An RRSP is a Canadian investment account where contributions reduce taxable income today, investments grow tax-sheltered, and withdrawals are taxed later."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is an RRSP better than a TFSA?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "RRSPs work best when your current tax rate is higher than your retirement tax rate."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should high-income earners prioritize RRSPs?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Often, yes. High-income earners receive larger tax deductions because RRSP contributions are deducted at their marginal tax rate. If retirement income falls into a lower tax bracket, the difference between the contribution tax rate and withdrawal tax rate creates a permanent advantage."
+      }
+    }
+  ]
+}
+  </script>
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script defer src="/assets/js/site.js"></script>
+
+  <style>
+    .article-content { max-width: 980px; margin: 0 auto; line-height: 1.7; }
+    .article-content h2 { margin: 0 0 0.75em; }
+    .article-content h3 { margin: 1.25em 0 0.5em; }
+    .article-content ul, .article-content ol { margin: 1em 0; padding-left: 2em; }
+    .article-content li { margin: 0.5em 0; }
+    .article-content p { margin: 0.9em 0; }
+    .article-content table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.95em; }
+    .article-content th, .article-content td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; }
+    .article-content th { background: var(--card-bg, rgba(0, 0, 0, 0.03)); font-weight: 600; }
+    .section-card {
+      border: 1px solid var(--border); border-radius: 18px; padding: 18px; margin: 18px 0;
+      background: var(--card-bg, var(--surface, #fff)); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
+    }
+    .section-card.intro-card { margin-top: 14px; }
+    .related-articles h2 { font-size: 18px; margin: 0 0 10px; }
+    .related-articles ul { list-style: none; padding-left: 0; margin: 0; }
+    .related-articles li { margin: 12px 0; }
+    .related-articles a { color: var(--accent); text-decoration: none; }
+    .related-articles a:hover { text-decoration: underline; }
+    .faq-accordion { margin: 0; }
+    .faq-accordion details { border: 1px solid var(--border); border-radius: 10px; margin: 10px 0; overflow: hidden; }
+    .faq-accordion details[open] { border-color: var(--accent, #d6b36a); }
+    .faq-accordion summary { padding: 14px 18px; font-weight: 700; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .faq-accordion summary::-webkit-details-marker { display: none; }
+    .faq-accordion summary::after { content: "+"; font-size: 1.2em; color: var(--accent); flex-shrink: 0; }
+    .faq-accordion details[open] summary::after { content: "−"; }
+    .faq-accordion .faq-answer { padding: 0 18px 16px; }
+    .faq-accordion .faq-answer p { margin: 0 0 0.9em 0; }
+    .faq-accordion .faq-answer p:last-child { margin-bottom: 0; }
+    .highlight-table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.95em; }
+    .highlight-table th, .highlight-table td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; }
+    .highlight-table th { background: var(--card-bg, rgba(0, 0, 0, 0.03)); font-weight: 600; }
+  </style>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <a href="/articles/investing-and-financial-literacy/" class="home-link">← Back to Investment and Financial Literacy</a>
+
+    <article class="article-content">
+      <header>
+        <h1>What Is an RRSP? Registered Retirement Savings Plan Explained (Canada)</h1>
+        <p><em>9 minute read</em></p>
+      </header>
+
+      <section class="section-card intro-card">
+        <h2 id="quick-answer">Quick Answer</h2>
+        <p>An RRSP (Registered Retirement Savings Plan) is a Canadian tax-advantaged investment account that lets you deduct contributions from your taxable income today, grow investments without annual taxation, and defer tax until withdrawal — ideally in retirement, when your tax rate is lower. It is one of the most powerful wealth-building tools available to Canadians because it produces two compounding advantages at once: an immediate tax refund and decades of tax-sheltered growth.</p>
+        <h2 id="rrsp-key-takeaways">RRSP Key Takeaways</h2>
+        <ul>
+          <li>Contributions reduce your taxable income immediately — you get a refund (or owe less) when you file.</li>
+          <li>Investments inside the account grow without annual taxation.</li>
+          <li>Withdrawals are taxed as income — the strategy depends on withdrawing when your tax rate is lower.</li>
+          <li>Your contribution limit is 18% of last year’s earned income, up to the annual government maximum ($32,490 for 2025).</li>
+          <li>Unused contribution room carries forward indefinitely.</li>
+          <li>RRSPs must be converted to a RRIF or annuity by December 31 of the year you turn 71.</li>
+        </ul>
+      </section>
+
+      <section class="section-card">
+        <h2 id="what-is-an-rrsp">What Is an RRSP?</h2>
+        <p>An RRSP is not a specific investment. It is a registered, tax-advantaged account — a container the Canadian government places around your investments so the CRA taxes them differently than it would in a regular account.</p>
+        <p>Inside an RRSP you can hold stocks, ETFs, bonds, GICs, mutual funds, and cash — the same assets available in any brokerage account.</p>
+        <p>What changes is not what you hold.<br>
+        What changes is how and when the government taxes the money.</p>
+        <p>The RRSP follows a simple sequence:</p>
+        <p>Your Income<br>
+             ↓<br>
+        RRSP Contribution  →  Tax Deduction  →  Refund<br>
+             ↓<br>
+        Tax-Sheltered Growth (no annual tax drag)<br>
+             ↓<br>
+        Withdrawal in Retirement<br>
+             ↓<br>
+        Taxed as Income (ideally at a lower rate)</p>
+        <p>That timing difference — pay less tax now, pay some tax later — is where the RRSP’s advantage lives.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="tax-rate-arbitrage">The Core Idea: Tax Rate Arbitrage</h2>
+        <p>The RRSP is fundamentally a tax-rate timing strategy. You contribute when your tax rate is high and withdraw when your tax rate is lower. The wider that gap, the bigger the permanent advantage.</p>
+        <h3>Inspectable Logic — RRSP Core Benefit</h3>
+        <p>RRSP benefit ≈ contribution tax rate − withdrawal tax rate</p>
+        <p>Example:</p>
+        <p>Contribution tax rate: 40%<br>
+        Withdrawal tax rate: 25%<br>
+        Permanent advantage: 15 percentage points per dollar contributed</p>
+        <p>If your retirement tax rate ends up equal to or higher than today, the advantage shrinks or reverses. This is why the comparison with your TFSA matters.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="who-can-open">Who Can Open an RRSP?</h2>
+        <p>Any Canadian resident with earned income and a filed tax return can open an RRSP.</p>
+        <p>Earned income includes:</p>
+        <ul>
+          <li>employment income</li>
+          <li>self-employment income</li>
+          <li>certain rental income</li>
+        </ul>
+        <p>Investment income alone does not generate RRSP contribution room.</p>
+        <p>You can contribute to your own RRSP until December 31 of the year you turn 71.</p>
+        <p>After that, the account must convert to:</p>
+        <ul>
+          <li>a RRIF</li>
+          <li>an annuity</li>
+          <li>or be withdrawn.</li>
+        </ul>
+        <p>You can still contribute to a spousal RRSP if your spouse is younger than 71.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="why-the-math-matters">Why the RRSP Matters: The Math</h2>
+        <p>Most explanations of the RRSP stop at the tax deduction.<br>
+        The real advantage becomes obvious only when you run the arithmetic.</p>
+        <p>The RRSP works on two levels simultaneously:</p>
+        <ul>
+          <li>It reduces your tax bill today.</li>
+          <li>It removes the drag of annual taxation from your investments for decades.</li>
+        </ul>
+        <p>Each effect is meaningful on its own. Together, they compound.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="immediate-tax-deduction">The Immediate Tax Deduction</h2>
+        <p>When you contribute to an RRSP, that amount is deducted from your taxable income for the year.</p>
+        <h3>Inspectable Calculation — The Refund</h3>
+        <p>Tax refund = contribution × marginal tax rate</p>
+        <p>Example:</p>
+        <p>Contribution: $15,000<br>
+        Tax rate: 40%<br>
+        Refund: $6,000</p>
+        <p>That $6,000 would otherwise go to the CRA. Instead, it stays in your portfolio.</p>
+        <p>What you do with it determines how much of the RRSP advantage you actually capture.</p>
+        <p>If the refund is reinvested — ideally into a <a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/">TFSA</a> — the compounding effect multiplies.<br>
+        If it is spent, much of the advantage disappears.</p>
+        <p>Not sure of your marginal tax rate? The <a href="/calculators/canada-income-tax/">Canada Personal Income Tax Calculator</a> can estimate it based on your income and province.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="compounding-advantage">The Compounding Advantage</h2>
+        <p>Outside a registered account, taxes reduce your effective return every year.</p>
+        <p>Interest income is taxed annually.<br>
+        Dividends are taxed annually.<br>
+        Capital gains allow deferral, but are still eventually taxed.</p>
+        <p>Inside an RRSP, none of that applies.</p>
+        <h3>Inspectable Logic — Tax Drag</h3>
+        <p>After-tax return = nominal return × (1 − annual tax rate)</p>
+        <p>Example:</p>
+        <p>Nominal return: 7%<br>
+        Tax rate: 40%<br>
+        After-tax return: 7% × (1 − 0.40) = 4.2%</p>
+        <p>Over 30 years, 4.2% compounding versus 7% compounding produces an enormous difference in outcome. The arithmetic of how compounding rates diverge over long time horizons is explored in <a href="/articles/investing-and-financial-literacy/compound-interest/">Compound Interest: The Ultimate Wealth Builder.</a> The same arithmetic applies to investment fees — The Cost of a 1% Fee shows how a seemingly small annual charge compounds over decades.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="common-mistake">A Common RRSP Mistake</h2>
+        <p>Some investors treat the RRSP tax refund as a bonus and spend it.</p>
+        <p>When the refund is not reinvested, a large portion of the RRSP’s mathematical advantage disappears. The refund is not extra money — it is part of the account’s structure. Reinvesting it, ideally into a TFSA or additional RRSP room, is what allows the strategy to compound properly.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="one-deposit-three-outcomes">One Deposit, Three Outcomes</h2>
+        <p>Assume:</p>
+        <ul>
+          <li>$15,000 invested once</li>
+          <li>7% annual return</li>
+          <li>30 years</li>
+          <li>40% marginal tax rate today</li>
+          <li>25% tax rate in retirement</li>
+        </ul>
+        <h3>Inside an RRSP</h3>
+        <p>$15,000 × (1.07)^30 = $114,184<br>
+        Withdrawal tax (25%) = − $28,546<br>
+        After-tax value = $85,638</p>
+        <h3>Taxable account — interest income</h3>
+        <p>Interest taxed annually at 40%.</p>
+        <p>$15,000 × (1.042)^30 = $52,002</p>
+        <h3>Taxable account — capital gains</h3>
+        <p>$15,000 × (1.07)^30 = $114,184<br>
+        Tax on gain ($99,184) at 20% = − $19,837<br>
+        After-tax value = $94,347</p>
+        <table class="highlight-table">
+          <thead>
+            <tr><th>Scenario</th><th>After-Tax Value</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>RRSP (withdraw at 25%)</td><td>$85,638</td></tr>
+            <tr><td>Taxable — capital gains</td><td>$94,347</td></tr>
+            <tr><td>Taxable — interest</td><td>$52,002</td></tr>
+          </tbody>
+        </table>
+        <p>At first glance the capital gains scenario appears to outperform the RRSP. But that comparison overstates the taxable account in two ways.</p>
+        <p>First, it assumes the entire portfolio generates pure capital gains.<br>
+        Second, it ignores the starting dollar problem.</p>
+        <h3>Inspectable Logic — The Pre-Tax Dollar Comparison</h3>
+        <p>RRSP contributions use pre-tax dollars.<br>
+        Taxable investments use after-tax dollars.</p>
+        <p>Pre-tax income available: $15,000<br>
+        After-tax capital (40% rate): $9,000</p>
+        <p>A fair comparison must equalize the starting dollars.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="full-strategy-reinvest-refund">The Full Strategy: Reinvest the Refund</h2>
+        <p>The refund is not a bonus. It is part of the math.</p>
+        <p>Refund of $6,000 invested at 7% for 30 years:</p>
+        <p>$6,000 × (1.07)^30 = $45,674</p>
+        <p>Total wealth created:</p>
+        <p>RRSP after-tax value: $85,638<br>
+        TFSA from refund: + $45,674</p>
+        <p>Total = $131,312</p>
+        <p>Taxable capital-gains scenario:</p>
+        <p>$94,347</p>
+        <p>Same income. Same return. Same time horizon.<br>
+        The difference is the account structure — and whether the refund was reinvested.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="when-rrsp-most-powerful">When an RRSP Is Most Powerful</h2>
+        <ul>
+          <li><strong>High income today, lower income in retirement</strong><br>
+          The larger the tax-rate gap between contribution and withdrawal, the larger the advantage.</li>
+          <li><strong>The refund is reinvested</strong><br>
+          A major portion of the RRSP’s long-term advantage comes from reinvesting the refund.</li>
+          <li><strong>Interest-generating investments</strong><br>
+          Interest income is taxed at your full marginal rate annually outside registered accounts. Shelter it inside an RRSP and that drag disappears.</li>
+          <li><strong>US dividend-paying stocks</strong><br>
+          The Canada–US tax treaty exempts RRSPs from the 15% US withholding tax on dividends.</li>
+          <li><strong>Spousal RRSPs</strong><br>
+          Spousal contributions allow income splitting in retirement.</li>
+        </ul>
+      </section>
+
+      <section class="section-card">
+        <h2 id="rrsp-contribution-limits">RRSP Contribution Limits</h2>
+        <p>Your RRSP contribution limit equals:</p>
+        <p>18% of the previous year's earned income</p>
+        <p>up to the annual government maximum.</p>
+        <table class="highlight-table">
+          <thead>
+            <tr><th>Year</th><th>Limit</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>2019</td><td>$26,500</td></tr>
+            <tr><td>2020</td><td>$27,230</td></tr>
+            <tr><td>2021</td><td>$27,830</td></tr>
+            <tr><td>2022</td><td>$29,210</td></tr>
+            <tr><td>2023</td><td>$30,780</td></tr>
+            <tr><td>2024</td><td>$31,560</td></tr>
+            <tr><td>2025</td><td>$32,490</td></tr>
+          </tbody>
+        </table>
+        <p>Unused contribution room carries forward indefinitely.</p>
+        <p>Your exact available room appears on your CRA Notice of Assessment.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="rrsp-withdrawals-tax">RRSP Withdrawals: How the Tax Works</h2>
+        <p>RRSP withdrawals are added to your taxable income for the year and taxed at your marginal rate.</p>
+        <p>Financial institutions withhold tax at source:</p>
+        <ul>
+          <li>10% under $5,001</li>
+          <li>20% up to $15,000</li>
+          <li>30% above $15,000</li>
+        </ul>
+        <p>(rates differ in Quebec)</p>
+        <p>This withholding is a prepayment, not the final tax bill.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="two-special-exceptions">The Two Special Exceptions</h2>
+        <p>Home Buyers’ Plan (HBP)<br>
+        Up to $60,000 withdrawn for a first home. Repaid over 15 years. Canadians buying their first home should also consider the <a href="/articles/investing-and-financial-literacy/what-is-an-fhsa/">FHSA</a>, which combines RRSP-style deductions with TFSA-style tax-free withdrawals for a first home purchase.</p>
+        <p>Lifelong Learning Plan (LLP)<br>
+        Up to $20,000 withdrawn for education. Repaid over 10 years.</p>
+        <p>Both programs are structured borrowing from retirement savings.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="rrsp-vs-tfsa-vs-fhsa">RRSP vs TFSA vs FHSA</h2>
+        <table class="highlight-table">
+          <thead>
+            <tr><th>Account</th><th>Contribution Deduction</th><th>Growth Taxed</th><th>Withdrawal Taxed</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>RRSP</td><td>Yes</td><td>No</td><td>Yes</td></tr>
+            <tr><td>TFSA</td><td>No</td><td>No</td><td>No</td></tr>
+            <tr><td>FHSA</td><td>Yes</td><td>No</td><td>No</td></tr>
+          </tbody>
+        </table>
+        <h3>Inspectable Logic — Which Account to Use First</h3>
+        <p>RRSP usually better when:<br>
+        current tax rate > retirement tax rate</p>
+        <p>TFSA usually better when:<br>
+        current tax rate ≤ retirement tax rate</p>
+        <p>Most Canadians benefit from using both accounts together.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="faq">Frequently Asked Questions</h2>
+        <div class="faq-accordion">
+          <details>
+            <summary>What is an RRSP in simple terms?</summary>
+            <div class="faq-answer">
+              <p>An RRSP is a Canadian investment account where contributions reduce taxable income today, investments grow tax-sheltered, and withdrawals are taxed later.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Is an RRSP better than a TFSA?</summary>
+            <div class="faq-answer">
+              <p>RRSPs work best when your current tax rate is higher than your retirement tax rate.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Should high-income earners prioritize RRSPs?</summary>
+            <div class="faq-answer">
+              <p>Often, yes. High-income earners receive larger tax deductions because RRSP contributions are deducted at their marginal tax rate. If retirement income falls into a lower tax bracket, the difference between the contribution tax rate and withdrawal tax rate creates a permanent advantage.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="section-card">
+        <h2 id="bottom-line">The Bottom Line</h2>
+        <p>The RRSP does not change how markets behave. Returns are what they are.</p>
+        <p>What the RRSP changes is how much of those returns you keep — by removing the annual tax drag on growth and shifting income from high-tax years to lower-tax years.</p>
+        <p>The refund is not a side benefit. It is part of the strategy. Canadians who reinvest their RRSP refund — rather than spending it — consistently come out far ahead.</p>
+        <p>Used with intention — and with the refund reinvested — the RRSP becomes one of the most powerful wealth-building tools available to Canadians.</p>
+      </section>
+
+      <section class="section-card related-articles">
+        <h2>Related Calculators and Articles</h2>
+        <ul>
+          <li><a href="/calculators/tfsa-rrsp-fhsa/">RRSP vs TFSA vs FHSA Calculator</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/">RRSP vs TFSA vs FHSA: Which Account Is Best?</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/">What Is a TFSA? Tax-Free Savings Account Explained (Canada)</a></li>
+        </ul>
+      </section>
+
+      <section class="section-card">
+        <p><strong>Disclaimer:</strong> This article is for educational purposes only and is not financial or tax advice. Tax rules and contribution limits can change. Verify details at canada.ca and consult a qualified professional for personal advice.</p>
+      </section>
+    </article>
+
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
+      </p>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+</body>
+</html>
