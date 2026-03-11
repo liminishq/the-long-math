@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Investment Calculator – Inflation Adjusted | The Long Math</title>
-  <meta name="description" content="Estimate investment growth with monthly contributions and compounding, and compare inflation-adjusted (real) buying power to nominal dollars using an assumed long-term inflation rate." />
+  <title>Inflation-Adjusted Investment Calculator | The Long Math</title>
+  <meta name="description" content="See what your investments are actually worth. Enter a starting balance, monthly contributions, and time horizon — get real (inflation-adjusted) and nominal results side by side." />
   <link rel="canonical" href="https://thelongmath.com/calculators/investment-calculator-inflation-adjusted/" />
 
   <!-- Site-wide theme + styles -->
@@ -35,10 +35,9 @@
 
     <!-- Full-width intro section -->
     <header class="intro-section">
-      <h1>Investment Calculator – Inflation Adjusted</h1>
-      <p>This calculator estimates investment growth with recurring contributions and compounding. It shows inflation-adjusted (real) results as the primary output, reflecting purchasing power in today's dollars, while also displaying nominal results for comparison.</p>
-      <p>All dollar amounts you enter—starting balance and contributions—are assumed to be in today's dollars. The calculator applies an assumed long-term inflation rate to show how purchasing power evolves over time, making it easier to understand the real value of your future balance.</p>
-      <p>The calculator defaults to showing real (inflation-adjusted) results as the primary output, with nominal results shown as a secondary comparison. This approach helps you see both the dollar amount and the actual buying power of your investment over time.</p>
+      <h1>Inflation-Adjusted Investment Calculator</h1>
+      <p>Most investment calculators show you a big number. This one shows you what that number is actually worth. Enter your starting balance, contributions, and time horizon — and see your projected balance in both today's dollars (inflation-adjusted) and future dollars (nominal), side by side.</p>
+      <p>All inputs are treated as today's dollars. The calculator applies your assumed inflation rate over time, so you don't need to adjust your numbers manually — it handles the math.</p>
     </header>
 
     <!-- Two-column calculator section -->
@@ -57,15 +56,9 @@
           <label for="monthlyContribution" id="contributionLabel">Monthly contribution</label>
           <input id="monthlyContribution" type="number" inputmode="decimal" min="0" step="10" value="500" />
           <details class="contribution-disclosure">
-            <summary style="cursor: pointer; margin-top: 8px; font-size: 12px; color: var(--muted);">How recurring contributions are treated</summary>
+            <summary style="cursor: pointer; margin-top: 8px; font-size: 12px; color: var(--muted);">How contributions are treated</summary>
             <div style="margin-top: 8px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; font-size: 12px; line-height: 1.5;">
-              <p style="margin: 0 0 8px;">"$500 per month" means $500 per month in today's dollars, maintained over time.</p>
-              <p style="margin: 0;">This means:</p>
-              <ul style="margin: 8px 0 0; padding-left: 20px;">
-                <li>Nominal contribution amounts increase over time as prices change</li>
-                <li>The real saving effort stays constant</li>
-                <li>The calculator handles the inflation math internally</li>
-              </ul>
+              <p style="margin: 0 0 8px;">Contributions are entered in today's dollars. The calculator adjusts them upward over time to reflect rising prices — so the real saving effort stays constant, even as the nominal amounts grow.</p>
             </div>
           </details>
         </div>
@@ -81,7 +74,7 @@
             <input id="expectedReturn" type="number" inputmode="decimal" step="0.1" value="7" />
             <span class="unit">%</span>
           </div>
-          <p class="help muted">Nominal (before inflation).</p>
+          <p class="help muted">Enter the nominal (pre-inflation) rate.</p>
         </div>
 
         <div class="field">
@@ -132,8 +125,7 @@
         </div>
 
         <p class="explainer" style="margin: 16px 0; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px; font-size: 13px; line-height: 1.5;">
-          Nominal dollars show your balance without accounting for inflation.<br>
-          Inflation-adjusted dollars show how much buying power that balance has in today's dollars.
+          The gap between these two numbers is the effect of inflation. The nominal figure is what your account balance will say. The inflation-adjusted figure is what it will buy.
         </p>
 
         <hr class="sep" />
@@ -161,8 +153,22 @@
 
         <hr class="sep" />
 
+        <div class="export-controls">
+          <button id="printButton" class="export-btn">Print results</button>
+          <button id="exportCSVButton" class="export-btn">Export CSV</button>
+        </div>
+      </article>
+      </div>
+    </div>
+
+    <!-- Full-width accumulation schedule card -->
+    <div class="card" style="margin-top: 24px;">
+      <article class="panel">
         <div class="schedule">
-          <h3 style="margin: 0 0 12px; font-size: 14px; font-weight: 600;">Accumulation schedule</h3>
+          <h2 class="section-title" style="margin-bottom: 8px;">Accumulation schedule</h2>
+          <p class="muted" style="margin: 0 0 12px; font-size: 13px;">
+            Year-by-year breakdown of your projected balance in real (inflation-adjusted) dollars. Use this to see when growth starts compounding meaningfully.
+          </p>
           <div style="margin-bottom: 12px;">
             <label style="font-size: 12px; color: var(--muted);">
               <input type="radio" name="scheduleView" value="yearly" checked /> Yearly
@@ -186,16 +192,11 @@
               </tbody>
             </table>
           </div>
-        </div>
-
-        <hr class="sep" />
-
-        <div class="export-controls">
-          <button id="printButton" class="export-btn">Print results</button>
-          <button id="exportCSVButton" class="export-btn">Export CSV</button>
+          <button id="scheduleToggleButton" class="export-btn" style="margin-top: 12px; width: 220px;">
+            Show full schedule
+          </button>
         </div>
       </article>
-      </div>
     </div>
 
     <div class="report-issue-wrap">
@@ -209,13 +210,13 @@
       </summary>
       <div style="padding: 16px; margin-top: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px;">
         <p style="margin: 0 0 12px; font-size: 14px; line-height: 1.6;">
-          All dollar amounts you enter (starting balance and contributions) are assumed to be in today's dollars.
+          All inputs — starting balance and contributions — are assumed to be in today's dollars. The calculator inflates contributions over time at the assumed rate, preserving the real value of your saving effort.
         </p>
         <p style="margin: 0 0 12px; font-size: 14px; line-height: 1.6;">
-          The calculator uses an assumed long-term inflation rate to show results in inflation-adjusted (real) dollars, reflecting purchasing power rather than nominal amounts.
+          The expected annual return is treated as a nominal rate (before inflation). Results are shown in real (inflation-adjusted) dollars as the primary output, with nominal results displayed for comparison.
         </p>
         <p style="margin: 0; font-size: 14px; line-height: 1.6;">
-          You do not need to adjust your inputs for inflation — the calculator applies the adjustment over time.
+          The inflation rate used here is a long-term assumption — not a forecast. Actual inflation varies year to year. See <a href="/tools/historical-inflation-rates/">historical inflation rates by year</a> to explore how inflation has varied over time.
         </p>
       </div>
     </details>
@@ -225,17 +226,29 @@
       <h2>Frequently Asked Questions</h2>
 
       <div class="faq-item">
-        <h3>What does "inflation-adjusted" mean?</h3>
-        <p><strong>Definition:</strong></p>
-        <p>Inflation-adjusted values show what money is worth after accounting for changes in prices over time.</p>
-        <p>In this calculator, inflation-adjusted results are expressed in today's dollars, so amounts can be compared based on purchasing power rather than raw dollar totals.</p>
-        <p><strong>Example:</strong></p>
-        <p>A loaf of bread that costs $3 today and $6 in the future has not become twice as valuable. The price has increased (doubled) over time.</p>
-        <p>The same adjustment applies to investments. If a portfolio grows from $100,000 today to $5 million over the same period, its inflation-adjusted value would be closer to $2.5 million in today's dollars because the cost of living has - in this example - doubled.</p>
-        <p style="margin-top: 12px; font-size: 13px; color: var(--muted);">
-          The inflation rate used here is a long-term assumption. You can explore historical inflation rates by year to see how inflation has varied over time and to help contextualize the assumption used in this calculator.
-        </p>
+        <h3>What does "inflation-adjusted" mean in an investment calculator?</h3>
+        <p>Inflation-adjusted (or "real") values express a future dollar amount in terms of today's purchasing power. They strip out the effect of rising prices, so you're comparing apples to apples — not today's dollars to future dollars that buy less.</p>
+        <p><strong>Example:</strong> Suppose a loaf of bread costs $3 today and $6 in twenty-five years. The price doubled, but the bread didn't become twice as valuable — it just costs twice as much. The same logic applies to investment balances. A portfolio worth $5 million in twenty-five years may only have the purchasing power of $2.5 million today, depending on how much prices rise in the interim.</p>
+        <p>This calculator shows both figures — nominal (what your account will say) and real (what it will buy) — so you can plan against actual purchasing power, not just a number. If you want to see the same idea applied to past and future prices directly, try the <a href="/calculators/inflation-time-machine/">Inflation Time Machine</a>, which converts amounts between years using CPI data.</p>
       </div>
+
+      <div class="faq-item">
+        <h3>What's the difference between nominal and real returns?</h3>
+        <p>A nominal return is the raw percentage gain on an investment, before accounting for inflation. A real return adjusts for inflation, showing how much your purchasing power actually grew.</p>
+        <p>If your portfolio returns 7% in a year when inflation runs at 2.5%, your real return is approximately 4.5%. The nominal balance looks larger, but part of that gain is offset by the fact that prices are also higher. Over long time horizons, this difference compounds significantly — which is why this calculator makes real returns the primary output.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What inflation rate should I use?</h3>
+        <p>The default is 2.5%, which is consistent with the Bank of Canada's inflation target range of 1–3%. For a U.S.-based estimate, 2–3% is a common long-run assumption.</p>
+        <p>Because this is a long-term projection, the exact rate matters less than understanding the direction: inflation erodes purchasing power over time, and this calculator makes that visible. You can explore <a href="/tools/inflation-tables/">historical inflation rates by year</a> to see how the actual rate has varied — and to pressure-test your assumption.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Why does the calculator show contributions increasing over time in the schedule?</h3>
+        <p>When you enter a monthly contribution in today's dollars, the calculator increases that amount over time to match assumed inflation. This keeps your real saving effort constant — meaning you're not gradually saving less in inflation-adjusted terms just because time has passed. The nominal contribution grows; the real contribution stays fixed.</p>
+      </div>
+
     </section>
 
     <!-- Disclaimer (site-wide footer will be injected) -->
