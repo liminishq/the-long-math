@@ -577,44 +577,73 @@ select.is-invalid{
 }
 
 /* =========================
-   FAQ SECTION
+   FAQ SECTION (accordion)
    ========================= */
 .faq-section{
   margin-top:16px;
 }
 
-.faq-list{
+.faq-accordion{
   margin-top:14px;
   display:grid;
-  gap:20px;
+  gap:12px;
 }
 
-.faq-item{
-  padding:16px 18px;
+.faq-accordion-item{
   border:1px solid var(--border);
   border-radius:14px;
   background:var(--surface);
+  overflow:hidden;
 }
 
-.faq-item h3{
-  margin:0 0 12px;
-  font-size:16px;
-  color:var(--accent);
+.faq-accordion-item summary{
+  cursor:pointer;
+  padding:14px 18px;
+  font-size:15px;
   font-weight:700;
-  letter-spacing:.2px;
+  color:var(--accent);
+  list-style:none;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
 }
 
-.faq-item p{
+.faq-accordion-item summary::-webkit-details-marker{
+  display:none;
+}
+
+.faq-accordion-item summary::after{
+  content:"+";
+  font-size:1.2em;
+  color:var(--accent);
+  flex-shrink:0;
+}
+
+.faq-accordion-item[open] summary::after{
+  content:"−";
+}
+
+.faq-accordion-item summary:hover{
+  color:var(--accent2);
+}
+
+.faq-accordion-body{
+  padding:0 18px 16px;
+  border-top:1px solid var(--border);
+}
+
+.faq-accordion-body p{
   margin:10px 0;
   color:var(--muted);
   font-size:13px;
   line-height:1.6;
 }
 
-.faq-item p:first-of-type{
-  margin-top:0;
+.faq-accordion-body p:first-of-type{
+  margin-top:12px;
 }
 
-.faq-item p:last-of-type{
+.faq-accordion-body p:last-of-type{
   margin-bottom:0;
 }

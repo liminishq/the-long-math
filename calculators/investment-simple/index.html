@@ -191,40 +191,54 @@
     <section class="faq-section">
       <h2>Frequently Asked Questions</h2>
 
-      <div class="faq-item">
-        <h3>What is the difference between nominal and real returns?</h3>
-        <p>A nominal return is the raw percentage gain on an investment, before accounting for inflation. A real return adjusts for inflation, showing how much your purchasing power actually grew. If your portfolio returns 7% in a year when inflation runs at 2.5%, your real return is approximately 4.4% — the rest is offset by rising prices.</p>
-        <p>Over long time horizons, the gap between nominal and real returns compounds into a significant difference in buying power. The <a href="/articles/investing-and-financial-literacy/inflation/">Inflation: The Math That Makes Future Money Smaller</a> article works through the arithmetic in detail.</p>
-      </div>
+      <div class="faq-accordion">
+        <details class="faq-accordion-item">
+          <summary>What is the difference between nominal and real returns?</summary>
+          <div class="faq-accordion-body">
+            <p>A nominal return is the raw percentage gain on an investment, before accounting for inflation. A real return adjusts for inflation, showing how much your purchasing power actually grew. If your portfolio returns 7% in a year when inflation runs at 2.5%, your real return is approximately 4.4% — the rest is offset by rising prices.</p>
+            <p>Over long time horizons, the gap between nominal and real returns compounds into a significant difference in buying power. The <a href="/articles/investing-and-financial-literacy/inflation/">Inflation: The Math That Makes Future Money Smaller</a> article works through the arithmetic in detail.</p>
+          </div>
+        </details>
 
-      <div class="faq-item">
-        <h3>What does "inflation-adjusted" mean in this calculator?</h3>
-        <p>When real mode is enabled, the calculator converts your nominal expected return to a real return using the Fisher equation: real = (1 + nominal) ÷ (1 + inflation) − 1. It then uses that real rate for compounding, so the final balance is expressed in today's purchasing power rather than future nominal dollars.</p>
-        <p>One important limitation: this calculator does not automatically adjust your contribution amounts for inflation. If you contribute $500/month today and inflation runs at 2.5%, a truly inflation-neutral model would increase contributions each year to maintain the same real saving effort. The <a href="/calculators/investment-calculator-inflation-adjusted/">Inflation-Adjusted Investment Calculator</a> handles this correctly and should be used for any analysis where that distinction matters.</p>
-      </div>
+        <details class="faq-accordion-item">
+          <summary>What does "inflation-adjusted" mean in this calculator?</summary>
+          <div class="faq-accordion-body">
+            <p>When real mode is enabled, the calculator converts your nominal expected return to a real return using the Fisher equation: real = (1 + nominal) ÷ (1 + inflation) − 1. It then uses that real rate for compounding, so the final balance is expressed in today's purchasing power rather than future nominal dollars.</p>
+            <p>One important limitation: this calculator does not automatically adjust your contribution amounts for inflation. If you contribute $500/month today and inflation runs at 2.5%, a truly inflation-neutral model would increase contributions each year to maintain the same real saving effort. The <a href="/calculators/investment-calculator-inflation-adjusted/">Inflation-Adjusted Investment Calculator</a> handles this correctly and should be used for any analysis where that distinction matters.</p>
+          </div>
+        </details>
 
-      <div class="faq-item">
-        <h3>Why does inflation adjustment matter over long horizons?</h3>
-        <p><a href="/articles/investing-and-financial-literacy/inflation/">Inflation compounds silently</a> alongside your investment returns. Over 25 years, even a moderate 2.5% annual inflation rate roughly halves purchasing power — meaning a $1,000,000 nominal balance may only buy what $540,000 buys today. The longer the time horizon, the larger this gap becomes, and the more misleading it is to plan using nominal figures alone.</p>
-        <p>You can explore how inflation has varied historically using the <a href="/tools/inflation-tables/">Historical Inflation Rates (CPI)</a> tool, or use the <a href="/calculators/inflation-time-machine/">Inflation Time Machine</a> to convert a specific dollar amount between two years.</p>
-      </div>
+        <details class="faq-accordion-item">
+          <summary>Why does inflation adjustment matter over long horizons?</summary>
+          <div class="faq-accordion-body">
+            <p><a href="/articles/investing-and-financial-literacy/inflation/">Inflation compounds silently</a> alongside your investment returns. Over 25 years, even a moderate 2.5% annual inflation rate roughly halves purchasing power — meaning a $1,000,000 nominal balance may only buy what $540,000 buys today. The longer the time horizon, the larger this gap becomes, and the more misleading it is to plan using nominal figures alone.</p>
+            <p>You can explore how inflation has varied historically using the <a href="/tools/inflation-tables/">Historical Inflation Rates (CPI)</a> tool, or use the <a href="/calculators/inflation-time-machine/">Inflation Time Machine</a> to convert a specific dollar amount between two years.</p>
+          </div>
+        </details>
 
-      <div class="faq-item">
-        <h3>How is the money-weighted IRR calculated?</h3>
-        <p>The money-weighted IRR (Internal Rate of Return) is derived from the actual cash flows: your starting deposit (an outflow at time zero), each recurring contribution (outflows at the end of each period), and the final projected balance (an inflow at the end). The calculator solves for the annualized discount rate that makes the net present value of all those cash flows equal to zero.</p>
-        <p>Unlike a simple average return, the IRR accounts for the timing and size of each contribution — so it reflects what your money actually earned, weighted by when it was invested. For most straightforward scenarios with constant contributions, the IRR will be close to (but not identical to) the expected return you entered.</p>
-      </div>
+        <details class="faq-accordion-item">
+          <summary>How is the money-weighted IRR calculated?</summary>
+          <div class="faq-accordion-body">
+            <p>The money-weighted IRR (Internal Rate of Return) is derived from the actual cash flows: your starting deposit (an outflow at time zero), each recurring contribution (outflows at the end of each period), and the final projected balance (an inflow at the end). The calculator solves for the annualized discount rate that makes the net present value of all those cash flows equal to zero.</p>
+            <p>Unlike a simple average return, the IRR accounts for the timing and size of each contribution — so it reflects what your money actually earned, weighted by when it was invested. For most straightforward scenarios with constant contributions, the IRR will be close to (but not identical to) the expected return you entered.</p>
+          </div>
+        </details>
 
-      <div class="faq-item">
-        <h3>What assumptions does this calculator make?</h3>
-        <p>This calculator assumes a constant expected return (no volatility or sequence-of-returns risk), fixed contribution amounts throughout, contributions occurring at the end of each period, compounding once per contribution period, and no fees or taxes. When real mode is enabled, it also assumes a constant inflation rate.</p>
-        <p>These are simplified assumptions appropriate for first-pass estimates. Fees in particular can compound into a substantial drag over long horizons — the <a href="/fees/">fee calculators</a> quantify that impact explicitly. Taxes depend on account type: returns inside a <a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/">TFSA</a> are tax-free, while a taxable account will reduce effective returns depending on the type of income generated.</p>
-      </div>
+        <details class="faq-accordion-item">
+          <summary>What assumptions does this calculator make?</summary>
+          <div class="faq-accordion-body">
+            <p>This calculator assumes a constant expected return (no volatility or sequence-of-returns risk), fixed contribution amounts throughout, contributions occurring at the end of each period, compounding once per contribution period, and no fees or taxes. When real mode is enabled, it also assumes a constant inflation rate.</p>
+            <p>These are simplified assumptions appropriate for first-pass estimates. Fees in particular can compound into a substantial drag over long horizons — the <a href="/fees/">fee calculators</a> quantify that impact explicitly. Taxes depend on account type: returns inside a <a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/">TFSA</a> are tax-free, while a taxable account will reduce effective returns depending on the type of income generated.</p>
+          </div>
+        </details>
 
-      <div class="faq-item">
-        <h3>How does compounding frequency affect results?</h3>
-        <p>This calculator compounds returns once per contribution period — so monthly contributions compound monthly, and annual contributions compound annually. More frequent compounding produces slightly higher balances than less frequent compounding at the same nominal annual rate, because each period's growth is itself reinvested sooner.</p>
-        <p>For a transparent look at how compounding multipliers work at different rates and horizons, see the <a href="/calculators/compound-multipliers/">Compound Interest Multipliers Table</a>. For a deeper explanation of the compounding mechanic itself, see <a href="/articles/investing-and-financial-literacy/compound-interest/">Compound Interest: The Ultimate Wealth Builder</a>.</p>
+        <details class="faq-accordion-item">
+          <summary>How does compounding frequency affect results?</summary>
+          <div class="faq-accordion-body">
+            <p>This calculator compounds returns once per contribution period — so monthly contributions compound monthly, and annual contributions compound annually. More frequent compounding produces slightly higher balances than less frequent compounding at the same nominal annual rate, because each period's growth is itself reinvested sooner.</p>
+            <p>For a transparent look at how compounding multipliers work at different rates and horizons, see the <a href="/calculators/compound-multipliers/">Compound Interest Multipliers Table</a>. For a deeper explanation of the compounding mechanic itself, see <a href="/articles/investing-and-financial-literacy/compound-interest/">Compound Interest: The Ultimate Wealth Builder</a>.</p>
+          </div>
+        </details>
       </div>
 
     </section>

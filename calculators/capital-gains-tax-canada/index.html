@@ -7,13 +7,73 @@
   <meta name="description" content="Estimate Canadian capital gains tax using ACB, proceeds, inclusion rate, and marginal tax rate. Educational calculator with inspectable arithmetic." />
   <link rel="canonical" href="https://thelongmath.com/calculators/capital-gains-tax-canada/" />
 
-  <!-- Site-wide theme + styles -->
   <script src="/assets/js/theme-init.js"></script>
   <link rel="stylesheet" href="/assets/css/styles.css" />
   <script defer src="/assets/js/site.js"></script>
-
-  <!-- Calculator-specific styles -->
   <link rel="stylesheet" href="/calculators/capital-gains-tax-canada/styles.css" />
+
+  <style>
+    .bracket-reference {
+      margin-top: 12px;
+      padding: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 12px;
+      line-height: 1.5;
+      display: none;
+    }
+    .bracket-reference.visible {
+      display: block;
+    }
+    .bracket-reference-title {
+      font-weight: 600;
+      font-size: 13px;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+    .bracket-tables-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 540px) {
+      .bracket-tables-wrap { grid-template-columns: 1fr; }
+    }
+    .bracket-table-block h4 {
+      font-size: 11px;
+      font-weight: 600;
+      margin: 0 0 6px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .bracket-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .bracket-table th {
+      text-align: left;
+      font-weight: 600;
+      padding: 3px 6px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .bracket-table td {
+      padding: 3px 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .bracket-table tr:last-child td {
+      border-bottom: none;
+    }
+    .bracket-reference-note {
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+  </style>
 
   <script type="application/ld+json">
   {
@@ -25,7 +85,7 @@
     "description": "Estimate Canadian capital gains tax using ACB, proceeds, inclusion rate, and marginal tax rate. Shows taxable gain, tax owing, and after-tax proceeds with inspectable arithmetic."
   }
   </script>
-  <!-- Google tag (gtag.js) -->
+
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
   <script>
   window.dataLayer = window.dataLayer || [];
@@ -77,28 +137,12 @@
           <div class="field">
             <label for="marginal_tax_rate">Marginal tax rate (%)</label>
             <input id="marginal_tax_rate" type="text" inputmode="decimal" value="40" placeholder="0" aria-label="Marginal tax rate" />
-            <div class="help-text">Your combined federal + provincial marginal rate on taxable income. For help determining your marginal tax rate, use the <a href="/calculators/canada-income-tax/" target="_blank" rel="noopener noreferrer">Canada Personal Income Tax Calculator</a> (opens in a new tab).</div>
-          </div>
-
-          <div class="field">
-            <label for="province">Province (informational)</label>
-            <select id="province" aria-label="Province">
-              <option value="">Select province or territory</option>
-              <option value="AB">Alberta</option>
-              <option value="BC">British Columbia</option>
-              <option value="MB">Manitoba</option>
-              <option value="NB">New Brunswick</option>
-              <option value="NL">Newfoundland and Labrador</option>
-              <option value="NS">Nova Scotia</option>
-              <option value="NT">Northwest Territories</option>
-              <option value="NU">Nunavut</option>
-              <option value="ON">Ontario</option>
-              <option value="PE">Prince Edward Island</option>
-              <option value="QC">Quebec</option>
-              <option value="SK">Saskatchewan</option>
-              <option value="YT">Yukon</option>
-            </select>
-            <div class="help-text">For reference only in this version; tax is not computed by province</div>
+            <div class="help-text">
+              Your combined federal + provincial marginal rate on taxable income — applied to the taxable portion of your capital gain.
+              To estimate your marginal rate based on your total projected income, you can use the
+              <a href="/calculators/canada-income-tax/" target="_blank" rel="noopener noreferrer">Canada Personal Income Tax Calculator</a>
+              (opens in a new tab).
+            </div>
           </div>
 
           <div class="field toggle-field">
@@ -138,6 +182,80 @@
       </div>
     </div>
 
+    <!-- Full-width card: how capital gains use your marginal rate + brackets reference -->
+    <div class="card" style="margin-top: 24px;">
+      <article class="panel">
+        <h2 class="section-title">How capital gains use your marginal tax rate</h2>
+        <p>
+          Capital gains are not taxed at a flat rate. The taxable portion of your gain (proceeds − ACB × inclusion rate)
+          is added to your other income for the year, and your marginal rate applies to the combined total. A large
+          capital gain can push you into a higher bracket than your employment or other income alone would suggest.
+        </p>
+        <p>
+          Select your province or territory below to see the federal and provincial bracket rates as a reference. This does
+          <em>not</em> change the calculator's math — you still enter your combined marginal rate in the field above. To estimate
+          your marginal rate based on your total projected income, use the
+          <a href="/calculators/canada-income-tax/" target="_blank" rel="noopener noreferrer">Canada Personal Income Tax Calculator</a>
+          (opens in a new tab).
+        </p>
+
+        <div class="field" style="margin-top: 12px;">
+          <label for="province">Province or territory</label>
+          <select id="province" aria-label="Province or territory">
+            <option value="">Select to see tax brackets</option>
+            <option value="AB">Alberta</option>
+            <option value="BC">British Columbia</option>
+            <option value="MB">Manitoba</option>
+            <option value="NB">New Brunswick</option>
+            <option value="NL">Newfoundland and Labrador</option>
+            <option value="NS">Nova Scotia</option>
+            <option value="NT">Northwest Territories</option>
+            <option value="NU">Nunavut</option>
+            <option value="ON">Ontario</option>
+            <option value="PE">Prince Edward Island</option>
+            <option value="QC">Quebec</option>
+            <option value="SK">Saskatchewan</option>
+            <option value="YT">Yukon</option>
+          </select>
+          <div class="help-text">
+            Select your province or territory to display federal and provincial income tax brackets for reference. This
+            does not change the calculation — enter your combined marginal rate in the field above.
+          </div>
+
+          <div class="bracket-reference" id="bracketReference">
+            <div class="bracket-reference-title" id="bracketReferenceTitle"></div>
+            <div class="bracket-tables-wrap">
+              <div class="bracket-table-block">
+                <h4>Federal (2025)</h4>
+                <table class="bracket-table">
+                  <thead><tr><th>Income over</th><th>Rate</th></tr></thead>
+                  <tbody id="federalBracketBody"></tbody>
+                </table>
+              </div>
+              <div class="bracket-table-block">
+                <h4 id="provBracketHeader"></h4>
+                <table class="bracket-table">
+                  <thead><tr><th>Income over</th><th>Rate</th></tr></thead>
+                  <tbody id="provBracketBody"></tbody>
+                </table>
+              </div>
+            </div>
+            <p class="bracket-reference-note">
+              These are marginal rates by bracket — not your effective (average) rate. Your combined marginal rate is the
+              federal rate plus the provincial rate that applies at your income level. For a full calculation including
+              credits and deductions, use the
+              <a href="/calculators/canada-income-tax/" target="_blank" rel="noopener noreferrer">Canada Personal Income Tax Calculator</a>
+              or see the
+              <a href="https://www.thelongmath.com/tools/income-tax-brackets-canada/" target="_blank" rel="noopener noreferrer">
+                Canada Income Tax Brackets reference page
+              </a>
+              (both open in a new tab).
+            </p>
+          </div>
+        </div>
+      </article>
+    </div>
+
     <div class="report-issue-wrap">
       <a href="/contact/" class="report-issue-link">Report an Issue</a>
     </div>
@@ -151,7 +269,7 @@
       <h2>FAQ</h2>
 
       <details class="faq-accordion-item">
-        <summary>What is “Adjusted Cost Base (ACB)”?</summary>
+        <summary>What is "Adjusted Cost Base (ACB)"?</summary>
         <div class="faq-accordion-body">
           <p>Adjusted Cost Base (ACB) is generally what you paid to acquire an asset, plus the cost of improvements, minus any returns of capital. For identical properties (e.g., shares of the same stock bought at different times), you must average the cost of all identical units to determine the ACB per unit. ACB is used to calculate your capital gain or loss when you sell.</p>
         </div>
@@ -165,9 +283,12 @@
       </details>
 
       <details class="faq-accordion-item">
-        <summary>What is marginal tax rate?</summary>
+        <summary>What is marginal tax rate, and how does it apply to capital gains?</summary>
         <div class="faq-accordion-body">
-          <p>Your marginal tax rate is the rate of tax you pay on your next dollar of taxable income. It combines federal and provincial/territorial rates and rises as income increases. To estimate tax on a capital gain, you apply your marginal rate to the taxable portion of the gain (inclusion rate × gain). You can use the <a href="/calculators/canada-income-tax/">Canada Personal Income Tax Calculator 2025</a> to help estimate your marginal rate based on your income and province.</p>
+          <p>Your marginal tax rate is the rate of tax you pay on your next dollar of taxable income. It combines federal and provincial/territorial rates and increases as your income rises through successive tax brackets.</p>
+          <p>Capital gains are not taxed at a separate flat rate. Instead, the taxable portion of your gain — calculated as your total gain multiplied by the inclusion rate — is added to your other income for the year (employment income, investment income, RRSP withdrawals, etc.). Your marginal rate is then applied to that combined total.</p>
+          <p>This matters because a significant capital gain can push your total income into a higher bracket than your other income alone would reach. For example, if your employment income puts you at a 33% marginal rate but a large capital gain pushes your total income higher, part of that gain may be taxed at 43% or more, depending on your province.</p>
+          <p>To find the bracket thresholds and combined federal + provincial rates that apply to your situation, see the <a href="https://www.thelongmath.com/tools/income-tax-brackets-canada/" target="_blank" rel="noopener noreferrer">Canada Income Tax Brackets — Federal and Provincial</a> reference page (opens in a new tab). To estimate your marginal rate based on your total projected income, use the <a href="/calculators/canada-income-tax/" target="_blank" rel="noopener noreferrer">Canada Personal Income Tax Calculator</a> (opens in a new tab).</p>
         </div>
       </details>
 
@@ -194,6 +315,70 @@
   </div>
 
   <div id="footerMount"></div>
+
+  <script>
+    const FEDERAL_BRACKETS = [
+      { threshold: 0,       rate: 0.145 },
+      { threshold: 57375,   rate: 0.205 },
+      { threshold: 114750,  rate: 0.26  },
+      { threshold: 177882,  rate: 0.29  },
+      { threshold: 253414,  rate: 0.33  }
+    ];
+
+    const PROVINCIAL_BRACKETS = {
+      AB: { name: "Alberta",                   brackets: [{threshold:0,rate:0.08},{threshold:60000,rate:0.10},{threshold:151234,rate:0.12},{threshold:181481,rate:0.13},{threshold:241974,rate:0.14},{threshold:362961,rate:0.15}] },
+      BC: { name: "British Columbia",          brackets: [{threshold:0,rate:0.0506},{threshold:49279,rate:0.077},{threshold:98560,rate:0.105},{threshold:113158,rate:0.1229},{threshold:137407,rate:0.147},{threshold:186306,rate:0.168},{threshold:259829,rate:0.205}] },
+      MB: { name: "Manitoba",                  brackets: [{threshold:0,rate:0.108},{threshold:47000,rate:0.1275},{threshold:100000,rate:0.174}] },
+      NB: { name: "New Brunswick",             brackets: [{threshold:0,rate:0.094},{threshold:51306,rate:0.14},{threshold:102614,rate:0.16},{threshold:190060,rate:0.195}] },
+      NL: { name: "Newfoundland and Labrador", brackets: [{threshold:0,rate:0.087},{threshold:44192,rate:0.145},{threshold:88382,rate:0.158},{threshold:157792,rate:0.178},{threshold:220910,rate:0.198},{threshold:282214,rate:0.208},{threshold:564429,rate:0.213},{threshold:1128858,rate:0.218}] },
+      NS: { name: "Nova Scotia",               brackets: [{threshold:0,rate:0.0879},{threshold:30507,rate:0.1495},{threshold:61015,rate:0.1667},{threshold:95883,rate:0.175},{threshold:154650,rate:0.21}] },
+      NT: { name: "Northwest Territories",     brackets: [{threshold:0,rate:0.059},{threshold:51964,rate:0.086},{threshold:103930,rate:0.122},{threshold:168967,rate:0.1405}] },
+      NU: { name: "Nunavut",                   brackets: [{threshold:0,rate:0.04},{threshold:54707,rate:0.07},{threshold:109413,rate:0.09},{threshold:177881,rate:0.115}] },
+      ON: { name: "Ontario",                   brackets: [{threshold:0,rate:0.0505},{threshold:52886,rate:0.0915},{threshold:105775,rate:0.1116},{threshold:150000,rate:0.1216},{threshold:220000,rate:0.1316}] },
+      PE: { name: "Prince Edward Island",      brackets: [{threshold:0,rate:0.095},{threshold:33328,rate:0.1347},{threshold:64656,rate:0.166},{threshold:105000,rate:0.1762},{threshold:140000,rate:0.19}] },
+      QC: { name: "Quebec",                    brackets: [{threshold:0,rate:0.14},{threshold:51480,rate:0.19},{threshold:102970,rate:0.24},{threshold:119910,rate:0.2575}] },
+      SK: { name: "Saskatchewan",              brackets: [{threshold:0,rate:0.105},{threshold:53463,rate:0.125},{threshold:152750,rate:0.145}] },
+      YT: { name: "Yukon",                     brackets: [{threshold:0,rate:0.064},{threshold:57375,rate:0.09},{threshold:114750,rate:0.109},{threshold:177882,rate:0.1293},{threshold:253414,rate:0.128},{threshold:500000,rate:0.15}] }
+    };
+
+    function fmtThreshold(n) {
+      return '$' + n.toLocaleString('en-CA');
+    }
+
+    function fmtRate(r) {
+      // e.g. 0.0506 → "5.06%", 0.08 → "8%"
+      const pct = (r * 100);
+      return (Number.isInteger(pct) ? pct.toString() : pct.toFixed(2).replace(/0+$/, '').replace(/\.$/, '')) + '%';
+    }
+
+    function renderRows(tbody, brackets) {
+      tbody.innerHTML = '';
+      brackets.forEach(function(b) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td>' + fmtThreshold(b.threshold) + '</td><td>' + fmtRate(b.rate) + '</td>';
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById('province').addEventListener('change', function() {
+      const code = this.value;
+      const panel = document.getElementById('bracketReference');
+
+      if (!code || !PROVINCIAL_BRACKETS[code]) {
+        panel.classList.remove('visible');
+        return;
+      }
+
+      const prov = PROVINCIAL_BRACKETS[code];
+      document.getElementById('bracketReferenceTitle').textContent =
+        '2025 income tax brackets — Federal + ' + prov.name;
+      document.getElementById('provBracketHeader').textContent =
+        prov.name + ' (2025)';
+      renderRows(document.getElementById('federalBracketBody'), FEDERAL_BRACKETS);
+      renderRows(document.getElementById('provBracketBody'), prov.brackets);
+      panel.classList.add('visible');
+    });
+  </script>
 
   <script src="/calculators/capital-gains-tax-canada/engine.js"></script>
   <script src="/calculators/capital-gains-tax-canada/ui.js"></script>

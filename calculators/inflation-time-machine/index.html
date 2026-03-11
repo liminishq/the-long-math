@@ -121,66 +121,80 @@
     <section class="faq-section">
       <h2>Assumptions &amp; FAQ</h2>
 
-      <div class="faq-item">
-        <h3>How this inflation calculator works</h3>
-        <p>
-          This tool converts an amount between two years using official Consumer Price Index (CPI) data.
-          It uses an index ratio: CPI(end year) ÷ CPI(start year). The result is the amount required in the end year
-          to match the purchasing power of the start-year amount (within the same country).
-        </p>
-        <p>
-          The “Average annual inflation rate” figure is the constant annual rate that would produce the same overall CPI change
-          across the selected time span. It is shown as a positive magnitude; the direction is conveyed by the year arrow
-          (start → end).
-        </p>
-      </div>
+      <div class="faq-accordion">
+        <details class="faq-accordion-item">
+          <summary>How this inflation calculator works</summary>
+          <div class="faq-accordion-body">
+            <p>
+              This tool converts an amount between two years using official Consumer Price Index (CPI) data.
+              It uses an index ratio: CPI(end year) ÷ CPI(start year). The result is the amount required in the end year
+              to match the purchasing power of the start-year amount (within the same country).
+            </p>
+            <p>
+              The “Average annual inflation rate” figure is the constant annual rate that would produce the same overall CPI change
+              across the selected time span. It is shown as a positive magnitude; the direction is conveyed by the year arrow
+              (start → end).
+            </p>
+          </div>
+        </details>
 
-      <div class="faq-item">
-        <h3>What is CPI?</h3>
-        <p>
-          CPI (Consumer Price Index) is a published measure of how the prices of a representative basket of goods and services
-          change over time. Each country’s statistical agency defines and maintains its own basket and methodology.
-        </p>
-        <p>
-          CPI is not your personal inflation rate. It is a broad index designed to track economy-wide consumer price changes.
-          This tool uses CPI because it provides a standardized way to compare purchasing power across years.
-        </p>
-      </div>
+        <details class="faq-accordion-item">
+          <summary>What is CPI?</summary>
+          <div class="faq-accordion-body">
+            <p>
+              CPI (Consumer Price Index) is a published measure of how the prices of a representative basket of goods and services
+              change over time. Each country’s statistical agency defines and maintains its own basket and methodology.
+            </p>
+            <p>
+              CPI is not your personal inflation rate. It is a broad index designed to track economy-wide consumer price changes.
+              This tool uses CPI because it provides a standardized way to compare purchasing power across years.
+            </p>
+          </div>
+        </details>
 
-      <div class="faq-item">
-        <h3>Why results differ by country</h3>
-        <p>
-          Inflation differs across countries because price changes differ across economies and time periods, and because each country’s CPI
-          is constructed using its own basket weights and statistical methods.
-        </p>
-        <p>
-          This tool does not perform currency conversion. The comparison list shows each country’s domestic CPI-based conversion in that country’s
-          local currency. Comparisons across countries are about inflation dynamics, not exchange rates.
-        </p>
-      </div>
+        <details class="faq-accordion-item">
+          <summary>Why results differ by country</summary>
+          <div class="faq-accordion-body">
+            <p>
+              Inflation differs across countries because price changes differ across economies and time periods, and because each country’s CPI
+              is constructed using its own basket weights and statistical methods.
+            </p>
+            <p>
+              This tool does not perform currency conversion. The comparison list shows each country’s domestic CPI-based conversion in that country’s
+              local currency. Comparisons across countries are about inflation dynamics, not exchange rates.
+            </p>
+          </div>
+        </details>
 
-      <div class="faq-item">
-        <h3>Data sources</h3>
-        <p>CPI data and coverage years by country (loaded from manifest):</p>
-        <ul id="data_sources_list">
-          <li>Loading…</li>
-        </ul>
-        <p class="help-text" style="margin-top: 10px;">
-          Coverage years reflect the full annual datasets currently available.
-        </p>
-      </div>
+        <details class="faq-accordion-item">
+          <summary>Data sources</summary>
+          <div class="faq-accordion-body">
+            <p>CPI data and coverage years by country (loaded from manifest):</p>
+            <ul id="data_sources_list">
+              <li>Loading…</li>
+            </ul>
+            <p class="help-text" style="margin-top: 10px;">
+              Coverage years reflect the full annual datasets currently available.
+            </p>
+          </div>
+        </details>
 
-      <div class="faq-item">
-        <h3>CPI and currency</h3>
-        <p>
-          This tool uses each country’s domestic CPI index. It does not perform foreign exchange conversion.
-          Amounts are in that country’s local currency (e.g. CAD for Canada, USD for United States) and are comparable only within the same country.
-        </p>
-      </div>
+        <details class="faq-accordion-item">
+          <summary>CPI and currency</summary>
+          <div class="faq-accordion-body">
+            <p>
+              This tool uses each country’s domestic CPI index. It does not perform foreign exchange conversion.
+              Amounts are in that country’s local currency (e.g. CAD for Canada, USD for United States) and are comparable only within the same country.
+            </p>
+          </div>
+        </details>
 
-      <div class="faq-item">
-        <h3>CPI data tables</h3>
-        <p>For the exact CPI index values used in these calculations, see <a href="/tools/cpi-data-tables/">CPI Data Tables (by country)</a>.</p>
+        <details class="faq-accordion-item">
+          <summary>CPI data tables</summary>
+          <div class="faq-accordion-body">
+            <p>For the exact CPI index values used in these calculations, see <a href="/tools/cpi-data-tables/">CPI Data Tables (by country)</a>.</p>
+          </div>
+        </details>
       </div>
     </section>
 

@@ -94,7 +94,7 @@
 
 .result-row .value {
   font-weight: 700;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .result-row.highlight {
@@ -103,9 +103,27 @@
 }
 
 .result-row .value.highlight-value {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 800;
   color: var(--accent);
+}
+
+/* Make lower-priority outputs slightly smaller than the main ones */
+.results .result-row:nth-child(1) .value,
+.results .result-row:nth-child(2) .value {
+  font-size: 15px;
+}
+
+/* Make after-tax proceeds (4th row) visually prominent, but secondary to estimated tax */
+.results .result-row:nth-child(4) {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent2);
+}
+
+.results .result-row:nth-child(4) .value {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--accent2);
 }
 
 .capital-loss-message,
@@ -189,11 +207,31 @@
 
 .faq-accordion-item summary {
   cursor: pointer;
-  padding: 12px 16px;
+  padding: 14px 18px;
   background: rgba(255, 255, 255, 0.03);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 15px;
-  color: var(--accent2);
+  color: var(--text);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.faq-accordion-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-accordion-item summary::after {
+  content: "+";
+  font-size: 1.2em;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.faq-accordion-item[open] summary::after {
+  content: "−";
 }
 
 .faq-accordion-item summary:hover {
