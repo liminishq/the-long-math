@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Canada Income Tax Brackets — Federal and Provincial (2025) | The Long Math</title>
+  <meta name="description" content="Canada 2025 personal income tax brackets in table form — federal first, then each province and territory. Educational reference for The Long Math calculators.">
+
+  <!-- Must run BEFORE CSS to avoid flash -->
+  <script src="/assets/js/theme-init.js"></script>
+
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/tools/income-tax-brackets-canada/styles.css">
+
+  <!-- Runs after DOM is parsed -->
+  <script defer src="/assets/js/site.js"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+
+<body>
+
+  <!-- Shared header/footer injection -->
+  <div id="site-header"></div>
+
+  <div class="wrap">
+
+    <!-- Back link -->
+    <div style="margin-bottom: 16px;">
+      <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
+    </div>
+
+    <!-- Title and intro -->
+    <section class="card">
+      <h1>Canada Income Tax Brackets — Federal and Provincial</h1>
+
+      <div class="lede">
+        <p>This page shows Canadian personal income tax brackets for federal tax first, then each province and territory, for the selected year.</p>
+        <p>The data mirrors the parameters used in the Canada Personal Income Tax Calculator on The Long Math, which are aligned with CRA and provincial sources where noted.</p>
+      </div>
+
+      <p style="margin-top: 12px; font-size: 14px;">
+        For full calculations (including credits, CPP/EI, and detailed “show the math” breakdowns), use the
+        <a href="/calculators/canada-income-tax/">Canada Personal Income Tax Calculator</a>. This page is a reference table only.
+      </p>
+
+      <div style="margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+        <label for="year-select" style="font-size: 14px; font-weight: 600;">Tax year:</label>
+        <select id="year-select" style="font-size: 14px; padding: 4px 8px;"></select>
+        <span id="year-loading" style="font-size: 12px; color: var(--muted); display: none;">Loading…</span>
+      </div>
+    </section>
+
+    <!-- Federal brackets -->
+    <section class="card" style="margin-top: 16px;">
+      <h2 class="section-title" id="federal-heading">Federal income tax brackets</h2>
+
+      <div class="table-container">
+        <table id="table-federal">
+          <caption id="federal-caption">Federal personal income tax brackets (Canada)</caption>
+          <thead>
+            <tr>
+              <th id="federal-band-header">Taxable income band</th>
+              <th>Tax rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <p class="table-note" id="federal-note">
+        Federal brackets and RRSP limits are based on CRA’s indexed personal income tax and benefit amounts for the selected year. Where applicable, the first bracket uses any effective blended rate implemented in the calculator.
+      </p>
+    </section>
+
+    <!-- Provincial and territorial brackets -->
+    <section class="card" style="margin-top: 16px;">
+      <h2 class="section-title" id="provincial-heading">Provincial and territorial income tax brackets</h2>
+
+      <p style="font-size: 14px; margin-bottom: 12px;">
+        Rates below are the primary personal income tax brackets used in the calculator for each province or territory. Brackets are shown from lowest income band to highest, with tax applied only to the income within each band.
+      </p>
+
+      <div id="provinces-container">
+        <!-- Province/territory tables injected by JavaScript -->
+      </div>
+
+      <p class="table-note" id="provincial-note">
+        Provincial and territorial brackets are primarily sourced from TaxTips.ca’s tax rate tables and cross-checked against CRA and provincial references where possible. Exact statutory wording may differ; this is an educational summary aligned with the calculator’s underlying parameters for the selected year.
+      </p>
+    </section>
+
+    <div class="report-issue-wrap">
+      <a href="/contact/" class="report-issue-link">Report an Issue</a>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
+      </p>
+    </div>
+
+  </div>
+
+  <div id="footerMount"></div>
+
+  <script src="/tools/income-tax-brackets-canada/script.js"></script>
+
+</body>
+</html>
