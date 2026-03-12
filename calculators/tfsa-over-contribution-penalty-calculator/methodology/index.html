@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspect the Arithmetic – TFSA Over-Contribution Penalty Calculator | The Long Math</title>
+  <meta name="description" content="Formulae, event logic, and assumptions for the TFSA over-contribution penalty calculator (Canada)." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/tfsa-over-contribution-penalty-calculator/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <div style="margin-bottom: 20px;">
+        <a href="/calculators/tfsa-over-contribution-penalty-calculator/" class="home-link">← Back to TFSA Over-Contribution Penalty Calculator</a>
+      </div>
+
+      <h1>Inspect the Arithmetic — TFSA Over-Contribution Penalty Calculator</h1>
+      <p class="methodology-meta">Version 1.0<br>Last updated: March 2026</p>
+
+      <p>
+        Transparent arithmetic is the operating system of this calculator.
+      </p>
+      <p>
+        This document publishes the formulae, event-handling logic, and assumptions used to estimate CRA TFSA over-contribution penalties on the calculator page.
+      </p>
+      <p>
+        No opinions. No hidden assumptions. Just arithmetic.
+      </p>
+
+      <h2>Purpose</h2>
+      <p>
+        The calculator estimates the tax (penalty) that CRA may assess on TFSA over-contributions. It offers two modes: <strong>Simple</strong> (one excess amount over a fixed number of months) and <strong>Advanced</strong> (month-by-month with contributions, withdrawals, and room changes on specific dates). This page explains both methods.
+      </p>
+
+      <h2 id="simple-method">A. Simple method</h2>
+      <p>
+        Simple mode is for a single lump-sum over-contribution that stayed at a constant amount for a known number of months.
+      </p>
+      <p><strong>Formula:</strong></p>
+      <div class="formula-block">
+        penalty = excessAmount × 1% × months
+      </div>
+      <p>
+        In plain language: you enter the excess amount (in dollars) and the number of whole months the excess remained. The estimate is 1% of the excess for each of those months. For example, $5,000 excess for 4 months gives penalty = 5,000 × 0.01 × 4 = $200.
+      </p>
+      <p class="formula-meta">
+        <strong>When to use Simple:</strong> Only when the excess amount did not change over the period. If you had contributions or withdrawals that changed the excess during those months, use Advanced mode instead, which estimates the penalty based on the highest excess reached in each affected month.
+      </p>
+
+      <h2 id="advanced-method">B. Advanced method</h2>
+      <p>
+        Advanced mode estimates the penalty based on the <strong>highest excess amount</strong> in each calendar month. It processes your transactions in date order and applies the 1% rule to that highest excess per month.
+      </p>
+
+      <h3 id="monthly-penalty">1. Monthly penalty</h3>
+      <p>For each calendar month in the calculation range:</p>
+      <div class="formula-block">
+        monthly penalty = 0.01 × (highest excess amount in that month)
+      </div>
+      <p class="formula-meta">The rate is 1% (0.01). “Highest excess in that month” means the maximum value of excess reached at any point during the month, including after each transaction.</p>
+
+      <h3 id="total-penalty">2. Total penalty</h3>
+      <div class="formula-block">
+        total penalty = sum of (monthly penalty) for every month in the date range
+      </div>
+      <p class="formula-meta">Months with no excess contribute zero to the total. The total is not “excess × number of months” unless excess is constant and unchanged for every month; the engine tracks the highest excess per month explicitly.</p>
+
+      <h2>Why the highest excess in the month matters</h2>
+      <p>
+        CRA assesses the penalty each month based on the <strong>highest</strong> excess that existed during that month. So if you had $5,000 excess at the start of a month and then withdrew $3,000 on the 20th, your excess at the end of the month is $2,000 — but the month is still assessed on $5,000, because that was the highest excess reached in that month. A withdrawal later in the month does not erase an earlier higher excess for that same month.
+      </p>
+      <p>
+        The calculator therefore processes events in date order and, for each calendar month, records the maximum excess seen at any step during that month. That maximum is used for the monthly penalty.
+      </p>
+
+      <h2>Event-handling logic</h2>
+      <p>Events are processed in chronological order. Two state variables are maintained:</p>
+      <ul>
+        <li><strong>room</strong> — available TFSA contribution room (starts at your “starting room”, then adjusted by events)</li>
+        <li><strong>excess</strong> — amount by which contributions have exceeded room (the over-contribution)</li>
+      </ul>
+
+      <h3 id="contribution">Contribution</h3>
+      <p>A contribution first uses available room; any amount that cannot be applied to room becomes (or adds to) excess.</p>
+      <div class="formula-block">
+        useFromRoom = min(contribution amount, room)<br>
+        room = room − useFromRoom<br>
+        excess = excess + (contribution amount − useFromRoom)
+      </div>
+
+      <h3 id="withdrawal">Withdrawal</h3>
+      <p>A withdrawal reduces current excess only. It does not add to contribution room in this model (room is only increased by room adjustments or by the annual Jan 1 room you specify).</p>
+      <div class="formula-block">
+        excess = max(0, excess − withdrawal amount)
+      </div>
+
+      <h3 id="room-adjustment">Room adjustment</h3>
+      <p>A room adjustment (or the automatic Jan 1 new room) increases available room. That new room can absorb part of the existing excess.</p>
+      <div class="formula-block">
+        room = room + amount<br>
+        excess = max(0, excess − amount)
+      </div>
+
+      <h2>Timeline construction</h2>
+      <ul>
+        <li>All <strong>transactions</strong> you enter with dates inside the calculation range are included; transactions outside the range are ignored.</li>
+        <li>If you set <strong>annual new TFSA room (Jan 1)</strong> &gt; 0, the engine inserts a room-adjustment event on January 1 for each year that falls within the range.</li>
+        <li>Events are sorted by date and processed in order. For each calendar month, the engine records the highest excess reached during that month and applies the 1% formula.</li>
+      </ul>
+
+      <h2>Worked example</h2>
+      <p>Using the following inputs:</p>
+      <ul>
+        <li><strong>Start date:</strong> 2026-01-01</li>
+        <li><strong>End date:</strong> 2026-04-30</li>
+        <li><strong>Starting room:</strong> 0</li>
+        <li><strong>Annual Jan 1 room:</strong> 7,000</li>
+        <li><strong>Transactions:</strong></li>
+        <ul>
+          <li>2026-01-10 — contribution — 9,000</li>
+          <li>2026-02-15 — withdrawal — 1,000</li>
+          <li>2026-03-03 — contribution — 500</li>
+        </ul>
+      </ul>
+      <p>Timeline (sorted):</p>
+      <ol>
+        <li><strong>2026-01-01</strong> — Jan 1 room: room = 0 + 7,000 = 7,000; excess = 0.</li>
+        <li><strong>2026-01-10</strong> — Contribution 9,000: useFromRoom = min(9,000, 7,000) = 7,000; room = 0; excess = 0 + 2,000 = <strong>2,000</strong>.</li>
+      </ol>
+      <p><strong>January:</strong> Highest excess in month = 2,000. Monthly penalty = 0.01 × 2,000 = <strong>$20</strong>.</p>
+      <ol start="3">
+        <li><strong>2026-02-15</strong> — Withdrawal 1,000: excess = 2,000 − 1,000 = 1,000.</li>
+      </ol>
+      <p><strong>February:</strong> At start of month excess was 2,000; after withdrawal, 1,000. Highest in month = 2,000. Monthly penalty = 0.01 × 2,000 = <strong>$20</strong>.</p>
+      <ol start="4">
+        <li><strong>2026-03-03</strong> — Contribution 500: room = 0; useFromRoom = 0; excess = 1,000 + 500 = 1,500.</li>
+      </ol>
+      <p><strong>March:</strong> Highest excess = 1,500. Monthly penalty = 0.01 × 1,500 = <strong>$15</strong>.</p>
+      <p><strong>April:</strong> No events. Excess remains 1,500. Monthly penalty = 0.01 × 1,500 = <strong>$15</strong>.</p>
+      <p><strong>Totals:</strong></p>
+      <div class="formula-block">
+        total penalty = 20 + 20 + 15 + 15 = $70<br>
+        months with excess = 4<br>
+        peak excess = $2,000<br>
+        ending excess = $1,500
+      </div>
+
+      <h2>Sample input/output contract</h2>
+      <p><strong>Input shape (engine):</strong></p>
+      <div class="formula-block">
+        {<br>
+        &nbsp; startDate: "YYYY-MM-DD",<br>
+        &nbsp; endDate: "YYYY-MM-DD",<br>
+        &nbsp; startingRoom: number,<br>
+        &nbsp; annualJan1Room: number,<br>
+        &nbsp; transactions: [<br>
+        &nbsp; &nbsp; { date: "YYYY-MM-DD", type: "contribution" | "withdrawal" | "room_adjustment", amount: number },<br>
+        &nbsp; &nbsp; ...<br>
+        &nbsp; ]<br>
+        }
+      </div>
+      <p><strong>Output shape (on success):</strong></p>
+      <div class="formula-block">
+        {<br>
+        &nbsp; totalPenalty: number,<br>
+        &nbsp; monthsWithPenalty: number,<br>
+        &nbsp; peakExcess: number,<br>
+        &nbsp; endingExcess: number,<br>
+        &nbsp; endingRoom: number,<br>
+        &nbsp; monthlyBreakdown: [ { month, highestExcess, monthlyPenalty, ... }, ... ],<br>
+        &nbsp; normalizedTimeline: [ ... ],<br>
+        &nbsp; assumptions: [ string, ... ]<br>
+        }
+      </div>
+      <p>On validation failure, the engine returns <code>{ error: "message" }</code>.</p>
+
+      <h2>Assumptions and limitations</h2>
+      <ol>
+        <li>Penalty is 1% per month on the highest excess in each calendar month, consistent with CRA’s stated approach. Your actual assessment may depend on CRA’s records and filing details.</li>
+        <li>Transactions outside the selected date range are ignored; the calculator does not load or assume events before the start date or after the end date.</li>
+        <li>Withdrawals reduce excess only; they do not add to contribution room in this model (room is increased only by room adjustments or the annual Jan 1 value you enter).</li>
+        <li>Jan 1 room is applied only when “annual new TFSA room (Jan 1)” is greater than zero.</li>
+        <li>All amounts are in CAD. Dates are in YYYY-MM-DD. Money math uses floating point; rounding is applied for display only.</li>
+        <li>This is an educational estimate. CRA rules and your specific situation may differ. This is not tax advice.</li>
+      </ol>
+
+      <h2>Regression tests</h2>
+      <p>
+        The engine includes a small regression harness. In the browser console (with the calculator page loaded) or in Node after loading the engine, run <code>TfsaOverContributionEngine.runRegressionTests()</code>. Test cases cover: no excess; single excess over multiple months; excess corrected mid-month; multiple contributions in one month; Jan 1 room eliminating excess; withdrawal after excess; room adjustment reducing excess.
+      </p>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between this documentation and the calculator output, the arithmetic in the engine governs.
+      </p>
+
+      <p style="margin-top: 1em;">
+        <a href="/calculators/tfsa-over-contribution-penalty-calculator/" class="inspect-arithmetic-btn">Back to TFSA Over-Contribution Penalty Calculator</a>
+      </p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>

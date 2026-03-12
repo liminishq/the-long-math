@@ -1,0 +1,349 @@
+/* TFSA Over-Contribution Penalty Calculator — local styles; relies on global styles.css */
+
+.mode-selector-wrap {
+  margin-bottom: 16px;
+}
+
+.mode-selector {
+  display: flex;
+  gap: 0;
+  margin-bottom: 8px;
+}
+
+.mode-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.mode-btn:first-of-type {
+  border-radius: 10px 0 0 10px;
+}
+
+.mode-btn:last-of-type {
+  border-radius: 0 10px 10px 0;
+  border-left-width: 0;
+}
+
+.mode-btn:hover {
+  color: var(--text);
+  background: var(--surface2);
+}
+
+.mode-btn.active {
+  color: var(--text);
+  background: var(--accentSoft);
+  border-color: var(--accent);
+  z-index: 1;
+}
+
+.mode-btn.active + .mode-btn {
+  border-left-width: 1px;
+}
+
+.mode-helper {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.mode-helper.hidden {
+  display: none;
+}
+
+.mode-section.hidden {
+  display: none;
+}
+
+.calc-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+@media (max-width: 900px) {
+  .calc-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.field {
+  margin: 12px 0;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface, rgba(255, 255, 255, 0.04));
+  color: var(--text);
+  font-size: 14px;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.field .help-text {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.field .error-text {
+  font-size: 12px;
+  color: var(--accent2, #c00);
+  margin-top: 4px;
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.result-row .label {
+  opacity: 0.85;
+  font-size: 14px;
+}
+
+.result-row .value {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.result-row.highlight {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent);
+}
+
+.result-row .value.highlight-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.inspect-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.txn-table-wrap {
+  overflow-x: auto;
+  margin-top: 8px;
+}
+
+.txn-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.txn-table th,
+.txn-table td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.txn-table th {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.txn-table td select,
+.txn-table td input {
+  padding: 6px 8px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.txn-table td input[type="date"] {
+  min-width: 130px;
+}
+
+.txn-table td input[type="number"] {
+  width: 100%;
+  min-width: 90px;
+}
+
+.txn-table .txn-remove {
+  padding: 4px 8px;
+  font-size: 12px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.txn-table .txn-remove:hover {
+  color: var(--accent2);
+  border-color: var(--accent2);
+}
+
+.add-txn-btn {
+  margin-top: 10px;
+  padding: 8px 14px;
+  font-size: 13px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.add-txn-btn:hover {
+  border-color: var(--accent);
+  background: var(--accentSoft);
+}
+
+.monthly-table-wrap {
+  overflow-x: auto;
+  margin-top: 12px;
+}
+
+.monthly-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.monthly-table th,
+.monthly-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.monthly-table th {
+  text-align: left;
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.monthly-table td.numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.note-block {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.explainer-box {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--accentSoft);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.explainer-box p {
+  margin: 0 0 8px;
+}
+
+.explainer-box p:last-child {
+  margin-bottom: 0;
+}
+
+.assumptions-list {
+  margin-top: 12px;
+  padding-left: 18px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.assumptions-list li {
+  margin-bottom: 4px;
+}
+
+.empty-state {
+  padding: 16px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  margin-top: 12px;
+}
+
+.rel-section h2 {
+  font-size: 18px;
+  margin: 0 0 10px;
+}
+
+.rel-section ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.rel-section li {
+  margin: 12px 0;
+}
+
+.rel-section a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.rel-section a:hover {
+  text-decoration: underline;
+}
