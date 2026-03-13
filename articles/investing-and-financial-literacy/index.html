@@ -11,6 +11,83 @@
   <script src="/assets/js/theme-init.js"></script>
   <link rel="stylesheet" href="/assets/css/styles.css">
   <script defer src="/assets/js/site.js"></script>
+  <style>
+    .foundations-hero {
+      text-align: center;
+      padding: 2.25rem 0 2.5rem;
+    }
+    @media (min-width: 640px) {
+      .foundations-hero { padding: 2.75rem 0 3rem; }
+    }
+    .foundations-hero-inner {
+      max-width: 780px;
+      margin: 0 auto;
+    }
+    .foundations-hero h1 {
+      margin: 0 0 0.75rem;
+      font-size: 1.9rem;
+      letter-spacing: 0.04em;
+    }
+    @media (min-width: 640px) {
+      .foundations-hero h1 { font-size: 2.1rem; }
+    }
+    .foundations-hero .lede {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .foundations-section {
+      margin-top: 1.5rem;
+    }
+    .foundations-grid {
+      display: grid;
+      gap: 16px;
+    }
+    @media (min-width: 820px) {
+      .foundations-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+    .foundation-card {
+      padding: 18px 16px 18px;
+    }
+    .foundation-card h2 {
+      margin: 0 0 0.5rem;
+      font-size: 1rem;
+    }
+    .foundation-card p {
+      margin: 0 0 0.75rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .foundation-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .foundation-item {
+      margin: 0.5rem 0;
+    }
+    .foundation-item-title {
+      font-size: 0.95rem;
+      margin: 0 0 0.1rem;
+    }
+    .foundation-item-title a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .foundation-item-title a:hover {
+      text-decoration: underline;
+    }
+    .foundation-item-desc {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+  </style>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
   <script>
@@ -26,122 +103,109 @@
   <div id="site-header"></div>
 
   <div class="wrap">
-    <!-- Back link -->
-    <a href="/" class="home-link">← Back to Home</a>
-
-    <!-- Header -->
-    <header>
-      <h1>Investment and Financial Literacy</h1>
-
-      <div class="lede">
-        <p>This is a collection of beginner-friendly articles that make finance and investing understandable with plain language and explicit assumptions.</p>
+    <!-- Hero / intro -->
+    <section class="foundations-hero" aria-labelledby="foundations-heading">
+      <div class="foundations-hero-inner">
+        <h1 id="foundations-heading">Investment and Financial Literacy</h1>
+        <div class="lede">
+          <p>This is a collection of beginner-friendly articles that make finance and investing understandable with plain language and explicit assumptions.</p>
+        </div>
       </div>
-    </header>
+    </section>
 
-    <!-- Articles List -->
-    <section class="card">
-      <h2 class="section-title">Articles</h2>
-      
-      <ul style="list-style: none; padding: 0; margin: 0;">
-        <li style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
-          <h3 style="margin: 0 0 8px; font-size: 18px;">
-            <a href="/articles/investing-and-financial-literacy/what-is-investing/" style="color: var(--accent); text-decoration: none;">What Is Investing?</a>
-          </h3>
-          <p style="margin: 0; color: var(--muted); font-size: 14px;">
-            A simple definition for beginners and new investors. Learn what investing is, why people invest, and how time can work in your favor.
-          </p>
-        </li>
+    <!-- Organized article sections -->
+    <section class="foundations-section">
+      <div class="foundations-grid">
+        <!-- Core investing concepts -->
+        <article class="card foundation-card">
+          <h2>Core Concepts</h2>
+          <p>Start here for the basic ideas behind investing and markets.</p>
+          <ul class="foundation-list">
+            <li class="foundation-item">
+              <h3 class="foundation-item-title">
+                <a href="/articles/investing-and-financial-literacy/what-is-investing/">What Is Investing?</a>
+              </h3>
+              <p class="foundation-item-desc">A simple definition for beginners and new investors. What investing is, why people invest, and how time can work in your favor.</p>
+            </li>
+            <li class="foundation-item">
+              <h3 class="foundation-item-title">
+                <a href="/articles/investing-and-financial-literacy/what-is-a-stock/">What Is a Stock? (In Simple Terms)</a>
+              </h3>
+              <p class="foundation-item-desc">What a share represents, how stocks make money, and why stock prices move — explained with simple arithmetic.</p>
+            </li>
+            <li class="foundation-item">
+              <h3 class="foundation-item-title">
+                <a href="/articles/investing-and-financial-literacy/what-is-the-stock-market/">What Is the Stock Market?</a>
+              </h3>
+              <p class="foundation-item-desc">What the stock market is, how it works, and why it can grow over time.</p>
+            </li>
+            <li class="foundation-item">
+              <h3 class="foundation-item-title">
+                <a href="/articles/investing-and-financial-literacy/asset-classes-for-investing/">Asset Classes for Investing</a>
+              </h3>
+              <p class="foundation-item-desc">The major asset classes — stocks, bonds, cash, and real assets — and why asset allocation matters.</p>
+            </li>
+          </ul>
+        </article>
 
-        <li style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
-          <h3 style="margin: 0 0 8px; font-size: 18px;">
-            <a href="/articles/investing-and-financial-literacy/what-is-a-stock/" style="color: var(--accent); text-decoration: none;">What Is a Stock? (In Simple Terms)</a>
-          </h3>
-          <p style="margin: 0; color: var(--muted); font-size: 14px;">
-            What is a stock? Learn how stocks work, what a share represents, how stocks make money, and why stock prices move — explained with simple arithmetic.
-          </p>
-        </li>
+        <!-- Growth and erosion over time -->
+        <article class="card foundation-card">
+          <h2>Growth and Erosion Over Time</h2>
+          <p>How compounding builds wealth — and how inflation changes what that wealth can buy.</p>
+          <ul class="foundation-list">
+            <li class="foundation-item">
+              <h3 class="foundation-item-title">
+                <a href="/articles/investing-and-financial-literacy/compound-interest/">Compound Interest: The Ultimate Wealth Builder</a>
+              </h3>
+              <p class="foundation-item-desc">What compound interest is, how it works, the formula, and why compounding accelerates over long horizons.</p>
+            </li>
+            <li class="foundation-item">
+              <h3 class="foundation-item-title">
+                <a href="/articles/investing-and-financial-literacy/inflation/">Inflation: The Math That Makes Future Money Smaller</a>
+              </h3>
+              <p class="foundation-item-desc">An arithmetic-based explanation of inflation, purchasing power, nominal vs real return, and why plans must be inflation-adjusted.</p>
+            </li>
+            <li class="foundation-item">
+              <h3 class="foundation-item-title">
+                <a href="/articles/investing-and-financial-literacy/the-true-cost-of-financial-advisor-fees/">The True Cost of Financial Advisor Fees</a>
+              </h3>
+              <p class="foundation-item-desc">How advisory fees, fund costs, and lost compounding interact over decades.</p>
+            </li>
+          </ul>
+        </article>
 
-        <li style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
-          <h3 style="margin: 0 0 8px; font-size: 18px;">
-            <a href="/articles/investing-and-financial-literacy/what-is-the-stock-market/" style="color: var(--accent); text-decoration: none;">What Is the Stock Market?</a>
-          </h3>
-          <p style="margin: 0; color: var(--muted); font-size: 14px;">
-            What the stock market is in simple terms, how it works, and why it can grow over time.
-          </p>
-        </li>
-
-        <li style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
-          <h3 style="margin: 0 0 8px; font-size: 18px;">
-            <a href="/articles/investing-and-financial-literacy/asset-classes-for-investing/" style="color: var(--accent); text-decoration: none;">Asset Classes for Investing</a>
-          </h3>
-          <p style="margin: 0; color: var(--muted); font-size: 14px;">
-            Learn the major asset classes—stocks, bonds, cash, and real assets—plus examples, historical return ranges, and why asset allocation matters.
-          </p>
-        </li>
-
-        <li style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
-          <h3 style="margin: 0 0 8px; font-size: 18px;">
-            <a href="/articles/investing-and-financial-literacy/compound-interest/" style="color: var(--accent); text-decoration: none;">Compound Interest: The Ultimate Wealth Builder</a>
-          </h3>
-          <p style="margin: 0; color: var(--muted); font-size: 14px;">
-            Learn what compound interest is, how it works, the formula, and why compounding accelerates over time.
-          </p>
-        </li>
-
-        <li style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
-          <h3 style="margin: 0 0 8px; font-size: 18px;">
-            <a href="/articles/investing-and-financial-literacy/the-true-cost-of-financial-advisor-fees/" style="color: var(--accent); text-decoration: none;">The True Cost of Financial Advisor Fees</a>
-          </h3>
-          <p style="margin: 0; color: var(--muted); font-size: 14px;">
-            Learn how much a financial advisor really costs over time. See the arithmetic behind AUM fees, MERs, lost compounding, and break-even return.
-          </p>
-        </li>
-
-        <li style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
-          <h3 style="margin: 0 0 8px; font-size: 18px;">
-            <a href="/articles/investing-and-financial-literacy/inflation/" style="color: var(--accent); text-decoration: none;">Inflation: The Math That Makes Future Money Smaller</a>
-          </h3>
-          <p style="margin: 0; color: var(--muted); font-size: 14px;">
-            An arithmetic-based explanation of inflation, purchasing power, nominal vs real return, and why long-term financial plans must be inflation-adjusted.
-          </p>
-        </li>
-
-        <li style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
-          <h3 style="margin: 0 0 8px; font-size: 18px;">
-            <a href="/articles/investing-and-financial-literacy/what-is-an-fhsa/" style="color: var(--accent); text-decoration: none;">What Is an FHSA? First Home Savings Account Explained (Canada)</a>
-          </h3>
-          <p style="margin: 0; color: var(--muted); font-size: 14px;">
-            How Canada's First Home Savings Account works: contribution limits, tax deductions, carry-forward, withdrawals for a first home, and how it compares with TFSA and RRSP.
-          </p>
-        </li>
-
-        <li style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
-          <h3 style="margin: 0 0 8px; font-size: 18px;">
-            <a href="/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/" style="color: var(--accent); text-decoration: none;">RRSP vs TFSA vs FHSA in Canada: Which Account Is Best?</a>
-          </h3>
-          <p style="margin: 0; color: var(--muted); font-size: 14px;">
-            RRSP vs TFSA vs FHSA in Canada—compare tax math, contribution limits, and worked examples to see when each account wins based on marginal tax rates and first-home eligibility.
-          </p>
-        </li>
-
-        <li style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
-          <h3 style="margin: 0 0 8px; font-size: 18px;">
-            <a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/" style="color: var(--accent); text-decoration: none;">What Is a TFSA? Tax-Free Savings Account Explained (Canada)</a>
-          </h3>
-          <p style="margin: 0; color: var(--muted); font-size: 14px;">
-            How the Canadian TFSA works: contribution room, the January 1 withdrawal rule, what you can hold inside, and why tax-free growth matters for long-term investing.
-          </p>
-        </li>
-
-        <li style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
-          <h3 style="margin: 0 0 8px; font-size: 18px;">
-            <a href="/articles/investing-and-financial-literacy/tfsa-withdrawal-rules-over-contribution-penalties/" style="color: var(--accent); text-decoration: none;">TFSA Withdrawal Rules: The January 1 Rule and Over-Contribution Penalties</a>
-          </h3>
-          <p style="margin: 0; color: var(--muted); font-size: 14px;">
-            Why withdrawn TFSA room returns on January 1 of the following year, how same-year re-contributions trigger CRA penalties, and how to avoid or fix over-contributions.
-          </p>
-        </li>
-      </ul>
+        <!-- Accounts, rules, and Canadian specifics -->
+        <article class="card foundation-card">
+          <h2>Accounts and Rules (Canada)</h2>
+          <p>How Canadian registered accounts and withdrawal rules change the arithmetic.</p>
+          <ul class="foundation-list">
+            <li class="foundation-item">
+              <h3 class="foundation-item-title">
+                <a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/">What Is a TFSA? Tax-Free Savings Account Explained (Canada)</a>
+              </h3>
+              <p class="foundation-item-desc">Contribution room, the January 1 withdrawal rule, what you can hold inside, and why tax-free growth matters.</p>
+            </li>
+            <li class="foundation-item">
+              <h3 class="foundation-item-title">
+                <a href="/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/">RRSP vs TFSA vs FHSA in Canada: Which Account Is Best?</a>
+              </h3>
+              <p class="foundation-item-desc">Compare tax math, contribution limits, and worked examples across RRSP, TFSA, and FHSA.</p>
+            </li>
+            <li class="foundation-item">
+              <h3 class="foundation-item-title">
+                <a href="/articles/investing-and-financial-literacy/what-is-an-fhsa/">What Is an FHSA? First Home Savings Account Explained (Canada)</a>
+              </h3>
+              <p class="foundation-item-desc">How the FHSA works, its tax treatment, limits, and interaction with other accounts.</p>
+            </li>
+            <li class="foundation-item">
+              <h3 class="foundation-item-title">
+                <a href="/articles/investing-and-financial-literacy/tfsa-withdrawal-rules-over-contribution-penalties/">TFSA Withdrawal Rules: The January 1 Rule and Over-Contribution Penalties</a>
+              </h3>
+              <p class="foundation-item-desc">Why withdrawn TFSA room returns on January 1, how over-contributions happen, and how penalties are calculated.</p>
+            </li>
+          </ul>
+        </article>
+      </div>
     </section>
 
     <!-- Disclaimer -->

@@ -213,7 +213,7 @@
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      gap: 10px;
+      gap: 0.35rem;
     }
     .home-proof-summary-label {
       color: var(--muted);
@@ -221,6 +221,17 @@
     .home-proof-summary-value {
       font-variant-numeric: tabular-nums;
       font-weight: 600;
+    }
+    .home-proof-summary-row.cost {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 -4px;
+      padding: 4px 6px;
+      border-radius: 8px;
+      background: var(--accentSoft);
+    }
+    .home-proof-summary-row.cost .home-proof-summary-label {
+      color: var(--accent);
     }
     .home-proof-summary-row.cost .home-proof-summary-value {
       color: var(--accent);
@@ -286,6 +297,62 @@
       color: var(--muted);
     }
     .pillar-card li { margin: 0.25rem 0; }
+
+    /* Featured Tools — 3-card grid */
+    .featured-tools-intro {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin: 0 0 1rem;
+      line-height: 1.5;
+    }
+    .featured-tools-grid {
+      display: grid;
+      gap: 16px;
+      margin-top: 0.5rem;
+    }
+    @media (min-width: 640px) {
+      .featured-tools-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (min-width: 880px) {
+      .featured-tools-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+    .featured-tool-card {
+      padding: 18px 16px 18px;
+      display: flex;
+      flex-direction: column;
+    }
+    .featured-tool-card h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .featured-tool-desc {
+      margin: 0 0 1rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.55;
+      flex: 1;
+    }
+    .featured-tool-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    @media (max-width: 480px) {
+      .featured-tool-buttons {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+    .featured-tool-buttons .home-cta {
+      flex: 0 0 auto;
+    }
 
     /* Questions / FAQ-style list */
     .questions-intro {
@@ -455,10 +522,10 @@
     <!-- SECTION 1 — HERO (THE IDEA) -->
     <section class="home-section home-hero" aria-labelledby="hero-heading">
       <div class="home-hero-inner">
-        <h1 id="hero-heading">Most financial decisions look small.</br>
+        <h1 id="hero-heading">Many financial decisions look small.</br>
 	The long term effects are not.</p></h1>
         <div class="hero-lede">
-          <p><strong>The Long Math</strong> is an independent website providing tools and explanations that make the long-term arithmetic of financial decisions visible.</p>
+          <p><strong>The Long Math</strong> is an independent website providing tools and explanations that make the long-term arithmetic of personal financial decisions visible.</p>
         </div>
         <p class="hero-tagline">No opinions. No hidden assumptions. Just arithmetic.</p>
         <div class="hero-ctas">
@@ -630,14 +697,35 @@
       </div>
     </section>
 
-    <!-- SECTION 6 — FEATURED TOOL -->
-    <section class="home-section card" aria-labelledby="featured-heading">
-      <h2 id="featured-heading" class="home-section-heading">Featured Tool</h2>
-      <p style="margin:0 0 0.75rem; font-size:0.95rem; color:var(--muted);">Cost of a Financial Advisor</p>
-      <p style="margin:0 0 1rem; font-size:0.95rem; color:var(--muted); line-height:1.6;">
-        A model showing how advisory fees interact with compounding over long time horizons. Inputs, assumptions, and formulas are explicit and inspectable.
-      </p>
-      <a href="/calculators/advisor-fee/" class="home-cta home-cta-primary">Open the Calculator →</a>
+    <!-- SECTION 6 — FEATURED TOOLS -->
+    <section class="home-section" aria-labelledby="featured-heading">
+      <h2 id="featured-heading" class="home-section-heading">Featured Tools</h2>
+      <p class="featured-tools-intro">Models that make long-term financial trade-offs visible.</p>
+      <div class="featured-tools-grid">
+        <article class="card featured-tool-card">
+          <h3>Cost of a Financial Advisor</h3>
+          <p class="featured-tool-desc">See how advisory fees compound into large long-term costs over time.</p>
+          <div class="featured-tool-buttons">
+            <a href="/calculators/advisor-fee/" class="home-cta home-cta-primary">Open Calculator →</a>
+            <a href="/articles/investing-and-financial-literacy/the-true-cost-of-financial-advisor-fees/" class="home-cta">See the Explanation →</a>
+          </div>
+        </article>
+        <article class="card featured-tool-card">
+          <h3>Inflation Time Machine</h3>
+          <p class="featured-tool-desc">See how inflation changes the purchasing power of money across time.</p>
+          <div class="featured-tool-buttons">
+            <a href="/calculators/inflation-time-machine/" class="home-cta home-cta-primary">Open Calculator →</a>
+            <a href="/articles/investing-and-financial-literacy/inflation/" class="home-cta">See the Explanation →</a>
+          </div>
+        </article>
+        <article class="card featured-tool-card">
+          <h3>Mortgage vs Invest</h3>
+          <p class="featured-tool-desc">Compare the long-term arithmetic of accelerated mortgage repayment versus investing.</p>
+          <div class="featured-tool-buttons">
+            <a href="/calculators/pay-off-mortgage-vs-invest/" class="home-cta home-cta-primary">Open Calculator →</a>
+          </div>
+        </article>
+      </div>
     </section>
 
     <!-- SECTION 7 — START HERE -->
