@@ -4,15 +4,439 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>The Long Math</title>
+  <meta name="description" content="The Long Math is a collection of calculators, articles, and models that make long-term financial arithmetic visible — fees, taxes, compounding, incentives, and time." />
+  <link rel="canonical" href="https://thelongmath.com/" />
 
   <!-- Must run BEFORE CSS to avoid flash -->
   <script src="/assets/js/theme-init.js"></script>
 
   <link rel="stylesheet" href="/assets/css/styles.css">
 
-  <!-- Runs after DOM is parsed -->
+  <!-- Homepage-only layout and sections -->
+  <style>
+    .home .wrap { padding: 24px 16px 48px; }
+
+    .home-section { margin-bottom: 2.75rem; }
+    @media (min-width: 640px) {
+      .home-section { margin-bottom: 3.25rem; }
+    }
+
+    .home-section-heading {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem;
+      color: var(--text);
+    }
+    @media (min-width: 640px) {
+      .home-section-heading { font-size: 1.35rem; }
+    }
+
+    .home-hero {
+      text-align: center;
+      padding: 2.25rem 0 2.75rem;
+    }
+    @media (min-width: 640px) {
+      .home-hero { padding: 3.25rem 0 3.5rem; }
+    }
+    .home-hero-inner {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .home-hero h1 {
+      font-size: 2.3rem;
+      margin: 0 0 0.75rem;
+      letter-spacing: 0.04em;
+    }
+    @media (min-width: 640px) {
+      .home-hero h1 { font-size: 2.7rem; }
+    }
+    .home-hero .hero-sigil {
+      display: inline-block;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+      font-size: 1rem;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(217, 180, 106, 0.45);
+      background: var(--accentSoft);
+      color: var(--text);
+      margin: 0 0 1.5rem;
+    }
+    .home-hero .hero-lede {
+      max-width: 40em;
+      margin: 0 auto 1.4rem;
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+    .home-hero .hero-lede p { margin: 0 0 0.75em; }
+    .home-hero .hero-lede p:last-of-type { margin-bottom: 0; }
+    .home-hero .hero-tagline {
+      font-weight: 700;
+      color: var(--text);
+      margin: 1.3rem 0 1.8rem;
+      font-size: 0.95rem;
+    }
+    .home-hero .hero-ctas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .home-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 20px;
+      min-height: 44px;
+      box-sizing: border-box;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--text);
+      background: var(--accentSoft);
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      text-decoration: none;
+    }
+    .home-cta:hover {
+      text-decoration: none;
+      background: rgba(217, 180, 106, 0.22);
+      border-color: var(--accent2);
+    }
+    .home-cta-primary {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    .home-cta-primary:hover {
+      background: var(--accent2);
+      border-color: var(--accent2);
+      color: var(--bg);
+    }
+
+    /* Demonstration module */
+    .home-proof {
+      padding: 1.6rem 1.3rem 1.7rem;
+    }
+    @media (min-width: 640px) {
+      .home-proof { padding: 1.9rem 1.6rem 2rem; }
+    }
+    .home-proof-subtitle {
+      margin: 0 0 1rem;
+      font-size: 0.93rem;
+      color: var(--muted);
+    }
+    .home-proof-grid {
+      display: grid;
+      gap: 18px;
+      margin-top: 0.5rem;
+    }
+    @media (min-width: 880px) {
+      .home-proof-grid {
+        grid-template-columns: minmax(0, 0.45fr) minmax(0, 0.55fr);
+      }
+    }
+    .home-proof-left {
+      font-size: 0.9375rem;
+    }
+    .home-proof-right {
+      border-left: 1px solid var(--border);
+      padding-left: 14px;
+      font-size: 0.9375rem;
+    }
+    @media (max-width: 879px) {
+      .home-proof-right {
+        border-left: none;
+        padding-left: 0;
+        border-top: 1px solid var(--border);
+        padding-top: 14px;
+      }
+    }
+    .home-proof-demo {
+      display: grid;
+      gap: 12px;
+      margin: 0.5rem 0 1rem;
+      font-size: 0.9375rem;
+    }
+    .home-proof-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      padding: 10px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .home-proof-row.highlight {
+      border-color: rgba(217, 180, 106, 0.6);
+      background: var(--accentSoft);
+    }
+    .home-proof-label { color: var(--muted); }
+    .home-proof-value {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .home-proof-caption {
+      margin: 1rem 0 0;
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .home-proof-cta { margin-top: 1rem; }
+
+    .home-proof-widget-title {
+      margin: 0 0 0.5rem;
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .home-proof-widget-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 0.875rem;
+      margin-bottom: 0.35rem;
+      color: var(--muted);
+    }
+    .home-proof-widget-slider {
+      width: 100%;
+      margin-bottom: 0.75rem;
+    }
+    .home-proof-summary {
+      display: grid;
+      gap: 6px;
+      margin: 0.75rem 0 0.75rem;
+      font-size: 0.9rem;
+    }
+    .home-proof-summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .home-proof-summary-label {
+      color: var(--muted);
+    }
+    .home-proof-summary-value {
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+    }
+    .home-proof-summary-row.cost .home-proof-summary-value {
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .home-proof-chart {
+      margin-top: 0.75rem;
+    }
+    .home-proof-chart svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .home-proof-chart-note {
+      margin: 0.4rem 0 0;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Three pillars */
+    .pillars-grid {
+      display: grid;
+      gap: 16px;
+    }
+    @media (min-width: 800px) {
+      .pillars-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+    .pillar-card {
+      background: linear-gradient(180deg,var(--card),var(--card2));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 16px 18px;
+      box-shadow: var(--shadow), var(--inset);
+    }
+    .pillar-card h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1rem;
+    }
+    .pillar-card p {
+      margin: 0 0 0.9rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .pillar-card ul {
+      margin: 0 0 0.9rem;
+      padding-left: 1.1rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .pillar-card li { margin: 0.25rem 0; }
+
+    /* Questions / FAQ-style list */
+    .questions-intro {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin: 0 0 0.9rem;
+    }
+    .questions-list {
+      margin: 0;
+      padding-left: 1.25rem;
+      font-size: 0.95rem;
+    }
+    .questions-list li {
+      margin: 0.55rem 0;
+    }
+    .questions-list a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .questions-list a:hover { text-decoration: underline; }
+
+    .inspectable-text {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 0;
+    }
+    .inspectable-text ul {
+      margin: 0.75rem 0 0;
+      padding-left: 1.25rem;
+    }
+    .inspectable-text li { margin: 0.3rem 0; }
+
+    .start-here-list {
+      margin: 0.5rem 0 0;
+      padding-left: 1.25rem;
+      font-size: 0.95rem;
+    }
+    .start-here-list li { margin: 0.4rem 0; }
+    .start-here-list a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .start-here-list a:hover { text-decoration: underline; }
+
+    .future-text {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 0 0 0.6rem;
+    }
+    .future-list {
+      margin: 0.4rem 0 0;
+      padding-left: 1.25rem;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .final-cta {
+      text-align: center;
+      padding: 2rem 1.25rem;
+    }
+    .final-cta p {
+      margin: 0.5rem 0 0;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+    .final-cta-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .home-text-narrow {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+  </style>
+
+  <!-- Structured data: Organization -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "The Long Math",
+  "url": "https://thelongmath.com/",
+  "logo": "https://thelongmath.com/assets/logo.png"
+}
+  </script>
+
+  <!-- Structured data: Breadcrumb (Home) -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://thelongmath.com/"
+    }
+  ]
+}
+  </script>
+
+  <!-- Structured data: FAQ for key questions -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much does a 1% advisory fee cost over 30 years?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The arithmetic shows that even a 1% annual fee can compound into a large dollar amount over long horizons. For example, on a $500,000 portfolio growing at 7% for 30 years, a 1% advisory fee reduces the ending value from about $3.8 million to roughly $2.9 million, a difference of approximately $939,000. The Cost of a Financial Advisor calculator on The Long Math lets you model this under your own assumptions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should extra money go toward paying down a mortgage or investing?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This site models the trade-off as a cash-flow-neutral comparison: the same monthly amount is either directed toward faster mortgage payoff or invested. The Pay Off Mortgage vs Invest calculator shows how interest rates, expected returns, and time horizon interact so you can see the arithmetic behind each scenario."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does inflation change the long-term value of money?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Inflation compounds over time and changes the real buying power of nominal dollar amounts. The Inflation Time Machine tool converts amounts between years using historical CPI data, while the Inflation article explains how nominal and real values diverge over long horizons."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When do different Canadian accounts (TFSA, RRSP, FHSA) produce different outcomes?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Different registered accounts apply tax rules at different stages: contribution, growth, and withdrawal. The TFSA vs RRSP vs FHSA calculator models these rules explicitly so you can see how tax rates, eligibility, and time horizon change the arithmetic of each account under specific scenarios."
+      }
+    }
+  ]
+}
+  </script>
+
   <script defer src="/assets/js/site.js"></script>
-  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
   <script>
   window.dataLayer = window.dataLayer || [];
@@ -22,94 +446,327 @@
   </script>
 </head>
 
-<body>
+<body class="home">
 
-  <!-- Shared header/footer injection -->
   <div id="site-header"></div>
 
   <div class="wrap">
 
-    <!-- Calculator-style brand stack -->
-
-    <!-- Manifesto card (locked copy, tighter rhythm) -->
-    <section class="card">
-      <div class="lede">
-        <p><strong>The Long Math</strong> is a growing collection of interactive financial calculators, tools, and explanations designed to make long-term personal and small-business financial trade-offs visible.</p>
-
-        <p>Most financial decisions are presented as stories. This site focuses on arithmetic. It examines how fees, taxes, compounding, and incentives interact over decades, using transparent assumptions and explicit calculations that can be inspected and verified.</p>
-
-        <p><strong>No opinions. No hidden assumptions. Just arithmetic.</strong></p>
+    <!-- SECTION 1 — HERO (THE IDEA) -->
+    <section class="home-section home-hero" aria-labelledby="hero-heading">
+      <div class="home-hero-inner">
+        <h1 id="hero-heading">Most financial decisions look small.</br>
+	The long term effects are not.</p></h1>
+        <div class="hero-lede">
+          <p><strong>The Long Math</strong> is an independent website providing tools and explanations that make the long-term arithmetic of financial decisions visible.</p>
+        </div>
+        <p class="hero-tagline">No opinions. No hidden assumptions. Just arithmetic.</p>
+        <div class="hero-ctas">
+          <a href="/calculators/" class="home-cta home-cta-primary">Explore Calculators</a>
+          <a href="/articles/investing-and-financial-literacy/" class="home-cta">Start with the Foundations</a>
+        </div>
       </div>
     </section>
 
-    <!-- Featured tool card (calculator-like section title + compact description) -->
-    <section style="margin-top:16px;">
-      <div class="card">
-        <div class="section-title">Featured tool</div>
+    <!-- SECTION 2 — DEMONSTRATION OF THE IDEA -->
+    <section class="home-section card home-proof" aria-labelledby="proof-heading">
+      <h2 id="proof-heading" class="home-section-heading">One small percentage. One very large difference.</h2>
+      <p class="home-proof-subtitle">$500,000 invested for 30 years at 7%</p>
 
-
-        <h1 style="margin:0 0 8px; font-size:20px;">Cost of a Financial Advisor</h1>
-
-        <p style="margin:0; color:var(--muted); font-size:13px; max-width:820px;">
-          Quantifies the long-term impact of advisory fees and lost compounding using explicit assumptions and inspectable math.
-        </p>
-
-        <div style="margin-top:12px;">
-<a href="/calculators/advisor-fee/" class="...">Open calculator</a>  
+      <div class="home-proof-grid">
+        <!-- Left: static worked example -->
+        <div class="home-proof-left">
+          <div class="home-proof-demo" aria-label="Worked example comparing outcomes with and without annual advisory fee">
+            <div class="home-proof-row">
+              <span class="home-proof-label">No advisory fee</span>
+              <span class="home-proof-value">$3,806,000</span>
+            </div>
+            <div class="home-proof-row">
+              <span class="home-proof-label">1% advisory fee</span>
+              <span class="home-proof-value">$2,867,000</span>
+            </div>
+            <div class="home-proof-row highlight">
+              <span class="home-proof-label">Difference</span>
+              <span class="home-proof-value">$939,000</span>
+            </div>
+          </div>
+          <p class="home-proof-caption">A small annual percentage becomes a very large number when compounded over decades.</p>
+          <p class="home-proof-cta">
+            <a href="/calculators/advisor-fee/" class="home-cta">See the full calculation →</a>
+          </p>
         </div>
 
-        <p style="margin:10px 0 0; color:var(--muted); font-size:12px;">
-          An example of what this looks like in practice.
-        </p>
+        <!-- Right: interactive widget -->
+        <div class="home-proof-right">
+          <h3 class="home-proof-widget-title">Adjust the fee</h3>
+          <div class="home-proof-widget-label">
+            <span>Management fee</span>
+            <span id="feeSelectedLabel">Selected fee: 1.0%</span>
+          </div>
+          <input
+            id="feeSlider"
+            class="home-proof-widget-slider"
+            type="range"
+            min="0.5"
+            max="5.0"
+            step="0.1"
+            value="1.0"
+            aria-label="Management fee (percent per year)">
+
+          <div class="home-proof-summary" aria-describedby="feeSummaryLive">
+            <div class="home-proof-summary-row">
+              <span class="home-proof-summary-label">No fee (7% annual return)</span>
+              <span class="home-proof-summary-value" id="feeBaseValue">$3,806,000</span>
+            </div>
+            <div class="home-proof-summary-row">
+              <span class="home-proof-summary-label">With selected fee</span>
+              <span class="home-proof-summary-value" id="feeWithValue">$2,867,000</span>
+            </div>
+            <div class="home-proof-summary-row cost">
+              <span class="home-proof-summary-label">Cost of fee</span>
+              <span class="home-proof-summary-value" id="feeCostValue">$939,000</span>
+            </div>
+          </div>
+          <p id="feeSummaryLive" class="visually-hidden" aria-live="polite"></p>
+
+          <div class="home-proof-chart" aria-hidden="true">
+            <svg id="feeChart" viewBox="0 0 320 180" role="img">
+              <defs>
+                <clipPath id="feeChartClip">
+                  <rect x="32" y="10" width="268" height="150"></rect>
+                </clipPath>
+              </defs>
+              <rect x="0" y="0" width="320" height="180" fill="none"></rect>
+              <!-- Axes -->
+              <line x1="32" y1="160" x2="300" y2="160" stroke="var(--border)" stroke-width="1" />
+              <line x1="32" y1="20" x2="32" y2="160" stroke="var(--border)" stroke-width="1" />
+              <!-- Lines -->
+              <g clip-path="url(#feeChartClip)">
+                <path id="feeChartBaseLine" fill="none" stroke="var(--accent)" stroke-width="2" />
+                <path id="feeChartFeeLine" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4 3" />
+              </g>
+            </svg>
+          </div>
+          <p class="home-proof-chart-note">Illustrative annual compounding over 30 years. Slider adjusts the fee in the model only.</p>
+        </div>
       </div>
     </section>
 
-    <!-- Three cards (same surface language) -->
-    <section style="margin-top:16px;">
-      <div class="home-grid">
-        <article class="card" style="position: relative;">
-          <a href="/articles/investing-and-financial-literacy/" style="display: block; text-decoration: none; color: inherit; position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;" aria-label="Investment &amp; Financial Literacy"></a>
-          <h1 style="margin:0 0 8px; font-size:18px;">Investment &amp; Financial Literacy</h1>
-          <p style="margin:0; color:var(--muted); font-size:13px;">
-            Educational content on markets, asset classes, portfolio construction, incentives, and long-horizon thinking.
-          </p>
-          <p style="margin:10px 0 0; color:var(--text); font-size:13px; font-style:italic; font-weight:700;">
-            This is where understanding is built.
-          </p>
+    <!-- SECTION 3 — THREE PILLARS OF THE SITE -->
+    <section class="home-section" aria-labelledby="pillars-heading">
+      <h2 id="pillars-heading" class="home-section-heading">Explore the Long Math</h2>
+      <div class="pillars-grid">
+        <!-- Calculators pillar -->
+        <article class="pillar-card">
+          <h3>Calculators</h3>
+          <p>Interactive models that show how fees, taxes, inflation, and time interact over decades.</p>
+          <ul>
+            <li>Cost of a Financial Advisor</li>
+            <li>Pay Off Mortgage vs Invest</li>
+            <li>Inflation Time Machine</li>
+            <li>TFSA Contribution Room</li>
+          </ul>
+          <a href="/calculators/" class="home-cta">Explore Calculators →</a>
         </article>
 
-        <article class="card" style="position: relative;">
-          <a href="/essays/" style="display: block; text-decoration: none; color: inherit; position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;" aria-label="Beyond The Numbers"></a>
-          <h1 style="margin:0 0 8px; font-size:18px;">Beyond The Numbers</h1>
-          <div class="section-title">Coming soon</div>
-          <p style="margin:0; color:var(--muted); font-size:13px;">
-            Essays on a life and career in medicine through a personal and business finance lens.
-          </p>
-          <p style="margin:10px 0 0; color:var(--text); font-size:13px; font-style:italic; font-weight:700;">
-            This is where lived experiences make the numbers real.
-          </p>
+        <!-- Foundations pillar -->
+        <article class="pillar-card">
+          <h3>Foundations</h3>
+          <p>Clear explanations of the concepts behind investing and long-term financial arithmetic.</p>
+          <ul>
+            <li>What Is Investing</li>
+            <li>What Is a Stock</li>
+            <li>What Is the Stock Market</li>
+            <li>Asset Classes</li>
+            <li>Compound Interest</li>
+            <li>Inflation</li>
+          </ul>
+          <a href="/articles/investing-and-financial-literacy/" class="home-cta">Browse the Foundations →</a>
         </article>
 
-        <article class="card" style="position: relative;">
-          <a href="/calculators/" style="display: block; text-decoration: none; color: inherit; position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;" aria-label="Tools and Calculators"></a>
-          <h1 style="margin:0 0 8px; font-size:18px;">Tools and Calculators</h1>
-          <p style="margin:0; color:var(--muted); font-size:13px;">
-            Interactive financial calculators that quantify long-term financial trade-offs using explicit assumptions and inspectable arithmetic.
-          </p>
-          <p style="margin:10px 0 0; color:var(--text); font-size:13px; font-style:italic; font-weight:700;">
-            This is where the math is made visible.
-          </p>
+        <!-- Beyond the Numbers pillar -->
+        <article class="pillar-card">
+          <h3>Beyond the Numbers</h3>
+          <p>Essays on incentives, work, medicine, and the realities behind financial decisions — where lived experience meets arithmetic.</p>
+          <a href="/essays/" class="home-cta">Read Essays →</a>
         </article>
-
       </div>
     </section>
 
-    <!-- Shared footer injection -->
-    <div id="site-footer"></div>
+    <!-- SECTION 4 — QUESTIONS THIS SITE CAN ANSWER -->
+    <section class="home-section card" aria-labelledby="questions-heading">
+      <h2 id="questions-heading" class="home-section-heading">Questions the Long Math Can Answer</h2>
+      <p class="questions-intro">Examples of questions this site addresses using explicit assumptions and inspectable arithmetic:</p>
+      <ul class="questions-list">
+        <li>
+          <a href="/calculators/advisor-fee/">How much does a 1% advisory fee cost over 30 years?</a>
+        </li>
+        <li>
+          <a href="/calculators/pay-off-mortgage-vs-invest/">Should extra money go toward paying down a mortgage or investing?</a>
+        </li>
+        <li>
+          <a href="/calculators/inflation-time-machine/">How does inflation change the long-term value of money?</a>
+        </li>
+        <li>
+          <a href="/calculators/tfsa-rrsp-fhsa/">When do different Canadian accounts (TFSA, RRSP, FHSA) produce different outcomes?</a>
+        </li>
+      </ul>
+    </section>
+
+    <!-- SECTION 5 — INSPECTABLE ARITHMETIC -->
+    <section class="home-section card" aria-labelledby="inspectable-heading">
+      <div class="home-text-narrow">
+        <h2 id="inspectable-heading" class="home-section-heading">Inspectable Arithmetic</h2>
+        <div class="inspectable-text">
+          <p>Financial conclusions are often presented without the math behind them. The Long Math focuses on the arithmetic itself.</p>
+          <p>Every model on this site shows:</p>
+          <ul>
+            <li>the formulas used</li>
+            <li>the assumptions used</li>
+            <li>the inputs used</li>
+          </ul>
+          <p>Nothing is hidden.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6 — FEATURED TOOL -->
+    <section class="home-section card" aria-labelledby="featured-heading">
+      <h2 id="featured-heading" class="home-section-heading">Featured Tool</h2>
+      <p style="margin:0 0 0.75rem; font-size:0.95rem; color:var(--muted);">Cost of a Financial Advisor</p>
+      <p style="margin:0 0 1rem; font-size:0.95rem; color:var(--muted); line-height:1.6;">
+        A model showing how advisory fees interact with compounding over long time horizons. Inputs, assumptions, and formulas are explicit and inspectable.
+      </p>
+      <a href="/calculators/advisor-fee/" class="home-cta home-cta-primary">Open the Calculator →</a>
+    </section>
+
+    <!-- SECTION 7 — START HERE -->
+    <section class="home-section card" aria-labelledby="start-here-heading">
+      <h2 id="start-here-heading" class="home-section-heading">Start Here</h2>
+      <p class="questions-intro">If you are new to investing, begin with these ideas:</p>
+      <ul class="start-here-list">
+        <li><a href="/articles/investing-and-financial-literacy/what-is-investing/">What Is Investing</a></li>
+        <li><a href="/articles/investing-and-financial-literacy/what-is-the-stock-market/">What Is the Stock Market</a></li>
+        <li><a href="/articles/investing-and-financial-literacy/asset-classes-for-investing/">Asset Classes</a></li>
+        <li><a href="/articles/investing-and-financial-literacy/compound-interest/">Compound Interest</a></li>
+        <li><a href="/articles/investing-and-financial-literacy/inflation/">Inflation</a></li>
+      </ul>
+      <p style="margin:1.25rem 0 0;">
+        <a href="/articles/investing-and-financial-literacy/" class="home-cta">Browse the Foundations →</a>
+      </p>
+    </section>
+
+    <!-- SECTION 8 — FUTURE TOOLS (SUBTLE) -->
+    <section class="home-section card" aria-labelledby="future-heading">
+      <div class="home-text-narrow">
+        <h2 id="future-heading" class="home-section-heading">More Models Over Time</h2>
+        <p class="future-text">Future tools will explore long-term financial arithmetic in areas such as:</p>
+        <ul class="future-list">
+          <li>taxes</li>
+          <li>corporate vs personal investing</li>
+          <li>investment fee structures</li>
+          <li>long-term financial scenarios</li>
+        </ul>
+        <p class="future-text">The goal remains the same: make the arithmetic visible.</p>
+      </div>
+    </section>
+
+    <!-- SECTION 9 — FINAL CTA -->
+    <section class="home-section card final-cta" aria-labelledby="final-heading">
+      <h2 id="final-heading" class="home-section-heading">Start with the math.</h2>
+      <p>Explore the arithmetic behind financial decisions.</p>
+      <div class="final-cta-buttons">
+        <a href="/calculators/advisor-fee/" class="home-cta home-cta-primary">Open the Advisor Fee Calculator</a>
+        <a href="/articles/investing-and-financial-literacy/" class="home-cta">Browse the Foundations</a>
+      </div>
+    </section>
 
   </div>
-<div id="footerMount"></div>
 
+  <div id="footerMount"></div>
+
+  <script>
+  (function () {
+    var slider = document.getElementById("feeSlider");
+    var feeLabel = document.getElementById("feeSelectedLabel");
+    var baseEl = document.getElementById("feeBaseValue");
+    var withEl = document.getElementById("feeWithValue");
+    var costEl = document.getElementById("feeCostValue");
+    var summaryLive = document.getElementById("feeSummaryLive");
+    var chartBasePath = document.getElementById("feeChartBaseLine");
+    var chartFeePath = document.getElementById("feeChartFeeLine");
+
+    if (!slider || !feeLabel || !baseEl || !withEl || !costEl || !summaryLive || !chartBasePath || !chartFeePath) return;
+
+    var P = 500000;
+    var r = 0.07;
+    var years = 30;
+
+    function formatMoney(x) {
+      return "$" + Math.round(x).toLocaleString("en-CA");
+    }
+
+    function formatPercent(x) {
+      return x.toFixed(1) + "%";
+    }
+
+    function compoundFV(rate) {
+      return P * Math.pow(1 + rate, years);
+    }
+
+    var baseFV = compoundFV(r);
+    baseEl.textContent = formatMoney(baseFV);
+
+    function buildPath(values, max) {
+      var width = 320;
+      var height = 180;
+      var left = 32;
+      var right = 300;
+      var top = 20;
+      var bottom = 160;
+
+      var pts = [];
+      for (var t = 0; t <= years; t++) {
+        var x = left + (right - left) * (t / years);
+        var v = values[t];
+        var y = bottom - (v / max) * (bottom - top);
+        pts.push((t === 0 ? "M" : "L") + x.toFixed(2) + " " + y.toFixed(2));
+      }
+      return pts.join(" ");
+    }
+
+    function computeSeries(rate) {
+      var arr = [];
+      for (var t = 0; t <= years; t++) {
+        arr.push(P * Math.pow(1 + rate, t));
+      }
+      return arr;
+    }
+
+    function update() {
+      var feePct = parseFloat(slider.value || "1.0");
+      var fee = feePct / 100;
+
+      feeLabel.textContent = "Selected fee: " + formatPercent(feePct);
+
+      var fvFee = compoundFV(r - fee);
+      withEl.textContent = formatMoney(fvFee);
+
+      var cost = baseFV - fvFee;
+      costEl.textContent = formatMoney(cost);
+
+      summaryLive.textContent = "With a " + formatPercent(feePct) + " annual fee, the ending value is " + formatMoney(fvFee) + ", a difference of " + formatMoney(cost) + " compared with the no-fee case.";
+
+      var baseSeries = computeSeries(r);
+      var feeSeries = computeSeries(r - fee);
+      var maxSeries = Math.max.apply(null, baseSeries.concat(feeSeries));
+      chartBasePath.setAttribute("d", buildPath(baseSeries, maxSeries));
+      chartFeePath.setAttribute("d", buildPath(feeSeries, maxSeries));
+    }
+
+    slider.addEventListener("input", update);
+    update();
+  })();
+  </script>
 </body>
-
 </html>

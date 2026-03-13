@@ -87,6 +87,10 @@ html[data-theme="light"]{
    ========================= */
 *{ box-sizing:border-box; }
 
+html{
+  overflow-y:scroll;
+}
+
 body{
   margin:0;
   font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
@@ -184,12 +188,18 @@ a:hover{ text-decoration:underline; }
    ========================= */
 .sitehead{
   display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:16px;
-  padding:10px 0 16px;
+  flex-direction:column;
+  gap:8px;
+  padding:14px 0 16px;
   border-bottom:1px solid var(--border);
   margin-bottom:14px;
+}
+
+.sitehead-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:24px;
 }
 
 .brandstack{
@@ -199,7 +209,7 @@ a:hover{ text-decoration:underline; }
 }
 
 .brand{
-  font-size:34px;
+  font-size:40px;
   font-weight:900;
   letter-spacing:.4px;
   line-height:1.05;
@@ -209,13 +219,48 @@ a:hover{ text-decoration:underline; }
 .sigil{
   display:inline-block;
   font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Courier New",monospace;
-  font-size:18px;
-  padding:8px 10px;
+  font-size:20px;
+  padding:9px 11px;
   border-radius:12px;
   border:1px solid rgba(217,180,106,.45);
   background:var(--accentSoft);
   color:var(--text);
   width:fit-content;
+}
+
+.primary-nav{
+  display:none;
+  flex:0 1 auto;
+  margin-left:auto;
+}
+
+.primary-nav-list{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:18px;
+  font-size:14px;
+}
+
+.primary-nav-list a{
+  color:var(--muted);
+  text-decoration:none;
+  padding:4px 0;
+}
+
+.primary-nav-list a:hover{
+  text-decoration:underline;
+  color:var(--accent);
+}
+
+.sitehead-meta{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:12px;
 }
 
 /* =========================
@@ -316,7 +361,12 @@ h1{
 
 @media (max-width:860px){
   .grid{ grid-template-columns:1fr; }
-  .sitehead{ flex-direction:column; align-items:flex-start; }
+  .sitehead-top{ flex-direction:column; align-items:flex-start; gap:10px; }
+  .sitehead-meta{ justify-content:flex-start; }
+}
+
+@media (min-width: 900px){
+  .primary-nav{ display:flex; }
 }
 
 /* =========================
@@ -823,6 +873,10 @@ html[data-theme="light"] .default-fee{
   line-height:1;
   font-weight:700;
   transition:all 0.18s ease;
+}
+
+@media (min-width: 900px){
+  .menu-btn{ display:none; }
 }
 .menu-btn:hover{
   border-color:var(--accent2);
