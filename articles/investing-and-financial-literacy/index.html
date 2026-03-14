@@ -31,10 +31,62 @@
     @media (min-width: 640px) {
       .foundations-hero h1 { font-size: 2.1rem; }
     }
+    .foundations-hero .hero-path {
+      margin: 0 0 1rem;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: var(--accent);
+    }
     .foundations-hero .lede {
       font-size: 0.95rem;
       line-height: 1.7;
       color: var(--muted);
+    }
+
+    .featured-concepts {
+      margin: 3rem 0;
+    }
+    .featured-concepts h2 {
+      margin: 0 0 1.25rem;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--accent2);
+    }
+    .featured-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 640px) {
+      .featured-grid { grid-template-columns: 1fr; }
+    }
+    .featured-card {
+      display: block;
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    .featured-card:hover {
+      border-color: rgba(217, 180, 106, 0.5);
+      transform: translateY(-2px);
+      background: var(--accentSoft);
+    }
+    .featured-card h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem;
+      color: var(--accent);
+    }
+    .featured-card p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.55;
     }
 
     .foundations-section {
@@ -121,13 +173,29 @@
     <section class="foundations-hero" aria-labelledby="foundations-heading">
       <div class="foundations-hero-inner">
         <h1 id="foundations-heading">Investment and Financial Literacy</h1>
+        <p class="hero-path">Start with the two concepts that drive most long-term financial outcomes: compounding and inflation.</p>
         <div class="lede">
           <p>This is a collection of beginner-friendly articles that make finance and investing understandable with plain language and explicit assumptions.</p>
         </div>
       </div>
     </section>
 
-    <!-- Organized article sections -->
+    <!-- Featured concepts: compound interest and inflation -->
+    <section class="featured-concepts" aria-labelledby="featured-concepts-heading">
+      <h2 id="featured-concepts-heading">Featured Concepts</h2>
+      <div class="featured-grid">
+        <a class="featured-card" href="/articles/investing-and-financial-literacy/compound-interest/">
+          <h3>Compound Interest: The Ultimate Wealth Builder</h3>
+          <p>Why compounding is the single most powerful force in long-term investing.</p>
+        </a>
+        <a class="featured-card" href="/articles/investing-and-financial-literacy/inflation/">
+          <h3>Inflation: The Math That Makes Future Money Smaller</h3>
+          <p>Why purchasing power declines over time and why returns must be inflation-adjusted.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- Article groupings -->
     <section class="foundations-section">
       <div class="foundations-grid">
         <!-- Core investing concepts -->
@@ -162,23 +230,11 @@
           </ul>
         </article>
 
-        <!-- Growth and erosion over time -->
+        <!-- Time and compounding -->
         <article class="card foundation-card">
-          <h2>Growth and Erosion Over Time</h2>
-          <p>How compounding builds wealth — and how inflation changes what that wealth can buy.</p>
+          <h2>Time and Compounding</h2>
+          <p>How time and compounding interact with fees, costs, and long horizons.</p>
           <ul class="foundation-list">
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/compound-interest/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Compound Interest: The Ultimate Wealth Builder</h3>
-                <p class="foundation-item-desc">What compound interest is, how it works, the formula, and why compounding accelerates over long horizons.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/inflation/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Inflation: The Math That Makes Future Money Smaller</h3>
-                <p class="foundation-item-desc">An arithmetic-based explanation of inflation, purchasing power, nominal vs real return, and why plans must be inflation-adjusted.</p>
-              </a>
-            </li>
             <li class="foundation-item">
               <a href="/articles/investing-and-financial-literacy/the-true-cost-of-financial-advisor-fees/" class="foundation-item-link">
                 <h3 class="foundation-item-title">The True Cost of Financial Advisor Fees</h3>
@@ -188,7 +244,7 @@
           </ul>
         </article>
 
-        <!-- Accounts, rules, and Canadian specifics -->
+        <!-- Accounts and rules (Canada) -->
         <article class="card foundation-card">
           <h2>Accounts and Rules (Canada)</h2>
           <p>How Canadian registered accounts and withdrawal rules change the arithmetic.</p>
