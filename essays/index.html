@@ -3,13 +3,37 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Beyond The Numbers | The Long Math</title>
-  <meta name="description" content="Essays on life, career, and personal finance—tuition, opportunity cost, and long-term trade-offs—with a numbers-based lens that ties into The Long Math." />
+  <title>Beyond the Numbers | The Long Math</title>
+  <meta name="description" content="Essays examining a life and career in medicine through a financial and business lens—training, income, incentives, opportunity cost, and long-term trade-offs." />
   <link rel="canonical" href="https://thelongmath.com/essays/" />
 
   <!-- Site-wide theme + styles -->
   <script src="/assets/js/theme-init.js"></script>
   <link rel="stylesheet" href="/assets/css/styles.css">
+  <style>
+    /* Amber/gold accents — match articles landing and Long Math hierarchy */
+    .page-essays .hero-lede {
+      color: var(--accent);
+    }
+    .page-essays .featured-essay {
+      border-left: 4px solid var(--accent);
+    }
+    .page-essays .card h2 {
+      color: var(--accent2);
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin: 0 0 0.75rem;
+    }
+    .page-essays .card h3 {
+      color: var(--accent);
+      margin: 0 0 0.5rem;
+      font-size: 1.05rem;
+    }
+    .page-essays .card h3 + p {
+      margin: 0 0 0.35rem;
+    }
+  </style>
   <script defer src="/assets/js/site.js"></script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
@@ -24,41 +48,65 @@
 <body>
   <div id="site-header"></div>
 
-  <div class="wrap">
+  <main class="wrap page-essays">
 
     <header>
-      <h1>Beyond The Numbers</h1>
+      <h1>Beyond the Numbers</h1>
 
-      <div class="lede">
-        <p>Personal essays about life experiences tied to career and personal or professional finance. Each piece keeps a numbers-based theme that connects to the kind of arithmetic you’ll find elsewhere on The Long Math—tuition and opportunity cost, long-term cash flows, and the trade-offs behind big decisions.</p>
-      </div>
+      <p class="hero-lede">
+        A financial look at the real cost of becoming a doctor.
+      </p>
+
+      <p>
+        Beyond the Numbers examines the financial realities behind a career in medicine. These essays explore training length, tuition, delayed earnings, incentives, taxation, and long-term trade-offs through a personal and business financial lens.
+      </p>
+
+      <p>
+        Medicine is often discussed in terms of prestige, purpose, and service. Much less attention is given to the arithmetic behind the path: years of delayed income, the opportunity cost of training, compensation structures, and the long financial horizon that shapes a physician's life.
+      </p>
     </header>
 
-    <section class="card">
-      <h2 class="section-title">Essays</h2>
-      <p style="margin: 0 0 16px; color: var(--muted); font-size: 14px;">
-        Topics you’ll find here (essays added as they’re published):
+    <section class="card featured-essay">
+      <h2>Featured Essay</h2>
+
+      <h3>Is Medical School Financially Worth It?</h3>
+
+      <p>
+        Medicine is one of the most respected professions in society. It is also one of the longest and most financially unusual career paths. This essay examines the full financial timeline of becoming a physician — from tuition and residency income to the delayed compounding that follows.
       </p>
-      <ul style="list-style: none; padding: 0; margin: 0;">
-        <li style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); color: var(--text); font-size: 15px;">
-          Is Med School Financially Worth It?
-        </li>
-        <li style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); color: var(--text); font-size: 15px;">
-          The Price of the White Coat (Tuition, Time, and Opportunity Cost)
-        </li>
-        <li style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); color: var(--text); font-size: 15px;">
-          Comparing Career Options: A 30-Year Cashflow Question
-        </li>
-      </ul>
-      <p style="margin: 16px 0 0; color: var(--muted); font-size: 13px;">
-        More essays to come. Check back or follow the site for updates.
-      </p>
+
+      <p class="essay-status">Currently in progress</p>
     </section>
 
-    <div class="disclaimer">
-      <p><strong>Disclaimer:</strong> These essays are personal reflections and are not financial, legal, or career advice. For decisions that affect your finances or career, do your own research and consider professional advice where appropriate.</p>
-    </div>
-  </div>
+    <section class="card">
+      <h2>Upcoming Essays</h2>
+
+      <div class="essay-item">
+        <h3>The Price of the White Coat</h3>
+        <p>
+          Tuition, lost earning years, and opportunity cost across the full training pipeline from undergraduate studies through residency.
+        </p>
+        <span class="essay-status">Coming soon</span>
+      </div>
+
+      <div class="essay-item">
+        <h3>Comparing Career Paths: A 30-Year Cash-Flow Question</h3>
+        <p>
+          How medicine compares financially with alternative professional careers when income timing, training length, and compounding are included.
+        </p>
+        <span class="essay-status">Coming soon</span>
+      </div>
+
+    </section>
+
+    <p class="muted">
+      Additional essays examining incentives, career structure, and financial trade-offs in medicine will be added to this section over time.
+    </p>
+
+    <p class="disclaimer">
+      Disclaimer: Essays in this section reflect personal perspectives and analysis. They are provided for educational and informational purposes only and do not constitute financial, legal, or career advice. Decisions about education, career paths, or finances should be made based on your own research and circumstances and, where appropriate, with guidance from qualified professionals.
+    </p>
+  </main>
 
   <div id="footerMount"></div>
 </body>

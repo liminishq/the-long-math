@@ -56,8 +56,8 @@
       margin: 0 0 0.5rem;
       font-size: 1rem;
     }
-    .foundation-card p {
-      margin: 0 0 0.75rem;
+    .foundation-card > p {
+      margin: 0 0 1.25rem;
       font-size: 0.9rem;
       color: var(--muted);
       line-height: 1.6;
@@ -68,18 +68,32 @@
       padding: 0;
     }
     .foundation-item {
-      margin: 0.5rem 0;
+      margin: 0 0 0.75rem;
+    }
+    .foundation-item:last-child {
+      margin-bottom: 0;
+    }
+    .foundation-item-link {
+      display: block;
+      padding: 0.85rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .foundation-item-link:hover {
+      background: var(--accentSoft);
+      border-color: rgba(217, 180, 106, 0.35);
+    }
+    .foundation-item-link:hover .foundation-item-title {
+      text-decoration: underline;
     }
     .foundation-item-title {
       font-size: 0.95rem;
-      margin: 0 0 0.1rem;
-    }
-    .foundation-item-title a {
+      font-weight: 600;
+      margin: 0 0 0.35rem;
       color: var(--accent);
-      text-decoration: none;
-    }
-    .foundation-item-title a:hover {
-      text-decoration: underline;
     }
     .foundation-item-desc {
       margin: 0;
@@ -102,7 +116,7 @@
   <!-- Shared header mount -->
   <div id="site-header"></div>
 
-  <div class="wrap">
+  <main class="wrap">
     <!-- Hero / intro -->
     <section class="foundations-hero" aria-labelledby="foundations-heading">
       <div class="foundations-hero-inner">
@@ -122,28 +136,28 @@
           <p>Start here for the basic ideas behind investing and markets.</p>
           <ul class="foundation-list">
             <li class="foundation-item">
-              <h3 class="foundation-item-title">
-                <a href="/articles/investing-and-financial-literacy/what-is-investing/">What Is Investing?</a>
-              </h3>
-              <p class="foundation-item-desc">A simple definition for beginners and new investors. What investing is, why people invest, and how time can work in your favor.</p>
+              <a href="/articles/investing-and-financial-literacy/what-is-investing/" class="foundation-item-link">
+                <h3 class="foundation-item-title">What Is Investing?</h3>
+                <p class="foundation-item-desc">A simple definition for beginners and new investors. What investing is, why people invest, and how time can work in your favor.</p>
+              </a>
             </li>
             <li class="foundation-item">
-              <h3 class="foundation-item-title">
-                <a href="/articles/investing-and-financial-literacy/what-is-a-stock/">What Is a Stock? (In Simple Terms)</a>
-              </h3>
-              <p class="foundation-item-desc">What a share represents, how stocks make money, and why stock prices move — explained with simple arithmetic.</p>
+              <a href="/articles/investing-and-financial-literacy/what-is-a-stock/" class="foundation-item-link">
+                <h3 class="foundation-item-title">What Is a Stock? (In Simple Terms)</h3>
+                <p class="foundation-item-desc">What a share represents, how stocks make money, and why stock prices move — explained with simple arithmetic.</p>
+              </a>
             </li>
             <li class="foundation-item">
-              <h3 class="foundation-item-title">
-                <a href="/articles/investing-and-financial-literacy/what-is-the-stock-market/">What Is the Stock Market?</a>
-              </h3>
-              <p class="foundation-item-desc">What the stock market is, how it works, and why it can grow over time.</p>
+              <a href="/articles/investing-and-financial-literacy/what-is-the-stock-market/" class="foundation-item-link">
+                <h3 class="foundation-item-title">What Is the Stock Market?</h3>
+                <p class="foundation-item-desc">What the stock market is, how it works, and why it can grow over time.</p>
+              </a>
             </li>
             <li class="foundation-item">
-              <h3 class="foundation-item-title">
-                <a href="/articles/investing-and-financial-literacy/asset-classes-for-investing/">Asset Classes for Investing</a>
-              </h3>
-              <p class="foundation-item-desc">The major asset classes — stocks, bonds, cash, and real assets — and why asset allocation matters.</p>
+              <a href="/articles/investing-and-financial-literacy/asset-classes-for-investing/" class="foundation-item-link">
+                <h3 class="foundation-item-title">Asset Classes for Investing</h3>
+                <p class="foundation-item-desc">The major asset classes — stocks, bonds, cash, and real assets — and why asset allocation matters.</p>
+              </a>
             </li>
           </ul>
         </article>
@@ -154,22 +168,22 @@
           <p>How compounding builds wealth — and how inflation changes what that wealth can buy.</p>
           <ul class="foundation-list">
             <li class="foundation-item">
-              <h3 class="foundation-item-title">
-                <a href="/articles/investing-and-financial-literacy/compound-interest/">Compound Interest: The Ultimate Wealth Builder</a>
-              </h3>
-              <p class="foundation-item-desc">What compound interest is, how it works, the formula, and why compounding accelerates over long horizons.</p>
+              <a href="/articles/investing-and-financial-literacy/compound-interest/" class="foundation-item-link">
+                <h3 class="foundation-item-title">Compound Interest: The Ultimate Wealth Builder</h3>
+                <p class="foundation-item-desc">What compound interest is, how it works, the formula, and why compounding accelerates over long horizons.</p>
+              </a>
             </li>
             <li class="foundation-item">
-              <h3 class="foundation-item-title">
-                <a href="/articles/investing-and-financial-literacy/inflation/">Inflation: The Math That Makes Future Money Smaller</a>
-              </h3>
-              <p class="foundation-item-desc">An arithmetic-based explanation of inflation, purchasing power, nominal vs real return, and why plans must be inflation-adjusted.</p>
+              <a href="/articles/investing-and-financial-literacy/inflation/" class="foundation-item-link">
+                <h3 class="foundation-item-title">Inflation: The Math That Makes Future Money Smaller</h3>
+                <p class="foundation-item-desc">An arithmetic-based explanation of inflation, purchasing power, nominal vs real return, and why plans must be inflation-adjusted.</p>
+              </a>
             </li>
             <li class="foundation-item">
-              <h3 class="foundation-item-title">
-                <a href="/articles/investing-and-financial-literacy/the-true-cost-of-financial-advisor-fees/">The True Cost of Financial Advisor Fees</a>
-              </h3>
-              <p class="foundation-item-desc">How advisory fees, fund costs, and lost compounding interact over decades.</p>
+              <a href="/articles/investing-and-financial-literacy/the-true-cost-of-financial-advisor-fees/" class="foundation-item-link">
+                <h3 class="foundation-item-title">The True Cost of Financial Advisor Fees</h3>
+                <p class="foundation-item-desc">How advisory fees, fund costs, and lost compounding interact over decades.</p>
+              </a>
             </li>
           </ul>
         </article>
@@ -180,28 +194,28 @@
           <p>How Canadian registered accounts and withdrawal rules change the arithmetic.</p>
           <ul class="foundation-list">
             <li class="foundation-item">
-              <h3 class="foundation-item-title">
-                <a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/">What Is a TFSA? Tax-Free Savings Account Explained (Canada)</a>
-              </h3>
-              <p class="foundation-item-desc">Contribution room, the January 1 withdrawal rule, what you can hold inside, and why tax-free growth matters.</p>
+              <a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/" class="foundation-item-link">
+                <h3 class="foundation-item-title">What Is a TFSA? Tax-Free Savings Account Explained (Canada)</h3>
+                <p class="foundation-item-desc">Contribution room, the January 1 withdrawal rule, what you can hold inside, and why tax-free growth matters.</p>
+              </a>
             </li>
             <li class="foundation-item">
-              <h3 class="foundation-item-title">
-                <a href="/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/">RRSP vs TFSA vs FHSA in Canada: Which Account Is Best?</a>
-              </h3>
-              <p class="foundation-item-desc">Compare tax math, contribution limits, and worked examples across RRSP, TFSA, and FHSA.</p>
+              <a href="/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/" class="foundation-item-link">
+                <h3 class="foundation-item-title">RRSP vs TFSA vs FHSA in Canada: Which Account Is Best?</h3>
+                <p class="foundation-item-desc">Compare tax math, contribution limits, and worked examples across RRSP, TFSA, and FHSA.</p>
+              </a>
             </li>
             <li class="foundation-item">
-              <h3 class="foundation-item-title">
-                <a href="/articles/investing-and-financial-literacy/what-is-an-fhsa/">What Is an FHSA? First Home Savings Account Explained (Canada)</a>
-              </h3>
-              <p class="foundation-item-desc">How the FHSA works, its tax treatment, limits, and interaction with other accounts.</p>
+              <a href="/articles/investing-and-financial-literacy/what-is-an-fhsa/" class="foundation-item-link">
+                <h3 class="foundation-item-title">What Is an FHSA? First Home Savings Account Explained (Canada)</h3>
+                <p class="foundation-item-desc">How the FHSA works, its tax treatment, limits, and interaction with other accounts.</p>
+              </a>
             </li>
             <li class="foundation-item">
-              <h3 class="foundation-item-title">
-                <a href="/articles/investing-and-financial-literacy/tfsa-withdrawal-rules-over-contribution-penalties/">TFSA Withdrawal Rules: The January 1 Rule and Over-Contribution Penalties</a>
-              </h3>
-              <p class="foundation-item-desc">Why withdrawn TFSA room returns on January 1, how over-contributions happen, and how penalties are calculated.</p>
+              <a href="/articles/investing-and-financial-literacy/tfsa-withdrawal-rules-over-contribution-penalties/" class="foundation-item-link">
+                <h3 class="foundation-item-title">TFSA Withdrawal Rules: The January 1 Rule and Over-Contribution Penalties</h3>
+                <p class="foundation-item-desc">Why withdrawn TFSA room returns on January 1, how over-contributions happen, and how penalties are calculated.</p>
+              </a>
             </li>
           </ul>
         </article>
@@ -214,7 +228,7 @@
         <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
       </p>
     </div>
-  </div>
+  </main>
 
   <!-- Shared footer mount -->
   <div id="footerMount"></div>
