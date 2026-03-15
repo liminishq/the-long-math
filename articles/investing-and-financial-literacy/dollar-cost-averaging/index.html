@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dollar Cost Averaging: What It Is, How It Works, and When It Makes Sense | The Long Math</title>
+  <meta name="description" content="Learn what dollar cost averaging (DCA) is, how it works, and when it makes sense. Includes a clear lump sum vs. DCA comparison, the behavioral case for automatic investing, and common misunderstandings explained." />
+  <link rel="canonical" href="https://thelongmath.com/articles/investing-and-financial-literacy/dollar-cost-averaging/" />
+  <meta name="article:modified" content="March 2026" />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Dollar Cost Averaging: What It Is, How It Works, and When It Makes Sense | The Long Math" />
+  <meta property="og:description" content="Learn what dollar cost averaging (DCA) is, how it works, and when it makes sense. Includes a clear lump sum vs. DCA comparison, the behavioral case for automatic investing, and common misunderstandings explained." />
+  <meta property="og:url" content="https://thelongmath.com/articles/investing-and-financial-literacy/dollar-cost-averaging/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Dollar Cost Averaging: What It Is, How It Works, and When It Makes Sense | The Long Math" />
+  <meta name="twitter:description" content="Learn what dollar cost averaging (DCA) is, how it works, and when it makes sense. Includes a clear lump sum vs. DCA comparison, the behavioral case for automatic investing, and common misunderstandings explained." />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://thelongmath.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Investment and Financial Literacy", "item": "https://thelongmath.com/articles/investing-and-financial-literacy/" },
+    { "@type": "ListItem", "position": 3, "name": "Dollar Cost Averaging: What It Is, How It Works, and When It Makes Sense", "item": "https://thelongmath.com/articles/investing-and-financial-literacy/dollar-cost-averaging/" }
+  ]
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Dollar Cost Averaging: What It Is, How It Works, and When It Makes Sense",
+  "description": "Learn what dollar cost averaging (DCA) is, how it works, and when it makes sense. Includes a clear lump sum vs. DCA comparison, the behavioral case for automatic investing, and common misunderstandings explained.",
+  "author": { "@type": "Organization", "name": "The Long Math" },
+  "publisher": {
+    "@type": "Organization",
+    "name": "The Long Math",
+    "logo": { "@type": "ImageObject", "url": "https://thelongmath.com/assets/logo.png" }
+  },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://thelongmath.com/articles/investing-and-financial-literacy/dollar-cost-averaging/" },
+  "dateModified": "2026-03-01"
+}
+  </script>
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script defer src="/assets/js/site.js"></script>
+
+  <style>
+    .article-content { max-width: 980px; margin: 0 auto; line-height: 1.7; font-size: 1.05rem; }
+    .article-content h2 { margin: 0 0 0.75em; }
+    .article-content h3 { margin: 1.25em 0 0.5em; }
+    .article-content ul, .article-content ol { margin: 1em 0; padding-left: 2em; }
+    .article-content li { margin: 0.5em 0; }
+    .article-content p { margin: 0.9em 0; }
+
+    .article-content table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.95em; }
+    .article-content th, .article-content td { border: 1px solid var(--border); padding: 10px 12px; }
+    .article-content th { background: var(--card-bg, rgba(0, 0, 0, 0.03)); font-weight: 600; text-align: left; }
+    .article-content td.num, .article-content th.num { text-align: right; }
+
+    .section-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      margin: 18px 0;
+      background: var(--card-bg, var(--surface, #fff));
+      box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+    }
+    .section-card.intro-card { margin-top: 14px; }
+
+    .lm-formula {
+      display: inline-block;
+      padding: 10px 14px;
+      border: 1px solid var(--accent, #d6b36a);
+      border-radius: 12px;
+      background: rgba(0,0,0,0.12);
+      color: var(--text, #ffffff);
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .quick-answer-block {
+      border-left: 4px solid var(--accent, #d6b36a);
+      background: var(--accentSoft, rgba(217,180,106,.08));
+    }
+
+    .related-articles h2 { font-size: 18px; margin: 0 0 10px; }
+    .related-articles h3 { font-size: 16px; margin: 1em 0 8px; }
+    .related-articles ul { list-style: none; padding-left: 0; margin: 0; }
+    .related-articles li { margin: 12px 0; }
+    .related-articles a { color: var(--accent); text-decoration: none; }
+    .related-articles a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      .article-content table { font-size: 0.88em; display: block; overflow-x: auto; }
+      .article-content th, .article-content td { padding: 8px 10px; }
+    }
+  </style>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <article class="article-content">
+      <header>
+        <h1>Dollar Cost Averaging: What It Is, How It Works, and When It Makes Sense</h1>
+        <p class="reading-time">7 minute read • Last updated March 2026</p>
+      </header>
+
+      <!-- Quick Answer -->
+      <section class="section-card quick-answer-block" id="quick-answer" aria-labelledby="quick-answer-heading">
+        <h2 id="quick-answer-heading">Quick Answer</h2>
+        <p>Dollar cost averaging (DCA) is an investing strategy where you invest a fixed amount of money at regular intervals — regardless of what markets are doing.</p>
+        <p>Instead of trying to time the market, you buy consistently over time. When prices are high, your contribution buys fewer shares. When prices are low, the same contribution buys more. Over many purchases, the average price you pay tends to smooth out between those highs and lows.</p>
+        <p>Dollar cost averaging does not guarantee higher returns than investing a lump sum immediately. Markets historically rise over time, so investing earlier often produces higher expected returns.</p>
+        <p>The main benefit of dollar cost averaging is reducing timing risk and making investing easier to stick with.</p>
+      </section>
+
+      <!-- What Is Dollar Cost Averaging? -->
+      <section class="section-card">
+        <h2>What Is Dollar Cost Averaging?</h2>
+        <p>Most people don't invest in one dramatic moment. They invest from a paycheque, a monthly surplus, a quarterly distribution. Money arrives gradually, and it gets put to work gradually. That's dollar cost averaging — not a sophisticated manoeuvre, but a description of how most people actually invest.</p>
+        <p>The formal definition: investing a fixed amount at regular intervals, regardless of market conditions.</p>
+        <p>In practice, it looks like this:</p>
+        <ul>
+          <li>Invest $500 every month</li>
+          <li>Buy the same investment each time</li>
+          <li>Continue regardless of whether markets are rising or falling</li>
+        </ul>
+        <p>The strategy deliberately removes one of investing's most paralyzing questions: Is now a good time? By committing to a schedule, the answer is always the same. The only decision left is whether to stay the course.</p>
+      </section>
+
+      <!-- How Dollar Cost Averaging Works -->
+      <section class="section-card">
+        <h2>How Dollar Cost Averaging Works</h2>
+        <p>Consider an investor who contributes $1,000 per month to a broad market index fund.</p>
+        <div class="table-wrap" style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th class="num">Price per Share</th>
+                <th class="num">Amount Invested</th>
+                <th class="num">Shares Purchased</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>January</td><td class="num">$100</td><td class="num">$1,000</td><td class="num">10.00</td></tr>
+              <tr><td>February</td><td class="num">$80</td><td class="num">$1,000</td><td class="num">12.50</td></tr>
+              <tr><td>March</td><td class="num">$125</td><td class="num">$1,000</td><td class="num">8.00</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>After three months:</p>
+        <ul>
+          <li>Total invested: $3,000</li>
+          <li>Total shares owned: 30.5</li>
+          <li>Average purchase price: $98.36 per share</li>
+        </ul>
+        <p>Prices ranged from $80 to $125, yet the average cost paid falls below the midpoint of that range. This happens automatically: because the contribution amount stays fixed, lower prices mechanically produce more shares purchased. The investor didn't do anything clever. The structure did the work.</p>
+      </section>
+
+      <!-- Why Investors Use Dollar Cost Averaging -->
+      <section class="section-card">
+        <h2>Why Investors Use Dollar Cost Averaging</h2>
+        <p>Two practical realities make this strategy the default for most investors.</p>
+        <p><strong>Income arrives gradually.</strong> Saving up a large lump sum before investing means delaying compounding — sometimes for years. Dollar cost averaging lets investments begin the moment money is available, however modest that amount is. Every month in the market is a month compounding is working.</p>
+        <p><strong>Timing the market is harder than it sounds.</strong> Short-term market movements are genuinely difficult to predict — not just for individual investors, but for professionals with teams of analysts. Investors who wait for a "better entry point" often end up sitting in cash through rallies they never expected, then re-entering after prices have already recovered. Dollar cost averaging removes this decision entirely. Investing becomes routine rather than a recurring judgment call.</p>
+      </section>
+
+      <!-- Lump Sum vs. Dollar Cost Averaging -->
+      <section class="section-card">
+        <h2>Lump Sum vs. Dollar Cost Averaging</h2>
+        <p>If an investor already has a large sum available — an inheritance, a bonus, the proceeds of a home sale — the question becomes more interesting.</p>
+        <p>Historically, investing a lump sum immediately produces higher expected returns than spreading the same amount over time. The reason is straightforward: markets have tended to rise over long periods, and money deployed earlier has more time to participate in that growth.</p>
+        <p>But lump-sum investing carries real timing risk. A large investment made immediately before a significant market decline can produce painful short-term losses — and more importantly, can make it psychologically difficult to stay invested.</p>
+        <div class="table-wrap" style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Strategy</th>
+                <th>Advantage</th>
+                <th>Disadvantage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Lump Sum</td><td>Higher expected return</td><td>Higher timing risk</td></tr>
+              <tr><td>Dollar Cost Avg.</td><td>Lower timing risk</td><td>Slightly lower expected return</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The mathematically optimal strategy is not always the psychologically sustainable one. An investor who deploys a lump sum and then panics during the first correction has not outperformed a methodical dollar cost averager — they've just taken on more risk for a worse outcome. For investors who know they're prone to second-guessing large decisions, gradually deploying a windfall isn't irrational. It's a reasonable trade: accept a modest expected-return discount in exchange for staying invested.</p>
+      </section>
+
+      <!-- When Dollar Cost Averaging Makes the Most Sense -->
+      <section class="section-card">
+        <h2>When Dollar Cost Averaging Makes the Most Sense</h2>
+        <p>Dollar cost averaging is particularly well-suited to:</p>
+        <ul>
+          <li>Investing from regular employment or business income</li>
+          <li>Building a portfolio gradually from savings</li>
+          <li>Starting to invest during uncertain or volatile markets</li>
+          <li>Maintaining discipline when headlines make every week feel like the worst possible time to invest</li>
+          <li>Setting up automatic monthly contributions and removing investing from your list of decisions</li>
+        </ul>
+        <p>That last point is underrated. Many long-term investors eventually automate their contributions entirely — money moves into investments each month without requiring a new decision. Automatic investing, in this sense, is less a strategy than a commitment device: when the process runs itself, there's nothing to talk yourself out of.</p>
+      </section>
+
+      <!-- The Behavioral Advantage of Dollar Cost Averaging -->
+      <section class="section-card">
+        <h2>The Behavioral Advantage of Dollar Cost Averaging</h2>
+        <p>Markets don't decline quietly. Downturns come with headlines, expert commentary, and a general sense that this time might be different. That environment is designed — not intentionally, but effectively — to trigger exactly the wrong response: sell what's down, wait for clarity, re-enter when things feel safer.</p>
+        <p>The problem is that by the time things feel safer, prices have usually already recovered.</p>
+        <p>Dollar cost averaging disrupts this pattern structurally. When an investor has committed to contributing $500 on the first of every month, a 20% market decline doesn't produce a new decision — it produces more shares at lower prices. The investor who stays the course during a correction isn't being heroic. They're just following a plan they already made.</p>
+        <p>This is the strategy's most durable advantage. Not the math, which is real but modest, but the way a fixed schedule converts market volatility from a threat into a mechanical opportunity.</p>
+      </section>
+
+      <!-- The Real Cost of Waiting -->
+      <section class="section-card">
+        <h2>The Real Cost of Waiting</h2>
+        <p>Investors who delay — waiting for clarity, for a pullback, for a more comfortable moment — often underestimate what that delay costs. It's not dramatic. It rarely feels like a mistake. But time out of the market is compounding that didn't happen, and compounding is the mechanism that makes long-term investing work.</p>
+        <p>The mathematics of compounding explains why early and consistent investing matters as much as it does.</p>
+        <p><span class="lm-formula">A = P(1 + r/n)<sup>nt</sup></span></p>
+        <p>A deeper explanation of this effect:</p>
+        <ul>
+          <li><a href="/articles/investing-and-financial-literacy/compound-interest/">Compound Interest: The Ultimate Wealth Builder</a> — how compounding accelerates long-term investment growth</li>
+          <li><a href="/articles/investing-and-financial-literacy/what-is-investing/">What Is Investing?</a> — a primer on the mechanics and purpose of investing</li>
+        </ul>
+      </section>
+
+      <!-- Common Misunderstandings About Dollar Cost Averaging -->
+      <section class="section-card">
+        <h2>Common Misunderstandings About Dollar Cost Averaging</h2>
+        <p><strong>Does dollar cost averaging eliminate market risk?</strong> No. If markets decline significantly, a dollar cost averaging portfolio will still lose value. The strategy reduces entry-timing risk — the risk of investing a large sum right before a downturn — not the underlying risk of owning equities.</p>
+        <p><strong>Does dollar cost averaging guarantee a lower average purchase price?</strong> Not exactly. The mechanical effect of buying more shares when prices are lower is real, but it's a byproduct, not the point. The point is building a habit of consistent investing that survives volatile markets. Treating price reduction as the goal misframes what the strategy actually does.</p>
+        <p><strong>Is dollar cost averaging better than lump-sum investing?</strong> It depends on what "better" means. If the goal is maximizing expected return, lump-sum investing generally wins when money is already available — markets have historically risen over time, and earlier deployment means more time in the market. If the goal is reducing the psychological risk of a poorly timed large investment, dollar cost averaging offers a real advantage. The two strategies optimize for different things.</p>
+        <p><strong>Is dollar cost averaging only for small investors?</strong> No. The strategy is equally applicable regardless of the amount being invested. What changes with larger sums is that the lump-sum trade-off becomes more significant — both in terms of expected return and in terms of timing risk. Many investors receiving a large windfall choose to deploy it gradually for psychological reasons, accepting a modest expected-return discount in exchange for a smoother entry.</p>
+      </section>
+
+      <!-- How Most Investors Use Dollar Cost Averaging -->
+      <section class="section-card">
+        <h2>How Most Investors Use Dollar Cost Averaging</h2>
+        <p>In practice, most investors implement this strategy through automation:</p>
+        <ul>
+          <li>Automatic transfers to brokerage accounts on a set date</li>
+          <li>Recurring ETF purchases</li>
+          <li>Employer retirement plan contributions deducted from payroll</li>
+          <li>Monthly TFSA or RRSP contributions</li>
+        </ul>
+        <p>Automation is the part that actually matters. A plan to invest monthly is easy to abandon when markets are down and the news is bad. A standing instruction that executes regardless is much harder to derail. The investor's job becomes not making a good decision each month, but having made a good decision once.</p>
+      </section>
+
+      <!-- Key Takeaways -->
+      <section class="section-card">
+        <h2>Key Takeaways</h2>
+        <ul>
+          <li>Dollar cost averaging means investing a fixed amount at regular intervals, regardless of market conditions.</li>
+          <li>It automatically spreads purchases across different price levels — more shares when prices are low, fewer when prices are high.</li>
+          <li>The strategy reduces timing risk but does not guarantee higher returns than lump-sum investing.</li>
+          <li>When money is already available, lump-sum investing generally produces higher expected returns.</li>
+          <li>The most durable advantage of DCA is behavioral: a fixed schedule removes the recurring temptation to wait for a better moment.</li>
+        </ul>
+        <p>For most investors, the most effective approach is the simplest one — invest regularly, ignore short-term noise, and let time compound the results.</p>
+      </section>
+
+      <!-- Related Articles -->
+      <section class="section-card related-articles">
+        <h2>Related Articles</h2>
+        <ul>
+          <li><a href="/articles/investing-and-financial-literacy/compound-interest/">Compound Interest: The Ultimate Wealth Builder</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/what-is-investing/">What Is Investing?</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/asset-classes-for-investing/">Asset Classes for Investing</a></li>
+        </ul>
+      </section>
+
+      <!-- Related Tools -->
+      <section class="section-card related-articles">
+        <h2>Related Tools</h2>
+        <ul>
+          <li><a href="/calculators/investment-simple/">Investment Growth Calculator</a></li>
+          <li><a href="/calculators/compound-multipliers/">Compound Interest Calculator</a></li>
+          <li><a href="/calculators/inflation-time-machine/">Inflation Calculator</a></li>
+        </ul>
+      </section>
+    </article>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
+      </p>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+</body>
+</html>

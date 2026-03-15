@@ -1,0 +1,12 @@
+---
+description: Use Unicode punctuation in article content; keep ASCII in code and scripts
+globs: articles/**/*.html
+alwaysApply: false
+---
+
+# Punctuation: Articles vs Code
+
+- **Article content** (e.g. `articles/**/*.html` body text): Use Unicode punctuation where it improves typography — curly apostrophes (’), em dashes (—), en dashes (–), curly quotes (“ ”) as desired. Do not normalize or strip these when editing articles.
+- **Code and scripts** (JS, JSON, build scripts, HTML attributes, JSON-LD, inline script content): Use ASCII only — straight apostrophe ('), hyphen-minus (-), double quote ("). This avoids escaping issues and keeps data/script behavior predictable.
+
+When editing article HTML, restrict Unicode punctuation to the visible article body (inside `<article>` / section content). Keep `<script>`, `<meta>`, and attribute values ASCII.

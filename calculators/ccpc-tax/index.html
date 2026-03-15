@@ -25,11 +25,6 @@
 <body>
   <div id="site-header"></div>
   
-  <!-- Back link -->
-  <div style="max-width: 980px; margin: 0 auto; padding: 8px 16px 0;">
-    <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
-  </div>
-  
   <div class="wrap">
 
     <!-- Header -->
@@ -83,31 +78,90 @@
           <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Deductible business expenses (exclude personal expenses)</div>
         </div>
 
-        <div class="field">
-          <label for="salary">Salary/Bonus Paid to Shareholder</label>
-          <input type="text" id="salary" placeholder="0" value="">
+        <div class="field field-toggle">
+          <label class="toggle-label">
+            <input type="checkbox" id="incomeSplitting" aria-describedby="incomeSplittingDesc">
+            <span class="toggle-switch"></span>
+            <span>Income splitting (two shareholders)</span>
+          </label>
+          <p id="incomeSplittingDesc" class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">When on, enter compensation and personal details for each shareholder separately. Corporate tax uses combined payments from the corporation to both shareholders.</p>
         </div>
 
-        <div class="field">
-          <label for="eligibleDividends">Eligible Dividends Paid</label>
-          <input type="text" id="eligibleDividends" placeholder="0" value="">
+        <div id="singleShareholderBlock">
+          <div class="field">
+            <label for="salary">Salary/Bonus Paid to Shareholder</label>
+            <input type="text" id="salary" placeholder="0" value="">
+          </div>
+
+          <div class="field">
+            <label for="eligibleDividends">Eligible Dividends Paid</label>
+            <input type="text" id="eligibleDividends" placeholder="0" value="">
+          </div>
+
+          <div class="field">
+            <label for="nonEligibleDividends">Non-Eligible Dividends Paid</label>
+            <input type="text" id="nonEligibleDividends" placeholder="0" value="">
+          </div>
+
+          <div class="field">
+            <label for="personalOtherIncome">Other Personal Income</label>
+            <input type="text" id="personalOtherIncome" placeholder="0" value="">
+            <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Personal income from sources other than the corporation</div>
+          </div>
+
+          <div class="field">
+            <label for="personalDeductions">Personal Deductions</label>
+            <input type="text" id="personalDeductions" placeholder="0" value="">
+            <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Estimated personal deductions (medical, donations, etc.)</div>
+          </div>
         </div>
 
-        <div class="field">
-          <label for="nonEligibleDividends">Non-Eligible Dividends Paid</label>
-          <input type="text" id="nonEligibleDividends" placeholder="0" value="">
-        </div>
+        <div id="incomeSplittingBlock" class="income-splitting-block" style="display: none;">
+          <h3 class="shareholder-heading">Shareholder 1</h3>
+          <div class="field">
+            <label for="sh1Salary">Salary/Bonus Paid</label>
+            <input type="text" id="sh1Salary" placeholder="0" value="">
+          </div>
+          <div class="field">
+            <label for="sh1EligibleDividends">Eligible Dividends Paid</label>
+            <input type="text" id="sh1EligibleDividends" placeholder="0" value="">
+          </div>
+          <div class="field">
+            <label for="sh1NonEligibleDividends">Non-Eligible Dividends Paid</label>
+            <input type="text" id="sh1NonEligibleDividends" placeholder="0" value="">
+          </div>
+          <div class="field">
+            <label for="sh1OtherIncome">Other Personal Income</label>
+            <input type="text" id="sh1OtherIncome" placeholder="0" value="">
+            <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Personal income from sources other than the corporation</div>
+          </div>
+          <div class="field">
+            <label for="sh1Deductions">Personal Deductions</label>
+            <input type="text" id="sh1Deductions" placeholder="0" value="">
+          </div>
 
-        <div class="field">
-          <label for="personalOtherIncome">Other Personal Income</label>
-          <input type="text" id="personalOtherIncome" placeholder="0" value="">
-          <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Personal income from sources other than the corporation</div>
-        </div>
-
-        <div class="field">
-          <label for="personalDeductions">Personal Deductions</label>
-          <input type="text" id="personalDeductions" placeholder="0" value="">
-          <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Estimated personal deductions (medical, donations, etc.)</div>
+          <h3 class="shareholder-heading">Shareholder 2</h3>
+          <div class="field">
+            <label for="sh2Salary">Salary/Bonus Paid</label>
+            <input type="text" id="sh2Salary" placeholder="0" value="">
+          </div>
+          <div class="field">
+            <label for="sh2EligibleDividends">Eligible Dividends Paid</label>
+            <input type="text" id="sh2EligibleDividends" placeholder="0" value="">
+          </div>
+          <div class="field">
+            <label for="sh2NonEligibleDividends">Non-Eligible Dividends Paid</label>
+            <input type="text" id="sh2NonEligibleDividends" placeholder="0" value="">
+          </div>
+          <div class="field">
+            <label for="sh2OtherIncome">Other Personal Income</label>
+            <input type="text" id="sh2OtherIncome" placeholder="0" value="">
+            <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Personal income from sources other than the corporation</div>
+          </div>
+          <div class="field">
+            <label for="sh2Deductions">Personal Deductions</label>
+            <input type="text" id="sh2Deductions" placeholder="0" value="">
+          </div>
         </div>
 
         <div style="margin-top: 20px; padding: 14px; border: 1px solid rgba(217,180,106,.35); border-radius: 12px; background: linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,.04));">
@@ -122,7 +176,7 @@
       <section class="card">
         <h2 class="section-title">Calculated Results</h2>
 
-        <div class="results">
+        <div id="singleResultBlock" class="results">
           <div class="result">
             <p class="k">Corporate Taxable Income</p>
             <p class="v" id="corporateTaxableIncome">$–</p>
@@ -163,6 +217,49 @@
             <p class="v" id="effectiveTaxRate">–%</p>
           </div>
         </div>
+
+        <div id="splitResultBlock" class="results results-split" style="display: none;">
+          <div class="result">
+            <p class="k">Corporate Taxable Income</p>
+            <p class="v" id="splitCorporateTaxableIncome">$–</p>
+          </div>
+          <div class="result">
+            <p class="k">Corporate Tax</p>
+            <p class="v" id="splitCorporateTax">$–</p>
+          </div>
+          <div class="result">
+            <p class="k">After-Tax Corporate Cash</p>
+            <p class="v" id="splitAfterTaxCorporateCash">$–</p>
+          </div>
+          <div class="result">
+            <p class="k">Retained Earnings</p>
+            <p class="v" id="splitRetainedEarnings">$–</p>
+          </div>
+          <div class="result shareholder-result">
+            <p class="k">Shareholder 1 — Personal Tax</p>
+            <p class="v" id="sh1PersonalTax">$–</p>
+          </div>
+          <div class="result shareholder-result">
+            <p class="k">Shareholder 1 — Net Take-Home</p>
+            <p class="v" id="sh1NetTakeHome">$–</p>
+          </div>
+          <div class="result shareholder-result">
+            <p class="k">Shareholder 2 — Personal Tax</p>
+            <p class="v" id="sh2PersonalTax">$–</p>
+          </div>
+          <div class="result shareholder-result">
+            <p class="k">Shareholder 2 — Net Take-Home</p>
+            <p class="v" id="sh2NetTakeHome">$–</p>
+          </div>
+          <div class="result prominent">
+            <p class="k">Total Tax Burden (Corp + Personal)</p>
+            <p class="v" id="splitTotalTaxBurden">$–</p>
+          </div>
+          <div class="result prominent">
+            <p class="k">Effective Overall Tax Rate</p>
+            <p class="v" id="splitEffectiveTaxRate">–%</p>
+          </div>
+        </div>
       </section>
 
     </div>
@@ -177,9 +274,17 @@
             <div id="corporateBreakdown" class="breakdown-content"></div>
           </details>
 
-          <details class="method-item">
+          <details class="method-item" id="singlePersonalBreakdownDetail">
             <summary><strong>Personal Tax Calculation</strong></summary>
             <div id="personalBreakdown" class="breakdown-content"></div>
+          </details>
+          <details class="method-item method-item-split" id="personal1BreakdownDetail" style="display: none;">
+            <summary><strong>Personal Tax — Shareholder 1</strong></summary>
+            <div id="personal1Breakdown" class="breakdown-content"></div>
+          </details>
+          <details class="method-item method-item-split" id="personal2BreakdownDetail" style="display: none;">
+            <summary><strong>Personal Tax — Shareholder 2</strong></summary>
+            <div id="personal2Breakdown" class="breakdown-content"></div>
           </details>
         </div>
       </div>
