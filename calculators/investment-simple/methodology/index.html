@@ -43,6 +43,22 @@
         This calculator models deterministic compound growth with periodic contributions and optional inflation adjustment under constant nominal return assumptions.
       </p>
 
+      <h2>Definitions</h2>
+      <p>Let:</p>
+      <ul>
+        <li>P = starting principal (initial investment)</li>
+        <li>PMT = contribution per period</li>
+        <li>r = nominal annual return (decimal)</li>
+        <li>n = number of compounding periods per year</li>
+        <li>t = number of years</li>
+        <li>FV = nominal future value</li>
+        <li>FV<sub>nominal</sub> = nominal future value after compounding</li>
+        <li>FV<sub>real</sub> = inflation-adjusted future value in today's dollars</li>
+        <li>i = annual inflation rate</li>
+        <li>CF<sub>t</sub> = cash flow at time t</li>
+        <li>T = total number of periods</li>
+      </ul>
+
       <h2>Formulae</h2>
       <p>
         The following equations define the computational structure of this calculator:
@@ -51,6 +67,7 @@
       <h3 id="compound-growth">1. Compound Growth with Periodic Contributions</h3>
       <div class="formula-block">FV = P(1 + r/n)<sup>nt</sup> + PMT × ((1 + r/n)<sup>nt</sup> − 1) / (r/n)</div>
       <p class="formula-meta"><strong>Rationale:</strong> This is the standard closed-form future value equation for periodic contributions under constant compounding.</p>
+      <p class="formula-meta">This form assumes contributions occur at the end of each contribution period (ordinary annuity).</p>
       <p class="formula-meta"><strong>Limitation:</strong> Assumes constant return and deterministic compounding; does not model volatility, sequence-of-returns risk, or varying contribution schedules.</p>
 
       <h3 id="inflation-adjustment">2. Inflation Adjustment (Real Value)</h3>
@@ -59,7 +76,7 @@
       <p class="formula-meta"><strong>Limitation:</strong> Assumes steady inflation and does not model year-to-year CPI variability or regime changes.</p>
 
       <h3 id="irr">3. Internal Rate of Return (If Displayed)</h3>
-      <div class="formula-block">NPV = Σ<sub>t=0 to T</sub> CF<sub>t</sub> / (1 + r)<sup>t</sup> = 0</div>
+      <div class="formula-block">NPV = Σ<sub>t=0</sub><sup>T</sup> CF<sub>t</sub> / (1 + r)<sup>t</sup> = 0</div>
       <p class="formula-meta"><strong>Rationale:</strong> Internal Rate of Return (IRR) represents the discount rate that sets net present value of all cash flows equal to zero.</p>
       <p class="formula-meta"><strong>Limitation:</strong> Multiple IRR solutions can exist when cash flows change sign more than once; results assume conventional cash flow structure unless otherwise specified.</p>
 

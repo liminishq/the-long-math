@@ -9,95 +9,9 @@
   <!-- Update to final public URL when live -->
   <link rel="canonical" href="https://thelongmath.com/calculators/fee-cost-0-5percent/" />
 
-  <style>
-    :root{
-      --bg:#0b0f17; --panel:#111827; --text:#e5e7eb; --muted:#a1a1aa;
-      --border:rgba(255,255,255,.10); --link:#93c5fd;
-      --shadow:0 10px 30px rgba(0,0,0,.35); --radius:14px; --maxw:980px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-      background:var(--bg);
-      color:var(--text);
-      line-height:1.55;
-    }
-    a{color:var(--link); text-decoration:none}
-    a:hover{text-decoration:underline}
-    .wrap{max-width:var(--maxw); margin:0 auto; padding:24px 18px 70px}
-    .card{
-      background:linear-gradient(180deg, rgba(17,24,39,.85), rgba(15,23,42,.85));
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:16px;
-    }
-    h1{margin:0 0 6px; font-size:28px}
-    .lead{margin:0 0 12px; color:var(--muted); max-width:75ch}
-    .crumb{margin-bottom:10px; font-size:13px; color:var(--muted)}
-
-    .answer{
-      margin:12px 0;
-      padding:10px 12px;
-      border:1px solid rgba(147,197,253,.25);
-      background:rgba(147,197,253,.08);
-      border-radius:12px;
-    }
-    .answer .label{
-      display:block;
-      font-size:12px;
-      color:var(--muted);
-      text-transform:uppercase;
-      letter-spacing:.02em;
-      margin-bottom:4px;
-    }
-
-    .grid{display:grid; grid-template-columns:1fr; gap:14px; margin-top:12px}
-    .panel{
-      border:1px solid var(--border);
-      border-radius:12px;
-      background:rgba(255,255,255,.04);
-      padding:12px;
-    }
-    h2{margin:0 0 8px; font-size:16px}
-
-    label{display:block; font-size:12px; color:var(--muted); margin:10px 0 6px}
-    input{
-      width:100%;
-      padding:10px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(0,0,0,.18);
-      color:var(--text);
-      font-size:14px;
-    }
-
-    .row{display:grid; grid-template-columns:1fr; gap:10px}
-    @media(min-width:780px){ .row{grid-template-columns:1fr 1fr} }
-
-    .out{display:grid; grid-template-columns:1fr; gap:10px}
-    @media(min-width:780px){ .out{grid-template-columns:1fr 1fr} }
-
-    .kv{
-      padding:10px;
-      border:1px solid var(--border);
-      border-radius:12px;
-      background:rgba(255,255,255,.03);
-    }
-    .k{font-size:12px; color:var(--muted)}
-    .v{font-size:16px; font-weight:750}
-
-    .math{margin-top:10px; font-size:13px; color:var(--muted)}
-    footer{
-      margin-top:16px;
-      padding-top:14px;
-      border-top:1px solid rgba(255,255,255,.10);
-      font-size:13px;
-      color:var(--muted);
-    }
-    .report-issue-link:hover{ color:var(--link); border-color:var(--link); background:rgba(147,197,253,.12); text-decoration:none; }
-  </style>
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
 
   <!-- AI-friendly structured data -->
   <script type="application/ld+json">
@@ -114,7 +28,6 @@
     }]
   }
   </script>
-
   <script defer src="/assets/js/fee-math.js"></script>
   <script defer src="/assets/js/fee-ui.js"></script>
   <!-- Google tag (gtag.js) -->
@@ -131,11 +44,6 @@
   <div id="site-header"></div>
   
   <div class="wrap">
-    <!-- Back link -->
-    <div style="margin-bottom: 16px;">
-      <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
-    </div>
-
     <header>
       <h1>Fee cost — 0.5% annual fee</h1>
       <p class="lead">
@@ -152,9 +60,9 @@
     </header>
 
     <div class="card">
-      <div class="grid">
+      <div class="calc-grid">
         <section class="panel">
-          <h2>Inputs</h2>
+          <h2 class="section-title">Inputs</h2>
           <div class="row">
             <div>
               <label for="P">Starting balance (CAD)</label>
@@ -180,23 +88,26 @@
         </section>
 
         <section class="panel">
-          <h2>Results</h2>
-          <div class="out">
-            <div class="kv">
-              <div class="k">Ending value (no fee)</div>
-              <div class="v" id="outNoFee">—</div>
+          <div class="results-panel-header">
+            <h2 class="section-title">Results</h2>
+            <a href="/calculators/fee-cost-0-5percent/methodology/" class="inspect-arithmetic-btn">Inspect the Arithmetic</a>
+          </div>
+          <div class="results">
+            <div class="result">
+              <p class="k">Ending value (no fee)</p>
+              <p class="v" id="outNoFee">—</p>
             </div>
-            <div class="kv">
-              <div class="k">Ending value (with 0.5% fee)</div>
-              <div class="v" id="outWithFee">—</div>
+            <div class="result">
+              <p class="k">Ending value (with 0.5% fee)</p>
+              <p class="v" id="outWithFee">—</p>
             </div>
-            <div class="kv">
-              <div class="k">Dollar difference</div>
-              <div class="v" id="outDiff">—</div>
+            <div class="result">
+              <p class="k">Dollar difference</p>
+              <p class="v" id="outDiff">—</p>
             </div>
-            <div class="kv">
-              <div class="k">Percent reduction</div>
-              <div class="v" id="outPct">—</div>
+            <div class="result">
+              <p class="k">Percent reduction</p>
+              <p class="v" id="outPct">—</p>
             </div>
           </div>
         </section>
@@ -208,12 +119,12 @@
       </div>
     </div>
 
-    <div class="report-issue-wrap" style="display:flex; justify-content:flex-end; margin-top:12px; margin-bottom:8px;">
-      <a href="/contact/" class="report-issue-link" style="font-size:13px; font-weight:600; color:var(--muted); text-decoration:none; border:1px solid var(--border); background:var(--panel); padding:8px 16px; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,.2);">Report an Issue</a>
+    <div class="report-issue-wrap">
+      <a href="/contact/" class="report-issue-link">Report an Issue</a>
     </div>
 
     <!-- Disclaimer -->
-    <div class="disclaimer" style="margin-top:24px; padding-top:14px; padding-bottom:14px; border-top:1px solid rgba(255,255,255,.10); border-bottom:1px solid rgba(255,255,255,.10); font-size:12px; color:var(--muted);">
+    <div class="disclaimer">
       <p>
         <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
       </p>

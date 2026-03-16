@@ -25,10 +25,6 @@
 
   <div class="wrap">
     <div class="methodology-content">
-      <div style="margin-bottom: 20px;">
-        <a href="/calculators/mortgage-calculator/" class="home-link">← Back to Mortgage Calculator</a>
-      </div>
-
       <h1>Inspectable Arithmetic for the Mortgage Calculator</h1>
       <p class="methodology-meta">Version 1.0<br>Last updated: February 2026</p>
 
@@ -56,7 +52,7 @@
         <li>r = nominal annual interest rate (APR, as entered)</li>
         <li>n = payments per year (12, 26, or 52 depending on frequency)</li>
         <li>T = amortization period in years</li>
-        <li>N = ⌊nT⌋ = maximum number of payment periods simulated</li>
+        <li>N = nT = number of payment periods implied by the amortization period and payment frequency</li>
         <li>r<sub>p</sub> = r/(100n) = periodic interest rate</li>
         <li>P<sub>m</sub> = standard monthly payment (monthly schedule basis)</li>
         <li>P = payment amount for the selected frequency</li>
@@ -97,11 +93,11 @@
       <div class="formula-block">r<sub>p</sub> = r / (100n)</div>
       <p>For each payment period t ≥ 1:</p>
       <div class="formula-block">Interest<sub>t</sub> = B<sub>t−1</sub> · r<sub>p</sub><br>Principal<sub>t</sub> = P − Interest<sub>t</sub></div>
-      <p class="formula-meta"><strong>Limitation:</strong> Uses simple APR division by frequency. It does not apply jurisdiction-specific compounding conventions (e.g., Canadian nominal rate compounded semi-annually) unless explicitly implemented elsewhere.</p>
+      <p class="formula-meta"><strong>Limitation:</strong> Uses simple APR division by payment frequency. It does not apply jurisdiction-specific compounding conventions (for example, Canadian mortgage rates are typically quoted as nominal rates compounded semi-annually and then converted to payment-period rates). This simplified calculator treats the entered APR as directly divisible by the payment frequency unless a jurisdiction-specific conversion is implemented elsewhere.</p>
 
       <h3 id="balance-update">5. Balance Update</h3>
       <div class="formula-block">B<sub>t</sub> = B<sub>t−1</sub> − Principal<sub>t</sub><br>with B<sub>0</sub> = L</div>
-      <p class="formula-meta">If Principal<sub>t</sub> &gt; B<sub>t−1</sub>, the principal portion is capped so the balance does not go negative (final-payment clamp).</p>
+      <p class="formula-meta">If Principal<sub>t</sub> &gt; B<sub>t−1</sub>, the principal portion is capped at B<sub>t−1</sub> so the balance does not go negative (final-payment clamp).</p>
 
       <h3 id="total-interest-total-paid">6. Total Interest Paid and Total Paid</h3>
       <div class="formula-block">TotalInterest = Σ Interest<sub>t</sub><br>TotalPaid = L + TotalInterest</div>

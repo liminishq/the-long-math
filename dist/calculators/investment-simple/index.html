@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Simple Investment Calculator | The Long Math</title>
-  <meta name="description" content="Quick compound growth estimates with recurring contributions and optional inflation adjustment for a first-pass view." />
+  <title>Simple Investment Calculator | Compound Growth Estimator | The Long Math</title>
+  <meta name="description" content="Estimate compound investment growth with recurring contributions. Enter a starting balance, contribution amount, time horizon, and expected return — get a projected balance, milestone table, and money-weighted IRR in seconds." />
   <link rel="canonical" href="https://thelongmath.com/calculators/investment-simple/" />
 
   <!-- Site-wide theme + styles -->
@@ -28,14 +28,11 @@
   <div id="site-header"></div>
   
   <div class="wrap">
-    <div style="margin-bottom: 16px;">
-      <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
-    </div>
 
     <header>
       <h1>Simple Investment Calculator</h1>
       <p class="lead">
-        A simplified investment calculator for quick, first-pass estimates of compound growth with recurring contributions.
+        Enter a starting balance, contribution amount, time horizon, and expected return — get a projected final balance, milestone table, and money-weighted IRR. Toggle on inflation adjustment to see results in today's dollars.
       </p>
     </header>
 
@@ -76,6 +73,7 @@
               <input id="annualReturn" type="number" inputmode="decimal" step="0.1" value="7" />
               <span class="unit">%</span>
             </div>
+            <p class="help muted">Enter the nominal (pre-inflation) rate.</p>
           </div>
 
           <hr class="sep" />
@@ -92,22 +90,18 @@
               <span class="unit">%</span>
             </div>
             <p class="help muted">
-              Real return is computed as: (1 + nominal) / (1 + inflation) − 1.
+              Real return = (1 + nominal) ÷ (1 + inflation) − 1. Contribution amounts are not adjusted upward for inflation in this calculator.
             </p>
           </div>
 
           <div class="callout" style="margin-top: 16px;">
-            <h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 700;">About this calculator</h3>
-            <p style="margin: 0 0 12px; font-size: 13px; line-height: 1.5;">
-              This is a simplified investment calculator intended for quick, first-pass estimates.
-              Inflation adjustment here is handled in a basic way and does not reflect how contributions, purchasing power, or assumptions interact over long time horizons.
-            </p>
+            <h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 700;">Need a more detailed analysis?</h3>
             <p style="margin: 0; font-size: 13px; line-height: 1.5;">
-              For a more complete and assumption-explicit analysis, use the <a href="/calculators/investment-calculator-inflation-adjusted/" style="color:var(--accent2);">Inflation-Adjusted Investment Calculator (advanced)</a>.
+              This calculator uses simplified inflation math and does not adjust contributions for rising prices. For a more thorough model — one that treats contributions in today's dollars and shows purchasing power year by year — use the <a href="/calculators/investment-calculator-inflation-adjusted/" style="color:var(--accent2);">Inflation-Adjusted Investment Calculator</a>.
             </p>
           </div>
 
-          <p class="help muted">
+          <p class="help muted" style="margin-top: 16px;">
             Assumes contributions happen at the <em>end</em> of each period and growth compounds once per contribution period.
           </p>
         </article>
@@ -129,7 +123,7 @@
               <div class="value" id="totalInvested">$—</div>
             </div>
             <div class="result-row">
-              <div class="label">Interest earned</div>
+              <div class="label">Growth from returns</div>
               <div class="value" id="interestEarned">$—</div>
             </div>
             <div class="result-row highlight">
@@ -159,27 +153,27 @@
           <div id="realExplainer" class="callout hidden">
             <h3 style="margin: 0 0 8px; font-size: 14px;">Inflation-adjusted results (real dollars)</h3>
             <p style="margin: 0; font-size: 13px; line-height: 1.5;">
-              Nominal results are shown in future dollars. Inflation-adjusted (real) results are shown in today's dollars — they estimate purchasing power after inflation.<br><br>
-              This calculator converts your nominal expected return into a real return using:<br>
-              <strong>real = (1 + nominal) / (1 + inflation) − 1</strong><br><br>
-              When real mode is on, the projection uses the real return for compounding. Contribution amounts you enter are not automatically increased for inflation.
+              Results in real mode are shown in today's dollars — they estimate purchasing power after inflation, not just the nominal account balance.<br><br>
+              This calculator converts your nominal return into a real return using:<br>
+              <strong>real = (1 + nominal) ÷ (1 + inflation) − 1</strong><br><br>
+              Note: contribution amounts are not automatically increased for inflation in this calculator. For a model that treats contributions in today's dollars and adjusts them over time, see the <a href="/calculators/investment-calculator-inflation-adjusted/" style="color:var(--accent2);">Inflation-Adjusted Investment Calculator</a>.
             </p>
           </div>
 
           <hr class="sep" />
 
           <div class="assumptions">
-            <h3>Assumptions shown</h3>
+            <h3>Assumptions</h3>
             <ul>
               <li><span class="muted">Compounding:</span> per contribution period</li>
               <li><span class="muted">Contributions:</span> end of each period</li>
-              <li><span class="muted">Fees:</span> none</li>
+              <li><span class="muted">Fees:</span> none modeled</li>
               <li><span class="muted">Taxes:</span> not modeled</li>
             </ul>
           </div>
 
           <p class="disclaimer muted">
-            Educational math only. Verify with your own assumptions and professional advice if needed.
+            Educational estimates only. Real-world outcomes vary with fees, taxes, and return volatility.
           </p>
         </article>
       </div>
@@ -198,38 +192,52 @@
         <details class="faq-accordion-item">
           <summary>What is the difference between nominal and real returns?</summary>
           <div class="faq-accordion-body">
-            <p>Nominal returns include the effect of inflation. If your investment grows 7% per year and inflation is 2.5%, your nominal return is 7%. Your real return (purchasing power) is approximately 4.4% after adjusting for inflation. Real returns show what your money can actually buy in today's dollars.</p>
+            <p>A nominal return is the raw percentage gain on an investment, before accounting for inflation. A real return adjusts for inflation, showing how much your purchasing power actually grew. If your portfolio returns 7% in a year when inflation runs at 2.5%, your real return is approximately 4.4% — the rest is offset by rising prices.</p>
+            <p>Over long time horizons, the gap between nominal and real returns compounds into a significant difference in buying power. The <a href="/articles/investing-and-financial-literacy/inflation/">Inflation: The Math That Makes Future Money Smaller</a> article works through the arithmetic in detail.</p>
           </div>
         </details>
 
         <details class="faq-accordion-item">
           <summary>What does "inflation-adjusted" mean in this calculator?</summary>
           <div class="faq-accordion-body">
-            <p>Inflation-adjusted (real) results are shown in today's dollars. They estimate the purchasing power of your future balance after accounting for inflation. This helps you understand what your investment will actually be worth in terms of what you can buy, not just the dollar amount.</p>
+            <p>When real mode is enabled, the calculator converts your nominal expected return to a real return using the Fisher equation: real = (1 + nominal) ÷ (1 + inflation) − 1. It then uses that real rate for compounding, so the final balance is expressed in today's purchasing power rather than future nominal dollars.</p>
+            <p>One important limitation: this calculator does not automatically adjust your contribution amounts for inflation. If you contribute $500/month today and inflation runs at 2.5%, a truly inflation-neutral model would increase contributions each year to maintain the same real saving effort. The <a href="/calculators/investment-calculator-inflation-adjusted/">Inflation-Adjusted Investment Calculator</a> handles this correctly and should be used for any analysis where that distinction matters.</p>
           </div>
         </details>
 
         <details class="faq-accordion-item">
           <summary>Why does inflation adjustment matter over long horizons?</summary>
           <div class="faq-accordion-body">
-            <p>Inflation compounds silently over time. Over 25 years, even moderate inflation (2-3% annually) can significantly erode purchasing power. A $1 million balance in 25 years might only have the purchasing power of $500,000-$600,000 in today's dollars. Real returns help you see the true long-term impact.</p>
+            <p><a href="/articles/investing-and-financial-literacy/inflation/">Inflation compounds silently</a> alongside your investment returns. Over 25 years, even a moderate 2.5% annual inflation rate roughly halves purchasing power — meaning a $1,000,000 nominal balance may only buy what $540,000 buys today. The longer the time horizon, the larger this gap becomes, and the more misleading it is to plan using nominal figures alone.</p>
+            <p>You can explore how inflation has varied historically using the <a href="/tools/inflation-tables/">Historical Inflation Rates (CPI)</a> tool, or use the <a href="/calculators/inflation-time-machine/">Inflation Time Machine</a> to convert a specific dollar amount between two years.</p>
           </div>
         </details>
 
         <details class="faq-accordion-item">
-          <summary>How is the money-weighted IRR calculated here?</summary>
+          <summary>How is the money-weighted IRR calculated?</summary>
           <div class="faq-accordion-body">
-            <p>The money-weighted IRR (Internal Rate of Return) is calculated from the actual cash flows: your starting deposit (outflow at time 0), each contribution (outflows at end of each period), and the final balance (inflow at the end). It finds the annualized return rate that makes the net present value of all cash flows equal to zero. This gives you the actual return earned on your money, accounting for the timing of contributions.</p>
+            <p>The money-weighted IRR (Internal Rate of Return) is derived from the actual cash flows: your starting deposit (an outflow at time zero), each recurring contribution (outflows at the end of each period), and the final projected balance (an inflow at the end). The calculator solves for the annualized discount rate that makes the net present value of all those cash flows equal to zero.</p>
+            <p>Unlike a simple average return, the IRR accounts for the timing and size of each contribution — so it reflects what your money actually earned, weighted by when it was invested. For most straightforward scenarios with constant contributions, the IRR will be close to (but not identical to) the expected return you entered.</p>
           </div>
         </details>
 
         <details class="faq-accordion-item">
           <summary>What assumptions does this calculator make?</summary>
           <div class="faq-accordion-body">
-            <p>This calculator assumes: a constant expected return (no volatility), fixed contribution amounts, contributions occur at the end of each period, compounding happens once per contribution period, no fees or taxes, and (when real mode is enabled) a constant inflation rate. These are simplified assumptions for educational purposes — real investments have volatility, fees, and taxes that affect outcomes.</p>
+            <p>This calculator assumes a constant expected return (no volatility or sequence-of-returns risk), fixed contribution amounts throughout, contributions occurring at the end of each period, compounding once per contribution period, and no fees or taxes. When real mode is enabled, it also assumes a constant inflation rate.</p>
+            <p>These are simplified assumptions appropriate for first-pass estimates. Fees in particular can compound into a substantial drag over long horizons — the <a href="/fees/">fee calculators</a> quantify that impact explicitly. Taxes depend on account type: returns inside a <a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/">TFSA</a> are tax-free, while a taxable account will reduce effective returns depending on the type of income generated.</p>
+          </div>
+        </details>
+
+        <details class="faq-accordion-item">
+          <summary>How does compounding frequency affect results?</summary>
+          <div class="faq-accordion-body">
+            <p>This calculator compounds returns once per contribution period — so monthly contributions compound monthly, and annual contributions compound annually. More frequent compounding produces slightly higher balances than less frequent compounding at the same nominal annual rate, because each period's growth is itself reinvested sooner.</p>
+            <p>For a transparent look at how compounding multipliers work at different rates and horizons, see the <a href="/calculators/compound-multipliers/">Compound Interest Multipliers Table</a>. For a deeper explanation of the compounding mechanic itself, see <a href="/articles/investing-and-financial-literacy/compound-interest/">Compound Interest: The Ultimate Wealth Builder</a>.</p>
           </div>
         </details>
       </div>
+
     </section>
 
     <!-- Disclaimer -->

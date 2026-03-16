@@ -32,6 +32,11 @@
   const barGrowth = el("barGrowth");
   const scheduleBody = el("scheduleBody");
   const scheduleViewRadios = document.querySelectorAll('input[name="scheduleView"]');
+  const scheduleToggleButton = el("scheduleToggleButton");
+
+  // State for schedule display
+  let showFullSchedule = false;
+  let lastResults = null;
 
   // Helper functions
   function toNumber(v){
@@ -101,6 +106,7 @@
       yearData.push({
         year: y,
         contributions: 0,
+        growth: 0,
         startingBalance: y === 0 ? balanceReal : 0,
         endingBalance: 0
       });
@@ -109,27 +115,35 @@
     // Period-by-period simulation
     for (let period = 0; period < totalPeriods; period++) {
       const periodStartBalance = balanceReal;
+      let periodContribution = 0;
+      let periodGrowth = 0;
       
       // Apply contribution at beginning if needed
       if (contribAtBeginning) {
         balanceReal += contribPerPeriod;
+        periodContribution += contribPerPeriod;
         totalContributionsReal += contribPerPeriod;
       }
       
       // Apply growth for this period using the derived period rate
       // This ensures annual compounding regardless of contribution frequency
-      balanceReal *= (1 + rRealPeriod);
+      periodGrowth = balanceReal * rRealPeriod;
+      balanceReal += periodGrowth;
       
       // Apply contribution at end if needed
       if (!contribAtBeginning) {
         balanceReal += contribPerPeriod;
+        periodContribution += contribPerPeriod;
         totalContributionsReal += contribPerPeriod;
       }
       
-      // Determine which year this period belongs to for schedule aggregation
-      const yearNum = Math.floor((period + 1) / contribPeriodsPerYear);
+      // Determine which year this period belongs to for schedule aggregation.
+      // We want periods 0..(contribPeriodsPerYear-1) to map to year 1,
+      // contribPeriodsPerYear..(2*contribPeriodsPerYear-1) to map to year 2, etc.
+      const yearNum = Math.floor(period / contribPeriodsPerYear) + 1;
       if (yearNum <= years && yearData[yearNum]) {
-        yearData[yearNum].contributions += contribPerPeriod;
+        yearData[yearNum].contributions += periodContribution;
+        yearData[yearNum].growth += periodGrowth;
         yearData[yearNum].endingBalance = balanceReal;
         if (yearNum > 0 && yearData[yearNum].startingBalance === 0) {
           yearData[yearNum].startingBalance = periodStartBalance;
@@ -139,12 +153,12 @@
       // Record monthly schedule if contribution frequency is monthly
       if (contribPeriodsPerYear === 12) {
         const month = period + 1;
-        const year = Math.floor((period) / contribPeriodsPerYear);
-        const periodGrowth = balanceReal - periodStartBalance - contribPerPeriod;
+        // Use 1-based year indexing so months 1-12 are "year 1", 13-24 "year 2", etc.
+        const year = Math.floor(period / contribPeriodsPerYear) + 1;
         monthlySchedule.push({
           period: month,
           year: year,
-          contributions: contribPerPeriod,
+          contributions: periodContribution,
           growth: periodGrowth,
           balance: balanceReal
         });
@@ -161,11 +175,10 @@
           balance: P0
         });
       } else if (yearData[y]) {
-        const growth = yearData[y].endingBalance - yearData[y].startingBalance - yearData[y].contributions;
         schedule.push({
           year: y,
           contributions: yearData[y].contributions,
-          growth: growth,
+          growth: yearData[y].growth,
           balance: yearData[y].endingBalance
         });
       }
@@ -207,6 +220,7 @@
 
   function updateDisplay(){
     const results = simulateInvestment();
+    lastResults = results;
     
     // Update headline outputs
     finalBalanceReal.textContent = fmtMoney(results.finalBalanceReal);
@@ -243,12 +257,15 @@
     const scheduleData = (isMonthly && contribPeriodsPerYear === 12 && results.monthlySchedule.length > 0) 
       ? results.monthlySchedule 
       : results.schedule;
+
+    const maxRowsCollapsed = 6;
+    const rowsToRender = showFullSchedule ? scheduleData : scheduleData.slice(0, maxRowsCollapsed);
     
     scheduleBody.innerHTML = "";
     
     if (isMonthly && contribPeriodsPerYear === 12 && results.monthlySchedule.length > 0) {
       // Monthly schedule - show all months
-      scheduleData.forEach(entry => {
+      rowsToRender.forEach(entry => {
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${entry.period}</td>
@@ -260,7 +277,7 @@
       });
     } else {
       // Yearly schedule
-      results.schedule.forEach(entry => {
+      rowsToRender.forEach(entry => {
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${entry.year}</td>
@@ -270,6 +287,16 @@
         `;
         scheduleBody.appendChild(row);
       });
+    }
+
+    // Update toggle button state
+    if (scheduleToggleButton) {
+      if (scheduleData.length > maxRowsCollapsed) {
+        scheduleToggleButton.style.display = "inline-flex";
+        scheduleToggleButton.textContent = showFullSchedule ? "Show fewer rows" : "Show full schedule";
+      } else {
+        scheduleToggleButton.style.display = "none";
+      }
     }
   }
 
@@ -345,9 +372,18 @@
 
   scheduleViewRadios.forEach(radio => {
     radio.addEventListener("change", () => {
+      showFullSchedule = false;
       updateDisplay();
     });
   });
+
+  if (scheduleToggleButton) {
+    scheduleToggleButton.addEventListener("click", () => {
+      if (!lastResults) return;
+      showFullSchedule = !showFullSchedule;
+      updateSchedule(lastResults);
+    });
+  }
 
   const printButton = el("printButton");
   const exportCSVButton = el("exportCSVButton");

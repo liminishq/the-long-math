@@ -193,16 +193,16 @@ html[data-theme="light"] .loan-result-tile.highlight {
 }
 
 .loan-chart-container {
-  background: rgba(255, 255, 255, 0.04);
+  background: transparent;
   border-radius: 8px;
-  padding: 10px;
+  padding: 6px 6px 10px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   position: relative;
-  height: 260px;
+  height: 340px;
 }
 
 html[data-theme="light"] .loan-chart-container {
-  background: rgba(255, 255, 255, 0.8);
+  background: transparent;
   border: 1px solid rgba(0, 0, 0, 0.12);
 }
 

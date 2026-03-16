@@ -81,11 +81,37 @@ function attachEventListeners() {
     });
   });
 
+  const incomeSplittingCheckbox = document.getElementById('incomeSplitting');
+  if (incomeSplittingCheckbox) {
+    incomeSplittingCheckbox.addEventListener('change', () => {
+      toggleIncomeSplitting(incomeSplittingCheckbox.checked);
+      calculate();
+    });
+  }
+
   // Reset button
   const resetButton = document.getElementById('resetButton');
   if (resetButton) {
     resetButton.addEventListener('click', resetAllInputs);
   }
+}
+
+function toggleIncomeSplitting(enabled) {
+  const singleBlock = document.getElementById('singleShareholderBlock');
+  const splitBlock = document.getElementById('incomeSplittingBlock');
+  const singleResult = document.getElementById('singleResultBlock');
+  const splitResult = document.getElementById('splitResultBlock');
+  const singlePersonalDetail = document.getElementById('singlePersonalBreakdownDetail');
+  const personal1Detail = document.getElementById('personal1BreakdownDetail');
+  const personal2Detail = document.getElementById('personal2BreakdownDetail');
+
+  if (singleBlock) singleBlock.style.display = enabled ? 'none' : 'block';
+  if (splitBlock) splitBlock.style.display = enabled ? 'block' : 'none';
+  if (singleResult) singleResult.style.display = enabled ? 'none' : 'grid';
+  if (splitResult) splitResult.style.display = enabled ? 'grid' : 'none';
+  if (singlePersonalDetail) singlePersonalDetail.style.display = enabled ? 'none' : 'block';
+  if (personal1Detail) personal1Detail.style.display = enabled ? 'block' : 'none';
+  if (personal2Detail) personal2Detail.style.display = enabled ? 'block' : 'none';
 }
 
 /**
@@ -111,20 +137,35 @@ function resetAllInputs() {
   document.getElementById('province').value = '';
   document.getElementById('grossRevenue').value = '';
   document.getElementById('expenses').value = '';
+  document.getElementById('incomeSplitting').checked = false;
+  toggleIncomeSplitting(false);
+
   document.getElementById('salary').value = '';
   document.getElementById('eligibleDividends').value = '';
   document.getElementById('nonEligibleDividends').value = '';
   document.getElementById('personalOtherIncome').value = '';
   document.getElementById('personalDeductions').value = '';
-  
-  // Clear results
+
+  document.getElementById('sh1Salary').value = '';
+  document.getElementById('sh1EligibleDividends').value = '';
+  document.getElementById('sh1NonEligibleDividends').value = '';
+  document.getElementById('sh1OtherIncome').value = '';
+  document.getElementById('sh1Deductions').value = '';
+  document.getElementById('sh2Salary').value = '';
+  document.getElementById('sh2EligibleDividends').value = '';
+  document.getElementById('sh2NonEligibleDividends').value = '';
+  document.getElementById('sh2OtherIncome').value = '';
+  document.getElementById('sh2Deductions').value = '';
+
   clearResults();
-  
-  // Clear breakdown sections
+
   document.getElementById('corporateBreakdown').innerHTML = '';
   document.getElementById('personalBreakdown').innerHTML = '';
-  
-  // Hide province note
+  const pb1 = document.getElementById('personal1Breakdown');
+  const pb2 = document.getElementById('personal2Breakdown');
+  if (pb1) pb1.innerHTML = '';
+  if (pb2) pb2.innerHTML = '';
+
   updateProvinceNote();
 }
 
@@ -132,17 +173,39 @@ function resetAllInputs() {
  * Get inputs from form
  */
 function getInputs() {
-  return {
+  const incomeSplitting = document.getElementById('incomeSplitting').checked;
+  const base = {
     year: parseInt(document.getElementById('year').value) || 2025,
     province: document.getElementById('province').value,
     grossRevenue: parseInput(document.getElementById('grossRevenue').value),
     expenses: parseInput(document.getElementById('expenses').value),
-    salary: parseInput(document.getElementById('salary').value),
-    eligibleDividends: parseInput(document.getElementById('eligibleDividends').value),
-    nonEligibleDividends: parseInput(document.getElementById('nonEligibleDividends').value),
-    personalOtherIncome: parseInput(document.getElementById('personalOtherIncome').value),
-    personalDeductions: parseInput(document.getElementById('personalDeductions').value)
+    incomeSplitting
   };
+
+  if (incomeSplitting) {
+    base.shareholder1 = {
+      salary: parseInput(document.getElementById('sh1Salary').value),
+      eligibleDividends: parseInput(document.getElementById('sh1EligibleDividends').value),
+      nonEligibleDividends: parseInput(document.getElementById('sh1NonEligibleDividends').value),
+      otherIncome: parseInput(document.getElementById('sh1OtherIncome').value),
+      deductions: parseInput(document.getElementById('sh1Deductions').value)
+    };
+    base.shareholder2 = {
+      salary: parseInput(document.getElementById('sh2Salary').value),
+      eligibleDividends: parseInput(document.getElementById('sh2EligibleDividends').value),
+      nonEligibleDividends: parseInput(document.getElementById('sh2NonEligibleDividends').value),
+      otherIncome: parseInput(document.getElementById('sh2OtherIncome').value),
+      deductions: parseInput(document.getElementById('sh2Deductions').value)
+    };
+  } else {
+    base.salary = parseInput(document.getElementById('salary').value);
+    base.eligibleDividends = parseInput(document.getElementById('eligibleDividends').value);
+    base.nonEligibleDividends = parseInput(document.getElementById('nonEligibleDividends').value);
+    base.personalOtherIncome = parseInput(document.getElementById('personalOtherIncome').value);
+    base.personalDeductions = parseInput(document.getElementById('personalDeductions').value);
+  }
+
+  return base;
 }
 
 /**
@@ -176,21 +239,29 @@ function calculate() {
  * Render main results
  */
 function renderResults(result) {
-  const { corporate, personal, combined } = result;
+  const { corporate, personal, personal1, personal2, combined, incomeSplitting } = result;
 
-  // Corporate results
-  document.getElementById('corporateTaxableIncome').textContent = formatCurrency(corporate.taxableIncome);
-  document.getElementById('corporateTax').textContent = formatCurrency(corporate.totalCorporateTax);
-  document.getElementById('afterTaxCorporateCash').textContent = formatCurrency(corporate.afterTaxCash);
-  document.getElementById('retainedEarnings').textContent = formatCurrency(combined.retainedEarnings);
-
-  // Personal results
-  document.getElementById('personalTax').textContent = formatCurrency(personal.totalIncomeTax);
-  document.getElementById('netPersonalTakeHome').textContent = formatCurrency(combined.netPersonalTakeHome);
-
-  // Combined results
-  document.getElementById('totalTaxBurden').textContent = formatCurrency(combined.totalTaxBurden);
-  document.getElementById('effectiveTaxRate').textContent = formatPercent(combined.effectiveTaxRate);
+  if (incomeSplitting) {
+    document.getElementById('splitCorporateTaxableIncome').textContent = formatCurrency(corporate.taxableIncome);
+    document.getElementById('splitCorporateTax').textContent = formatCurrency(corporate.totalCorporateTax);
+    document.getElementById('splitAfterTaxCorporateCash').textContent = formatCurrency(corporate.afterTaxCash);
+    document.getElementById('splitRetainedEarnings').textContent = formatCurrency(combined.retainedEarnings);
+    document.getElementById('sh1PersonalTax').textContent = formatCurrency(personal1.totalIncomeTax);
+    document.getElementById('sh1NetTakeHome').textContent = formatCurrency(personal1.takeHomeAfterPayroll);
+    document.getElementById('sh2PersonalTax').textContent = formatCurrency(personal2.totalIncomeTax);
+    document.getElementById('sh2NetTakeHome').textContent = formatCurrency(personal2.takeHomeAfterPayroll);
+    document.getElementById('splitTotalTaxBurden').textContent = formatCurrency(combined.totalTaxBurden);
+    document.getElementById('splitEffectiveTaxRate').textContent = formatPercent(combined.effectiveTaxRate);
+  } else {
+    document.getElementById('corporateTaxableIncome').textContent = formatCurrency(corporate.taxableIncome);
+    document.getElementById('corporateTax').textContent = formatCurrency(corporate.totalCorporateTax);
+    document.getElementById('afterTaxCorporateCash').textContent = formatCurrency(corporate.afterTaxCash);
+    document.getElementById('retainedEarnings').textContent = formatCurrency(combined.retainedEarnings);
+    document.getElementById('personalTax').textContent = formatCurrency(personal.totalIncomeTax);
+    document.getElementById('netPersonalTakeHome').textContent = formatCurrency(combined.netPersonalTakeHome);
+    document.getElementById('totalTaxBurden').textContent = formatCurrency(combined.totalTaxBurden);
+    document.getElementById('effectiveTaxRate').textContent = formatPercent(combined.effectiveTaxRate);
+  }
 }
 
 /**
@@ -198,7 +269,12 @@ function renderResults(result) {
  */
 function renderBreakdown(result) {
   renderCorporateBreakdown(result.corporate);
-  renderPersonalBreakdown(result.personal);
+  if (result.incomeSplitting) {
+    renderPersonalBreakdown(result.personal1, document.getElementById('personal1Breakdown'));
+    renderPersonalBreakdown(result.personal2, document.getElementById('personal2Breakdown'));
+  } else {
+    renderPersonalBreakdown(result.personal, document.getElementById('personalBreakdown'));
+  }
 }
 
 /**
@@ -286,10 +362,13 @@ function renderCorporateBreakdown(corporate) {
 
 /**
  * Render personal tax breakdown (simplified - can expand later)
+ * @param {Object} personal - personal totals + breakdown
+ * @param {HTMLElement} [container] - optional container (default: personalBreakdown)
  */
-function renderPersonalBreakdown(personal) {
-  const container = document.getElementById('personalBreakdown');
-  container.innerHTML = '';
+function renderPersonalBreakdown(personal, container) {
+  const el = container || document.getElementById('personalBreakdown');
+  if (!el) return;
+  el.innerHTML = '';
 
   const div = document.createElement('div');
   div.className = 'breakdown-section';
@@ -304,7 +383,7 @@ function renderPersonalBreakdown(personal) {
     <p>Total Burden: ${formatCurrency(personal.totalBurden)}</p>
   `;
 
-  container.appendChild(div);
+  el.appendChild(div);
 }
 
 /**
@@ -319,6 +398,12 @@ function clearResults() {
   document.getElementById('netPersonalTakeHome').textContent = '$–';
   document.getElementById('totalTaxBurden').textContent = '$–';
   document.getElementById('effectiveTaxRate').textContent = '–%';
+
+  const splitIds = ['splitCorporateTaxableIncome', 'splitCorporateTax', 'splitAfterTaxCorporateCash', 'splitRetainedEarnings', 'sh1PersonalTax', 'sh1NetTakeHome', 'sh2PersonalTax', 'sh2NetTakeHome', 'splitTotalTaxBurden', 'splitEffectiveTaxRate'];
+  splitIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = id.includes('Effective') ? '–%' : '$–';
+  });
 }
 
 /**

@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspect the Arithmetic – Flat-Fee or Hourly Advisor Cost Calculator | The Long Math</title>
+  <meta name="description" content="Formulae, computational structure, and assumptions for the Flat-Fee or Hourly Advisor Cost Calculator." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/flat-fee-or-hourly/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <h1>Inspect the Arithmetic — Flat-Fee or Hourly Advisor Cost Calculator</h1>
+      <p class="methodology-meta">Version 1.0<br>Last updated: March 2026</p>
+
+      <p>
+        Transparent arithmetic is the operating system of this calculator.
+      </p>
+      <p>
+        This document publishes the formulae, computational structure, and assumptions used to generate the outputs displayed on the calculator page.
+      </p>
+      <p>
+        No opinions. No hidden assumptions. Just arithmetic.
+      </p>
+
+      <h2>Purpose</h2>
+      <p>
+        This calculator estimates the long-run effect of flat-fee, hourly, or percentage-of-assets (AUM) advisor fees on a portfolio. It decomposes
+        the total impact into direct fees paid, lost compounding from removing those dollars, the gap between ending values with and without fees,
+        and an AUM-fee percentage that would produce the same ending value as a given flat or hourly schedule.
+      </p>
+
+      <h2>Definitions</h2>
+      <p>Let:</p>
+      <ul>
+        <li>B<sub>0</sub> = starting portfolio balance (initial value)</li>
+        <li>B<sub>t</sub> = portfolio balance at the end of month t</li>
+        <li>C = monthly contribution (dollars added at end of month)</li>
+        <li>F = annual advisor fee in dollars (flat-fee or hourly model before monthly conversion)</li>
+        <li>T = time horizon in years</li>
+        <li>N = 12T = total number of months</li>
+        <li>r = annual nominal return (decimal)</li>
+        <li>r<sub>m</sub> = effective monthly return derived from r</li>
+        <li>f<sub>a</sub> = annual advisor fee rate (decimal, for AUM model)</li>
+        <li>Fee<sub>t</sub> = fee dollars deducted in month t</li>
+        <li>TotalFees = Σ Fee<sub>t</sub> over the full horizon</li>
+        <li>FV<sub>without</sub> = ending value with no advisor fees</li>
+        <li>FV<sub>with</sub> = ending value with the chosen fee model</li>
+        <li>TotalCost = FV<sub>without</sub> − FV<sub>with</sub></li>
+        <li>LostCompounding = TotalCost − TotalFees</li>
+      </ul>
+
+      <h2>Core Equations</h2>
+
+      <h3 id="monthly-rate">1. Monthly Return from Annual Return</h3>
+      <p>
+        The calculator converts the user-supplied annual nominal return r into an effective monthly rate r<sub>m</sub>:
+      </p>
+      <div class="formula-block">
+        r<sub>m</sub> = (1 + r)<sup>1/12</sup> − 1
+      </div>
+
+      <h3 id="without-fees">2. Growth Without Advisor Fees</h3>
+      <p>
+        With no advisor fees, the portfolio is simulated month by month with contributions at the end of each month:
+      </p>
+      <div class="formula-block">
+        B<sub>0</sub> = startingBalance<br>
+        For t = 1, 2, …, N:<br>
+        &nbsp;&nbsp;B<sub>t</sub> = B<sub>t−1</sub>(1 + r<sub>m</sub>) + C
+      </div>
+      <p>
+        The ending value without fees is:
+      </p>
+      <div class="formula-block">
+        FV<sub>without</sub> = B<sub>N</sub>
+      </div>
+
+      <h3 id="with-fees">3. Growth With Flat, Hourly, or AUM Fees</h3>
+      <p>
+        With advisor fees, the simulation still runs month by month with growth first, then fees, then contributions at the end of the month.
+      </p>
+      <p>Growth step (all models):</p>
+      <div class="formula-block">
+        B<sub>t</sub><sup>gross</sup> = B<sub>t−1</sub>(1 + r<sub>m</sub>)
+      </div>
+      <p>Fee step depends on the model:</p>
+      <ul>
+        <li>
+          <strong>Flat-fee model:</strong> a flat annual fee F (optionally increased by a fixed percentage each year) is converted to a monthly fee
+          F/12 and deducted each month.
+        </li>
+        <li>
+          <strong>Hourly model:</strong> an hourly rate × hours per year defines an annual dollar fee, again converted to a monthly amount and
+          optionally increased each year.
+        </li>
+        <li>
+          <strong>AUM model:</strong> a percentage-of-assets rate f<sub>a</sub> (annual decimal) is applied as a monthly percentage of the current
+          balance:
+          <div class="formula-block">
+            f<sub>a,m</sub> = f<sub>a</sub> / 12<br>
+            Fee<sub>t</sub> = B<sub>t</sub><sup>gross</sup> × f<sub>a,m</sub>
+          </div>
+        </li>
+      </ul>
+      <p>
+        In all cases, the fee deducted in month t is:
+      </p>
+      <div class="formula-block">
+        Fee<sub>t</sub> = monthly fee determined by the chosen model, capped so it cannot exceed B<sub>t</sub><sup>gross</sup><br>
+        B<sub>t</sub><sup>net</sup> = B<sub>t</sub><sup>gross</sup> − Fee<sub>t</sub>
+      </div>
+      <p>Contribution step (all models):</p>
+      <div class="formula-block">
+        B<sub>t</sub> = B<sub>t</sub><sup>net</sup> + C
+      </div>
+      <p>
+        Total fees are tracked as:
+      </p>
+      <div class="formula-block">
+        TotalFees = Σ<sub>t=1</sub><sup>N</sup> Fee<sub>t</sub>
+      </div>
+      <p>
+        The ending value with fees is:
+      </p>
+      <div class="formula-block">
+        FV<sub>with</sub> = B<sub>N</sub>
+      </div>
+
+      <h3 id="cost-decomposition">4. Total Cost, Fees Paid, and Lost Compounding</h3>
+      <p>
+        The calculator defines the total cost of the fee model as the gap between ending values with and without fees:
+      </p>
+      <div class="formula-block">
+        TotalCost = FV<sub>without</sub> − FV<sub>with</sub>
+      </div>
+      <p>
+        Given TotalFees from the monthly simulation, lost compounding is the residual:
+      </p>
+      <div class="formula-block">
+        LostCompounding = TotalCost − TotalFees
+      </div>
+
+      <h3 id="aum-equivalent">5. AUM-Fee Equivalent</h3>
+      <p>
+        For flat and hourly models, the calculator finds the AUM fee rate f<sub>a</sub><sup>*</sup> (annual decimal) that would produce the same
+        ending value as the modeled schedule, holding all other inputs constant. It does this numerically using a binary search on an AUM rate
+        between 0 and 5%.
+      </p>
+      <p>
+        Let FV<sub>with_AUM(f)</sub> be the ending value from the AUM fee simulation with rate f. The calculator searches for f such that:
+      </p>
+      <div class="formula-block">
+        FV<sub>with_AUM(f)</sub> ≈ FV<sub>with</sub>
+      </div>
+      <p class="formula-meta">
+        If no solution is found below 5% (i.e., even a 5% AUM fee does not reduce the portfolio as much as the modeled flat or hourly schedule),
+        the calculator reports an AUM-equivalent of “≥ 5.00%”.
+      </p>
+
+      <h2>Implementation Notes</h2>
+      <ul>
+        <li>
+          The core arithmetic is implemented in <code>calculateFlatFeeOrHourlyCost()</code> inside
+          <code>/calculators/flat-fee-or-hourly/engine.js</code>, which calls helper functions to simulate paths with and without fees and to solve
+          for the AUM-equivalent rate.
+        </li>
+        <li>
+          Contributions are always applied at the end of each month after growth and fee deduction, matching the description above.
+        </li>
+        <li>
+          All calculations use JavaScript’s standard floating-point arithmetic; any rounding is applied only when formatting numbers for display.
+        </li>
+      </ul>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between this documentation and the live calculator engine, the engine’s arithmetic
+        (<code>calculateFlatFeeOrHourlyCost()</code> in <code>engine.js</code>) is the source of truth. This page will be updated to match the
+        engine.
+      </p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>
+

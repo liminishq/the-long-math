@@ -46,6 +46,7 @@
       <h2>Definitions</h2>
       <p>Let:</p>
       <ul>
+        <li>B<sub>0</sub> = initial portfolio balance (equal to starting balance P)</li>
         <li>B<sub>t</sub> = portfolio balance at the end of month t</li>
         <li>P = starting balance</li>
         <li>C = monthly contribution</li>
@@ -75,7 +76,7 @@
       <div class="formula-block">Fee<sub>t</sub> = f<sub>total,m</sub> × B<sub>t</sub><sup>gross</sup></div>
       <p>Net balance:</p>
       <div class="formula-block">B<sub>t</sub> = B<sub>t</sub><sup>gross</sup> − Fee<sub>t</sub></div>
-      <p>Equivalent form:</p>
+      <p>Algebraically equivalent expression when fees are applied after growth:</p>
       <div class="formula-block">B<sub>t</sub> = (B<sub>t−1</sub> + C)(1 + r<sub>m</sub>)(1 − f<sub>total,m</sub>)</div>
       <p class="formula-meta"><strong>Rationale:</strong> Advisor fees and MERs are modeled as proportional deductions from assets under management.</p>
       <p class="formula-meta"><strong>Limitation:</strong> Actual billing schedules may vary (e.g., quarterly billing, in arrears, average daily balance). This model applies a proportional monthly drag consistent with monthly compounding.</p>

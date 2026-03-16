@@ -7,18 +7,12 @@ import { calculateCorporateTax } from './corporate.engine.js';
 import { computePersonalTax } from './tax.engine.js';
 
 /**
- * Calculate complete CCPC tax scenario
+ * Calculate complete CCPC tax scenario (single or income-splitting)
  * @param {Object} input - Input object with:
- *   - year: tax year
- *   - province: province code (corporate)
- *   - grossRevenue: gross corporate revenue
- *   - expenses: total business expenses
- *   - salary: salary/bonus paid to shareholder
- *   - eligibleDividends: eligible dividends paid
- *   - nonEligibleDividends: non-eligible dividends paid
- *   - personalProvince: province for personal tax (may differ from corporate)
- *   - personalOtherIncome: other personal income
- *   - personalDeductions: personal deductions
+ *   - year, province, grossRevenue, expenses
+ *   - incomeSplitting: boolean
+ *   - If single: salary, eligibleDividends, nonEligibleDividends, personalOtherIncome, personalDeductions
+ *   - If splitting: shareholder1: { salary, eligibleDividends, nonEligibleDividends, otherIncome, deductions }, shareholder2: same
  * @returns {Object} Complete CCPC tax calculation result
  */
 export function computeCCPCTax(input) {
@@ -27,24 +21,91 @@ export function computeCCPCTax(input) {
     province,
     grossRevenue = 0,
     expenses = 0,
-    salary = 0,
-    eligibleDividends = 0,
-    nonEligibleDividends = 0,
-    personalProvince,
-    personalOtherIncome = 0,
-    personalDeductions = 0
+    incomeSplitting = false
   } = input;
 
-  // Use corporate province for personal if not specified
-  const personalProv = personalProvince || province;
-
-  // Calculate corporate taxable income
+  const personalProv = input.personalProvince || province;
   const corporateTaxableIncome = Math.max(0, grossRevenue - expenses);
-
-  // Calculate corporate tax
   const corporate = calculateCorporateTax(corporateTaxableIncome, province);
+  const afterTaxCorporateCash = corporate.afterTaxCash;
 
-  // Calculate personal tax using existing personal tax engine
+  if (incomeSplitting && input.shareholder1 != null && input.shareholder2 != null) {
+    const sh1 = input.shareholder1;
+    const sh2 = input.shareholder2;
+    const salary1 = sh1.salary || 0;
+    const salary2 = sh2.salary || 0;
+    const elig1 = sh1.eligibleDividends || 0;
+    const elig2 = sh2.eligibleDividends || 0;
+    const nonElig1 = sh1.nonEligibleDividends || 0;
+    const nonElig2 = sh2.nonEligibleDividends || 0;
+
+    const totalDistributions = salary1 + elig1 + nonElig1 + salary2 + elig2 + nonElig2;
+    const retainedEarnings = Math.max(0, afterTaxCorporateCash - totalDistributions);
+
+    const personal1 = computePersonalTax({
+      year,
+      province: personalProv,
+      employmentIncome: salary1,
+      eligibleDividends: elig1,
+      nonEligibleDividends: nonElig1,
+      otherIncome: sh1.otherIncome || 0,
+      rrspDeduction: 0,
+      fhsaDeduction: 0,
+      estimatedDeductions: sh1.deductions || 0,
+      taxPaid: 0
+    });
+
+    const personal2 = computePersonalTax({
+      year,
+      province: personalProv,
+      employmentIncome: salary2,
+      eligibleDividends: elig2,
+      nonEligibleDividends: nonElig2,
+      otherIncome: sh2.otherIncome || 0,
+      rrspDeduction: 0,
+      fhsaDeduction: 0,
+      estimatedDeductions: sh2.deductions || 0,
+      taxPaid: 0
+    });
+
+    const totalPersonalTax = personal1.totals.totalIncomeTax + personal2.totals.totalIncomeTax;
+    const totalTaxBurden = corporate.totalCorporateTax + totalPersonalTax;
+    const effectiveTaxRate = grossRevenue > 0 ? totalTaxBurden / grossRevenue : 0;
+    const netPersonalTakeHome = personal1.totals.takeHomeAfterPayroll + personal2.totals.takeHomeAfterPayroll;
+
+    return {
+      incomeSplitting: true,
+      corporate: {
+        ...corporate,
+        grossRevenue,
+        expenses,
+        distributions: totalDistributions
+      },
+      personal: null,
+      personal1: {
+        ...personal1.totals,
+        breakdown: personal1.breakdown
+      },
+      personal2: {
+        ...personal2.totals,
+        breakdown: personal2.breakdown
+      },
+      combined: {
+        totalTaxBurden,
+        effectiveTaxRate,
+        netPersonalTakeHome,
+        retainedEarnings,
+        afterTaxCorporateCash
+      }
+    };
+  }
+
+  const salary = input.salary || 0;
+  const eligibleDividends = input.eligibleDividends || 0;
+  const nonEligibleDividends = input.nonEligibleDividends || 0;
+  const personalOtherIncome = input.personalOtherIncome || 0;
+  const personalDeductions = input.personalDeductions || 0;
+
   const personal = computePersonalTax({
     year,
     province: personalProv,
@@ -58,23 +119,14 @@ export function computeCCPCTax(input) {
     taxPaid: 0
   });
 
-  // Calculate total tax burden
   const totalTaxBurden = corporate.totalCorporateTax + personal.totals.totalIncomeTax;
-  
-  // Calculate effective overall tax rate
   const effectiveTaxRate = grossRevenue > 0 ? totalTaxBurden / grossRevenue : 0;
-
-  // Net personal take-home
   const netPersonalTakeHome = personal.totals.takeHomeAfterPayroll;
-
-  // After-tax corporate cash (before distributions)
-  const afterTaxCorporateCash = corporate.afterTaxCash;
-
-  // Retained earnings (after-tax cash minus distributions)
   const distributions = salary + eligibleDividends + nonEligibleDividends;
   const retainedEarnings = Math.max(0, afterTaxCorporateCash - distributions);
 
   return {
+    incomeSplitting: false,
     corporate: {
       ...corporate,
       grossRevenue,
@@ -85,6 +137,8 @@ export function computeCCPCTax(input) {
       ...personal.totals,
       breakdown: personal.breakdown
     },
+    personal1: null,
+    personal2: null,
     combined: {
       totalTaxBurden,
       effectiveTaxRate,

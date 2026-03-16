@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspect the Arithmetic – Inflation-Adjusted Investment Calculator | The Long Math</title>
+  <meta name="description" content="Formulae, computational structure, and assumptions for the Inflation-Adjusted Investment Calculator." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/investment-calculator-inflation-adjusted/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <h1>Inspect the Arithmetic — Inflation-Adjusted Investment Calculator</h1>
+      <p class="methodology-meta">Version 1.0<br>Last updated: March 2026</p>
+
+      <p>
+        Transparent arithmetic is the operating system of this calculator.
+      </p>
+      <p>
+        This document publishes the formulae, computational structure, and assumptions used to generate the outputs displayed on the calculator page.
+      </p>
+      <p>
+        No opinions. No hidden assumptions. Just arithmetic.
+      </p>
+
+      <h2>Purpose</h2>
+      <p>
+        This calculator estimates the future value of an investment in both nominal (future dollars) and real (inflation-adjusted, today's dollars)
+        terms. It uses a starting balance, ongoing contributions, a time horizon in years, an expected nominal annual return, and an assumed annual
+        inflation rate. The primary output is the real (inflation-adjusted) ending balance; the nominal balance is shown for comparison.
+      </p>
+      <p>
+        It is an educational tool only. It does not replicate a full financial plan, tax system, or specific account rules. It does not apply taxes,
+        fees, contribution limits, or asset allocation constraints.
+      </p>
+
+      <h2>Definitions</h2>
+      <p>Let:</p>
+      <ul>
+        <li>S = starting amount (today's dollars)</li>
+        <li>C = contribution per period, entered in today's dollars</li>
+        <li>Y = time horizon in years (1–60)</li>
+        <li>r<sub>nom</sub> = expected nominal annual return (percent, converted to decimal)</li>
+        <li>π = assumed annual inflation rate (percent, converted to decimal)</li>
+        <li>m = number of contribution periods per year (12 for monthly, 1 for yearly)</li>
+        <li>r<sub>real,annual</sub> = real annual return (after inflation)</li>
+        <li>r<sub>real,period</sub> = real return per contribution period</li>
+        <li>t = period index, from 0 to T − 1, where T = m × Y</li>
+        <li>B<sub>t</sub> = real (inflation-adjusted) balance at the end of period t</li>
+        <li>NominalFinal = nominal (future dollars) ending balance</li>
+        <li>RealFinal = real (today's dollars) ending balance</li>
+      </ul>
+
+      <h2>Core Equations</h2>
+
+      <h3 id="real-return">1. Real Return from Nominal Return and Inflation</h3>
+      <p>
+        The calculator first converts the user-supplied nominal annual return and inflation rate into a real annual return:
+      </p>
+      <div class="formula-block">
+        r<sub>real,annual</sub> = (1 + r<sub>nom</sub>) / (1 + π) − 1
+      </div>
+      <p class="formula-meta">
+        If π ≤ −100% (an edge case guard), the calculator skips this adjustment and uses r<sub>nom</sub> directly.
+      </p>
+
+      <h3 id="period-rate">2. Period Return</h3>
+      <p>
+        Contributions can be monthly or yearly, but compounding is always modeled at the real annual rate translated into the matching period rate:
+      </p>
+      <div class="formula-block">
+        m = 12 (monthly contributions) or 1 (yearly contributions)<br>
+        r<sub>real,period</sub> =
+        <span style="white-space: nowrap;">
+          { (1 + r<sub>real,annual</sub>)<sup>1/12</sup> − 1, if m = 12;<br>
+          &nbsp;&nbsp;r<sub>real,annual</sub>, if m = 1. }
+        </span>
+      </div>
+
+      <h3 id="simulation">3. Period-by-Period Simulation (Real Dollars)</h3>
+      <p>
+        The calculator runs a simple simulation in real (today's) dollars over T = m × Y periods. Contributions are entered in today's dollars and
+        treated as fixed real amounts; inflation is accounted for through the real return.
+      </p>
+      <p>
+        Let B<sub>0</sub> = S. For each period t from 0 to T − 1:
+      </p>
+      <div class="formula-block">
+        1. If contributions are at the beginning of the period:<br>
+        &nbsp;&nbsp;B<sub>t</sub> ← B<sub>t</sub> + C<br>
+        2. Apply real growth for the period:<br>
+        &nbsp;&nbsp;Growth<sub>t</sub> = B<sub>t</sub> × r<sub>real,period</sub><br>
+        &nbsp;&nbsp;B<sub>t</sub> ← B<sub>t</sub> + Growth<sub>t</sub><br>
+        3. If contributions are at the end of the period:<br>
+        &nbsp;&nbsp;B<sub>t</sub> ← B<sub>t</sub> + C
+      </div>
+      <p class="formula-meta">
+        The calculator tracks cumulative contributions in real dollars as the sum of all C applied over the simulation, and real growth as
+        RealFinal − S − (total real contributions).
+      </p>
+
+      <h3 id="final-balances">4. Real and Nominal Final Balances</h3>
+      <p>
+        After T periods, the real ending balance is simply the simulated balance:
+      </p>
+      <div class="formula-block">
+        RealFinal = B<sub>T</sub>
+      </div>
+      <p>
+        The nominal ending balance is derived by re-applying the inflation assumption over the whole horizon:
+      </p>
+      <div class="formula-block">
+        InflationFactor = (1 + π)<sup>Y</sup><br>
+        NominalFinal = RealFinal × InflationFactor
+      </div>
+
+      <h2>Schedule and Breakdown</h2>
+      <p>
+        The calculator builds a real (inflation-adjusted) accumulation schedule from the same period-by-period simulation:
+      </p>
+      <ul>
+        <li>
+          A yearly schedule records, for each year y from 0 to Y, the year's total real contributions, real growth, and ending real balance.
+          Year 0 is the starting point (S, with zero contributions and growth).
+        </li>
+        <li>
+          When the "Monthly" view is selected and contributions are monthly, a monthly schedule records each period's contribution, growth, and ending
+          real balance.
+        </li>
+        <li>
+          The on-page breakdown bar uses the final real balance and decomposes it into starting amount, total real contributions, and real growth.
+        </li>
+      </ul>
+
+      <h2>Inputs, Parsing, and Edge Cases</h2>
+      <ul>
+        <li>
+          All numeric inputs are read directly from the form fields. NaN or non-finite values are treated as 0 for amounts and as 0% for rates,
+          except that the time horizon is clamped between 1 and 60 years and rounded to the nearest whole year.
+        </li>
+        <li>
+          Contributions are interpreted in today's dollars. They are not explicitly inflated as separate nominal amounts; instead, the simulation
+          runs entirely in real terms via the real return r<sub>real,period</sub>.
+        </li>
+        <li>
+          This simplified version does not subtract taxes, fees, or account-level frictions. It does not model contribution limits, withdrawals,
+          or different account types.
+        </li>
+        <li>
+          Extremely high or low return and inflation inputs may produce unrealistic outputs but are allowed for "what if" scenarios.
+        </li>
+      </ul>
+
+      <h2>Implementation Notes</h2>
+      <ul>
+        <li>
+          The arithmetic described above is implemented in the JavaScript function <code>simulateInvestment()</code> inside
+          <code>/calculators/investment-calculator-inflation-adjusted/script.js</code>. The on-page results (headline figures, breakdown, schedule,
+          CSV export) read values directly from that function's return object.
+        </li>
+        <li>
+          Real and nominal balances are computed once per input change; the accumulation schedule is reconstructed from the same simulated path.
+        </li>
+        <li>
+          All calculations use JavaScript's standard floating-point arithmetic. Display formatting (e.g., rounding to whole dollars) happens only at
+          the presentation layer.
+        </li>
+      </ul>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between this documentation and the live calculator behavior, the JavaScript engine
+        (<code>simulateInvestment()</code> in <code>script.js</code>) is the source of truth. This page will be updated to match the engine.
+      </p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>
+

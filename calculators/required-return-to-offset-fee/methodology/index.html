@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspect the Arithmetic – Required Return to Offset Investment and Management Fees | The Long Math</title>
+  <meta name="description" content="Formulae, computational structure, and assumptions for the required-return-to-offset-fee calculator." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/required-return-to-offset-fee/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <h1>Inspect the Arithmetic — Required Return to Offset Investment and Management Fees</h1>
+      <p class="methodology-meta">Version 1.0<br>Last updated: March 2026</p>
+
+      <p>
+        Transparent arithmetic is the operating system of this calculator.
+      </p>
+      <p>
+        This document publishes the formulae, computational structure, and assumptions used to generate the outputs displayed on the calculator page.
+      </p>
+      <p>
+        No opinions. No hidden assumptions. Just arithmetic.
+      </p>
+
+      <h2>Purpose</h2>
+      <p>
+        This calculator answers two related questions under a simple “net = gross − fee” return model:
+      </p>
+      <ul>
+        <li>What additional annual return (alpha) is required to fully offset an annual fee?</li>
+        <li>
+          If that excess return is not earned, how much extra cash must be contributed each year to end up at the same value you would have had
+          with no fee?
+        </li>
+      </ul>
+
+      <h2>Definitions</h2>
+      <p>Let:</p>
+      <ul>
+        <li>P = starting balance (initial principal, CAD)</li>
+        <li>c = baseline annual contribution (CAD), applied at the end of each year</li>
+        <li>c<sub>extra</sub> = additional annual contribution required to offset the fee</li>
+        <li>t = investment horizon in years</li>
+        <li>r = gross annual return baseline (decimal)</li>
+        <li>f = annual fee rate (decimal)</li>
+        <li>α = additional annual return (alpha) required to offset the fee</li>
+        <li>r<sub>net</sub> = net annual return after fee = r − f</li>
+        <li>FV(P, r, t, c) = future value with annual compounding and end-of-year contributions</li>
+      </ul>
+
+      <h2>Core Equations</h2>
+
+      <h3 id="fv-annual">1. Future Value with Annual Compounding</h3>
+      <p>
+        The calculator uses the same closed-form future value function as the fee-cost pages:
+      </p>
+      <div class="formula-block">
+        FV(P, r, t, c) = P(1 + r)<sup>t</sup> + c · \frac{(1 + r)<sup>t</sup> − 1}{r}, &nbsp; if r ≠ 0<br>
+        FV(P, 0, t, c) = P + c · t, &nbsp; if r = 0
+      </div>
+
+      <h3 id="paths">2. Reference Paths</h3>
+      <p>Two reference paths are defined:</p>
+      <ul>
+        <li>
+          <strong>No-fee path:</strong>
+          <div class="formula-block">
+            FV<sub>no_fee</sub> = FV(P, r, t, c)
+          </div>
+        </li>
+        <li>
+          <strong>With-fee path (no extra return, same contributions):</strong>
+          <div class="formula-block">
+            r<sub>net</sub> = r − f<br>
+            FV<sub>with_fee</sub> = FV(P, r<sub>net</sub>, t, c)
+          </div>
+        </li>
+      </ul>
+      <p>
+        The “ending value lost to fees” shown on the calculator page is simply FV<sub>no_fee</sub> − FV<sub>with_fee</sub>.
+      </p>
+
+      <h3 id="alpha">3. Required Excess Return (Alpha)</h3>
+      <p>
+        Under the “net = gross − fee” model, offsetting the fee on a percentage basis requires that the net-with-fee return match the no-fee return:
+      </p>
+      <div class="formula-block">
+        r = (r + α − f) ⇒ α = f
+      </div>
+      <p>
+        The calculator therefore reports:
+      </p>
+      <div class="formula-block">
+        α = f<br>
+        Required gross return = r + α = r + f
+      </div>
+
+      <h3 id="extra-contrib">4. Extra Annual Contribution Required</h3>
+      <p>
+        If excess return α is not achieved, the calculator solves for c<sub>extra</sub> such that a higher contribution level exactly compensates for
+        the fee drag:
+      </p>
+      <div class="formula-block">
+        FV(P, r, t, c) = FV(P, r − f, t, c + c<sub>extra</sub>)
+      </div>
+      <p>
+        For r − f ≠ 0, define:
+      </p>
+      <div class="formula-block">
+        g = (1 + (r − f))<sup>t</sup><br>
+        A = \frac{g − 1}{r − f}
+      </div>
+      <p>
+        Then, expanding both sides and solving algebraically for c<sub>extra</sub> gives:
+      </p>
+      <div class="formula-block">
+        c<sub>extra</sub> = \frac{FV(P, r, t, c) − P·g}{A} − c
+      </div>
+      <p>
+        When r − f = 0, the net-with-fee path is a flat-growth path and the formula reduces to:
+      </p>
+      <div class="formula-block">
+        c<sub>extra</sub> = \frac{FV(P, r, t, c) − P}{t} − c
+      </div>
+
+      <h2>Implementation Notes</h2>
+      <ul>
+        <li>
+          The functions <code>TLM_FeeMath.fvAnnual</code>, <code>TLM_FeeMath.endingValueWithFee()</code>, and
+          <code>TLM_FeeMath.extraAnnualContributionToOffsetFee()</code> in <code>/assets/js/fee-math.js</code> implement the equations above.
+        </li>
+        <li>
+          The page-specific logic in <code>initRequiredReturnPage()</code> inside <code>/assets/js/fee-ui.js</code> computes:
+          <ul>
+            <li>α (as a percentage) and the required gross return r + α,</li>
+            <li>FV<sub>no_fee</sub>, FV<sub>with_fee</sub>, and their difference,</li>
+            <li>c<sub>extra</sub> and the associated SEO/callout sentence.</li>
+          </ul>
+        </li>
+        <li>
+          All values are computed in continuous decimal form and then formatted as percentages or whole-dollar CAD amounts at the display layer.
+        </li>
+      </ul>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between this documentation and the live calculator engine, the engine’s arithmetic
+        (<code>TLM_FeeMath</code> + <code>initRequiredReturnPage()</code>) is the source of truth. This page will be updated to match the engine.
+      </p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>
+

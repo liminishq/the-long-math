@@ -4,16 +4,16 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>TFSA Over-Contribution Penalty Calculator – The Long Math</title>
-  <meta name="description" content="Estimate CRA TFSA over-contribution penalties based on excess amount and months outstanding. Calculator in development." />
+  <meta name="description" content="Estimate CRA TFSA over-contribution penalties based on the highest excess amount in each calendar month. Educational calculator for Canada." />
   <link rel="canonical" href="https://thelongmath.com/calculators/tfsa-over-contribution-penalty-calculator/" />
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="TFSA Over-Contribution Penalty Calculator – The Long Math" />
-  <meta property="og:description" content="Estimate CRA TFSA over-contribution penalties. Calculator in development." />
+  <meta property="og:description" content="Estimate CRA TFSA over-contribution penalties based on the highest excess in each month." />
   <meta property="og:url" content="https://thelongmath.com/calculators/tfsa-over-contribution-penalty-calculator/" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="TFSA Over-Contribution Penalty Calculator – The Long Math" />
-  <meta name="twitter:description" content="Estimate CRA TFSA over-contribution penalties. Calculator in development." />
+  <meta name="twitter:description" content="Estimate CRA TFSA over-contribution penalties based on the highest excess in each month." />
 
   <script type="application/ld+json">
 {
@@ -28,24 +28,10 @@
   </script>
 
   <script src="/assets/js/theme-init.js"></script>
-  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="/calculators/tfsa-over-contribution-penalty-calculator/styles.css" />
   <script defer src="/assets/js/site.js"></script>
-  <style>
-    .article-content { max-width: 980px; margin: 0 auto; line-height: 1.7; }
-    .article-content h2 { margin: 0 0 0.75em; }
-    .article-content p { margin: 0.9em 0; }
-    .section-card {
-      border: 1px solid var(--border); border-radius: 18px; padding: 18px; margin: 18px 0;
-      background: var(--card-bg, var(--surface, #fff)); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
-    }
-    .section-card.intro-card { margin-top: 14px; }
-    .related-articles h2 { font-size: 18px; margin: 0 0 10px; }
-    .related-articles ul { list-style: none; padding-left: 0; margin: 0; }
-    .related-articles li { margin: 12px 0; }
-    .related-articles a { color: var(--accent); text-decoration: none; }
-    .related-articles a:hover { text-decoration: underline; }
-    .status-notice { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin: 18px 0; font-size: 0.95em; }
-  </style>
+
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
   <script>
   window.dataLayer = window.dataLayer || [];
@@ -58,37 +44,190 @@
   <div id="site-header"></div>
 
   <div class="wrap">
-    <a href="/calculators/" class="home-link">← Back to Tools and Calculators</a>
 
-    <article class="article-content">
-      <header>
-        <h1>TFSA Over-Contribution Penalty Calculator</h1>
-      </header>
+    <header>
+      <h1>TFSA Over-Contribution Penalty Calculator</h1>
+      <p class="lead">
+        Estimate CRA TFSA over-contribution tax (penalty) based on your available room, contributions, and withdrawals over a date range.
+      </p>
+      <p class="lead">
+        The penalty is 1% per month on the <strong>highest excess amount</strong> in each calendar month. This tool models that rule so you can see how excess and penalties change over time.
+      </p>
+      <p class="lead" style="margin-top: 12px; font-weight: 600;">
+        <strong>No opinions. No hidden assumptions. Just arithmetic.</strong>
+      </p>
+    </header>
 
-      <div class="status-notice">
-        <strong>Work in progress.</strong> This calculator is not yet available. The full version will let you estimate CRA TFSA over-contribution penalties.
+    <div class="card" id="calc_card">
+      <div class="inspect-bar">
+        <a href="/calculators/tfsa-over-contribution-penalty-calculator/methodology/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">
+          Inspect the Arithmetic
+        </a>
       </div>
 
-      <section class="section-card intro-card">
-        <p>When it is ready, this tool will estimate CRA TFSA over-contribution penalties based on:</p>
-        <ul>
-          <li>The <strong>excess contribution amount</strong> (how much you are over your available room)</li>
-          <li>The <strong>number of months</strong> the excess remains in the account</li>
-          <li>Common withdrawal-and-re-contribution timing mistakes (e.g. withdrawing in one year and re-contributing before January 1 of the next year)</li>
-        </ul>
-        <p>A more detailed version may later support changing excess amounts over time (e.g. multiple contributions or partial withdrawals in different months). This page is part of our TFSA article and calculator cluster; the main content is in <a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/">What Is a TFSA?</a> and the <a href="/calculators/tfsa-room/">TFSA Contribution Room Calculator</a>.</p>
-      </section>
+      <div class="mode-selector-wrap">
+        <div class="mode-selector" role="tablist" aria-label="Calculator mode">
+          <button type="button" class="mode-btn active" id="mode_btn_simple" role="tab" aria-selected="true" data-mode="simple">Simple</button>
+          <button type="button" class="mode-btn" id="mode_btn_advanced" role="tab" aria-selected="false" data-mode="advanced">Advanced</button>
+        </div>
+        <p class="mode-helper" id="mode_helper_simple">Quick estimate for one excess amount over a known number of months.</p>
+        <p class="mode-helper hidden" id="mode_helper_advanced">Month-by-month estimate when contributions, withdrawals, or room changes happened on different dates.</p>
+      </div>
 
-      <section class="section-card related-articles">
-        <h2>Related content</h2>
-        <ul>
-          <li><a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/">What Is a TFSA? Tax-Free Savings Account Explained (Canada)</a></li>
-          <li><a href="/articles/investing-and-financial-literacy/tfsa-withdrawal-rules-over-contribution-penalties/">TFSA Withdrawal Rules: The January 1 Rule and Over-Contribution Penalties</a></li>
-          <li><a href="/calculators/tfsa-room/">TFSA Contribution Room Calculator</a></li>
-          <li><a href="/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/">RRSP vs TFSA vs FHSA: Which Account Is Best?</a></li>
-        </ul>
-      </section>
-    </article>
+      <!-- Simple mode -->
+      <div id="simple_section" class="mode-section">
+        <div class="calc-grid calc-grid-simple">
+          <article class="panel">
+            <h2 class="section-title">Inputs</h2>
+            <div class="field">
+              <label for="simple_excess_amount">Excess amount (CAD)</label>
+              <input id="simple_excess_amount" type="number" inputmode="decimal" min="0" step="100" value="" placeholder="0" />
+              <div class="help-text">The over-contribution amount that stayed in the account</div>
+              <div id="simple_excess_error" class="error-text" aria-live="polite"></div>
+            </div>
+            <div class="field">
+              <label for="simple_months">Number of months at excess</label>
+              <input id="simple_months" type="number" inputmode="numeric" min="0" step="1" value="" placeholder="0" />
+              <div class="help-text">Whole months the excess remained (e.g. 3 for three full months)</div>
+              <div id="simple_months_error" class="error-text" aria-live="polite"></div>
+            </div>
+          </article>
+          <article class="panel">
+            <h2 class="section-title">Results</h2>
+            <div id="simple_results" class="results">
+              <div class="result-row highlight">
+                <div class="label">Estimated penalty</div>
+                <div class="value highlight-value" id="out_simple_penalty">$–</div>
+              </div>
+            </div>
+            <div id="simple_echo" class="note-block" style="display: none;"></div>
+            <p class="note-block" style="margin-top: 10px;">
+              This simplified estimate assumes the excess amount stayed the same for the full number of months entered.
+            </p>
+            <p class="note-block simple-disclaimer">
+              This is a simplified estimate for a constant excess amount. If your excess changed over time, use Advanced mode.
+            </p>
+          </article>
+        </div>
+      </div>
+
+      <!-- Advanced mode -->
+      <div id="advanced_section" class="mode-section hidden">
+      <div class="note-block">
+        This tool estimates the penalty based on the <strong>highest excess amount</strong> reached in each month. If your excess changed during the month, the month is still assessed using that month’s highest excess.
+      </div>
+
+      <div class="calc-grid">
+        <article class="panel">
+          <h2 class="section-title">Inputs</h2>
+
+          <div class="field">
+            <label for="start_date">Calculation start date</label>
+            <input id="start_date" type="date" />
+            <div class="help-text">First day of the period to assess</div>
+          </div>
+
+          <div class="field">
+            <label for="end_date">Calculation end date</label>
+            <input id="end_date" type="date" />
+            <div class="help-text">Last day of the period</div>
+            <div id="end_date_error" class="error-text" aria-live="polite"></div>
+          </div>
+
+          <div class="field">
+            <label for="starting_room">Starting available TFSA room (CAD)</label>
+            <input id="starting_room" type="number" inputmode="decimal" min="0" step="100" value="0" />
+            <div class="help-text">Room you have at the start date (before any transactions in range)</div>
+          </div>
+
+          <div class="field">
+            <label for="annual_jan1_room">Annual new TFSA room added each January 1 (CAD)</label>
+            <input id="annual_jan1_room" type="number" inputmode="decimal" min="0" step="100" value="7000" />
+            <div class="help-text">New room added on Jan 1 for each year in the range (use 0 if not applicable)</div>
+          </div>
+
+          <div class="field">
+            <label>Transactions</label>
+            <div class="help-text">Add contributions, withdrawals, and optional room adjustments. Transactions outside the date range are ignored.</div>
+            <div class="txn-table-wrap">
+              <table class="txn-table" id="txn_table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Amount (CAD)</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="txn_body"></tbody>
+              </table>
+            </div>
+            <button type="button" class="add-txn-btn" id="add_txn_btn">Add row</button>
+          </div>
+        </article>
+
+        <article class="panel">
+          <h2 class="section-title">Results</h2>
+
+          <div id="results_error" class="error-text" aria-live="polite"></div>
+          <div id="results_content">
+            <div class="results">
+              <div class="result-row highlight">
+                <div class="label">Estimated total penalty</div>
+                <div class="value highlight-value" id="out_total_penalty">$–</div>
+              </div>
+              <div class="result-row">
+                <div class="label">Months with excess</div>
+                <div class="value" id="out_months_penalty">–</div>
+              </div>
+              <div class="result-row">
+                <div class="label">Peak excess (in range)</div>
+                <div class="value" id="out_peak_excess">$–</div>
+              </div>
+              <div class="result-row">
+                <div class="label">Ending excess</div>
+                <div class="value" id="out_ending_excess">$–</div>
+              </div>
+            </div>
+
+            <h3 class="section-title" style="margin-top: 16px;">Monthly breakdown</h3>
+            <div class="monthly-table-wrap">
+              <table class="monthly-table" id="monthly_table">
+                <thead>
+                  <tr>
+                    <th>Month</th>
+                    <th class="numeric">Highest excess</th>
+                    <th class="numeric">Monthly penalty</th>
+                    <th class="numeric">End-of-month excess</th>
+                  </tr>
+                </thead>
+                <tbody id="monthly_body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="results_empty" class="empty-state" style="display: none;">
+            Set dates and optional transactions, then the estimate will appear here.
+          </div>
+
+          <div class="explainer-box" style="margin-top: 16px;">
+            <p><strong>About this estimate:</strong></p>
+            <p>This is an educational estimate based on the 1%-per-month rule on the highest excess in each calendar month. CRA rules and your specific filing situation may vary. This is not tax advice.</p>
+          </div>
+        </article>
+      </div>
+      </div>
+    </div>
+
+    <section class="rel-section" style="margin-top: 24px;">
+      <h2>Related content</h2>
+      <ul>
+        <li><a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/">What Is a TFSA? Tax-Free Savings Account Explained (Canada)</a></li>
+        <li><a href="/articles/investing-and-financial-literacy/tfsa-withdrawal-rules-over-contribution-penalties/">TFSA Withdrawal Rules: The January 1 Rule and Over-Contribution Penalties</a></li>
+        <li><a href="/calculators/tfsa-room/">TFSA Contribution Room Calculator</a></li>
+        <li><a href="/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/">RRSP vs TFSA vs FHSA: Which Account Is Best?</a></li>
+      </ul>
+    </section>
 
     <div class="disclaimer">
       <p>
@@ -98,5 +237,8 @@
   </div>
 
   <div id="footerMount"></div>
+
+  <script src="/calculators/tfsa-over-contribution-penalty-calculator/engine.js"></script>
+  <script src="/calculators/tfsa-over-contribution-penalty-calculator/ui.js"></script>
 </body>
 </html>

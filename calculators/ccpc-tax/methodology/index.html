@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspect the Arithmetic – CCPC Tax Calculator | The Long Math</title>
+  <meta name="description" content="Formulae, computational structure, and assumptions for the CCPC Tax Calculator (2025)." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/ccpc-tax/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <h1>Inspect the Arithmetic — CCPC Tax Calculator</h1>
+      <p class="methodology-meta">Version 1.0<br>Last updated: March 2026</p>
+
+      <p>
+        Transparent arithmetic is the operating system of this calculator.
+      </p>
+      <p>
+        This document publishes the formulae, computational structure, and assumptions used to generate the outputs displayed on the CCPC calculator page.
+      </p>
+      <p>
+        No opinions. No hidden assumptions. Just arithmetic.
+      </p>
+
+      <h2>Purpose</h2>
+      <p>
+        This calculator estimates the combined tax burden for a Canadian Controlled Private Corporation (CCPC) and its shareholder(s) for the 2025 tax year.
+        It models:
+      </p>
+      <ul>
+        <li>Corporate taxable income and corporate tax (federal and provincial) on active business income.</li>
+        <li>After-tax cash inside the corporation and retained earnings after distributions.</li>
+        <li>Personal income tax, CPP, and EI for one or two shareholders receiving salary and/or dividends.</li>
+        <li>The combined corporate + personal tax burden and an effective overall tax rate on gross corporate revenue.</li>
+      </ul>
+
+      <h2>Definitions</h2>
+      <p>Let:</p>
+      <ul>
+        <li>Y = tax year (fixed at 2025 in this version)</li>
+        <li>P<sub>corp</sub> = province/territory of incorporation (for corporate tax)</li>
+        <li>P<sub>pers</sub> = province/territory of residence for shareholders (for personal tax; assumed equal to P<sub>corp</sub> unless overridden later)</li>
+        <li>R = gross corporate revenue</li>
+        <li>X = deductible business expenses</li>
+        <li>I<sub>corp</sub> = corporate taxable income</li>
+        <li>SBDLimit = federal small business deduction limit (typically $500,000), applied for the chosen province using the corporate tax data files.</li>
+        <li>r<sub>fed,SBD</sub>, r<sub>fed,gen</sub> = federal SBD and general corporate tax rates</li>
+        <li>r<sub>prov,SBD</sub>, r<sub>prov,gen</sub> = provincial SBD and general corporate tax rates</li>
+        <li>Tax<sub>fed,corp</sub> = federal corporate tax</li>
+        <li>Tax<sub>prov,corp</sub> = provincial corporate tax</li>
+        <li>Tax<sub>corp</sub> = total corporate tax</li>
+        <li>Cash<sub>after</sub> = after‑tax corporate cash (before distributions)</li>
+        <li>For one shareholder:</li>
+        <ul>
+          <li>S = salary/bonus paid to the shareholder</li>
+          <li>D<sub>elig</sub> = eligible dividends paid</li>
+          <li>D<sub>ne</sub> = non‑eligible dividends paid</li>
+          <li>O<sub>pers</sub> = other personal income</li>
+          <li>D<sub>pers</sub> = personal deductions (user‑entered estimate)</li>
+        </ul>
+        <li>For two shareholders (income splitting):</li>
+        <ul>
+          <li>S<sub>1</sub>, S<sub>2</sub> = salary/bonus paid to shareholder 1 and 2</li>
+          <li>D<sub>elig,1</sub>, D<sub>elig,2</sub> = eligible dividends to each shareholder</li>
+          <li>D<sub>ne,1</sub>, D<sub>ne,2</sub> = non‑eligible dividends to each shareholder</li>
+          <li>O<sub>pers,1</sub>, O<sub>pers,2</sub> = other personal income</li>
+          <li>D<sub>pers,1</sub>, D<sub>pers,2</sub> = personal deductions</li>
+        </ul>
+        <li>CPP, EI = employee CPP contributions and EI premiums on salary (per shareholder)</li>
+        <li>Tax<sub>pers</sub> = total personal income tax (federal + provincial) for a given shareholder</li>
+        <li>Tax<sub>pers,1</sub>, Tax<sub>pers,2</sub> = total personal tax for shareholders 1 and 2</li>
+        <li>Burden<sub>total</sub> = combined corporate tax + personal income tax for all shareholders</li>
+        <li>Rate<sub>eff</sub> = effective combined tax rate on gross revenue</li>
+        <li>RetEarn = retained earnings after all modeled distributions</li>
+      </ul>
+
+      <h2>Corporate Tax Arithmetic</h2>
+      <p>
+        Corporate tax is computed by the pure engine function <code>calculateCorporateTax(taxableIncome, province)</code> in <code>corporate.engine.js</code>,
+        using corporate tax data from <code>federal-corporate.json</code> and <code>provinces-corporate.json</code>.
+      </p>
+
+      <h3 id="corp-taxable-income">1. Corporate Taxable Income</h3>
+      <div class="formula-block">
+        I<sub>corp</sub> = max(0, R − X)
+      </div>
+      <p>
+        Negative results (where expenses exceed revenue) are clipped to 0 for this calculator. Salaries or bonuses paid to shareholders are assumed to already be included in deductible business expenses (X). The calculator does not deduct salary again when computing corporate taxable income. Loss carryforwards, loss carrybacks, and passive investment income rules are out of scope.
+      </p>
+
+      <h3 id="corp-brackets">2. Federal and Provincial Corporate Tax</h3>
+      <p>
+        The engine applies a simple two‑tier structure based on the small business deduction limit SBDLimit:
+      </p>
+      <div class="formula-block">
+        If I<sub>corp</sub> ≤ SBDLimit:<br>
+        &nbsp;&nbsp;All income taxed at SBD rates.<br><br>
+        Else:<br>
+        &nbsp;&nbsp;Income up to SBDLimit taxed at SBD rates.<br>
+        &nbsp;&nbsp;Income above SBDLimit taxed at general rates.
+      </div>
+      <p>Federal side:</p>
+      <div class="formula-block">
+        FedSBDIncome = min(I<sub>corp</sub>, SBDLimit)<br>
+        FedGenIncome = max(0, I<sub>corp</sub> − SBDLimit)<br>
+        Tax<sub>fed,corp</sub> = FedSBDIncome × r<sub>fed,SBD</sub> + FedGenIncome × r<sub>fed,gen</sub>
+      </div>
+      <p>Provincial side (using province‑specific rates and SBD limit where applicable):</p>
+      <div class="formula-block">
+        ProvSBDIncome = min(I<sub>corp</sub>, SBDLimit)<br>
+        ProvGenIncome = max(0, I<sub>corp</sub> − SBDLimit)<br>
+        Tax<sub>prov,corp</sub> = ProvSBDIncome × r<sub>prov,SBD</sub> + ProvGenIncome × r<sub>prov,gen</sub>
+      </div>
+      <p>Total corporate tax and after‑tax cash:</p>
+      <div class="formula-block">
+        Tax<sub>corp</sub> = Tax<sub>fed,corp</sub> + Tax<sub>prov,corp</sub><br>
+        Cash<sub>after</sub> = I<sub>corp</sub> − Tax<sub>corp</sub>
+      </div>
+
+      <h2>Distributions and Retained Earnings</h2>
+
+      <h3 id="single-shareholder">3. Single‑Shareholder Scenario</h3>
+      <p>
+        For a single shareholder, the calculator treats the salary and dividends the shareholder receives as distributions out of
+        the corporate after‑tax cash:
+      </p>
+      <div class="formula-block">
+        Dist<sub>single</sub> = S + D<sub>elig</sub> + D<sub>ne</sub><br>
+        RetEarn = max(0, Cash<sub>after</sub> − Dist<sub>single</sub>)
+      </div>
+      <p>
+        If modeled distributions exceed after‑tax corporate cash, retained earnings are clipped to zero rather than displaying negative corporate equity. The corporate side does not enforce balance‑sheet constraints beyond this max‑zero clipping; over‑distributions relative to Cash<sub>after</sub>
+        are not flagged separately in this version.
+      </p>
+
+      <h3 id="split-shareholder">4. Two‑Shareholder (Income Splitting) Scenario</h3>
+      <p>When “income splitting” is enabled:</p>
+      <div class="formula-block">
+        Dist<sub>split</sub> = (S<sub>1</sub> + D<sub>elig,1</sub> + D<sub>ne,1</sub>) + (S<sub>2</sub> + D<sub>elig,2</sub> + D<sub>ne,2</sub>)<br>
+        RetEarn = max(0, Cash<sub>after</sub> − Dist<sub>split</sub>)
+      </div>
+
+      <h2>Personal Tax Arithmetic</h2>
+      <p>
+        Personal tax for each shareholder is computed by the shared personal tax engine <code>computePersonalTax()</code> in <code>tax.engine.js</code>,
+        using the same brackets, credits, CPP/EI logic, and dividend rules as the standalone Canada Personal Income Tax Calculator.
+      </p>
+
+      <h3 id="personal-inputs">5. Mapping Corporate Inputs to Personal Inputs</h3>
+      <p>For each shareholder, the CCPC bridge module <code>computeCCPCTax()</code> constructs a personal tax input object:</p>
+      <ul>
+        <li>Employment income = salary from the corporation (S, S<sub>1</sub>, or S<sub>2</sub>).</li>
+        <li>Eligible and non‑eligible dividends = dividends from the corporation.</li>
+        <li>Other income = O<sub>pers</sub>, O<sub>pers,1</sub>, or O<sub>pers,2</sub>.</li>
+        <li>RRSP and FHSA deductions = 0 in this CCPC calculator.</li>
+        <li>Estimated deductions = D<sub>pers</sub>, D<sub>pers,1</sub>, or D<sub>pers,2</sub>.</li>
+        <li>Tax already paid = 0 (no modeled source deductions in this tool).</li>
+      </ul>
+      <p>
+        The personal engine then follows the methodology documented in the personal income tax methodology page:
+        it computes taxable income, federal and provincial tax, dividend gross‑up and DTC, CPP/EI, and marginal/average rates.
+      </p>
+
+      <h3 id="personal-outputs">6. Personal Outputs Used by the CCPC Calculator</h3>
+      <p>From each personal tax run, the bridge reads:</p>
+      <ul>
+        <li>Total income tax (federal + provincial) for each shareholder.</li>
+        <li>CPP and EI contributions (implicitly included in the total burden in the personal engine).</li>
+        <li>Take‑home income after income tax + CPP + EI.</li>
+      </ul>
+      <p>
+        The CCPC UI surfaces a simplified summary for each shareholder: total personal tax, total burden, and net take‑home pay.
+      </p>
+
+      <h2>Combined Burden and Effective Rate</h2>
+
+      <h3 id="combined-single">7. Single‑Shareholder Combined View</h3>
+      <p>For a single shareholder, the bridge computes:</p>
+      <div class="formula-block">
+        Tax<sub>pers</sub> = output of personal engine (total income tax)<br>
+        Tax<sub>corp</sub> = total corporate tax (federal + provincial)<br>
+        Burden<sub>total</sub> = Tax<sub>corp</sub> + Tax<sub>pers</sub><br>
+        Rate<sub>eff</sub> = 
+          \[
+            \begin{cases}
+              0, & \text{if } R = 0 \\
+              \dfrac{Burden\_{total}}{R}, & \text{otherwise}
+            \end{cases}
+          \]<br>
+        NetPersonalTakeHome = take‑home income from personal engine
+      </div>
+      <p>
+        The effective rate is expressed relative to gross corporate revenue (R), not corporate profit. This shows the combined corporate + personal tax burden relative to the total income generated by the business.
+      </p>
+
+      <h3 id="combined-split">8. Two‑Shareholder Combined View</h3>
+      <p>For two shareholders, the bridge computes:</p>
+      <div class="formula-block">
+        Tax<sub>pers,1</sub>, Tax<sub>pers,2</sub> = total income tax for each shareholder<br>
+        Tax<sub>corp</sub> = total corporate tax<br>
+        Burden<sub>total</sub> = Tax<sub>corp</sub> + Tax<sub>pers,1</sub> + Tax<sub>pers,2</sub><br>
+        Rate<sub>eff</sub> = 
+          \[
+            \begin{cases}
+              0, & \text{if } R = 0 \\
+              \dfrac{Burden\_{total}}{R}, & \text{otherwise}
+            \end{cases}
+          \]<br>
+        NetPersonalTakeHome = take‑home<sub>1</sub> + take‑home<sub>2</sub>
+      </div>
+      <p>
+        The calculator displays corporate results (taxable income, tax, after‑tax cash, retained earnings), per‑shareholder results (personal tax and net take‑home),
+        and the combined totals and effective rate.
+      </p>
+
+      <h2>Assumptions and Limitations</h2>
+      <ol>
+        <li>Tax year is fixed at 2025; corporate and personal parameters are loaded from JSON data files for that year only.</li>
+        <li>The calculator models active business income only; investment income, passive income rules, and refundable taxes on investment income are not included.</li>
+        <li>No associated‑corporation rules or grind‑downs of the SBD limit are modeled; the small business limit is applied as‑is from the data files.</li>
+        <li>Loss carryforwards, loss carrybacks, and integration with previous or future years are out of scope.</li>
+        <li>RRSP, FHSA, and other registered‑account interactions for shareholders are not modeled; the CCPC calculator passes zero for those fields into the personal engine.</li>
+        <li>Source deductions (withholding at source) and installments are not modeled; tax paid is treated as 0 and the focus is on the structural burden rather than balances owing or refunds.</li>
+        <li>Shareholder province of residence is assumed to match the corporate province for personal tax purposes in this version.</li>
+        <li>All amounts are in Canadian dollars, and bracket thresholds and rates are taken directly from the data files; any corrections to those data sources will flow through to this calculator.</li>
+        <li>Rounding is applied at the display layer and in some bracket summaries; internal computations use full floating‑point precision.</li>
+      </ol>
+
+      <h2>Implementation Notes</h2>
+      <ul>
+        <li>The corporate engine <code>calculateCorporateTax()</code> is pure and deterministic: given taxable income and province, it returns tax and a full breakdown, including SBD limit and per‑tier amounts.</li>
+        <li>The personal engine <code>computePersonalTax()</code> is shared with the Canada Personal Income Tax Calculator and is validated separately via known‑answer tests.</li>
+        <li>The bridge <code>computeCCPCTax()</code> combines these outputs and is responsible only for mapping inputs, summing taxes, and computing combined metrics.</li>
+        <li>The “Show the Math” section on the CCPC calculator page reads directly from these engine outputs to render bracket tables and summary lines; this methodology page describes the underlying steps.</li>
+      </ul>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between this documentation and the live CCPC calculator, the engine modules
+        (<code>corporate.engine.js</code>, <code>tax.engine.js</code>, and <code>ccpc.bridge.js</code>) are the source of truth. This page will be updated to match them.
+      </p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>
+

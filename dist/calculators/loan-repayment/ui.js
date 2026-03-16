@@ -67,30 +67,47 @@
 
       paymentChart = new Chart(ctx2d, {
         type: "line",
-        data: {
+          data: {
           labels: [],
           datasets: [
+            // Dataset 0: Interest area (from 0 up to interest line)
             {
-              label: "Interest",
+              label: "Interest (per payment)",
               data: [],
               borderColor: cssVar("--chart-interest-line") || "#D3C3B1",
               backgroundColor: cssVar("--chart-interest-fill") || "rgba(211,195,177,0.35)",
-              fill: true,
-              stack: "payment",
+              fill: "origin",
               tension: 0.3,
               pointRadius: 0,
               pointHoverRadius: 3,
+              borderWidth: 1.5,
+              yAxisID: "payment",
             },
+            // Dataset 1: Principal area (from interest line up to principal line)
             {
-              label: "Principal",
+              label: "Principal (per payment)",
               data: [],
               borderColor: cssVar("--chart-principal-line") || "#9CB3CB",
               backgroundColor: cssVar("--chart-principal-fill") || "rgba(156,179,203,0.35)",
-              fill: true,
-              stack: "payment",
+              fill: "-1", // fill between this line and previous (interest) line
               tension: 0.3,
               pointRadius: 0,
               pointHoverRadius: 3,
+              borderWidth: 1.5,
+              yAxisID: "payment",
+            },
+            // Dataset 2: Remaining principal curve (no fill, separate axis)
+            {
+              label: "Remaining principal",
+              data: [],
+              borderColor: cssVar("--chart-balance-line") || "#F2C94C",
+              backgroundColor: "transparent",
+              fill: false,
+              borderWidth: 2,
+              tension: 0.25,
+              pointRadius: 0,
+              pointHoverRadius: 3,
+              yAxisID: "balance",
             },
           ],
         },
@@ -102,22 +119,37 @@
           },
           scales: {
             x: {
-              stacked: true,
+              stacked: false,
               ticks: {
-                autoSkip: true,
-                maxTicksLimit: 7,
+                autoSkip: false,
+                maxTicksLimit: 20,
                 minRotation: 0,
                 maxRotation: 0,
                 color: cssVar("--chart-axis") || "rgba(255,255,255,0.72)",
+                font: {
+                  size: 9,
+                },
                 callback: function (value, index) {
-                  const labelValue = paymentChart.data.labels[index];
-                  return labelValue;
+                  const labels = paymentChart.data.labels || [];
+                  const raw = labels[index];
+                  if (!Number.isFinite(raw) || !paymentChart.$paymentsPerYear) return "";
+                  const year = raw / paymentChart.$paymentsPerYear;
+                  if (year < 0) return "";
+                  // Show 0 and then every 5 years up to the term
+                  if (Math.abs(year) < 1e-8) return "0";
+                  if (Math.abs(Math.round(year / 5) * 5 - year) < 1e-8 && year <= (paymentChart.$totalYears || year)) {
+                    return String(Math.round(year));
+                  }
+                  return "";
                 },
               },
               title: {
                 display: true,
-                text: "Payment #",
+                text: "Years",
                 color: cssVar("--chart-axis-dim") || cssVar("--chart-axis") || "rgba(255,255,255,0.72)",
+                font: {
+                  size: 10,
+                },
               },
               grid: {
                 color: cssVar("--chart-grid") || "rgba(255,255,255,0.08)",
@@ -128,13 +160,18 @@
                 display: false,
               },
             },
-            y: {
+            payment: {
               stacked: true,
+              position: "left",
               ticks: {
                 maxTicksLimit: 6,
                 color: cssVar("--chart-axis") || "rgba(255,255,255,0.72)",
-                callback: function (value) {
-                  return fmtCurrency(value);
+                font: {
+                  size: 8,
+                },
+                callback: function () {
+                  // Hide numeric labels for payment axis (y) for a cleaner visual
+                  return "";
                 },
               },
               grid: {
@@ -147,6 +184,36 @@
               },
               title: { display: false },
             },
+            balance: {
+              stacked: false,
+              position: "right",
+              ticks: {
+                maxTicksLimit: 6,
+                color: cssVar("--chart-axis") || "rgba(255,255,255,0.72)",
+                font: {
+                  size: 8,
+                },
+                callback: function () {
+                  // Hide numeric labels; curve shape communicates scale
+                  return "";
+                },
+              },
+              grid: {
+                drawOnChartArea: false,
+                drawBorder: false,
+              },
+              border: {
+                display: false,
+              },
+              title: {
+                display: true,
+                text: "Remaining principal",
+                color: cssVar("--chart-axis-dim") || cssVar("--chart-axis") || "rgba(255,255,255,0.72)",
+                font: {
+                  size: 10,
+                },
+              },
+            },
           },
           plugins: {
             legend: {
@@ -156,7 +223,10 @@
                 usePointStyle: true,
                 color: cssVar("--chart-axis") || "rgba(255,255,255,0.72)",
                 boxWidth: 10,
-                padding: 14,
+                padding: 10,
+                font: {
+                  size: 10,
+                },
               },
             },
             tooltip: {
@@ -164,9 +234,11 @@
                 title: function (items) {
                   if (!items || !items.length) return "";
                   const idx = items[0].dataIndex;
-                  const prefix = paymentChart && paymentChart.$freqPrefix ? paymentChart.$freqPrefix : "";
-                  const labelValue = paymentChart.data.labels[idx];
-                  return prefix + labelValue;
+                  const labels = paymentChart.data.labels || [];
+                  const raw = labels[idx];
+                  if (!Number.isFinite(raw) || !paymentChart.$paymentsPerYear) return "";
+                  const year = raw / paymentChart.$paymentsPerYear;
+                  return "Year " + year.toFixed(2);
                 },
                 label: function (ctx) {
                   return ctx.dataset.label + ": " + fmtCurrency(ctx.parsed.y);
@@ -184,6 +256,7 @@
           if (m.type === "attributes" && m.attributeName === "data-theme") {
             if (!paymentChart) return;
 
+            const balanceLine = cssVar("--chart-balance-line") || "#F2C94C";
             const principalLine = cssVar("--chart-principal-line") || "#9CB3CB";
             const principalFill = cssVar("--chart-principal-fill") || "rgba(156,179,203,0.35)";
             const interestLine = cssVar("--chart-interest-line") || "#D3C3B1";
@@ -192,18 +265,24 @@
             const axisColor = cssVar("--chart-axis") || "rgba(255,255,255,0.72)";
             const axisDim = cssVar("--chart-axis-dim") || axisColor;
 
+            // Dataset 0: interest
             paymentChart.data.datasets[0].borderColor = interestLine;
             paymentChart.data.datasets[0].backgroundColor = interestFill;
+            // Dataset 1: principal
             paymentChart.data.datasets[1].borderColor = principalLine;
             paymentChart.data.datasets[1].backgroundColor = principalFill;
+            // Dataset 2: remaining principal curve
+            paymentChart.data.datasets[2].borderColor = balanceLine;
 
             const scales = paymentChart.options.scales;
-            if (scales && scales.x && scales.y) {
+            if (scales && scales.x && scales.payment && scales.balance) {
               scales.x.ticks.color = axisColor;
               scales.x.title.color = axisDim;
               scales.x.grid.color = gridColor;
-              scales.y.ticks.color = axisColor;
-              scales.y.grid.color = gridColor;
+              scales.payment.ticks.color = axisColor;
+              scales.payment.grid.color = gridColor;
+              scales.balance.ticks.color = axisColor;
+              scales.balance.title.color = axisDim;
             }
 
             if (paymentChart.options.plugins && paymentChart.options.plugins.legend && paymentChart.options.plugins.legend.labels) {
@@ -329,26 +408,40 @@
     $("totals-balance").textContent = fmtCurrency(0);
   }
 
-  function renderCharts(scheduleRows, principal, totalInterest, paymentsPerYear) {
+  function renderCharts(scheduleRows, principal, totalInterest, paymentsPerYear, years) {
     ensureCharts();
 
     if (paymentChart && Array.isArray(scheduleRows) && scheduleRows.length > 0) {
-      const labels = scheduleRows.map(function (_, idx) {
-        return idx + 1;
-      });
-      const interestSeries = scheduleRows.map(function (row) {
-        return row.interest;
-      });
-      const principalSeries = scheduleRows.map(function (row) {
-        return row.principalPaid;
+      const labels = [0];
+      const balanceSeries = [principal];
+      const interestSeries = [0];
+      const principalSeries = [0];
+
+      scheduleRows.forEach(function (row, idx) {
+        const k = idx + 1;
+        labels.push(k);
+        interestSeries.push(row.interest);
+        principalSeries.push(row.principalPaid);
+        balanceSeries.push(Math.max(0, row.balance));
       });
 
-      // Set frequency prefix for tick/tooltip formatting
-      paymentChart.$freqPrefix = paymentsPerYear === 12 ? "M" : "W";
+      // Store frequency + term for axis/tooltip formatting
+      paymentChart.$paymentsPerYear = paymentsPerYear;
+      paymentChart.$totalYears = years;
 
       paymentChart.data.labels = labels;
+      // Dataset order: 0 = interest, 1 = principal, 2 = remaining principal curve
       paymentChart.data.datasets[0].data = interestSeries;
       paymentChart.data.datasets[1].data = principalSeries;
+      paymentChart.data.datasets[2].data = balanceSeries;
+
+      // Lock balance axis to [0, principal] so the curve intercepts at the top of the plot area
+      if (paymentChart.options && paymentChart.options.scales && paymentChart.options.scales.balance) {
+        const balanceScale = paymentChart.options.scales.balance;
+        balanceScale.min = 0;
+        balanceScale.max = principal > 0 ? principal : undefined;
+      }
+
       paymentChart.update();
     }
   }
@@ -398,7 +491,7 @@
         interest: 0,
         principalPaid: 0,
       });
-      renderCharts([], 0, 0, inp.paymentsPerYear || 12);
+      renderCharts([], 0, 0, inp.paymentsPerYear || 12, inp.years || 0);
       return;
     }
 
@@ -411,7 +504,7 @@
 
     renderResults(result, inp);
     renderSchedule(result.scheduleRows, result.totalsRow);
-    renderCharts(result.scheduleRows, inp.principal, result.totalInterest, inp.paymentsPerYear);
+    renderCharts(result.scheduleRows, inp.principal, result.totalInterest, inp.paymentsPerYear, inp.years);
   }
 
   // -----------------------------
