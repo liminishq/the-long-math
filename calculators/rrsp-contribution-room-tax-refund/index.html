@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RRSP Contribution Room &amp; Tax Refund Calculator – The Long Math</title>
+  <meta name="description" content="Estimate your available RRSP contribution room, deductible contribution amount, estimated tax refund, after-tax cost, and remaining room using explicit assumptions." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/rrsp-contribution-room-tax-refund/" />
+
+  <!-- Site-wide theme + styles -->
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+
+  <!-- Calculator-specific styles -->
+  <link rel="stylesheet" href="/calculators/rrsp-contribution-room-tax-refund/styles.css" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <header>
+      <h1>RRSP Contribution Room &amp; Tax Refund Calculator</h1>
+      <p class="lead">
+        Estimate your available RRSP room, deductible contribution, tax refund, and after-tax contribution cost using explicit assumptions.
+      </p>
+      <p class="lead">
+        This calculator models contribution room, deduction limits, and the tax impact of an RRSP contribution based on simplified CRA-style rules.
+      </p>
+      <p class="lead" style="margin-top: 12px; font-weight: 600;">
+        <strong>No opinions. No hidden assumptions. Just arithmetic.</strong>
+      </p>
+    </header>
+
+    <div class="card">
+      <div class="inspect-bar">
+        <a href="/calculators/rrsp-contribution-room-tax-refund/methodology/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">
+          Inspect the Arithmetic
+        </a>
+      </div>
+
+      <div class="mode-selector-wrap">
+        <div class="mode-selector" role="tablist" aria-label="Input mode">
+          <button type="button" class="mode-btn active" id="mode_btn_simple" role="tab" aria-selected="true" data-mode="simple">Simple</button>
+          <button type="button" class="mode-btn" id="mode_btn_advanced" role="tab" aria-selected="false" data-mode="advanced">Advanced</button>
+        </div>
+        <p class="mode-helper" id="mode_helper_simple">
+          Simple mode shows the core inputs only. Advanced mode adds pension adjustments, CRA override, and refund method controls.
+        </p>
+        <p class="mode-helper hidden" id="mode_helper_advanced">
+          Advanced mode exposes pension adjustments, CRA deduction limit override, and refund method choices. Simple mode keeps those at defaults.
+        </p>
+      </div>
+
+      <div class="calc-grid">
+        <!-- Inputs -->
+        <article class="panel">
+          <h2 class="section-title">Inputs</h2>
+
+          <section class="input-section">
+            <h3 class="section-label">1. Contribution Room Inputs</h3>
+
+            <div class="field">
+              <label for="tax_year">Tax year being evaluated</label>
+              <select id="tax_year">
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+              </select>
+              <div class="help-text">Year for which you want to estimate RRSP room and refund.</div>
+            </div>
+
+            <div class="field">
+              <label for="unused_room">Unused RRSP room carried forward (CAD)</label>
+              <input id="unused_room" type="text" inputmode="decimal" placeholder="0" />
+              <div class="help-text">
+                Total RRSP room carried forward into this year from past contribution room. Check your CRA Notice of Assessment or
+                <a href="https://www.canada.ca/en/revenue-agency/services/e-services/e-services-individuals/account-individuals.html" target="_blank" rel="noopener noreferrer">CRA My Account</a>
+                to verify.
+              </div>
+            </div>
+          </section>
+
+          <section class="input-section">
+            <h3 class="section-label">2. Income &amp; Contribution Scenario Inputs</h3>
+
+            <div class="field">
+              <label for="taxable_before">This year’s taxable income before this RRSP deduction (CAD)</label>
+              <input id="taxable_before" type="text" inputmode="decimal" placeholder="0" />
+              <div class="help-text">Best estimate of your taxable income for this tax year before claiming this RRSP deduction. Required for the refund estimate.</div>
+            </div>
+
+            <div class="field">
+              <label for="prior_earned_income">Prior-year RRSP-eligible earned income (CAD)</label>
+              <input id="prior_earned_income" type="text" inputmode="decimal" placeholder="0" />
+              <div class="help-text">Employment and other RRSP-eligible earned income from the prior tax year. Used only to estimate new RRSP room for this year.</div>
+            </div>
+
+            <div class="field">
+              <label for="province">Province / Territory</label>
+              <select id="province">
+                <option value="">Select...</option>
+              </select>
+              <div id="province_error" class="error-text" aria-live="polite"></div>
+              <div class="help-text">Province or territory of residence for tax purposes.</div>
+            </div>
+
+            <div class="field">
+              <label for="planned_contribution">Planned RRSP contribution for this tax year (CAD)</label>
+              <input id="planned_contribution" type="text" inputmode="decimal" placeholder="0" />
+              <div class="help-text">Amount you plan to contribute for the selected tax year. This is what the calculator tests against your room and refund.</div>
+            </div>
+          </section>
+
+          <section class="input-section advanced-only hidden">
+            <h3 class="section-label">3. Advanced Adjustments</h3>
+
+            <div class="field">
+              <label for="pa">Pension adjustment (PA)</label>
+              <input id="pa" type="text" inputmode="decimal" placeholder="0" />
+            </div>
+
+            <div class="field">
+              <label for="par">Pension adjustment reversal (PAR)</label>
+              <input id="par" type="text" inputmode="decimal" placeholder="0" />
+            </div>
+
+            <div class="field">
+              <label for="pspa">Past service pension adjustment (PSPA)</label>
+              <input id="pspa" type="text" inputmode="decimal" placeholder="0" />
+            </div>
+
+            <div class="field toggle-field">
+              <div class="toggle-row">
+                <input id="cra_override_toggle" type="checkbox" />
+                <label for="cra_override_toggle">Use CRA deduction limit override</label>
+              </div>
+              <div class="help-text">
+                This estimate is not your official CRA deduction limit. Use your Notice of Assessment amount if you want to start from CRA’s recorded figure.
+              </div>
+            </div>
+
+            <div class="field advanced-only hidden" id="cra_override_field">
+              <label for="cra_limit">Official CRA RRSP deduction limit (CAD)</label>
+              <input id="cra_limit" type="text" inputmode="decimal" placeholder="0" />
+            </div>
+
+            <div class="field">
+              <label>Refund method</label>
+              <div class="refund-toggle" role="radiogroup" aria-label="Refund estimation method">
+                <button type="button" class="refund-btn active" data-method="progressive">Progressive tax estimate</button>
+                <button type="button" class="refund-btn" data-method="marginal">Simple marginal-rate estimate</button>
+              </div>
+              <div class="help-text">
+                Progressive mode recalculates tax before and after the RRSP deduction using combined federal and provincial brackets.
+              </div>
+            </div>
+          </section>
+        </article>
+
+        <!-- Results -->
+        <article class="panel">
+          <h2 class="section-title">Results</h2>
+
+          <div class="results-grid">
+            <div class="result-card">
+              <h3 class="result-title">Estimated RRSP contribution room</h3>
+              <p class="result-value" id="out_estimated_room">$–</p>
+              <p class="result-note" id="out_cra_override_note">
+                Based on 18% of prior-year earned income (capped) plus carryforward and pension adjustments.
+              </p>
+            </div>
+
+            <div class="result-card">
+              <h3 class="result-title">Planned contribution</h3>
+              <p class="result-value" id="out_planned_contribution">$–</p>
+            </div>
+
+            <div class="result-card">
+              <h3 class="result-title">Amount deductible</h3>
+              <p class="result-value" id="out_deductible">$–</p>
+              <p class="result-note">
+                Capped at the smaller of available RRSP room and your planned contribution.
+              </p>
+            </div>
+
+            <div class="result-card">
+              <h3 class="result-title">Estimated tax refund</h3>
+              <p class="result-value" id="out_refund">$–</p>
+              <p class="result-note" id="out_refund_method_note">
+                Refund is estimated by recalculating tax before and after the RRSP deduction.
+              </p>
+            </div>
+
+            <div class="result-card">
+              <h3 class="result-title">After-tax cost of contribution</h3>
+              <p class="result-value" id="out_after_tax_cost">$–</p>
+            </div>
+
+            <div class="result-card">
+              <h3 class="result-title">Remaining RRSP room</h3>
+              <p class="result-value" id="out_remaining_room">$–</p>
+            </div>
+          </div>
+
+          <div class="secondary-results">
+            <div class="secondary-row" id="over_contribution_row" aria-live="polite">
+              <div class="label">Over-contribution warning</div>
+              <div class="value" id="out_over_contribution">–</div>
+            </div>
+            <div class="secondary-row">
+              <div class="label">Excess contribution amount</div>
+              <div class="value" id="out_excess_contribution">$–</div>
+            </div>
+            <div class="secondary-row">
+              <div class="label">Marginal tax rate used (simple mode)</div>
+              <div class="value" id="out_marginal_rate">–%</div>
+            </div>
+            <div class="secondary-row">
+              <div class="label">Effective refund % of contribution</div>
+              <div class="value" id="out_effective_refund">–%</div>
+            </div>
+          </div>
+
+          <div class="explainer-box">
+            <p><strong>About this estimate:</strong></p>
+            <p>
+              This tool estimates RRSP contribution room and tax refund using simplified rules. Your official CRA RRSP deduction limit may differ and always controls how much you can deduct.
+            </p>
+            <p>
+              Refunds are estimated using combined federal and provincial income tax brackets for the selected year and province. CPP, EI, and all other credits and deductions beyond this RRSP deduction are not modelled here.
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="report-issue-wrap">
+      <a href="/contact/" class="report-issue-link">Report an Issue</a>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
+      </p>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+
+  <!-- Scripts -->
+  <script src="/calculators/rrsp-contribution-room-tax-refund/engine.js"></script>
+  <script src="/calculators/rrsp-contribution-room-tax-refund/ui.js"></script>
+</body>
+</html>
+

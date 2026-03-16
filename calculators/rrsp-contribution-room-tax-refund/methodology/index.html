@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspect the Arithmetic: RRSP Contribution Room &amp; Tax Refund Calculator – The Long Math</title>
+  <meta name="description" content="Inspect the formulas and assumptions behind the RRSP Contribution Room &amp; Tax Refund Calculator. See contribution room, deduction, refund, and after-tax cost arithmetic step by step." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/rrsp-contribution-room-tax-refund/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <header>
+      <h1>Inspect the Arithmetic: RRSP Contribution Room &amp; Tax Refund Calculator</h1>
+      <p class="lead">
+        This page documents the variables, formulas, and assumptions used by the RRSP Contribution Room &amp; Tax Refund Calculator.
+      </p>
+      <p class="lead">
+        The goal is not to predict your exact CRA result. The goal is to make the arithmetic transparent so you can see how each input changes room, deductions, and tax.
+      </p>
+      <p class="lead" style="margin-top: 12px; font-weight: 600;">
+        <strong>No opinions. No hidden assumptions. Just arithmetic.</strong>
+      </p>
+      <p style="margin-top: 16px;">
+        <a href="/calculators/rrsp-contribution-room-tax-refund/" class="inspect-arithmetic-btn">Back to Calculator</a>
+      </p>
+    </header>
+
+    <main class="methods-card">
+      <section>
+        <h2>1. What this calculator estimates</h2>
+        <p>This calculator estimates, for a selected tax year and province:</p>
+        <ul>
+          <li>Estimated RRSP contribution room based on prior-year earned income, annual caps, unused room, and pension adjustments.</li>
+          <li>Deductible RRSP contribution amount, capped by available room (or an optional CRA deduction limit override).</li>
+          <li>Estimated tax refund or tax savings from the RRSP deduction.</li>
+          <li>After-tax cost of the RRSP contribution (contribution minus estimated refund).</li>
+          <li>Remaining RRSP room after the contribution.</li>
+          <li>Any excess contribution relative to available room in this model.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>2. Variable definitions</h2>
+        <ul>
+          <li><strong>Tax Year</strong>: Calendar tax year being modelled (2025 or 2026).</li>
+          <li><strong>Prior-Year Earned Income</strong>: RRSP-eligible earned income from the prior tax year (employment and similar income).</li>
+          <li><strong>Unused Carryforward Room</strong>: RRSP room carried forward into the selected tax year.</li>
+          <li><strong>PA (Pension Adjustment)</strong>: Pension adjustment that reduces RRSP room.</li>
+          <li><strong>PAR (Pension Adjustment Reversal)</strong>: Pension adjustment reversal that restores RRSP room.</li>
+          <li><strong>PSPA (Past Service Pension Adjustment)</strong>: Past service pension adjustment that reduces RRSP room.</li>
+          <li><strong>CRA Deduction Limit Override</strong>: Optional input for the official RRSP deduction limit from your CRA Notice of Assessment.</li>
+          <li><strong>Planned Contribution</strong>: Amount you plan to contribute for the selected tax year.</li>
+          <li><strong>Province / Territory</strong>: Province or territory of residence for tax purposes.</li>
+          <li><strong>Taxable Income Before RRSP Deduction</strong>: Your taxable income before applying this RRSP deduction.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>3. Contribution room formula</h2>
+        <p>Annual RRSP caps are hard-coded as:</p>
+        <pre><code>RRSP_LIMITS = {
+  2025: 32,490
+  2026: 33,810
+}</code></pre>
+
+        <p>The calculator first computes new RRSP room for the selected tax year:</p>
+        <pre><code>New RRSP Room = min(18% × Prior-Year Earned Income, Annual RRSP Cap)</code></pre>
+
+        <p>Then it estimates available RRSP room:</p>
+        <pre><code>Available RRSP Room =
+  Unused Carryforward Room
++ New RRSP Room
+− Pension Adjustment (PA)
++ Pension Adjustment Reversal (PAR)
+− Past Service Pension Adjustment (PSPA)</code></pre>
+
+        <p>If the CRA deduction limit override is not used, the available room for deduction equals this estimate. If the override is enabled, the official CRA deduction limit replaces the estimated room for deduction while the estimate is still shown for comparison.</p>
+      </section>
+
+      <section>
+        <h2>4. Refund and cost formulas</h2>
+
+        <p>The deductible contribution is:</p>
+        <pre><code>Deductible Contribution = min(Planned Contribution, Available RRSP Room)</code></pre>
+
+        <p>New taxable income after the RRSP deduction is:</p>
+        <pre><code>New Taxable Income = max(0, Taxable Income Before RRSP Deduction − Deductible Contribution)</code></pre>
+
+        <p>In progressive mode, the calculator estimates income tax before and after the deduction using federal and provincial brackets, then takes the difference:</p>
+        <pre><code>Estimated Refund = Tax Before RRSP Deduction − Tax After RRSP Deduction</code></pre>
+
+        <p>In simple marginal-rate mode, the calculator multiplies the deductible contribution by the combined marginal rate at the starting taxable income:</p>
+        <pre><code>Estimated Refund = Deductible Contribution × Marginal Tax Rate</code></pre>
+
+        <p>The after-tax cost of the contribution is:</p>
+        <pre><code>After-Tax Cost = Planned Contribution − Estimated Refund</code></pre>
+
+        <p>Remaining room after the contribution is:</p>
+        <pre><code>Remaining Room = Available RRSP Room − Deductible Contribution</code></pre>
+
+        <p>Any excess contribution relative to available room in this model is:</p>
+        <pre><code>Excess Contribution = max(0, Planned Contribution − Available RRSP Room)</code></pre>
+      </section>
+
+      <section>
+        <h2>5. Worked example</h2>
+
+        <p>This example uses the following inputs:</p>
+        <ul>
+          <li>Tax year: 2025</li>
+          <li>Prior-year earned income: 150,000</li>
+          <li>Unused carryforward room: 8,000</li>
+          <li>PA: 0</li>
+          <li>PAR: 0</li>
+          <li>PSPA: 0</li>
+          <li>Planned contribution: 20,000</li>
+          <li>Taxable income before deduction: 210,000</li>
+          <li>Province: Ontario</li>
+        </ul>
+
+        <h3>Step 1 – New RRSP room</h3>
+        <p>Annual RRSP cap for 2025 is 32,490.</p>
+        <pre><code>18% × 150,000 = 0.18 × 150,000 = 27,000
+
+New RRSP Room = min(27,000, 32,490) = 27,000</code></pre>
+
+        <h3>Step 2 – Available RRSP room</h3>
+        <p>With no pension adjustments in this example:</p>
+        <pre><code>Available RRSP Room =
+  8,000 (Unused Carryforward Room)
++ 27,000 (New RRSP Room)
+− 0 (PA)
++ 0 (PAR)
+− 0 (PSPA)
+
+Available RRSP Room = 35,000</code></pre>
+
+        <h3>Step 3 – Deductible contribution</h3>
+        <pre><code>Deductible Contribution = min(Planned Contribution, Available RRSP Room)
+                        = min(20,000, 35,000)
+                        = 20,000</code></pre>
+
+        <h3>Step 4 – New taxable income</h3>
+        <pre><code>Taxable Income Before RRSP Deduction = 210,000
+
+New Taxable Income = max(0, 210,000 − 20,000)
+                   = 190,000</code></pre>
+
+        <h3>Step 5 – Progressive refund estimate (federal + Ontario)</h3>
+        <p>The calculator applies 2025 federal and Ontario brackets to taxable income of 210,000 and 190,000.</p>
+
+        <p>At a high level (numbers rounded for illustration):</p>
+        <pre><code>Tax Before RRSP Deduction  ≈  Tax on 210,000 (federal + Ontario)
+Tax After RRSP Deduction   ≈  Tax on 190,000 (federal + Ontario)
+
+Estimated Refund = Tax Before RRSP Deduction − Tax After RRSP Deduction</code></pre>
+
+        <p>Because the 20,000 deduction sits near the upper brackets, the combined marginal rate is relatively high. For example, if the combined marginal rate around this income range is approximately 50% (exact combined rate depends on the precise bracket thresholds), then a 20,000 deduction would generate a refund on the order of:</p>
+        <pre><code>Approximate Refund ≈ 20,000 × 0.50 = 10,000</code></pre>
+
+        <p>The calculator uses the actual 2025 bracket thresholds for Canada and Ontario to compute this more precisely, then reports:</p>
+        <ul>
+          <li>Estimated refund in dollars.</li>
+          <li>Effective refund % of the full 20,000 contribution.</li>
+        </ul>
+
+        <h3>Step 6 – After-tax cost and remaining room</h3>
+        <p>Using an illustrative refund of 10,000:</p>
+        <pre><code>After-Tax Cost = Planned Contribution − Estimated Refund
+               = 20,000 − 10,000
+               = 10,000</code></pre>
+
+        <p>Remaining room after deducting 20,000 from 35,000:</p>
+        <pre><code>Remaining Room = Available RRSP Room − Deductible Contribution
+               = 35,000 − 20,000
+               = 15,000</code></pre>
+      </section>
+
+      <section>
+        <h2>6. Assumptions and limitations</h2>
+        <ul>
+          <li><strong>Official CRA deduction limit</strong>: The calculator’s estimated RRSP room may differ from your official CRA deduction limit. CRA’s records always control how much you can deduct. Use the CRA deduction limit override if you want to start from your Notice of Assessment value.</li>
+          <li><strong>Refund is an estimate</strong>: Refunds are estimated using combined federal and provincial brackets for the selected year and province. Many other credits, deductions, and special rules are not modelled.</li>
+          <li><strong>HBP and LLP not modelled</strong>: Home Buyers’ Plan (HBP) and Lifelong Learning Plan (LLP) repayments are not included in this version. Those can change your actual RRSP room and deduction behaviour.</li>
+          <li><strong>Contribution vs deduction timing</strong>: In practice, contribution timing and deduction timing can differ (e.g., contributions made in the first 60 days of the year). This calculator assumes the contribution and deduction apply to the same tax year.</li>
+          <li><strong>Special pension and historical cases</strong>: Complex pension arrangements, historical adjustments, and CRA corrections are not modelled. These can materially change actual room.</li>
+          <li><strong>Simplified tax model</strong>: The progressive tax estimate uses brackets only and ignores most credits except where they are constant with respect to this RRSP deduction. The goal is to estimate the change in tax, not to reproduce a full T1 return.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>7. Data sources and references</h2>
+        <ul>
+          <li>RRSP annual limits: Canada Revenue Agency announcements for 2025 and 2026.</li>
+          <li>Federal and provincial brackets: Same JSON data set used by the Canada Personal Income Tax Calculator 2025 on The Long Math.</li>
+          <li>General RRSP rules: CRA documentation on RRSP contribution room, pension adjustments, and deduction limits.</li>
+        </ul>
+        <p style="font-size: 12px; color: var(--muted); margin-top: 8px;">
+          This page is for educational use only. It simplifies some rules to keep the arithmetic inspectable. Always rely on CRA records and professional advice for filing decisions.
+        </p>
+      </section>
+    </main>
+
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
+      </p>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+</body>
+</html>
+
