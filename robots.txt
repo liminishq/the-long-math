@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.thelongmath.com/sitemap.xml
+Sitemap: https://thelongmath.com/sitemap.xml
