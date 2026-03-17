@@ -134,8 +134,18 @@
   }
 
   /**
+   * Same-date event priority (lower = processed first).
+   * Ensures e.g. Jan 1 room is applied before a same-day contribution,
+   * so room is available and no phantom excess appears.
+   * 1. room_adjustment  2. withdrawal  3. contribution
+   */
+  const EVENT_PRIORITY = { room_adjustment: 0, withdrawal: 1, contribution: 2 };
+
+  /**
    * Build sorted list of events in range: user transactions (in range) plus
    * Jan 1 room_adjustment for each year crossed if annualJan1Room > 0.
+   * Sorted by date, then by explicit priority so same-day events are deterministic:
+   * room_adjustment first, then withdrawal, then contribution.
    */
   function buildEventTimeline(inputs) {
     const { startDate, endDate, startingRoom, annualJan1Room, transactions } = inputs;
@@ -170,13 +180,24 @@
       }
     }
 
-    events.sort((a, b) => compareDates(a.dateObj, b.dateObj));
+    events.sort((a, b) => {
+      const cmp = compareDates(a.dateObj, b.dateObj);
+      if (cmp !== 0) return cmp;
+      const pa = EVENT_PRIORITY[a.type] ?? 3;
+      const pb = EVENT_PRIORITY[b.type] ?? 3;
+      return pa - pb;
+    });
     return events;
   }
 
   /**
    * Apply one event to state. State is { room, excess }.
    * Returns new state (no mutation).
+   *
+   * room_adjustment semantics (single application, no double-counting):
+   * The adjustment is applied once. It first absorbs current excess (reduces excess).
+   * Only the remainder after absorbing excess is added to available room.
+   * So: absorbed = min(excess, amount); excess -= absorbed; room += (amount - absorbed).
    */
   function applyEvent(state, event) {
     let { room, excess } = state;
@@ -192,10 +213,14 @@
       case "withdrawal":
         excess = Math.max(0, excess - amount);
         break;
-      case "room_adjustment":
-        room = room + amount;
-        excess = Math.max(0, excess - amount);
+      case "room_adjustment": {
+        let remainingAdjustment = amount;
+        const absorbed = Math.min(excess, remainingAdjustment);
+        excess = excess - absorbed;
+        remainingAdjustment = remainingAdjustment - absorbed;
+        room = room + remainingAdjustment;
         break;
+      }
       default:
         break;
     }
@@ -416,6 +441,42 @@
           ]
         },
         expect: { totalPenalty: 30, peakExcess: 3000 } // highest in month 3000
+      },
+      {
+        name: "8. Same-date Jan 1 room and contribution",
+        inputs: {
+          startDate: "2026-01-01",
+          endDate: "2026-01-31",
+          startingRoom: 0,
+          annualJan1Room: 7000,
+          transactions: [{ date: "2026-01-01", type: "contribution", amount: 5000 }]
+        },
+        expect: { totalPenalty: 0, peakExcess: 0 } // room_adjustment first, then contribution fits
+      },
+      {
+        name: "9. room_adjustment with existing excess (absorb first, remainder to room)",
+        inputs: {
+          startDate: "2026-01-01",
+          endDate: "2026-01-31",
+          startingRoom: 0,
+          annualJan1Room: 0,
+          transactions: [
+            { date: "2026-01-05", type: "contribution", amount: 1000 },
+            { date: "2026-01-15", type: "room_adjustment", amount: 3000 }
+          ]
+        },
+        expect: { totalPenalty: 10, peakExcess: 1000 } // excess 0 after adj, room 2000
+      },
+      {
+        name: "10. room_adjustment when no excess (all to room)",
+        inputs: {
+          startDate: "2026-01-01",
+          endDate: "2026-01-31",
+          startingRoom: 500,
+          annualJan1Room: 0,
+          transactions: [{ date: "2026-01-10", type: "room_adjustment", amount: 1000 }]
+        },
+        expect: { totalPenalty: 0, peakExcess: 0 } // room becomes 1500
       }
     ];
     let passed = 0;

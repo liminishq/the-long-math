@@ -65,7 +65,18 @@
   display: none;
 }
 
-.calc-grid {
+.calc-init-error {
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  background: rgba(200, 80, 80, 0.12);
+  border: 1px solid var(--accent2, #c00);
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.calc-grid,
+.calc-grid-simple {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
   gap: 16px;
@@ -73,7 +84,8 @@
 }
 
 @media (max-width: 900px) {
-  .calc-grid {
+  .calc-grid,
+  .calc-grid-simple {
     grid-template-columns: 1fr;
   }
 }
@@ -269,6 +281,10 @@
   letter-spacing: 0.5px;
 }
 
+.monthly-table th.numeric {
+  text-align: right;
+}
+
 .monthly-table td.numeric {
   text-align: right;
   font-variant-numeric: tabular-nums;
@@ -322,6 +338,35 @@
   border: 1px dashed var(--border);
   border-radius: 10px;
   margin-top: 12px;
+}
+
+.faq-section.calc-faq {
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.faq-section h2 {
+  margin: 0 0 20px;
+  font-size: 20px;
+  color: var(--text);
+}
+
+.faq-item {
+  margin-bottom: 24px;
+}
+
+.faq-item h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: var(--accent2);
+  font-weight: 700;
+}
+
+.faq-item p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
 }
 
 .rel-section h2 {

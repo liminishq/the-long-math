@@ -98,16 +98,18 @@
       </div>
 
       <h3 id="withdrawal">Withdrawal</h3>
-      <p>A withdrawal reduces current excess only. It does not add to contribution room in this model (room is only increased by room adjustments or by the annual Jan 1 room you specify).</p>
+      <p>A withdrawal reduces current excess only. <strong>Withdrawals reduce excess from that point forward but do not restore same-year contribution room</strong> in this model. Room is only increased by room adjustments or by the annual Jan 1 room you specify.</p>
       <div class="formula-block">
         excess = max(0, excess − withdrawal amount)
       </div>
 
       <h3 id="room-adjustment">Room adjustment</h3>
-      <p>A room adjustment (or the automatic Jan 1 new room) increases available room. That new room can absorb part of the existing excess.</p>
+      <p>A room adjustment (or the automatic Jan 1 new room) is applied once: it first absorbs current excess (reduces excess); only the remainder is added to available room. No double-counting.</p>
       <div class="formula-block">
-        room = room + amount<br>
-        excess = max(0, excess − amount)
+        absorbed = min(excess, amount)<br>
+        excess = excess − absorbed<br>
+        remaining = amount − absorbed<br>
+        room = room + remaining
       </div>
 
       <h2>Timeline construction</h2>

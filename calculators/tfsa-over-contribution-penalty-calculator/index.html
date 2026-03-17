@@ -26,6 +26,46 @@
   ]
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How is the TFSA over-contribution penalty calculated?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "CRA charges 1% per month on the highest excess amount in each calendar month. The penalty is the sum of those monthly amounts. This calculator estimates that total."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does the simple calculator assume?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The simple mode assumes the excess amount stayed the same for the full number of months you enter. If your excess changed over time, use Advanced mode."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When should I use advanced mode?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use Advanced mode when contributions, withdrawals, or room changes happened on different dates and you want a month-by-month estimate based on the highest excess in each month."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do withdrawals restore TFSA room immediately?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In real life, withdrawals add to your contribution room starting January 1 of the next year, not in the same year. This calculator’s Advanced mode models that: withdrawals reduce excess from that point forward but do not restore same-year contribution room."
+      }
+    }
+  ]
+}
+  </script>
 
   <script src="/assets/js/theme-init.js"></script>
   <link rel="stylesheet" href="/assets/css/styles.css" />
@@ -59,6 +99,7 @@
     </header>
 
     <div class="card" id="calc_card">
+      <div id="calc_init_error" class="hidden calc-init-error" role="alert"></div>
       <div class="inspect-bar">
         <a href="/calculators/tfsa-over-contribution-penalty-calculator/methodology/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">
           Inspect the Arithmetic
@@ -115,6 +156,9 @@
       <div id="advanced_section" class="mode-section hidden">
       <div class="note-block">
         This tool estimates the penalty based on the <strong>highest excess amount</strong> reached in each month. If your excess changed during the month, the month is still assessed using that month’s highest excess.
+      </div>
+      <div class="note-block withdrawal-assumption">
+        In this model, <strong>withdrawals reduce excess from that point forward but do not restore same-year contribution room</strong>. Room is only increased by the “annual new TFSA room (Jan 1)” value or by explicit room-adjustment transactions.
       </div>
 
       <div class="calc-grid">
@@ -218,6 +262,26 @@
       </div>
       </div>
     </div>
+
+    <section class="faq-section calc-faq" style="margin-top: 24px;">
+      <h2>Frequently asked questions</h2>
+      <div class="faq-item">
+        <h3>How is the TFSA over-contribution penalty calculated?</h3>
+        <p>CRA charges 1% per month on the highest excess amount in each calendar month. The penalty is the sum of those monthly amounts. This calculator estimates that total.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What does the simple calculator assume?</h3>
+        <p>The simple mode assumes the excess amount stayed the same for the full number of months you enter. If your excess changed over time, use Advanced mode.</p>
+      </div>
+      <div class="faq-item">
+        <h3>When should I use advanced mode?</h3>
+        <p>Use Advanced mode when contributions, withdrawals, or room changes happened on different dates and you want a month-by-month estimate based on the highest excess in each month.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Do withdrawals restore TFSA room immediately?</h3>
+        <p>In real life, withdrawals add to your contribution room starting January 1 of the next year, not in the same year. This calculator’s Advanced mode models that: withdrawals reduce excess from that point forward but do not restore same-year contribution room.</p>
+      </div>
+    </section>
 
     <section class="rel-section" style="margin-top: 24px;">
       <h2>Related content</h2>

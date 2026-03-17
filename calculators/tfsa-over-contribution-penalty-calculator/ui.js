@@ -4,7 +4,6 @@
 (function () {
   "use strict";
 
-  const STORAGE_KEY = "tlm_tfsa_over_contribution_lastInputs";
   const DEFAULT_MODE = "simple";
 
   let currentMode = DEFAULT_MODE;
@@ -100,12 +99,6 @@
     if (isNaN(end.getTime())) return { ok: false, message: "Invalid end date." };
     if (end.getTime() < start.getTime()) return { ok: false, message: "End date must be on or after start date." };
     return { ok: true };
-  }
-
-  function saveLastInputs(inp) {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(inp));
-    } catch (e) {}
   }
 
   function addTransactionRow(data) {
@@ -235,12 +228,11 @@
 
     outPenalty.textContent = fmtCADCents(result.penalty);
     simpleEcho.style.display = "block";
-    simpleEcho.textContent = "Using excess " + fmtCAD(excessAmount) + " over " + String(Math.floor(monthsAtExcess)) + " month(s). Penalty is 1% of the excess per month.";
+    simpleEcho.textContent = "Excess " + fmtCAD(excessAmount) + " × " + String(Math.floor(monthsAtExcess)) + " month(s) × 1% = " + fmtCADCents(result.penalty) + " estimated penalty.";
   }
 
   function renderAdvanced() {
     const inp = readInputs();
-    saveLastInputs(inp);
 
     const endErr = $("end_date_error");
     endErr.textContent = "";
@@ -336,21 +328,31 @@
   }
 
   function init() {
-    initAdvanced();
+    try {
+      initAdvanced();
 
-    $("mode_btn_simple").addEventListener("click", function () {
-      setMode("simple");
-    });
-    $("mode_btn_advanced").addEventListener("click", function () {
-      setMode("advanced");
-    });
+      $("mode_btn_simple").addEventListener("click", function () {
+        setMode("simple");
+      });
+      $("mode_btn_advanced").addEventListener("click", function () {
+        setMode("advanced");
+      });
 
-    $("simple_excess_amount").addEventListener("input", renderSimple);
-    $("simple_excess_amount").addEventListener("change", renderSimple);
-    $("simple_months").addEventListener("input", renderSimple);
-    $("simple_months").addEventListener("change", renderSimple);
+      $("simple_excess_amount").addEventListener("input", renderSimple);
+      $("simple_excess_amount").addEventListener("change", renderSimple);
+      $("simple_months").addEventListener("input", renderSimple);
+      $("simple_months").addEventListener("change", renderSimple);
 
-    setMode(DEFAULT_MODE);
+      setMode(DEFAULT_MODE);
+    } catch (err) {
+      console.error("TFSA Over-Contribution Calculator init failed:", err);
+      var card = document.getElementById("calc_card");
+      var errEl = document.getElementById("calc_init_error");
+      if (card && errEl) {
+        errEl.textContent = "Calculator failed to load. Check the console for details.";
+        errEl.classList.remove("hidden");
+      }
+    }
   }
 
   if (document.readyState === "loading") {
