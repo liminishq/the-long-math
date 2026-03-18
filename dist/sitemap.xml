@@ -103,6 +103,36 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://thelongmath.com/articles/investing-and-financial-literacy/dollar-cost-averaging/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/articles/investing-and-financial-literacy/what-is-an-fhsa/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/articles/investing-and-financial-literacy/what-is-an-rrsp/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/articles/investing-and-financial-literacy/norberts-gambit/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/articles/investing-and-financial-literacy/the-true-cost-of-financial-advisor-fees/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/articles/investing-and-financial-literacy/investing-vs-trading/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://thelongmath.com/calculators/tfsa-over-contribution-penalty-calculator/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -118,9 +148,48 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://thelongmath.com/calculators/active-vs-passive-break-even/methodology/</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/calculators/compound-multipliers/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/calculators/tfsa-rrsp-fhsa/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/calculators/tfsa-rrsp-fhsa/methodology/</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/calculators/rrsp-contribution-room-tax-refund/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/calculators/rrsp-contribution-room-tax-refund/methodology/</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://thelongmath.com/calculators/fee-cost-1percent/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/calculators/fee-cost-1percent/methodology/</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://thelongmath.com/calculators/fee-cost-0-5percent/</loc>
@@ -128,14 +197,32 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://thelongmath.com/calculators/fee-cost-0-5percent/methodology/</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://thelongmath.com/calculators/investment-calculator-inflation-adjusted/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://thelongmath.com/calculators/investment-calculator-inflation-adjusted/methodology/</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://thelongmath.com/calculators/required-return-to-offset-fee/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/calculators/required-return-to-offset-fee/methodology/</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://thelongmath.com/calculators/pay-off-mortgage-vs-invest/</loc>
@@ -158,6 +245,18 @@
     <loc>https://thelongmath.com/calculators/flat-fee-or-hourly/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/calculators/flat-fee-or-hourly/methodology/</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/calculators/tfsa-over-contribution-penalty-calculator/methodology/</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://thelongmath.com/calculators/investment-simple/</loc>
@@ -208,12 +307,35 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://thelongmath.com/calculators/canada-income-tax/methodology/</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://thelongmath.com/calculators/capital-gains-tax-canada/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://thelongmath.com/calculators/capital-gains-tax-canada/methodology/</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://thelongmath.com/calculators/ccpc-tax/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/calculators/ccpc-tax/methodology/</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/tools/income-tax-brackets-canada/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

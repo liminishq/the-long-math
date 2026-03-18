@@ -98,19 +98,6 @@
               yAxisID: "balance",
               stack: "balanceStack",
             },
-            // Dataset 2: Remaining principal curve (outline of envelope, no fill)
-            {
-              label: "Remaining principal (total balance)",
-              data: [],
-              borderColor: cssVar("--chart-balance-line") || "#F2C94C",
-              backgroundColor: "transparent",
-              fill: false,
-              borderWidth: 2,
-              tension: 0.25,
-              pointRadius: 0,
-              pointHoverRadius: 3,
-              yAxisID: "balance",
-            },
           ],
         },
         options: {
@@ -263,7 +250,6 @@
           if (m.type === "attributes" && m.attributeName === "data-theme") {
             if (!paymentChart) return;
 
-            const balanceLine = cssVar("--chart-balance-line") || "#F2C94C";
             const principalLine = cssVar("--chart-principal-line") || "#9CB3CB";
             const principalFill = cssVar("--chart-principal-fill") || "rgba(156,179,203,0.35)";
             const interestLine = cssVar("--chart-interest-line") || "#D3C3B1";
@@ -278,8 +264,6 @@
             // Dataset 1: principal component
             paymentChart.data.datasets[1].borderColor = principalLine;
             paymentChart.data.datasets[1].backgroundColor = principalFill;
-            // Dataset 2: remaining principal curve
-            paymentChart.data.datasets[2].borderColor = balanceLine;
 
             const scales = paymentChart.options.scales;
             if (scales && scales.x && scales.balance) {
@@ -419,7 +403,6 @@
 
     if (paymentChart && Array.isArray(scheduleRows) && scheduleRows.length > 0) {
       const labels = [0];
-      const balanceSeries = [principal];
       const interestAreaSeries = [];
       const principalAreaSeries = [];
 
@@ -440,7 +423,6 @@
         labels.push(k);
 
         const bal = Math.max(0, row.balance);
-        balanceSeries.push(bal);
 
         const totalPay = row.interest + row.principalPaid;
         let interestShare = 0;
@@ -459,17 +441,9 @@
       paymentChart.$totalYears = years;
 
       paymentChart.data.labels = labels;
-      // Dataset order: 0 = interest area, 1 = principal area, 2 = remaining principal curve
+      // Dataset order: 0 = interest area, 1 = principal area
       paymentChart.data.datasets[0].data = interestAreaSeries;
       paymentChart.data.datasets[1].data = principalAreaSeries;
-      paymentChart.data.datasets[2].data = balanceSeries;
-
-      // Lock balance axis to [0, principal] so the curve intercepts cleanly with axes
-      if (paymentChart.options && paymentChart.options.scales && paymentChart.options.scales.balance) {
-        const balanceScale = paymentChart.options.scales.balance;
-        balanceScale.min = 0;
-        balanceScale.max = principal > 0 ? principal : undefined;
-      }
 
       paymentChart.update();
     }
