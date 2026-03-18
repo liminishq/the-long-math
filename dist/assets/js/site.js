@@ -169,7 +169,22 @@
     if (!article) return;
 
     var header = article.querySelector("header");
-    if (header && (header.querySelector(".read-time") || header.querySelector(".reading-time"))) return;
+    if (header) {
+      // Some articles hardcode the read-time using different markup (e.g. `.reading-meta` or no class).
+      // Detect those cases to avoid inserting a duplicate "x minute read".
+      if (
+        header.querySelector(".read-time") ||
+        header.querySelector(".reading-time") ||
+        header.querySelector(".reading-meta")
+      ) {
+        return;
+      }
+
+      var headerText = header.textContent || "";
+      // Match "8-minute read" even when the hyphen is a Unicode hyphen-minus variant.
+      var readTimeRegex = /\b\d+\s*[\-\u2010\u2011\u2012\u2013\u2014]?\s*minute(s)?\s*[\-\u2010\u2011\u2012\u2013\u2014]?\s*read\b/i;
+      if (readTimeRegex.test(headerText)) return;
+    }
 
     var text = article.innerText || article.textContent || "";
     var words = text.trim().split(/\s+/).filter(Boolean);
@@ -206,6 +221,11 @@
 
     var header = article.querySelector("header");
     if (!header) return;
+
+    // Avoid duplicating the "Last updated ..." line when an article already provides it.
+    if (header.querySelector(".last-updated")) return;
+    var headerText = header.textContent || "";
+    if (/\bLast updated\b/i.test(headerText)) return;
 
     var after = header.querySelector(".reading-time") || header.querySelector(".read-time");
     var p = document.createElement("p");
