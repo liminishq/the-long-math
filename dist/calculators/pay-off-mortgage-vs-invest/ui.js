@@ -361,6 +361,36 @@
     $("total_interest_paid").textContent = fmtCAD(totalInterestPaid);
     $("total_interest_earned").textContent = fmtCAD(totalInterestEarned);
 
+    // Key facts: mortgage payoff timeline for current allocation vs baseline (all extra cash invested)
+    const mortgageExtraPct = Math.round(100 - inp.allocationPercent);
+    $("fact_extra_cash_to_mortgage_pct").textContent = String(mortgageExtraPct);
+
+    const splitPayoffMonths = (payoffMonth) => {
+      if (payoffMonth == null || !Number.isFinite(payoffMonth)) return null;
+      const years = Math.floor(payoffMonth / 12);
+      const months = payoffMonth % 12;
+      return { years, months };
+    };
+
+    const payoffParts = splitPayoffMonths(result.payoffMonth);
+    const baselineParts = splitPayoffMonths(result.payoffMonthAllInvest);
+
+    $("fact_payoff_years").textContent = payoffParts ? String(payoffParts.years) : "—";
+    $("fact_payoff_months").textContent = payoffParts ? String(payoffParts.months) : "—";
+    $("fact_payoff_baseline_years").textContent = baselineParts ? String(baselineParts.years) : "—";
+    $("fact_payoff_baseline_months").textContent = baselineParts ? String(baselineParts.months) : "—";
+
+    let deltaText = "—";
+    if (payoffParts && baselineParts) {
+      const currentMonths = payoffParts.years * 12 + payoffParts.months;
+      const baselineMonths = baselineParts.years * 12 + baselineParts.months;
+      const delta = baselineMonths - currentMonths; // positive => sooner
+      if (delta === 0) deltaText = "the same";
+      else if (delta > 0) deltaText = String(delta) + " months sooner";
+      else deltaText = String(Math.abs(delta)) + " months later";
+    }
+    $("fact_payoff_delta").textContent = deltaText;
+
     // Update chart
     const adjustedSeries = result.series.map(p => ({
       month: p.month,
