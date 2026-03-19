@@ -375,6 +375,7 @@ function calculateMortgageVsInvest(inputs) {
     totalInterestEarned: currentResult.totalInterestEarned,
     series: currentResult.series,
     payoffMonth: currentResult.payoffMonth,
+    payoffMonthAllInvest: result100Invest.payoffMonth, // baseline: extra cash fully invested (0% allocated to mortgage)
     fact100Mortgage: result100Mortgage.series[result100Mortgage.series.length - 1].netWorth,
     fact100Invest: result100Invest.series[result100Invest.series.length - 1].netWorth,
     fact100MortgageInterestPaid: result100Mortgage.totalInterestPaid,
