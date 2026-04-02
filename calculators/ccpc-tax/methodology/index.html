@@ -58,8 +58,10 @@
         <li>P<sub>corp</sub> = province/territory of incorporation (for corporate tax)</li>
         <li>P<sub>pers</sub> = province/territory of residence for shareholders (for personal tax; assumed equal to P<sub>corp</sub> unless overridden later)</li>
         <li>R = gross corporate revenue</li>
-        <li>X = deductible business expenses</li>
-        <li>I<sub>corp</sub> = corporate taxable income</li>
+        <li>X = deductible business expenses (exclude shareholder salary; salary is entered separately)</li>
+        <li>P<sub>pre</sub> = max(0, R − X), corporate income before owner compensation (salary and employer CPP)</li>
+        <li>CPP<sub>emp</sub> = employer CPP on T4 salary (matched to employee CPP in the payroll model, per employment)</li>
+        <li>I<sub>corp</sub> = corporate taxable income after salary and employer CPP</li>
         <li>SBDLimit = federal small business deduction limit (typically $500,000), applied for the chosen province using the corporate tax data files.</li>
         <li>r<sub>fed,SBD</sub>, r<sub>fed,gen</sub> = federal SBD and general corporate tax rates</li>
         <li>r<sub>prov,SBD</sub>, r<sub>prov,gen</sub> = provincial SBD and general corporate tax rates</li>
@@ -99,10 +101,12 @@
 
       <h3 id="corp-taxable-income">1. Corporate Taxable Income</h3>
       <div class="formula-block">
-        I<sub>corp</sub> = max(0, R − X)
+        P<sub>pre</sub> = max(0, R − X)<br>
+        I<sub>corp</sub> = max(0, P<sub>pre</sub> − S − CPP<sub>emp</sub>) &nbsp; (one shareholder; S = salary to that shareholder)<br>
+        I<sub>corp</sub> = max(0, P<sub>pre</sub> − (S<sub>1</sub> + S<sub>2</sub>) − (CPP<sub>emp,1</sub> + CPP<sub>emp,2</sub>)) &nbsp; (two shareholders)
       </div>
       <p>
-        Negative results (where expenses exceed revenue) are clipped to 0 for this calculator. Salaries or bonuses paid to shareholders are assumed to already be included in deductible business expenses (X). The calculator does not deduct salary again when computing corporate taxable income. Loss carryforwards, loss carrybacks, and passive investment income rules are out of scope.
+        Negative results are clipped to 0. Salary and employer CPP are deductible corporate expenses and are modeled from the salary inputs (not from X). Employee CPP and EI remain on the personal side only. Loss carryforwards, loss carrybacks, and passive investment income rules are out of scope.
       </p>
 
       <h3 id="corp-brackets">2. Federal and Provincial Corporate Tax</h3>
@@ -138,22 +142,21 @@
 
       <h3 id="single-shareholder">3. Single‑Shareholder Scenario</h3>
       <p>
-        For a single shareholder, the calculator treats the salary and dividends the shareholder receives as distributions out of
-        the corporate after‑tax cash:
+        Salary is already reflected in I<sub>corp</sub> (and in Cash<sub>after</sub>). Retained earnings compare after‑tax corporate cash only to <strong>dividends</strong> paid from post‑corporate‑tax funds:
       </p>
       <div class="formula-block">
-        Dist<sub>single</sub> = S + D<sub>elig</sub> + D<sub>ne</sub><br>
+        Dist<sub>single</sub> = D<sub>elig</sub> + D<sub>ne</sub><br>
         RetEarn = max(0, Cash<sub>after</sub> − Dist<sub>single</sub>)
       </div>
       <p>
-        If modeled distributions exceed after‑tax corporate cash, retained earnings are clipped to zero rather than displaying negative corporate equity. The corporate side does not enforce balance‑sheet constraints beyond this max‑zero clipping; over‑distributions relative to Cash<sub>after</sub>
+        If modeled dividends exceed after‑tax corporate cash, retained earnings are clipped to zero rather than displaying negative corporate equity. The corporate side does not enforce balance‑sheet constraints beyond this max‑zero clipping; over‑distributions relative to Cash<sub>after</sub>
         are not flagged separately in this version.
       </p>
 
       <h3 id="split-shareholder">4. Two‑Shareholder (Income Splitting) Scenario</h3>
-      <p>When “income splitting” is enabled:</p>
+      <p>When “income splitting” is enabled, the same rule applies using total dividends to both shareholders:</p>
       <div class="formula-block">
-        Dist<sub>split</sub> = (S<sub>1</sub> + D<sub>elig,1</sub> + D<sub>ne,1</sub>) + (S<sub>2</sub> + D<sub>elig,2</sub> + D<sub>ne,2</sub>)<br>
+        Dist<sub>split</sub> = (D<sub>elig,1</sub> + D<sub>ne,1</sub>) + (D<sub>elig,2</sub> + D<sub>ne,2</sub>)<br>
         RetEarn = max(0, Cash<sub>after</sub> − Dist<sub>split</sub>)
       </div>
 

@@ -56,3 +56,12 @@ export function getProvincialCorporateData(province) {
   }
   return provincesCorporateData[province];
 }
+
+/**
+ * Inject corporate tax tables without fetch (automated tests).
+ * @param {{ federal: object, provinces: object }} snapshot
+ */
+export function applyCorporateTaxDataSnapshot(snapshot) {
+  federalCorporateData = snapshot.federal;
+  provincesCorporateData = snapshot.provinces;
+}

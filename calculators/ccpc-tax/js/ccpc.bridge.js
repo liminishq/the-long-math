@@ -4,7 +4,24 @@
  */
 
 import { calculateCorporateTax } from './corporate.engine.js';
-import { computePersonalTax } from './tax.engine.js';
+import { computePersonalTax, employerCppForT4Employment } from './tax.engine.js';
+
+/**
+ * Sum deductible owner compensation: salary plus employer CPP (matched to employee CPP on T4 salary).
+ * Employee CPP stays on the personal side only.
+ * @param {number[]} salaries
+ * @returns {{ salaryExpense: number, employerCppExpense: number }}
+ */
+function sumCompensationCorporateDeductions(salaries) {
+  let salaryExpense = 0;
+  let employerCppExpense = 0;
+  for (const raw of salaries) {
+    const s = Math.max(0, Number(raw) || 0);
+    salaryExpense += s;
+    employerCppExpense += employerCppForT4Employment(s);
+  }
+  return { salaryExpense, employerCppExpense };
+}
 
 /**
  * Calculate complete CCPC tax scenario (single or income-splitting)
@@ -25,9 +42,6 @@ export function computeCCPCTax(input) {
   } = input;
 
   const personalProv = input.personalProvince || province;
-  const corporateTaxableIncome = Math.max(0, grossRevenue - expenses);
-  const corporate = calculateCorporateTax(corporateTaxableIncome, province);
-  const afterTaxCorporateCash = corporate.afterTaxCash;
 
   if (incomeSplitting && input.shareholder1 != null && input.shareholder2 != null) {
     const sh1 = input.shareholder1;
@@ -39,8 +53,18 @@ export function computeCCPCTax(input) {
     const nonElig1 = sh1.nonEligibleDividends || 0;
     const nonElig2 = sh2.nonEligibleDividends || 0;
 
-    const totalDistributions = salary1 + elig1 + nonElig1 + salary2 + elig2 + nonElig2;
-    const retainedEarnings = Math.max(0, afterTaxCorporateCash - totalDistributions);
+    const { salaryExpense, employerCppExpense } = sumCompensationCorporateDeductions([salary1, salary2]);
+    const corporateIncomeBeforeCompensation = Math.max(0, grossRevenue - expenses);
+    const corporateTaxableIncome = Math.max(
+      0,
+      corporateIncomeBeforeCompensation - salaryExpense - employerCppExpense
+    );
+
+    const corporate = calculateCorporateTax(corporateTaxableIncome, province);
+    const afterTaxCorporateCash = corporate.afterTaxCash;
+
+    const dividendDistributions = elig1 + nonElig1 + elig2 + nonElig2;
+    const retainedEarnings = Math.max(0, afterTaxCorporateCash - dividendDistributions);
 
     const personal1 = computePersonalTax({
       year,
@@ -79,7 +103,11 @@ export function computeCCPCTax(input) {
         ...corporate,
         grossRevenue,
         expenses,
-        distributions: totalDistributions
+        corporateIncomeBeforeCompensation,
+        salaryExpense,
+        employerCppExpense,
+        dividendDistributions,
+        distributions: dividendDistributions
       },
       personal: null,
       personal1: {
@@ -106,6 +134,16 @@ export function computeCCPCTax(input) {
   const personalOtherIncome = input.personalOtherIncome || 0;
   const personalDeductions = input.personalDeductions || 0;
 
+  const { salaryExpense, employerCppExpense } = sumCompensationCorporateDeductions([salary]);
+  const corporateIncomeBeforeCompensation = Math.max(0, grossRevenue - expenses);
+  const corporateTaxableIncome = Math.max(
+    0,
+    corporateIncomeBeforeCompensation - salaryExpense - employerCppExpense
+  );
+
+  const corporate = calculateCorporateTax(corporateTaxableIncome, province);
+  const afterTaxCorporateCash = corporate.afterTaxCash;
+
   const personal = computePersonalTax({
     year,
     province: personalProv,
@@ -122,8 +160,8 @@ export function computeCCPCTax(input) {
   const totalTaxBurden = corporate.totalCorporateTax + personal.totals.totalIncomeTax;
   const effectiveTaxRate = grossRevenue > 0 ? totalTaxBurden / grossRevenue : 0;
   const netPersonalTakeHome = personal.totals.takeHomeAfterPayroll;
-  const distributions = salary + eligibleDividends + nonEligibleDividends;
-  const retainedEarnings = Math.max(0, afterTaxCorporateCash - distributions);
+  const dividendDistributions = eligibleDividends + nonEligibleDividends;
+  const retainedEarnings = Math.max(0, afterTaxCorporateCash - dividendDistributions);
 
   return {
     incomeSplitting: false,
@@ -131,7 +169,11 @@ export function computeCCPCTax(input) {
       ...corporate,
       grossRevenue,
       expenses,
-      distributions
+      corporateIncomeBeforeCompensation,
+      salaryExpense,
+      employerCppExpense,
+      dividendDistributions,
+      distributions: dividendDistributions
     },
     personal: {
       ...personal.totals,

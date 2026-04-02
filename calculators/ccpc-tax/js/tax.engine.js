@@ -223,7 +223,7 @@ function calculateDividends(eligibleDividends, nonEligibleDividends, province) {
  * @param {number} employmentIncome - Employment income
  * @returns {Object} CPP calculation
  */
-function calculateCPP(employmentIncome) {
+export function calculateCPP(employmentIncome) {
   const payroll = getPayrollData();
   
   // CPP1: Base CPP on earnings up to YMPE
@@ -255,6 +255,15 @@ function calculateCPP(employmentIncome) {
       cpp2MaxContribution: payroll.cpp2 ? payroll.cpp2.maxAdditionalContribution : 0
     }
   };
+}
+
+/**
+ * Employer CPP for standard T4 employment: matched to employee CPP (same rates/caps).
+ * @param {number} employmentIncome
+ * @returns {number}
+ */
+export function employerCppForT4Employment(employmentIncome) {
+  return calculateCPP(employmentIncome).cpp;
 }
 
 /**

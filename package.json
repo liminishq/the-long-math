@@ -3,7 +3,8 @@
   "private": true,
   "description": "Static site with build-time i18n generation",
   "scripts": {
-    "build": "node build/build.js"
+    "build": "node build/build.js",
+    "test": "node --test calculators/ccpc-tax/tests/ccpc-bridge.test.mjs"
   },
   "devDependencies": {
     "nunjucks": "^3.2.4"

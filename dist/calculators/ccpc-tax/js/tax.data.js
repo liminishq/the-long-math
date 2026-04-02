@@ -86,3 +86,14 @@ export function getDividendsData() {
   }
   return dividendsData;
 }
+
+/**
+ * Inject tax tables without fetch (automated tests).
+ * @param {{ federal: object, provinces: object, payroll: object, dividends: object }} snapshot
+ */
+export function applyTaxDataSnapshot(snapshot) {
+  federalData = snapshot.federal;
+  provincesData = snapshot.provinces;
+  payrollData = snapshot.payroll;
+  dividendsData = snapshot.dividends;
+}

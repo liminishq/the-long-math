@@ -70,12 +70,13 @@
         <div class="field">
           <label for="grossRevenue">Gross Corporate Revenue</label>
           <input type="text" id="grossRevenue" placeholder="0" value="">
+          <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Total revenue before owner salary; salary is entered below and deducted for corporate taxable income.</div>
         </div>
 
         <div class="field">
           <label for="expenses">Total Business Expenses</label>
           <input type="text" id="expenses" placeholder="0" value="">
-          <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Deductible business expenses (exclude personal expenses)</div>
+          <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Deductible business expenses excluding shareholder salary and employer CPP (those follow from the salary fields and payroll rules).</div>
         </div>
 
         <div class="field field-toggle">
