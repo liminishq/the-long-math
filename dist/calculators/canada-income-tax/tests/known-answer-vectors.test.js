@@ -6,9 +6,9 @@
  * These tests fail loudly if any calculation changes. Values are CRA/form-aligned expectations.
  */
 
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { dirname, join, resolve } from 'node:path';
 import { computePersonalTax } from '../js/tax.engine.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -193,4 +193,6 @@ function runAll() {
   if (failed > 0) process.exit(1);
 }
 
-runAll();
+const executedDirectly =
+  process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url;
+if (executedDirectly) runAll();
