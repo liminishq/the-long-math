@@ -180,6 +180,133 @@ function clampNumber(n, lo, hi) {
   return Math.min(hi, Math.max(lo, n));
 }
 
+/**
+ * Many calculators use plain text inputs without min/max. The fuzzer would otherwise use a
+ * generic ~500–2000 range for every field, producing nonsense years and percentages and
+ * false "missing numeric output" failures when the UI correctly shows an em dash.
+ */
+function fillMissingNumericBounds(inp) {
+  if (inp.kind !== "number") return;
+  const hasMin = isFiniteNumber(inp.min);
+  const hasMax = isFiniteNumber(inp.max);
+  if (hasMin && hasMax) return;
+
+  const id = (inp.id || "").toLowerCase();
+  let lo = null;
+  let hi = null;
+
+  if (id === "birth_year" || id === "birthyear") {
+    lo = 1900;
+    hi = 2015;
+  } else if (
+    id === "years" ||
+    id === "horizon_years" ||
+    id === "time_horizon" ||
+    id === "timehorizon" ||
+    id === "calc_amortization" ||
+    id === "amortization_years" ||
+    id === "loanyears"
+  ) {
+    lo = 1;
+    hi = 80;
+  } else if ((id.includes("amort") && id.includes("year")) || (id.includes("horizon") && id.includes("year"))) {
+    lo = 1;
+    hi = 80;
+  } else if (id.includes("hour")) {
+    lo = 0;
+    hi = 8760;
+  } else if (
+    id.includes("pct") ||
+    id.includes("percent") ||
+    /\b(return|yield)\b/.test(id) ||
+    id.endsWith("_rate") ||
+    id === "fees" ||
+    id === "mer_pct" ||
+    id === "fee_pct" ||
+    id === "inflation_rate" ||
+    id === "custom_inflation_rate" ||
+    id === "home_growth" ||
+    id === "marginal_tax_rate" ||
+    id === "inclusion_rate" ||
+    id === "annual_return" ||
+    id === "expected_return" ||
+    id === "expectedreturn" ||
+    id === "current_rate" ||
+    id === "interest_rate" ||
+    id === "calc_interest_rate"
+  ) {
+    lo = 0;
+    hi = 100;
+  } else if (
+    id === "p" ||
+    id.includes("balance") ||
+    id.includes("contrib") ||
+    id.includes("proceeds") ||
+    id.includes("acb") ||
+    id.includes("payment") ||
+    id.includes("budget") ||
+    id.includes("income") ||
+    id.includes("price") ||
+    id.includes("amount") ||
+    id.includes("cash") ||
+    id.includes("withdrawal") ||
+    id.includes("deposit") ||
+    id.includes("starting") ||
+    id.includes("monthly") ||
+    id.includes("annual_contribution") ||
+    id.includes("lifetime") ||
+    id.includes("total")
+  ) {
+    lo = 0;
+    hi = 5e9;
+  } else {
+    lo = 0;
+    hi = 1e7;
+  }
+
+  if (!hasMin && lo != null) inp.min = lo;
+  if (!hasMax && hi != null) inp.max = hi;
+}
+
+function isLikelyHorizonYearsId(id) {
+  const idl = (id || "").toLowerCase();
+  return (
+    idl === "years" ||
+    idl === "horizon_years" ||
+    idl === "time_horizon" ||
+    idl === "timehorizon" ||
+    idl === "calc_amortization" ||
+    idl === "amortization_years" ||
+    idl === "loanyears" ||
+    ((idl.includes("amort") && idl.includes("year")) || (idl.includes("horizon") && idl.includes("year")))
+  );
+}
+
+function isLikelyPercentInputId(id) {
+  const idl = (id || "").toLowerCase();
+  if (idl === "birth_year" || idl === "birthyear" || isLikelyHorizonYearsId(id)) return false;
+  return (
+    idl.includes("pct") ||
+    idl.includes("percent") ||
+    /\b(return|yield)\b/.test(idl) ||
+    idl.endsWith("_rate") ||
+    idl === "fees" ||
+    idl === "mer_pct" ||
+    idl === "fee_pct" ||
+    idl === "inflation_rate" ||
+    idl === "custom_inflation_rate" ||
+    idl === "home_growth" ||
+    idl === "marginal_tax_rate" ||
+    idl === "inclusion_rate" ||
+    idl === "annual_return" ||
+    idl === "expected_return" ||
+    idl === "expectedreturn" ||
+    idl === "current_rate" ||
+    idl === "interest_rate" ||
+    idl === "calc_interest_rate"
+  );
+}
+
 function parseMaybeNumber(text) {
   if (text == null) return null;
   const s = String(text).trim();
@@ -221,6 +348,8 @@ function evaluateRealism({ outputItems, inputAbsMax }) {
     "loss",
     "tax refund",
     "recoup",
+    "difference",
+    "delta",
   ];
 
   let questionableCount = 0;
@@ -333,9 +462,14 @@ async function runScenarioSet({ page, scenarioCount, calculatorSlug, rand, input
           value = rand() < 0.5 ? 0 : 1;
         }
       } else if (scenarioType === "extreme") {
-        if (actualMax != null) {
-          // Push beyond max if possible.
-          value = actualMax * 5 * (0.5 + rand());
+        if (isLikelyHorizonYearsId(id) && actualMax != null) {
+          // Stay in a range the growth formulas can represent without NaN.
+          value = Math.min(actualMax * (1.2 + rand() * 0.8), 120);
+        } else if (isLikelyPercentInputId(id) && actualMax != null) {
+          const lo = actualMin != null ? actualMin : 0;
+          value = lo + (actualMax - lo) * (0.88 + rand() * 0.12);
+        } else if (actualMax != null) {
+          value = actualMax * (1.25 + rand() * 1.75);
         } else if (actualMin != null && actualMin >= 0) {
           value = actualMin * (1000 + Math.floor(rand() * 1000));
         } else {
@@ -419,6 +553,14 @@ async function runScenarioSet({ page, scenarioCount, calculatorSlug, rand, input
           if (!valEl) return;
           const id = valEl.id || "";
           items.push({ id, label, text: (valEl.textContent || "").trim() });
+        });
+
+        // Fee-style tools: .out .kv with .k label and .v[id] value (e.g. active-vs-passive-break-even).
+        document.querySelectorAll(".out .kv").forEach((row) => {
+          const label = row.querySelector(".k")?.textContent?.trim() || "";
+          const valEl = row.querySelector(".v[id]") || row.querySelector(".v");
+          if (!valEl || !valEl.id) return;
+          items.push({ id: valEl.id, label, text: (valEl.textContent || "").trim() });
         });
 
         return items;
@@ -660,6 +802,8 @@ async function main() {
           },
         };
       });
+
+      for (const inp of inputSpecs.inputs) fillMissingNumericBounds(inp);
 
       const hasInteractiveInputs = inputSpecs.expected.hasInputs;
 
