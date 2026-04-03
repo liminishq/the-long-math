@@ -16,7 +16,23 @@
       color: var(--accent);
     }
     .page-essays .featured-essay {
+      position: relative;
       border-left: 4px solid var(--accent);
+      cursor: pointer;
+    }
+    .page-essays .featured-essay .featured-essay-link {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+      display: block;
+      text-decoration: none;
+      color: transparent;
+    }
+    .page-essays .featured-essay:has(.featured-essay-link:hover) {
+      border-left-color: var(--accent2);
     }
     .page-essays .card h2 {
       color: var(--accent2);
@@ -33,12 +49,11 @@
     .page-essays .card h3 + p {
       margin: 0 0 0.35rem;
     }
-    .page-essays .card h3 a {
-      color: inherit;
-      text-decoration: none;
-    }
-    .page-essays .card h3 a:hover {
-      text-decoration: underline;
+    .page-essays .featured-essay .essay-card-cta {
+      margin: 0.75rem 0 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--accent);
     }
   </style>
   <script defer src="/assets/js/site.js"></script>
@@ -74,17 +89,17 @@
     </header>
 
     <section class="card featured-essay">
+      <a href="/beyond-the-numbers/is-med-school-financially-worth-it/" class="featured-essay-link" aria-label="Is Medical School Financially Worth It? — read the essay"></a>
+
       <h2>Featured Essay</h2>
 
-      <h3><a href="/beyond-the-numbers/is-med-school-financially-worth-it/">Is Medical School Financially Worth It?</a></h3>
+      <h3>Is Medical School Financially Worth It?</h3>
 
       <p>
         Medicine is one of the most respected professions in society. It is also one of the longest and most financially unusual career paths. This essay examines the full financial timeline of becoming a physician — from tuition and residency income to the delayed compounding that follows.
       </p>
 
-      <p>
-        <a href="/beyond-the-numbers/is-med-school-financially-worth-it/">Read the essay →</a>
-      </p>
+      <p class="essay-card-cta">Read the essay →</p>
 
       <p class="essay-status">Published</p>
     </section>
