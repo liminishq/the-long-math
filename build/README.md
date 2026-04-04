@@ -15,8 +15,8 @@ Deploy the **`dist/`** directory (e.g. Cloudflare Pages: set build output to `di
 
 ### Local preview
 
-- **Recommended:** `npm run build`, then serve **`dist/`** (e.g. `cd dist` and `python -m http.server 8000`). French lives under `/fr/...` there.
-- **Repo root:** After `npm run build`, the build also copies English article HTML into `articles/investing-and-financial-literacy/` so paths like `/articles/investing-and-financial-literacy/` work if your static server uses the project root. Those files are gitignored mirrors, not the source of truth.
+- **Recommended:** `npm run build`, then serve **`dist/`** (e.g. `cd dist` and `python -m http.server 8000`). English and French article URLs both work there.
+- **Repo root:** After `npm run build`, the build mirrors generated article HTML into **`articles/investing-and-financial-literacy/`** (English) and **`fr/articles/investing-and-financial-literacy/`** (French) so a server on the project root can serve `/articles/...` and **`/fr/articles/...`** (e.g. the Français link) without 404s. The French mirror paths are gitignored; English may be tracked—either way, **`dist/`** remains the deploy source of truth.
 
 Remove any **stale** subfolders under `articles/investing-and-financial-literacy/` left from older layouts; only slugs matching `ARTICLE_SLUGS` in `build/build.js` are updated each build.
 

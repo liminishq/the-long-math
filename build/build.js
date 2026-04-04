@@ -271,6 +271,7 @@ function build() {
   }
 
   syncEnglishArticlesHtmlToSource();
+  syncFrenchArticlesHtmlToSource();
 
   console.log("Build complete. Output: " + DIST);
 }
@@ -300,6 +301,32 @@ function syncEnglishArticlesHtmlToSource() {
   }
 
   console.log("Mirrored English article pages to articles/investing-and-financial-literacy/ (for local static server from repo root).");
+}
+
+/**
+ * Same as syncEnglishArticlesHtmlToSource, but for French so /fr/articles/... works
+ * when the static server uses the repo root (language switcher targets /fr/...).
+ */
+function syncFrenchArticlesHtmlToSource() {
+  const srcBase = path.join(DIST, "fr", "articles", "investing-and-financial-literacy");
+  const destBase = path.join(ROOT, "fr", "articles", "investing-and-financial-literacy");
+  if (!fs.existsSync(srcBase)) return;
+
+  const hubSrc = path.join(srcBase, "index.html");
+  if (fs.existsSync(hubSrc)) {
+    ensureDir(destBase);
+    fs.copyFileSync(hubSrc, path.join(destBase, "index.html"));
+  }
+
+  for (const slug of ARTICLE_SLUGS) {
+    const from = path.join(srcBase, slug, "index.html");
+    if (!fs.existsSync(from)) continue;
+    const toDir = path.join(destBase, slug);
+    ensureDir(toDir);
+    fs.copyFileSync(from, path.join(toDir, "index.html"));
+  }
+
+  console.log("Mirrored French article pages to fr/articles/investing-and-financial-literacy/ (for local static server from repo root).");
 }
 
 function copyRecursive(src, dest, filter) {

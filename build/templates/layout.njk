@@ -24,11 +24,11 @@
   {% block headExtra %}{% endblock %}
 </head>
 <body>
-  {% include "partials/header.njk" %}
+  {# Header/footer come from /assets/partials/header(-fr).html and footer(-fr).html via site.js #}
+  <div id="site-header"></div>
   <div class="wrap">
     {% block content %}{% endblock %}
   </div>
-  {% include "partials/footer.njk" %}
   {% block footScripts %}{% endblock %}
   <div id="footerMount"></div>
 </body>

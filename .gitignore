@@ -3,6 +3,10 @@ dist/
 
 # Article pages under articles/investing-and-financial-literacy/ are tracked (site.js injects header/footer).
 
+# French article mirror from dist (same purpose as English mirror; run npm run build)
+fr/articles/investing-and-financial-literacy/index.html
+fr/articles/investing-and-financial-literacy/*/index.html
+
 # Dependencies
 node_modules/
 
