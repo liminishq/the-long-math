@@ -2,7 +2,7 @@
 dist/
 
 # Mirrored article HTML (copied from dist/ by npm run build — for local servers pointed at repo root)
-articles/investing-and-financial-literacy/index.html
+# Landing page index is tracked in-repo (shared header via site.js); subtree mirrors remain ignored.
 articles/investing-and-financial-literacy/*/index.html
 
 # Dependencies
