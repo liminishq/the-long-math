@@ -31,5 +31,23 @@
   "search": {
     "openAria": "Open search",
     "button": "Search"
+  },
+  "export": {
+    "csv": "CSV",
+    "pdf": "PDF",
+    "ariaGroup": "Export results",
+    "noData": "Nothing to export yet. Run the calculator first.",
+    "pdfError": "Could not create the PDF. Check your connection and try again.",
+    "primaryResultLabel": "Adjusted amount",
+    "rankingRow": "Ranking",
+    "comparisonRow": "Comparison",
+    "compoundTableSection": "Compound multipliers (full table)",
+    "milestonesSection": "Balance at milestones",
+    "scheduleSection": "Year-by-year schedule",
+    "monthlySection": "Monthly breakdown",
+    "csvTitle": "Title",
+    "csvLabelCol": "Label",
+    "csvValueCol": "Value",
+    "pdfTruncated": "truncated in PDF; use CSV for the full table"
   }
 }

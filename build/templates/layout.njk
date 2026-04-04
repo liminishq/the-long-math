@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ lang }}">
+<html lang="{{ htmlLang }}">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,6 +21,7 @@
   gtag('js', new Date());
   gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
   </script>
+  {% block headExtra %}{% endblock %}
 </head>
 <body>
   {% include "partials/header.njk" %}

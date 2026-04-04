@@ -710,20 +710,28 @@ th{
   gap:8px;
 }
 
-.tlm-export-wrap{
+/* Calculator top bar: Inspect link(s) + Export (site-wide; pages may add local .inspect-bar rules) */
+.wrap .inspect-bar,
+.loan-wrap.wrap .inspect-bar{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+}
+
+.tlm-calc-toolbar{
   display:flex;
   justify-content:flex-end;
   margin-bottom:10px;
 }
 
-.tlm-export-group{
-  display:inline-flex;
-  flex-wrap:wrap;
-  gap:6px;
-  align-items:center;
+.tlm-export-dropdown{
+  position:relative;
+  display:inline-block;
 }
 
-button.tlm-export-btn{
+button.tlm-export-trigger{
   padding:6px 12px;
   font-size:12px;
   font-weight:600;
@@ -736,10 +744,44 @@ button.tlm-export-btn{
   transition:color .15s, border-color .15s, background .15s;
 }
 
-button.tlm-export-btn:hover{
+button.tlm-export-trigger:hover{
   color:var(--text);
   border-color:var(--accent);
   background:var(--accentSoft);
+}
+
+.tlm-export-menu{
+  position:absolute;
+  right:0;
+  top:calc(100% + 4px);
+  z-index:50;
+  min-width:10rem;
+  padding:4px 0;
+  margin:0;
+  list-style:none;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:8px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+
+button.tlm-export-menu-item{
+  display:block;
+  width:100%;
+  padding:8px 14px;
+  font-size:13px;
+  font-weight:600;
+  font-family:inherit;
+  text-align:left;
+  cursor:pointer;
+  border:none;
+  background:transparent;
+  color:var(--text);
+}
+
+button.tlm-export-menu-item:hover{
+  background:var(--accentSoft);
+  color:var(--text);
 }
 
 /* Report an Issue button (below calculator, right side, secondary button look) */

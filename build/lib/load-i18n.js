@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { loadArticleDict } = require("./article-helpers.js");
 
 const NAMESPACES = ["common", "calculators", "meta"];
 
@@ -61,6 +62,7 @@ function getMergedDict(root, lang, dictEn) {
     common: dict.common,
     calculators: dict.calculators,
     meta: dict.meta,
+    articles: loadArticleDict(root, lang),
     _fallback: dictEn,
   };
 }

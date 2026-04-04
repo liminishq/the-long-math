@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 "use strict";
 
+// Legacy: article HTML under articles/ was migrated to assets/i18n/{en,fr}/articles/*.json
+// and built via build/build.js. This script only updates on-disk index.html files; it is a no-op
+// until/unless static article HTML is restored.
+
 const fs = require("fs");
 const path = require("path");
 

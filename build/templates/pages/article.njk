@@ -1,0 +1,21 @@
+{% extends "layout.njk" %}
+{% block headExtra %}
+{% if article.pageStyles %}{{ article.pageStyles | safe }}{% endif %}
+{% if article.meta.articleModified %}
+  <meta name="article:modified" content="{{ article.meta.articleModified }}" />
+{% endif %}
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="{{ article.meta.ogTitle or title }}" />
+  <meta property="og:description" content="{{ article.meta.ogDescription or description }}" />
+  <meta property="og:url" content="{{ canonical }}" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{ article.meta.twitterTitle or title }}" />
+  <meta name="twitter:description" content="{{ article.meta.twitterDescription or description }}" />
+{% for block in ldJsonBlocks %}
+  <script type="application/ld+json">{{ block | safe }}</script>
+{% endfor %}
+{% endblock %}
+{% block content %}
+{{ wrapMainHtml | safe }}
+<div class="disclaimer">{{ disclaimerHtml | safe }}</div>
+{% endblock %}

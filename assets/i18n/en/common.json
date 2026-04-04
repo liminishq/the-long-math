@@ -57,6 +57,10 @@
     "generatedAt": "Generated",
     "yes": "Yes",
     "no": "No",
-    "additionalTables": "Additional tables (detail)"
+    "additionalTables": "Additional tables (detail)",
+    "exportResults": "Export results",
+    "mortgageSchedule12": "Mortgage — first 12 months (monthly)",
+    "mortgageScheduleAnnual": "Mortgage — annual summary",
+    "loanAmortizationSection": "Loan amortization schedule"
   }
 }

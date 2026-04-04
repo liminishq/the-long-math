@@ -57,6 +57,10 @@
     "generatedAt": "Généré",
     "yes": "Oui",
     "no": "Non",
-    "additionalTables": "Tableaux supplémentaires (détail)"
+    "additionalTables": "Tableaux supplémentaires (détail)",
+    "exportResults": "Exporter les résultats",
+    "mortgageSchedule12": "Hypothèque — 12 premiers mois (mensuel)",
+    "mortgageScheduleAnnual": "Hypothèque — résumé annuel",
+    "loanAmortizationSection": "Tableau d’amortissement du prêt"
   }
 }

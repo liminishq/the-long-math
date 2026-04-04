@@ -702,6 +702,46 @@ th{
   background:var(--accentSoft);
 }
 
+.results-panel-header-actions{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+}
+
+.tlm-export-wrap{
+  display:flex;
+  justify-content:flex-end;
+  margin-bottom:10px;
+}
+
+.tlm-export-group{
+  display:inline-flex;
+  flex-wrap:wrap;
+  gap:6px;
+  align-items:center;
+}
+
+button.tlm-export-btn{
+  padding:6px 12px;
+  font-size:12px;
+  font-weight:600;
+  font-family:inherit;
+  cursor:pointer;
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--muted);
+  border-radius:8px;
+  transition:color .15s, border-color .15s, background .15s;
+}
+
+button.tlm-export-btn:hover{
+  color:var(--text);
+  border-color:var(--accent);
+  background:var(--accentSoft);
+}
+
 /* Report an Issue button (below calculator, right side, secondary button look) */
 .report-issue-wrap{
   display:flex;
