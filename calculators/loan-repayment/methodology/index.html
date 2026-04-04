@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspectable Arithmetic – Loan Repayment Calculator | The Long Math</title>
+  <meta name="description" content="Formulae, computational structure, and assumptions for the Loan Repayment Calculator." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/loan-repayment/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { anonymize_ip: true });
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <h1>Inspectable Arithmetic for the Loan Repayment Calculator</h1>
+      <p class="methodology-meta">Version 1.0<br>Last updated: April 2026</p>
+
+      <p>
+        Transparent arithmetic is the operating system of this calculator.
+      </p>
+      <p>
+        This document publishes the formulae, computational structure, and assumptions used to generate the outputs displayed on the
+        <a href="/calculators/loan-repayment/">Loan Repayment Calculator</a> page.
+      </p>
+      <p>
+        No opinions. No hidden assumptions. Just arithmetic.
+      </p>
+
+      <h2>Purpose</h2>
+      <p>
+        The calculator models a fixed-rate, fully amortizing loan with a constant payment each period. It computes the payment per period,
+        total interest, total paid, number of payments, an amortization schedule, and chart data derived from that schedule.
+      </p>
+
+      <h2>Definitions</h2>
+      <p>Let:</p>
+      <ul>
+        <li>P = loan amount (principal), as entered</li>
+        <li>r<sub>pct</sub> = nominal annual interest rate in percent, as entered</li>
+        <li>r = r<sub>pct</sub> / 100 = annual rate as a decimal</li>
+        <li>m = payments per year (12, 26, or 52)</li>
+        <li>i = r / m = interest rate per payment period</li>
+        <li>T = amortization term in years, as entered</li>
+        <li>N = round(T × m) = total number of payments</li>
+        <li>A = payment amount per period (constant when r and N are fixed)</li>
+        <li>B<sub>k</sub> = remaining balance immediately after payment k (B<sub>0</sub> = P)</li>
+      </ul>
+
+      <h2>Formulae</h2>
+
+      <h3>1. Number of payments</h3>
+      <div class="formula-block">N = round(T · m)</div>
+      <p class="formula-meta">If T · m is not an integer, N is the nearest integer (same as the live engine).</p>
+
+      <h3>2. Payment per period</h3>
+      <p>If r = 0 (or equivalently r<sub>pct</sub> = 0):</p>
+      <div class="formula-block">A = P / N</div>
+      <p>Otherwise:</p>
+      <div class="formula-block">A = P · i(1 + i)<sup>N</sup> / ((1 + i)<sup>N</sup> − 1)</div>
+      <p class="formula-meta">Standard fixed-rate, fully amortizing payment formula with periodic rate i and N payments.</p>
+
+      <h3>3. Amortization step (for k = 1 … N)</h3>
+      <p>Starting with B<sub>0</sub> = P, for each period k:</p>
+      <div class="formula-block">Interest<sub>k</sub> = B<sub>k−1</sub> · i<br>Principal<sub>k</sub> = A − Interest<sub>k</sub><br>B<sub>k</sub> = B<sub>k−1</sub> − Principal<sub>k</sub></div>
+      <p class="formula-meta">Each row in the on-page table uses these values. The payment column is A for every period (before display rounding).</p>
+
+      <h3>4. Totals</h3>
+      <div class="formula-block">Total paid = Σ<sub>k=1…N</sub> A = N · A<br>Total interest = Σ<sub>k=1…N</sub> Interest<sub>k</sub></div>
+      <p class="formula-meta">Headline totals match the sums of the schedule rows (within cent rounding on display).</p>
+
+      <h3>5. Final balance and clamping</h3>
+      <p>
+        The engine advances the balance with full floating-point precision, then may clamp the final remaining balance to zero if a tiny
+        negative value appears due to rounding (magnitude under about one cent). This matches the QA invariants documented in
+        <code>engine.js</code>.
+      </p>
+
+      <h2>Payment frequency labels</h2>
+      <p>
+        Period labels in the schedule use “Month k” when m = 12, and “Week k” when m = 26 or 52 (biweekly and weekly). This is a display
+        convention only; the mathematics uses m as payments per year regardless of label.
+      </p>
+
+      <h2>Assumptions</h2>
+      <ol>
+        <li>Nominal annual rate is converted to a periodic rate by dividing by m (no separate compounding convention).</li>
+        <li>Interest rate is constant for the full amortization horizon.</li>
+        <li>Payments are equal and occur exactly m times per year with no skipped or irregular payments.</li>
+        <li>No fees, penalties, insurance, taxes, or extra payments are modeled.</li>
+        <li>Display values are rounded to cents where shown; internal steps use JavaScript floating-point arithmetic.</li>
+      </ol>
+
+      <h2>Implementation</h2>
+      <p>
+        The live schedule and headline outputs are produced by <code>computeLoanSchedule</code> in
+        <code>/calculators/loan-repayment/engine.js</code>. The UI binds those results in <code>ui.js</code>.
+      </p>
+      <p>
+        If any discrepancy is identified between this documentation and the live engine, the engine’s arithmetic is the source of truth;
+        this page should be updated to match.
+      </p>
+
+      <p><a href="/calculators/loan-repayment/">← Back to Loan Repayment Calculator</a></p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>

@@ -886,6 +886,25 @@
   },
   {
     "type": "calculator",
+    "title": "Inspectable Arithmetic for the Loan Repayment Calculator",
+    "url": "/calculators/loan-repayment/methodology/",
+    "desc": "Formulae, computational structure, and assumptions for the Loan Repayment Calculator.",
+    "keywords": [
+      "Inspectable Arithmetic – Loan Repayment Calculator",
+      "Inspectable Arithmetic for the Loan Repayment Calculator",
+      "methodology",
+      "formulae",
+      "computational",
+      "structure",
+      "assumptions",
+      "loan",
+      "repayment",
+      "calculator",
+      "amortization"
+    ]
+  },
+  {
+    "type": "calculator",
     "title": "Mortgage Calculator — Payments, Interest, and Amortization",
     "url": "/calculators/mortgage-calculator/",
     "desc": "Calculate mortgage payments, remaining balance, and total interest over the full amortization period. See how payments and costs evolve over time.",
