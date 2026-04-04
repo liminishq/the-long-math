@@ -109,8 +109,9 @@
     if (window.TLM && window.TLM.i18n && window.TLM.i18n.getLang) {
       return window.TLM.i18n.getLang() === "fr" ? "/fr" : "";
     }
-    var p = (window.location && window.location.pathname) || "";
-    return p.indexOf("/fr") === 0 ? "/fr" : "";
+    var p = (window.location && window.location.pathname) || "/";
+    if (p.charAt(0) !== "/") p = "/" + p;
+    return p === "/fr" || p.indexOf("/fr/") === 0 ? "/fr" : "";
   }
 
   function resolveUrl(url) {

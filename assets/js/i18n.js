@@ -10,14 +10,35 @@
   const BASE = "/assets/i18n";
   const cache = { en: null, fr: null };
 
+  function normalizedPathname() {
+    let p = (window.location && window.location.pathname) || "/";
+    if (!p.startsWith("/")) p = "/" + p;
+    return p;
+  }
+
+  /**
+   * True only for the French locale prefix (/fr or /fr/...), not paths like /fragment/ or /freedom/
+   * where String.prototype.indexOf("/fr") would falsely match at index 0.
+   */
+  function pathIsFrenchLocale(path) {
+    return path === "/fr" || path.startsWith("/fr/");
+  }
+
+  /** /fr/articles/... → /articles/... ; /fr or /fr/ → / */
+  function stripFrenchLocalePrefix(path) {
+    if (path === "/fr" || path === "/fr/") return "/";
+    if (path.startsWith("/fr/")) return path.slice(3);
+    return path;
+  }
+
   /**
    * Current UI language. Prefer document lang (set by page), then path (/fr/ → fr), else en.
    */
   function getLang() {
     const html = document.documentElement;
     const langAttr = (html && html.getAttribute("lang")) || "";
-    const path = (window.location && window.location.pathname) || "";
-    if (path.indexOf("/fr") === 0) return "fr";
+    const path = normalizedPathname();
+    if (pathIsFrenchLocale(path)) return "fr";
     const code = (langAttr && langAttr.toLowerCase().split("-")[0]) || "";
     if (code === "fr") return "fr";
     return "en";
@@ -147,17 +168,18 @@
    * Also updates any [data-locale-path] hrefs with the current locale prefix.
    */
   function setLanguageSwitcherLinks() {
-    const path = (window.location && window.location.pathname) || "/";
+    const path = normalizedPathname();
+    const onFr = pathIsFrenchLocale(path);
     const lang = getLang();
     const prefix = lang === "fr" ? "/fr" : "";
 
     const enLink = document.getElementById("lang-link-en");
     const frLink = document.getElementById("lang-link-fr");
     if (enLink) {
-      enLink.href = path.indexOf("/fr") === 0 ? path.replace(/^\/fr\/?/, "/") || "/" : path;
+      enLink.href = onFr ? stripFrenchLocalePrefix(path) : path;
     }
     if (frLink) {
-      frLink.href = path.indexOf("/fr") === 0 ? path : "/fr" + (path === "/" ? "" : path);
+      frLink.href = onFr ? path : "/fr" + (path === "/" ? "" : path);
     }
 
     document.querySelectorAll("[data-locale-path]").forEach(function (node) {

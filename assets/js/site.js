@@ -165,9 +165,55 @@
   // -------------------------
   // Load pre-rendered header/footer by language (path-based), or run post-load for generated pages
   // -------------------------
+  function normalizedPathname() {
+    var p = (window.location && window.location.pathname) || "/";
+    if (p.charAt(0) !== "/") p = "/" + p;
+    return p;
+  }
+
+  /** Match i18n.js: only /fr or /fr/..., not /fragment/ etc. */
+  function pathIsFrenchLocale(p) {
+    return p === "/fr" || p.indexOf("/fr/") === 0;
+  }
+
   function getPartialLang() {
-    var p = (window.location && window.location.pathname) || "";
-    return p.indexOf("/fr") === 0 ? "fr" : "en";
+    return pathIsFrenchLocale(normalizedPathname()) ? "fr" : "en";
+  }
+
+  /**
+   * Same href rules as i18n.setLanguageSwitcherLinks when i18n.js is not on the page.
+   */
+  function patchLanguageSwitcherAndLocaleNav() {
+    var path = normalizedPathname();
+    var onFr = pathIsFrenchLocale(path);
+    var prefix = onFr ? "/fr" : "";
+    var enLink = document.getElementById("lang-link-en");
+    var frLink = document.getElementById("lang-link-fr");
+    if (enLink) {
+      if (onFr) {
+        enLink.href = path === "/fr" || path === "/fr/" ? "/" : path.slice(3);
+      } else {
+        enLink.href = path;
+      }
+    }
+    if (frLink) {
+      frLink.href = onFr ? path : "/fr" + (path === "/" ? "" : path);
+    }
+    document.querySelectorAll("[data-locale-path]").forEach(function (node) {
+      var localePath = node.getAttribute("data-locale-path");
+      if (localePath) {
+        var href = prefix + (localePath === "/" ? "" : localePath) || "/";
+        node.setAttribute("href", href);
+      }
+    });
+  }
+
+  function applyLanguageSwitcherAndNavHrefs() {
+    if (window.TLM && window.TLM.i18n && window.TLM.i18n.setLanguageSwitcherLinks) {
+      window.TLM.i18n.setLanguageSwitcherLinks();
+    } else {
+      patchLanguageSwitcherAndLocaleNav();
+    }
   }
 
   function runAfterHeaderFooter() {
@@ -196,9 +242,7 @@
           headerMount.innerHTML = headerHtml;
         }
         if (footerMount && footerHtml) footerMount.innerHTML = footerHtml;
-        if (window.TLM && window.TLM.i18n && window.TLM.i18n.setLanguageSwitcherLinks) {
-          window.TLM.i18n.setLanguageSwitcherLinks();
-        }
+        applyLanguageSwitcherAndNavHrefs();
         setTimeout(function () {
           initThemeToggle();
           initMenu();
@@ -212,9 +256,7 @@
       return;
     }
 
-    if (window.TLM && window.TLM.i18n && window.TLM.i18n.setLanguageSwitcherLinks) {
-      window.TLM.i18n.setLanguageSwitcherLinks();
-    }
+    applyLanguageSwitcherAndNavHrefs();
     setTimeout(function () {
       initThemeToggle();
       initMenu();
