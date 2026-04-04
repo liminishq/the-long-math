@@ -289,8 +289,9 @@ body.tlm-search-open > #footerMount {
   user-select: none;
 }
 
-/* Nav search trigger (injected header) */
+/* Nav search trigger (injected header) — sits in .sitehead-search-row below primary nav */
 .nav-search-btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -328,26 +329,25 @@ body.tlm-search-open > #footerMount {
   color: var(--muted);
 }
 
-/* Search lives in .head-actions with theme + language (not in primary nav) */
-.sitehead > .head-actions,
+/* Theme + language row (below search in .sitehead-right) */
 .sitehead .head-actions.sitehead-meta {
   flex-wrap: wrap;
   align-items: center;
   row-gap: 8px;
 }
 
-.head-actions .nav-search-btn {
+.sitehead-search-row .nav-search-btn {
   flex-shrink: 0;
 }
 
 @media (max-width: 520px) {
-  .head-actions .nav-search-kbd {
+  .sitehead-search-row .nav-search-kbd {
     display: none;
   }
 }
 
 @media (max-width: 400px) {
-  .head-actions .nav-search-label {
+  .sitehead-search-row .nav-search-label {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -358,7 +358,7 @@ body.tlm-search-open > #footerMount {
     white-space: nowrap;
     border: 0;
   }
-  .head-actions .nav-search-btn {
+  .sitehead-search-row .nav-search-btn {
     padding: 6px 10px;
   }
 }

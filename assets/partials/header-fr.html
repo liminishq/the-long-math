@@ -5,43 +5,47 @@
       <div class="sigil">$ = P(1 + r/n)<sup>nt</sup></div>
     </a>
 
-    <nav class="primary-nav" aria-label="Primary navigation">
-      <ul class="primary-nav-list">
-        <li><a href="/" data-locale-path="/" data-i18n="common.nav.home">Accueil</a></li>
-        <li><a href="/calculators/" data-locale-path="/calculators/">Calculateurs</a></li>
-        <li><a href="/articles/investing-and-financial-literacy/" data-locale-path="/articles/investing-and-financial-literacy/">Investissement</a></li>
-        <li><a href="/essays/" data-locale-path="/essays/">Au-delà des chiffres</a></li>
-        <li><a href="/about/" data-locale-path="/about/" data-i18n="common.nav.about">À propos</a></li>
-        <li><a href="/contact/" data-locale-path="/contact/" data-i18n="common.nav.contact">Contact</a></li>
-      </ul>
-    </nav>
-  </div>
+    <div class="sitehead-right">
+      <nav class="primary-nav" aria-label="Primary navigation">
+        <ul class="primary-nav-list">
+          <li><a href="/" data-locale-path="/" data-i18n="common.nav.home">Accueil</a></li>
+          <li><a href="/calculators/" data-locale-path="/calculators/">Calculateurs</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/" data-locale-path="/articles/investing-and-financial-literacy/">Investissement</a></li>
+          <li><a href="/essays/" data-locale-path="/essays/">Au-delà des chiffres</a></li>
+          <li><a href="/about/" data-locale-path="/about/" data-i18n="common.nav.about">À propos</a></li>
+          <li><a href="/contact/" data-locale-path="/contact/" data-i18n="common.nav.contact">Contact</a></li>
+        </ul>
+      </nav>
 
-  <div class="head-actions sitehead-meta">
-    <div class="themebox">
-      <div class="tlabel" id="theme_label" data-i18n="common.theme.dark">Sombre</div>
-      <label class="switch" aria-label="Toggle light/dark mode" data-i18n-attr="aria-label:common.theme.toggle">
-        <input id="theme_toggle" type="checkbox" />
-        <span class="knob"></span>
-      </label>
+      <div class="sitehead-search-row">
+        <button type="button" id="searchBtn" class="nav-search-btn" aria-label="Ouvrir la recherche">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Zm0-2a5.5 5.5 0 0 0 0-11 5.5 5.5 0 0 0 0 11Z" fill="currentColor" />
+            <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+          <span class="nav-search-label">Rechercher</span>
+          <kbd class="nav-search-kbd">⌘K</kbd>
+        </button>
+      </div>
+
+      <div class="head-actions sitehead-meta">
+        <div class="themebox">
+          <div class="tlabel" id="theme_label" data-i18n="common.theme.dark">Sombre</div>
+          <label class="switch" aria-label="Toggle light/dark mode" data-i18n-attr="aria-label:common.theme.toggle">
+            <input id="theme_toggle" type="checkbox" />
+            <span class="knob"></span>
+          </label>
+        </div>
+
+        <div class="lang-switcher" aria-label="Language">
+          <a id="lang-link-en" href="#">English</a><span class="lang-sep" aria-hidden="true"> | </span><a id="lang-link-fr" href="#">Français</a>
+        </div>
+
+        <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="menuPanel" aria-label="Open menu" data-i18n-attr="aria-label:common.nav.openMenu">
+          ☰
+        </button>
+      </div>
     </div>
-
-    <div class="lang-switcher" aria-label="Language">
-      <a id="lang-link-en" href="#">English</a><span class="lang-sep" aria-hidden="true"> | </span><a id="lang-link-fr" href="#">Français</a>
-    </div>
-
-    <button type="button" id="searchBtn" class="nav-search-btn" aria-label="Ouvrir la recherche">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Zm0-2a5.5 5.5 0 0 0 0-11 5.5 5.5 0 0 0 0 11Z" fill="currentColor" />
-        <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-      </svg>
-      <span class="nav-search-label">Rechercher</span>
-      <kbd class="nav-search-kbd">⌘K</kbd>
-    </button>
-
-    <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="menuPanel" aria-label="Open menu" data-i18n-attr="aria-label:common.nav.openMenu">
-      ☰
-    </button>
   </div>
 </header>
 

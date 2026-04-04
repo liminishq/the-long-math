@@ -202,9 +202,27 @@ main p{
 
 .sitehead-top{
   display:flex;
+  flex-wrap:nowrap;
   justify-content:space-between;
   align-items:flex-start;
   gap:24px;
+}
+
+/* Right column: nav links, then search, then theme + language (reference header layout) */
+.sitehead-right{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:10px;
+  flex:0 1 auto;
+  min-width:0;
+  margin-left:auto;
+}
+
+.sitehead-search-row{
+  display:flex;
+  justify-content:flex-end;
+  width:100%;
 }
 
 .brandstack{
@@ -236,7 +254,7 @@ main p{
 .primary-nav{
   display:none;
   flex:0 1 auto;
-  margin-left:auto;
+  width:100%;
 }
 
 .primary-nav-list{
@@ -401,13 +419,20 @@ h1{
 }
 
 
-@media (max-width:860px){
-  .grid{ grid-template-columns:1fr; }
+/* Narrow phones: stack brand above nav/tools (was 860px — too aggressive for tablets) */
+@media (max-width:640px){
   .sitehead-top{ flex-direction:column; align-items:flex-start; gap:10px; }
+  .sitehead-right{
+    align-items:flex-start;
+    width:100%;
+    margin-left:0;
+  }
+  .sitehead-search-row{ justify-content:flex-start; }
   .sitehead-meta{ justify-content:flex-start; }
 }
 
-@media (min-width: 900px){
+/* Show horizontal nav + hide hamburger from tablet up (was 900px — left a dead zone 768–899px) */
+@media (min-width: 768px){
   .primary-nav{ display:flex; }
 }
 
@@ -999,7 +1024,7 @@ html[data-theme="light"] .default-fee{
   transition:all 0.18s ease;
 }
 
-@media (min-width: 900px){
+@media (min-width: 768px){
   .menu-btn{ display:none; }
 }
 .menu-btn:hover{
