@@ -631,13 +631,6 @@
         openModal();
       });
     }
-    var m = document.getElementById("searchBtnMobile");
-    if (m) {
-      m.addEventListener("click", function (e) {
-        e.preventDefault();
-        openModal();
-      });
-    }
   }
 
   function init() {
