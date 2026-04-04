@@ -46,8 +46,17 @@
     "scheduleSection": "Calendrier année par année",
     "monthlySection": "Répartition mensuelle",
     "csvTitle": "Titre",
+    "csvSectionCol": "Section",
+    "csvKindCol": "Type",
     "csvLabelCol": "Libellé",
     "csvValueCol": "Valeur",
-    "pdfTruncated": "tronqué dans le PDF; utilisez le CSV pour la table complète"
+    "pdfTruncated": "tronqué dans le PDF; utilisez le CSV pour la table complète",
+    "sectionCalculator": "Calculateur",
+    "kindInput": "Entrée",
+    "kindOutput": "Résultat",
+    "generatedAt": "Généré",
+    "yes": "Oui",
+    "no": "Non",
+    "additionalTables": "Tableaux supplémentaires (détail)"
   }
 }
