@@ -310,10 +310,24 @@
     }
   }
 
+  function loadCalculatorExportScript() {
+    var path = (window.location && window.location.pathname) || "";
+    if (path.indexOf("/calculators/") === -1) return;
+    if (/^(\/fr)?\/calculators\/?$/.test(path)) return;
+    if (/\/calculators\/[^/]+\/(methodology|data)(\/|$)/.test(path)) return;
+    if (document.getElementById("tlm-export-results-js")) return;
+    var s = document.createElement("script");
+    s.id = "tlm-export-results-js";
+    s.src = "/assets/js/export-results.js";
+    s.async = true;
+    document.head.appendChild(s);
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initThemeToggle();
     initMenu();
     initReadingTime();
     initLastUpdated();
+    loadCalculatorExportScript();
   });
 })();

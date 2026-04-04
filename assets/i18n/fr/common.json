@@ -31,5 +31,23 @@
   "search": {
     "openAria": "Ouvrir la recherche",
     "button": "Rechercher"
+  },
+  "export": {
+    "csv": "CSV",
+    "pdf": "PDF",
+    "ariaGroup": "Exporter les résultats",
+    "noData": "Rien à exporter pour le moment. Utilisez d’abord le calculateur.",
+    "pdfError": "Impossible de créer le PDF. Vérifiez la connexion et réessayez.",
+    "primaryResultLabel": "Montant ajusté",
+    "rankingRow": "Classement",
+    "comparisonRow": "Comparaison",
+    "compoundTableSection": "Multiplicateurs d’intérêt composé (table complète)",
+    "milestonesSection": "Solde aux jalons",
+    "scheduleSection": "Calendrier année par année",
+    "monthlySection": "Répartition mensuelle",
+    "csvTitle": "Titre",
+    "csvLabelCol": "Libellé",
+    "csvValueCol": "Valeur",
+    "pdfTruncated": "tronqué dans le PDF; utilisez le CSV pour la table complète"
   }
 }
