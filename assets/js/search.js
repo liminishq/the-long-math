@@ -303,10 +303,17 @@
     );
   }
 
-  function sectionLabel(type) {
-    if (type === "calculator") return "Calculators";
-    if (type === "article") return "Articles";
-    return "Essays";
+  function isMethodologyEntry(entry) {
+    var u = (entry && entry.url) || "";
+    return u.indexOf("/methodology/") !== -1;
+  }
+
+  function sectionLabel(bucket) {
+    if (bucket === "article") return "Articles";
+    if (bucket === "calculator") return "Calculators";
+    if (bucket === "essay") return "Essays";
+    if (bucket === "methodology") return "Inspect the arithmetic";
+    return bucket;
   }
 
   function runSearch() {
@@ -358,36 +365,74 @@
       return;
     }
 
-    var groups = { calculator: [], article: [], essay: [] };
+    var groups = {
+      article: [],
+      calculator: [],
+      essay: [],
+      methodology: [],
+    };
     for (j = 0; j < scored.length; j++) {
       var en = scored[j].entry;
-      if (groups[en.type]) groups[en.type].push(en);
+      if (en.type === "article") groups.article.push(en);
+      else if (en.type === "essay") groups.essay.push(en);
+      else if (en.type === "calculator") {
+        if (isMethodologyEntry(en)) groups.methodology.push(en);
+        else groups.calculator.push(en);
+      }
     }
 
     renderGrouped(groups, tokens);
   }
 
   function renderBrowse(tokens) {
-    var list = indexCache
-      .filter(function (e) {
-        return e.type === currentFilter;
-      })
-      .sort(function (a, b) {
-        return (a.title || "").localeCompare(b.title || "");
-      });
-    flatResults = list;
+    var list = indexCache.filter(function (e) {
+      return e.type === currentFilter;
+    });
     if (!list.length) {
       resultsEl.innerHTML = '<p class="search-empty">Nothing in this category.</p>';
+      flatResults = [];
       selectedIndex = -1;
       return;
     }
-    var groups = { calculator: [], article: [], essay: [] };
+
+    var titleSort = function (a, b) {
+      return (a.title || "").localeCompare(b.title || "");
+    };
+
+    if (currentFilter === "calculator") {
+      var main = [];
+      var meth = [];
+      for (var i = 0; i < list.length; i++) {
+        if (isMethodologyEntry(list[i])) meth.push(list[i]);
+        else main.push(list[i]);
+      }
+      main.sort(titleSort);
+      meth.sort(titleSort);
+      renderGrouped(
+        {
+          article: [],
+          essay: [],
+          calculator: main,
+          methodology: meth,
+        },
+        tokens
+      );
+      return;
+    }
+
+    list.sort(titleSort);
+    var groups = {
+      article: [],
+      calculator: [],
+      essay: [],
+      methodology: [],
+    };
     groups[currentFilter] = list.slice();
     renderGrouped(groups, tokens);
   }
 
   function renderGrouped(groups, tokens) {
-    var order = ["calculator", "article", "essay"];
+    var order = ["article", "calculator", "essay", "methodology"];
     var html = "";
     var orderedFlat = [];
     var g;
