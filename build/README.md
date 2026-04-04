@@ -47,4 +47,5 @@ Deploy the **`dist/`** directory (e.g. Cloudflare Pages: set build output to `di
 1. Add `assets/i18n/en/articles/{slug}.json` and `assets/i18n/fr/articles/{slug}.json` (copy EN to FR first, then translate).
 2. Add `{slug}` to `ARTICLE_SLUGS` in `build/build.js`.
 3. Add the English search entry in `assets/data/search-index.json` and a duplicate with `"url": "/fr/articles/investing-and-financial-literacy/{slug}/"` (or extend the index generator if you add one).
-4. Run `npm run build`.
+4. After changing French titles/descriptions, run `node tools/sync-fr-search-index.cjs` to refresh FR search rows from `assets/i18n/fr/articles/*.json`.
+5. Run `npm run build`.

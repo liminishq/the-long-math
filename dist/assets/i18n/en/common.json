@@ -46,8 +46,21 @@
     "scheduleSection": "Year-by-year schedule",
     "monthlySection": "Monthly breakdown",
     "csvTitle": "Title",
+    "csvSectionCol": "Section",
+    "csvKindCol": "Kind",
     "csvLabelCol": "Label",
     "csvValueCol": "Value",
-    "pdfTruncated": "truncated in PDF; use CSV for the full table"
+    "pdfTruncated": "truncated in PDF; use CSV for the full table",
+    "sectionCalculator": "Calculator",
+    "kindInput": "Input",
+    "kindOutput": "Output",
+    "generatedAt": "Generated",
+    "yes": "Yes",
+    "no": "No",
+    "additionalTables": "Additional tables (detail)",
+    "exportResults": "Export results",
+    "mortgageSchedule12": "Mortgage — first 12 months (monthly)",
+    "mortgageScheduleAnnual": "Mortgage — annual summary",
+    "loanAmortizationSection": "Loan amortization schedule"
   }
 }
