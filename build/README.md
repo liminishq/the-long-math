@@ -16,7 +16,8 @@ Deploy the **`dist/`** directory (e.g. Cloudflare Pages: set build output to `di
 ### Local preview
 
 - **Recommended:** `npm run build`, then serve **`dist/`** (e.g. `cd dist` and `python -m http.server 8000`). English and French article URLs both work there.
-- **Repo root:** After `npm run build`, the build mirrors generated article HTML into **`articles/investing-and-financial-literacy/`** (English) and **`fr/articles/investing-and-financial-literacy/`** (French) so a server on the project root can serve `/articles/...` and **`/fr/articles/...`** (e.g. the Français link) without 404s. The French mirror paths are gitignored; English may be tracked—either way, **`dist/`** remains the deploy source of truth.
+- **Repo root:** After `npm run build`, the build mirrors generated article HTML into **`articles/investing-and-financial-literacy/`** (English) and **`fr/articles/investing-and-financial-literacy/`** (French) so a server on the project root can serve `/articles/...` and **`/fr/articles/...`** (e.g. the Français link) without 404s. The French article mirror paths are gitignored; English may be tracked—either way, **`dist/`** remains the deploy source of truth.
+- **French nav (repo root):** The header rewrites nav links to **`/fr/...`** when you are under a French URL. The build also emits French copies of **`/about/`**, **`/essays/`**, **`/contact/`**, the **calculators hub** (`/calculators/`), and mirrors them into **`fr/about/`**, **`fr/essays/`**, **`fr/contact/`**, **`fr/calculators/`**, plus **`fr/index.html`**, so **`/fr/about/`**, **`/fr/calculators/`**, etc. resolve instead of 404ing. (Body copy is still English until those pages are fully translated in the build.)
 
 Remove any **stale** subfolders under `articles/investing-and-financial-literacy/` left from older layouts; only slugs matching `ARTICLE_SLUGS` in `build/build.js` are updated each build.
 
@@ -27,6 +28,7 @@ Remove any **stale** subfolders under `articles/investing-and-financial-literacy
 3. Generates the **Investment and Financial Literacy** hub and **all articles** under `/articles/investing-and-financial-literacy/` for en and `/fr/articles/...` for fr (templates: `build/templates/pages/article.njk`, `articles-hub.njk`). Root-relative links in article bodies are prefixed with `/fr` on French builds.
 4. Generates header/footer partials per language (`header.html`, `header-fr.html`, `footer.html`, `footer-fr.html`) for pages that inject them.
 5. Copies the rest of the project into `dist/` (other HTML, assets), excluding `build/`, `fr/`, `node_modules/`, `.git/`, and the old static paths for generated articles (see `shouldCopyToDist` in `build/build.js`).
+6. Writes French copies of the static pages in step 5 (`about`, `essays`, `contact`, calculators hub) into `dist/fr/...` with `lang="fr-CA"`, `i18n.js` included, and in-page links adjusted where a French URL exists (e.g. `/fr/articles/…`, `/fr/calculators/advisor-fee/`). Mirrors those plus `dist/fr/index.html` into the repo’s `fr/` tree for root-based local servers (`emitFrenchStaticMirrors`, `syncFrenchStaticHtmlToSource` in `build/build.js`).
 
 ## Articles (per-article JSON)
 

@@ -270,10 +270,88 @@ function build() {
     }
   }
 
+  emitFrenchStaticMirrors();
+
   syncEnglishArticlesHtmlToSource();
   syncFrenchArticlesHtmlToSource();
+  syncFrenchStaticHtmlToSource();
 
   console.log("Build complete. Output: " + DIST);
+}
+
+/**
+ * English-only static pages (about, essays, contact, calculators hub) are copied to dist/,
+ * but nav + language switcher target /fr/... for those paths. Emit French copies with
+ * safe href rewrites so /fr/about/, /fr/essays/, /fr/contact/, /fr/calculators/ resolve.
+ */
+function rewriteHtmlForFrStaticMirror(html) {
+  let s = html;
+  s = s.replace(/<html\s+lang="[^"]*"/i, '<html lang="fr-CA"');
+  if (!s.includes("i18n.js")) {
+    s = s.replace(
+      '<script defer src="/assets/js/site.js"></script>',
+      '<script src="/assets/js/i18n.js"></script>\n  <script defer src="/assets/js/site.js"></script>'
+    );
+  }
+  s = s.replace(
+    /https:\/\/thelongmath\.com\/(about|essays|contact)\//g,
+    "https://thelongmath.com/fr/$1/"
+  );
+  const hrefPairs = [
+    ['href="/calculators/advisor-fee/', 'href="/fr/calculators/advisor-fee/'],
+    ['href="/articles/', 'href="/fr/articles/'],
+    ['href="/about/', 'href="/fr/about/'],
+    ['href="/essays/', 'href="/fr/essays/'],
+  ];
+  for (const [from, to] of hrefPairs) {
+    s = s.split(from).join(to);
+  }
+  s = s.replace(/href="\/contact\/"/g, 'href="/fr/contact/"');
+  return s;
+}
+
+function emitFrenchStaticMirrors() {
+  const rels = [
+    "about/index.html",
+    "essays/index.html",
+    "contact/index.html",
+    "calculators/index.html",
+  ];
+  for (const rel of rels) {
+    const src = path.join(DIST, rel);
+    if (!fs.existsSync(src)) {
+      console.warn("emitFrenchStaticMirrors: missing " + src);
+      continue;
+    }
+    const raw = fs.readFileSync(src, "utf8");
+    const out = rewriteHtmlForFrStaticMirror(raw);
+    const outPath = path.join(DIST, "fr", rel);
+    ensureDir(path.dirname(outPath));
+    fs.writeFileSync(outPath, out, "utf8");
+    console.log("  " + outPath);
+  }
+}
+
+/**
+ * Mirror generated French landing + static pages into fr/ so a static server at repo root
+ * serves /fr/, /fr/about/, etc. (same idea as article mirrors).
+ */
+function syncFrenchStaticHtmlToSource() {
+  const files = [
+    path.join("fr", "index.html"),
+    path.join("fr", "about", "index.html"),
+    path.join("fr", "essays", "index.html"),
+    path.join("fr", "contact", "index.html"),
+    path.join("fr", "calculators", "index.html"),
+  ];
+  for (const rel of files) {
+    const src = path.join(DIST, rel);
+    if (!fs.existsSync(src)) continue;
+    const dest = path.join(ROOT, rel);
+    ensureDir(path.dirname(dest));
+    fs.copyFileSync(src, dest);
+  }
+  console.log("Mirrored French landing + static pages to fr/ (for local static server from repo root).");
 }
 
 /**
