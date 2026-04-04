@@ -1,9 +1,7 @@
 # Build output — regenerate with: npm run build
 dist/
 
-# Mirrored article HTML (copied from dist/ by npm run build — for local servers pointed at repo root)
-# Landing page index is tracked in-repo (shared header via site.js); subtree mirrors remain ignored.
-articles/investing-and-financial-literacy/*/index.html
+# Article pages under articles/investing-and-financial-literacy/ are tracked (site.js injects header/footer).
 
 # Dependencies
 node_modules/
