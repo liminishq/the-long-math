@@ -13,6 +13,13 @@ npm run build
 
 Deploy the **`dist/`** directory (e.g. Cloudflare Pages: set build output to `dist`).
 
+### Local preview
+
+- **Recommended:** `npm run build`, then serve **`dist/`** (e.g. `cd dist` and `python -m http.server 8000`). French lives under `/fr/...` there.
+- **Repo root:** After `npm run build`, the build also copies English article HTML into `articles/investing-and-financial-literacy/` so paths like `/articles/investing-and-financial-literacy/` work if your static server uses the project root. Those files are gitignored mirrors, not the source of truth.
+
+Remove any **stale** subfolders under `articles/investing-and-financial-literacy/` left from older layouts; only slugs matching `ARTICLE_SLUGS` in `build/build.js` are updated each build.
+
 ## What the build does
 
 1. Loads translation dictionaries from `assets/i18n/{en,fr}/` (`common`, `calculators`, `meta`) plus **per-article JSON** under `assets/i18n/{en,fr}/articles/*.json`.

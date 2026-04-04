@@ -270,7 +270,36 @@ function build() {
     }
   }
 
+  syncEnglishArticlesHtmlToSource();
+
   console.log("Build complete. Output: " + DIST);
+}
+
+/**
+ * Copy generated English article HTML from dist/ into articles/ so a simple static
+ * server run from the repo root (e.g. python -m http.server) can serve /articles/...
+ * without pointing at dist/. Not used for deploy; dist/ remains the deploy target.
+ */
+function syncEnglishArticlesHtmlToSource() {
+  const srcBase = path.join(DIST, "articles", "investing-and-financial-literacy");
+  const destBase = path.join(ROOT, "articles", "investing-and-financial-literacy");
+  if (!fs.existsSync(srcBase)) return;
+
+  const hubSrc = path.join(srcBase, "index.html");
+  if (fs.existsSync(hubSrc)) {
+    ensureDir(destBase);
+    fs.copyFileSync(hubSrc, path.join(destBase, "index.html"));
+  }
+
+  for (const slug of ARTICLE_SLUGS) {
+    const from = path.join(srcBase, slug, "index.html");
+    if (!fs.existsSync(from)) continue;
+    const toDir = path.join(destBase, slug);
+    ensureDir(toDir);
+    fs.copyFileSync(from, path.join(toDir, "index.html"));
+  }
+
+  console.log("Mirrored English article pages to articles/investing-and-financial-literacy/ (for local static server from repo root).");
 }
 
 function copyRecursive(src, dest, filter) {

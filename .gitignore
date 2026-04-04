@@ -1,6 +1,10 @@
 # Build output — regenerate with: npm run build
 dist/
 
+# Mirrored article HTML (copied from dist/ by npm run build — for local servers pointed at repo root)
+articles/investing-and-financial-literacy/index.html
+articles/investing-and-financial-literacy/*/index.html
+
 # Dependencies
 node_modules/
 

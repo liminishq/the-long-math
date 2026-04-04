@@ -4,6 +4,11 @@
   padding: 0 16px 40px;
 }
 
+.loan-wrap .inspect-bar {
+  margin-top: 4px;
+  margin-bottom: 2px;
+}
+
 :root {
   --chart-principal-line: #9CB3CB;              /* muted steel */
   --chart-principal-fill: rgba(156, 179, 203, 0.35);
