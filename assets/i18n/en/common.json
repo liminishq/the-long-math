@@ -27,5 +27,9 @@
   },
   "links": {
     "reportIssue": "Report an Issue"
+  },
+  "search": {
+    "openAria": "Open search",
+    "button": "Search"
   }
 }

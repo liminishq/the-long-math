@@ -94,6 +94,75 @@
   }
 
   // -------------------------
+  // Site search (modal + index) — injected after header so #searchBtn exists
+  // -------------------------
+  var searchUiPromise = null;
+
+  function ensureSearchUi() {
+    if (document.getElementById("searchOverlay")) {
+      if (window.TLM && window.TLM.search && window.TLM.search.rebindOpeners) {
+        window.TLM.search.rebindOpeners();
+      }
+      return Promise.resolve();
+    }
+    if (searchUiPromise) return searchUiPromise;
+
+    searchUiPromise = fetch("/assets/partials/search-modal.html")
+      .then(function (r) {
+        return r.text();
+      })
+      .then(function (html) {
+        var holder = document.createElement("div");
+        holder.innerHTML = html.trim();
+        while (holder.firstChild) {
+          document.body.appendChild(holder.firstChild);
+        }
+
+        if (!document.getElementById("tlm-search-css")) {
+          var lk = document.createElement("link");
+          lk.id = "tlm-search-css";
+          lk.rel = "stylesheet";
+          lk.href = "/assets/css/search.css";
+          document.head.appendChild(lk);
+        }
+
+        return new Promise(function (resolve, reject) {
+          if (window.TLM && window.TLM.search && window.TLM.search.init) {
+            window.TLM.search.init();
+            window.TLM.search.rebindOpeners();
+            resolve();
+            return;
+          }
+          if (document.getElementById("tlm-search-js")) {
+            resolve();
+            return;
+          }
+          var s = document.createElement("script");
+          s.id = "tlm-search-js";
+          s.async = false;
+          s.src = "/assets/js/search.js";
+          s.onload = function () {
+            if (window.TLM && window.TLM.search) {
+              window.TLM.search.init();
+              window.TLM.search.rebindOpeners();
+            }
+            resolve();
+          };
+          s.onerror = function () {
+            reject(new Error("search.js failed to load"));
+          };
+          document.body.appendChild(s);
+        });
+      })
+      .catch(function (err) {
+        searchUiPromise = null;
+        console.warn("Search UI load failed:", err);
+      });
+
+    return searchUiPromise;
+  }
+
+  // -------------------------
   // Load pre-rendered header/footer by language (path-based), or run post-load for generated pages
   // -------------------------
   function getPartialLang() {
@@ -134,6 +203,7 @@
           initThemeToggle();
           initMenu();
         }, 0);
+        ensureSearchUi();
       }).catch(function (err) {
         console.warn("Header/footer load failed:", err);
         initThemeToggle();
