@@ -513,7 +513,24 @@
   // -----------------------------
   // Wire events
   // -----------------------------
+  function applyPrincipalQueryParam() {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var p = params.get("principal");
+      if (p == null || String(p).trim() === "") return;
+      var n = num(p);
+      if (Number.isFinite(n) && n > 0) {
+        var el = document.getElementById("loanPrincipal");
+        if (el) el.value = String(Math.round(n * 100) / 100);
+      }
+    } catch (e) {
+      /* ignore malformed query strings */
+    }
+  }
+
   function wire() {
+    applyPrincipalQueryParam();
+
     ["loanPrincipal", "annualRate", "loanYears", "paymentFrequency"].forEach(function (id) {
       $(id).addEventListener("input", render);
       $(id).addEventListener("change", render);

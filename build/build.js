@@ -77,6 +77,7 @@ function getHreflangUrls(logicalPath) {
  */
 function shouldCopyToDist(srcPath) {
   const rel = path.relative(ROOT, srcPath).split(path.sep).join("/");
+  if (rel === "index.html") return false;
   if (rel === "articles/investing-and-financial-literacy/index.html") return false;
   if (/^articles\/investing-and-financial-literacy\/[^/]+\/index\.html$/.test(rel)) return false;
   return true;
@@ -106,6 +107,9 @@ function build() {
   const env = nunjucks.configure(TEMPLATES_DIR, {
     autoescape: true,
     noCache: true,
+  });
+  env.addFilter("jsonstr", function (str) {
+    return JSON.stringify(str == null ? "" : String(str));
   });
 
   console.log("Copying project to dist...");
@@ -169,6 +173,7 @@ function build() {
         description,
         t: tFn,
         pageId: page.id,
+        bodyClass: page.id === "index" ? "home" : "",
       };
 
       const html = nunjucks.render(page.template, ctx);
@@ -275,6 +280,7 @@ function build() {
   syncEnglishArticlesHtmlToSource();
   syncFrenchArticlesHtmlToSource();
   syncFrenchStaticHtmlToSource();
+  syncEnglishHomeHtmlToSource();
 
   console.log("Build complete. Output: " + DIST);
 }
@@ -352,6 +358,18 @@ function syncFrenchStaticHtmlToSource() {
     fs.copyFileSync(src, dest);
   }
   console.log("Mirrored French landing + static pages to fr/ (for local static server from repo root).");
+}
+
+/**
+ * Mirror generated English homepage from dist/index.html to repo root so serving
+ * the project root matches the same template-driven home as dist/ and Cloudflare.
+ */
+function syncEnglishHomeHtmlToSource() {
+  const src = path.join(DIST, "index.html");
+  const dest = path.join(ROOT, "index.html");
+  if (!fs.existsSync(src)) return;
+  fs.copyFileSync(src, dest);
+  console.log("Mirrored English homepage to index.html (for local static server from repo root).");
 }
 
 /**

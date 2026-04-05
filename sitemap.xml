@@ -281,6 +281,17 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://thelongmath.com/calculators/student-debt-at-graduation/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thelongmath.com/calculators/student-debt-at-graduation/methodology/</loc>
+    <lastmod>2026-04-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://thelongmath.com/calculators/inflation-time-machine/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

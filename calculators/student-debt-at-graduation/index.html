@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Student Debt Calculator (Canada): Estimate Your Debt at Graduation | The Long Math</title>
+  <meta name="description" content="Estimate how much student debt you may graduate with. Enter tuition, living costs, and what you can fund without borrowing. Clear, inspectable arithmetic." />
+  <link rel="canonical" href="https://www.thelongmath.com/calculators/student-debt-at-graduation/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Student Debt Calculator (Canada): Estimate Your Debt at Graduation | The Long Math" />
+  <meta property="og:description" content="Estimate how much student debt you may graduate with. Enter tuition, living costs, and what you can fund without borrowing." />
+  <meta property="og:url" content="https://www.thelongmath.com/calculators/student-debt-at-graduation/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Student Debt Calculator (Canada): Estimate Your Debt at Graduation | The Long Math" />
+  <meta name="twitter:description" content="Estimate how much student debt you may graduate with. Clear, inspectable arithmetic." />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.thelongmath.com/" },
+      { "@type": "ListItem", "position": 2, "name": "Calculators", "item": "https://www.thelongmath.com/calculators/" },
+      { "@type": "ListItem", "position": 3, "name": "Student Debt at Graduation Calculator", "item": "https://www.thelongmath.com/calculators/student-debt-at-graduation/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Student Debt at Graduation Calculator",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "url": "https://www.thelongmath.com/calculators/student-debt-at-graduation/",
+    "description": "Estimate projected student debt at graduation from education costs and non-debt funding across one or more programs. Optional two-scenario comparison."
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What counts as student debt?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Student debt is the amount you must borrow to cover education costs after using all available non-debt funding."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What should I include in education costs?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Include tuition, books, supplies, mandatory fees, and living expenses such as housing, food, transportation, and insurance."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What should I include as funding?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Include any money you can use without borrowing: earnings, savings, family support, scholarships, bursaries, grants, or similar non-debt funding."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Should I include student loans as funding?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. This calculator estimates how much you need to borrow. Loans are the result, not an input."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What if I have more funding than costs?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Your projected debt will be zero. The calculator does not allow projected debt to go below zero."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does this include interest on student loans?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. This calculator estimates debt at graduation only. Use a loan repayment calculator to model interest and repayment timelines."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How can I compare two education scenarios?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Use comparison mode to enter two different paths—such as living at home versus renting—and see how each changes your total cost and projected debt at graduation."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="/calculators/student-debt-at-graduation/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <div class="sd-wrap wrap">
+    <header class="sd-header">
+      <h1>Student Debt at Graduation Calculator</h1>
+      <p class="lead">
+        Estimate the total cost of your education, subtract what you can pay without borrowing, and see your projected debt at graduation.
+      </p>
+      <p class="sd-intro">
+        Most people think about tuition when planning school. But total cost is larger: living expenses, program length, and multiple degrees all compound. This calculator shows the full arithmetic—what your education may cost, what you can fund without debt, and the shortfall that becomes student loans.
+      </p>
+
+      <div class="sd-quick-block">
+        <h2>How much student debt will I graduate with?</h2>
+        <p>Your projected student debt is:</p>
+        <p class="sd-quick-formula">Total education cost − total amount you can fund without borrowing</p>
+        <p style="margin-top: 10px;">
+          If your funding covers all costs, your projected debt is zero. Otherwise, the remaining shortfall is the amount you will likely need to borrow.
+        </p>
+      </div>
+    </header>
+
+    <div class="inspect-bar">
+      <a href="/calculators/student-debt-at-graduation/methodology/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">Inspect the Arithmetic</a>
+    </div>
+
+    <div class="sd-card">
+      <div class="sd-mode-row">
+        <span class="sd-mode-label" id="sd-mode-label">Mode</span>
+        <div class="sd-mode-toggle" role="group" aria-labelledby="sd-mode-label">
+          <button type="button" id="sd-mode-single" aria-pressed="true">Single scenario</button>
+          <button type="button" id="sd-mode-compare" aria-pressed="false">Compare two scenarios</button>
+        </div>
+      </div>
+
+      <div id="sd-compare-only" class="hidden">
+        <div class="sd-compare-names">
+          <div class="loan-field">
+            <label for="sd-scenario-name-a">Scenario A name</label>
+            <input id="sd-scenario-name-a" type="text" autocomplete="off" value="Baseline" />
+          </div>
+          <div class="loan-field">
+            <label for="sd-scenario-name-b">Scenario B name</label>
+            <input id="sd-scenario-name-b" type="text" autocomplete="off" value="Alternative" />
+          </div>
+        </div>
+        <div class="sd-copy-row">
+          <button type="button" id="sd-copy-a-to-b">Copy Scenario A to Scenario B</button>
+        </div>
+        <div class="sd-tabs" role="tablist" aria-label="Scenario inputs">
+          <button type="button" role="tab" id="sd-tab-a" aria-selected="true" aria-controls="sd-panel-a">Edit Scenario A</button>
+          <button type="button" role="tab" id="sd-tab-b" aria-selected="false" aria-controls="sd-panel-b">Edit Scenario B</button>
+        </div>
+      </div>
+
+      <h2 class="sd-section-title">Enter Your Education Path</h2>
+
+      <div id="sd-panel-a" role="tabpanel" aria-labelledby="sd-tab-a">
+        <div id="sd-mount-a" class="sd-programs-mount" data-scenario="a"></div>
+        <button type="button" class="sd-add-prog" id="sd-add-a">+ Add another program</button>
+      </div>
+
+      <div id="sd-panel-b" class="hidden" role="tabpanel" aria-labelledby="sd-tab-b">
+        <div id="sd-mount-b" class="sd-programs-mount" data-scenario="b"></div>
+        <button type="button" class="sd-add-prog" id="sd-add-b">+ Add another program</button>
+      </div>
+    </div>
+
+    <div class="sd-card" id="sd-results-card">
+      <h2 class="sd-section-title">Results</h2>
+      <p id="sd-sr-summary" class="sd-sr-only" aria-live="polite"></p>
+
+      <div id="sd-results-single">
+        <div class="sd-results-grid">
+          <div class="sd-result-tile">
+            <div class="sd-result-label">Total education cost</div>
+            <div class="sd-result-value" id="sd-out-cost">$—</div>
+          </div>
+          <div class="sd-result-tile">
+            <div class="sd-result-label">Total funded without debt</div>
+            <div class="sd-result-value" id="sd-out-funded">$—</div>
+          </div>
+          <div class="sd-result-tile highlight">
+            <div class="sd-result-label">Projected debt at graduation</div>
+            <div class="sd-result-value" id="sd-out-debt">$—</div>
+          </div>
+        </div>
+
+        <h3 class="sd-subsection-title">Program breakdown</h3>
+        <div class="sd-breakdown-table-wrap">
+          <table class="sd-breakdown-table">
+            <thead>
+              <tr>
+                <th scope="col">Program</th>
+                <th scope="col">Total cost</th>
+                <th scope="col">Total funded (no debt)</th>
+                <th scope="col">Cost minus funding</th>
+              </tr>
+            </thead>
+            <tbody id="sd-breakdown-body"></tbody>
+          </table>
+        </div>
+        <p class="sd-note">
+          Projected debt is computed once for the whole path: surpluses in one program offset shortfalls in another. The last column shows each program’s own cost minus its own funding before that pooling.
+        </p>
+      </div>
+
+      <div id="sd-results-compare" class="hidden">
+        <div class="sd-compare-debt-row">
+          <div class="sd-result-tile highlight">
+            <div class="sd-result-label" id="sd-compare-label-debt-a">Scenario A — projected debt</div>
+            <div class="sd-result-value" id="sd-out-debt-a">$—</div>
+          </div>
+          <div class="sd-result-tile highlight">
+            <div class="sd-result-label" id="sd-compare-label-debt-b">Scenario B — projected debt</div>
+            <div class="sd-result-value" id="sd-out-debt-b">$—</div>
+          </div>
+        </div>
+
+        <div class="sd-compare-metrics">
+          <div class="sd-result-tile">
+            <div class="sd-result-label" id="sd-compare-label-cost-a">Scenario A — total education cost</div>
+            <div class="sd-result-value" id="sd-out-cost-a">$—</div>
+          </div>
+          <div class="sd-result-tile">
+            <div class="sd-result-label" id="sd-compare-label-cost-b">Scenario B — total education cost</div>
+            <div class="sd-result-value" id="sd-out-cost-b">$—</div>
+          </div>
+          <div class="sd-result-tile">
+            <div class="sd-result-label" id="sd-compare-label-funded-a">Scenario A — funded without debt</div>
+            <div class="sd-result-value" id="sd-out-funded-a">$—</div>
+          </div>
+          <div class="sd-result-tile">
+            <div class="sd-result-label" id="sd-compare-label-funded-b">Scenario B — funded without debt</div>
+            <div class="sd-result-value" id="sd-out-funded-b">$—</div>
+          </div>
+        </div>
+
+        <p class="sd-compare-summary" id="sd-compare-line"></p>
+        <p class="sd-note" id="sd-compare-pct-note"></p>
+      </div>
+
+      <div id="sd-charts-single" class="sd-charts">
+        <div class="sd-chart-panel">
+          <h3>Cost composition</h3>
+          <p class="sd-chart-caption">Total dollars over your path, split by cost type (tuition, books and fees, living, other).</p>
+          <p id="sd-chart-sr-comp" class="sd-sr-only" aria-live="polite"></p>
+          <div class="sd-chart-container">
+            <canvas id="sd-chart-composition" aria-hidden="true"></canvas>
+          </div>
+        </div>
+        <div class="sd-chart-panel">
+          <h3>Funding vs shortfall</h3>
+          <p class="sd-chart-caption">Non-debt funding compared to projected borrowing need.</p>
+          <p id="sd-chart-sr-fund" class="sd-sr-only" aria-live="polite"></p>
+          <div class="sd-chart-container">
+            <canvas id="sd-chart-funding" aria-hidden="true"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div id="sd-charts-compare" class="sd-charts hidden">
+        <div class="sd-chart-panel">
+          <h3>Projected debt by scenario</h3>
+          <p class="sd-chart-caption">Side-by-side projected debt at graduation.</p>
+          <p id="sd-chart-sr-debtcmp" class="sd-sr-only" aria-live="polite"></p>
+          <div class="sd-chart-container">
+            <canvas id="sd-chart-debt-compare" aria-hidden="true"></canvas>
+          </div>
+        </div>
+        <div class="sd-chart-panel">
+          <h3>Cost, funding, and debt</h3>
+          <p class="sd-chart-caption">Total cost, funded without debt, and projected debt for each scenario.</p>
+          <p id="sd-chart-sr-break" class="sd-sr-only" aria-live="polite"></p>
+          <div class="sd-chart-container sd-chart-tall">
+            <canvas id="sd-chart-breakdown-compare" aria-hidden="true"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="sd-explain-block">
+        <h2>Why student debt is often underestimated</h2>
+        <p>
+          Most estimates focus on tuition. In reality, total debt is driven by living costs over multiple years, stacked degrees or professional programs, and limited ability to self-fund. Small annual gaps compound into large totals.
+        </p>
+      </div>
+
+      <div class="sd-cta-block">
+        <h2>Next step: Project repayment</h2>
+        <p class="sd-chart-caption" id="sd-repay-hint" style="margin-bottom: 12px;"></p>
+        <div class="sd-cta-row">
+          <a class="sd-cta-primary" id="sd-repay-cta" href="/calculators/loan-repayment/">See how long it will take to repay this debt</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="inspect-bar" style="margin-top: 8px;">
+      <a href="/calculators/student-debt-at-graduation/methodology/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">Inspect the Arithmetic</a>
+    </div>
+
+    <div class="report-issue-wrap">
+      <a href="/contact/" class="report-issue-link">Report an Issue</a>
+    </div>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-accordion">
+        <details class="faq-accordion-item">
+          <summary>What counts as student debt?</summary>
+          <div class="faq-accordion-body">
+            <p>Student debt is the amount you must borrow to cover education costs after using all available non-debt funding.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>What should I include in education costs?</summary>
+          <div class="faq-accordion-body">
+            <p>Include tuition, books, supplies, mandatory fees, and living expenses such as housing, food, transportation, and insurance.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>What should I include as funding?</summary>
+          <div class="faq-accordion-body">
+            <p>Include any money you can use without borrowing: earnings, savings, family support, scholarships, bursaries, grants, or similar non-debt funding.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>Should I include student loans as funding?</summary>
+          <div class="faq-accordion-body">
+            <p>No. This calculator estimates how much you need to borrow. Loans are the result, not an input.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>What if I have more funding than costs?</summary>
+          <div class="faq-accordion-body">
+            <p>Your projected debt will be zero. The calculator does not allow projected debt to go below zero.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>Does this include interest on student loans?</summary>
+          <div class="faq-accordion-body">
+            <p>No. This calculator estimates debt at graduation only. Use a loan repayment calculator to model interest and repayment timelines.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>How can I compare two education scenarios?</summary>
+          <div class="faq-accordion-body">
+            <p>Use comparison mode to enter two different paths—such as living at home versus renting—and see how each changes your total cost and projected debt at graduation.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
+      </p>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+
+  <script defer src="/calculators/student-debt-at-graduation/engine.js"></script>
+  <script defer src="/calculators/student-debt-at-graduation/ui.js"></script>
+</body>
+</html>

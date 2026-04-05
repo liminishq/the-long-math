@@ -1,44 +1,305 @@
 {% extends "layout.njk" %}
+{% block headExtra %}
+  <link rel="stylesheet" href="/assets/css/home.css">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "The Long Math",
+  "url": {{ canonical | jsonstr }},
+  "logo": "https://thelongmath.com/assets/logo.png"
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": {{ t('meta.home.breadcrumbName') | jsonstr }},
+      "item": {{ canonical | jsonstr }}
+    }
+  ]
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": {{ t('meta.home.faq.q1') | jsonstr }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ t('meta.home.faq.a1') | jsonstr }}
+      }
+    },
+    {
+      "@type": "Question",
+      "name": {{ t('meta.home.faq.q2') | jsonstr }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ t('meta.home.faq.a2') | jsonstr }}
+      }
+    },
+    {
+      "@type": "Question",
+      "name": {{ t('meta.home.faq.q3') | jsonstr }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ t('meta.home.faq.a3') | jsonstr }}
+      }
+    },
+    {
+      "@type": "Question",
+      "name": {{ t('meta.home.faq.q4') | jsonstr }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ t('meta.home.faq.a4') | jsonstr }}
+      }
+    }
+  ]
+}
+  </script>
+{% endblock %}
 {% block content %}
-<section class="card">
-  <div class="lede">
-    <p>{{ t('meta.home.manifesto1') }}</p>
-    <p>{{ t('meta.home.manifesto2') }}</p>
-    <p><strong>{{ t('meta.home.manifesto3') }}</strong></p>
-  </div>
-</section>
-<section style="margin-top:16px;">
-  <div class="card">
-    <div class="section-title">{{ t('meta.home.featuredSectionTitle') }}</div>
-    <h1 style="margin:0 0 8px; font-size:20px;">{{ t('meta.home.featuredTitle') }}</h1>
-    <p style="margin:0; color:var(--muted); font-size:13px; max-width:820px;">{{ t('meta.home.featuredDesc') }}</p>
-    <div style="margin-top:12px;">
-      <a href="{{ pathPrefix }}/calculators/advisor-fee/" class="...">{{ t('meta.home.openCalculator') }}</a>
-    </div>
-    <p style="margin:10px 0 0; color:var(--muted); font-size:12px;">{{ t('meta.home.featuredExample') }}</p>
-  </div>
-</section>
-<section style="margin-top:16px;">
-  <div class="home-grid">
-    <article class="card" style="position: relative;">
-      <a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/" style="display: block; text-decoration: none; color: inherit; position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;" aria-label="{{ t('meta.home.card1Title') }}"></a>
-      <h1 style="margin:0 0 8px; font-size:18px;">{{ t('meta.home.card1Title') }}</h1>
-      <p style="margin:0; color:var(--muted); font-size:13px;">{{ t('meta.home.card1Desc') }}</p>
-      <p style="margin:10px 0 0; color:var(--text); font-size:13px; font-style:italic; font-weight:700;">{{ t('meta.home.card1Tagline') }}</p>
-    </article>
-    <article class="card" style="position: relative;">
-      <a href="{{ pathPrefix }}/essays/" style="display: block; text-decoration: none; color: inherit; position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;" aria-label="{{ t('meta.home.card2Title') }}"></a>
-      <h1 style="margin:0 0 8px; font-size:18px;">{{ t('meta.home.card2Title') }}</h1>
-      <div class="section-title">{{ t('meta.home.card2ComingSoon') }}</div>
-      <p style="margin:0; color:var(--muted); font-size:13px;">{{ t('meta.home.card2Desc') }}</p>
-      <p style="margin:10px 0 0; color:var(--text); font-size:13px; font-style:italic; font-weight:700;">{{ t('meta.home.card2Tagline') }}</p>
-    </article>
-    <article class="card" style="position: relative;">
-      <a href="{{ pathPrefix }}/calculators/" style="display: block; text-decoration: none; color: inherit; position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;" aria-label="{{ t('meta.home.card3Title') }}"></a>
-      <h1 style="margin:0 0 8px; font-size:18px;">{{ t('meta.home.card3Title') }}</h1>
-      <p style="margin:0; color:var(--muted); font-size:13px;">{{ t('meta.home.card3Desc') }}</p>
-      <p style="margin:10px 0 0; color:var(--text); font-size:13px; font-style:italic; font-weight:700;">{{ t('meta.home.card3Tagline') }}</p>
-    </article>
-  </div>
-</section>
+
+    <section class="home-section home-hero" aria-labelledby="hero-heading">
+      <div class="home-hero-inner">
+        <h1 id="hero-heading">{{ t('meta.home.hero.line1') }}<br />{{ t('meta.home.hero.line2') }}</h1>
+        <div class="hero-lede">
+          <p><strong>{{ t('meta.home.hero.brand') }}</strong> {{ t('meta.home.hero.ledeRest') }}</p>
+        </div>
+        <p class="hero-tagline">{{ t('meta.home.hero.tagline') }}</p>
+        <div class="hero-ctas">
+          <a href="{{ pathPrefix }}/calculators/" class="home-cta home-cta-primary">{{ t('meta.home.hero.ctaCalculators') }}</a>
+          <a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/" class="home-cta">{{ t('meta.home.hero.ctaUnderstanding') }}</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-section card home-proof" aria-labelledby="proof-heading">
+      <h2 id="proof-heading" class="home-section-heading">{{ t('meta.home.proof.heading') }}</h2>
+      <p class="home-proof-subtitle">{{ t('meta.home.proof.subtitle') }}</p>
+
+      <div class="home-proof-grid">
+        <div class="home-proof-left">
+          <div class="home-proof-demo" aria-label="{{ t('meta.home.proof.demoAria') }}">
+            <div class="home-proof-row">
+              <span class="home-proof-label">{{ t('meta.home.proof.noFee') }}</span>
+              <span class="home-proof-value">$3,806,000</span>
+            </div>
+            <div class="home-proof-row">
+              <span class="home-proof-label">{{ t('meta.home.proof.withFee') }}</span>
+              <span class="home-proof-value">$2,867,000</span>
+            </div>
+            <div class="home-proof-row highlight">
+              <span class="home-proof-label">{{ t('meta.home.proof.difference') }}</span>
+              <span class="home-proof-value">$939,000</span>
+            </div>
+          </div>
+          <p class="home-proof-caption">{{ t('meta.home.proof.caption') }}</p>
+          <p class="home-proof-cta">
+            <a href="{{ pathPrefix }}/calculators/advisor-fee/" class="home-cta">{{ t('meta.home.proof.cta') }}</a>
+          </p>
+        </div>
+
+        <div class="home-proof-right">
+          <h3 class="home-proof-widget-title">{{ t('meta.home.proof.widgetTitle') }}</h3>
+          <div class="home-proof-widget-label">
+            <span>{{ t('meta.home.proof.feeAxisLabel') }}</span>
+            <span id="feeSelectedLabel"></span>
+          </div>
+          <input
+            id="feeSlider"
+            class="home-proof-widget-slider"
+            type="range"
+            min="0.5"
+            max="5.0"
+            step="0.1"
+            value="1.0"
+            aria-label="{{ t('meta.home.proof.feeAxisLabel') }}">
+
+          <div class="home-proof-summary" aria-describedby="feeSummaryLive">
+            <div class="home-proof-summary-row">
+              <span class="home-proof-summary-label">{{ t('meta.home.proof.rowNoFee') }}</span>
+              <span class="home-proof-summary-value" id="feeBaseValue">$3,806,000</span>
+            </div>
+            <div class="home-proof-summary-row">
+              <span class="home-proof-summary-label">{{ t('meta.home.proof.rowWithFee') }}</span>
+              <span class="home-proof-summary-value" id="feeWithValue">$2,867,000</span>
+            </div>
+            <div class="home-proof-summary-row cost">
+              <span class="home-proof-summary-label">{{ t('meta.home.proof.rowCost') }}</span>
+              <span class="home-proof-summary-value" id="feeCostValue">$939,000</span>
+            </div>
+          </div>
+          <p id="feeSummaryLive" class="visually-hidden" aria-live="polite"></p>
+
+          <div class="home-proof-chart" aria-hidden="true">
+            <svg id="feeChart" viewBox="0 0 320 180" role="img">
+              <defs>
+                <clipPath id="feeChartClip">
+                  <rect x="32" y="10" width="268" height="150"></rect>
+                </clipPath>
+              </defs>
+              <rect x="0" y="0" width="320" height="180" fill="none"></rect>
+              <line x1="32" y1="160" x2="300" y2="160" stroke="var(--border)" stroke-width="1" />
+              <line x1="32" y1="20" x2="32" y2="160" stroke="var(--border)" stroke-width="1" />
+              <g clip-path="url(#feeChartClip)">
+                <path id="feeChartBaseLine" fill="none" stroke="var(--accent)" stroke-width="2" />
+                <path id="feeChartFeeLine" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4 3" />
+              </g>
+            </svg>
+          </div>
+          <p class="home-proof-chart-note">{{ t('meta.home.proof.chartNote') }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-section" aria-labelledby="pillars-heading">
+      <h2 id="pillars-heading" class="home-section-heading">{{ t('meta.home.pillars.heading') }}</h2>
+      <div class="pillars-grid">
+        <article class="pillar-card">
+          <h3>{{ t('meta.home.pillars.calcTitle') }}</h3>
+          <p>{{ t('meta.home.pillars.calcDesc') }}</p>
+          <ul>
+            <li>{{ t('meta.home.pillars.calcLi1') }}</li>
+            <li>{{ t('meta.home.pillars.calcLi2') }}</li>
+            <li>{{ t('meta.home.pillars.calcLi3') }}</li>
+            <li>{{ t('meta.home.pillars.calcLi4') }}</li>
+          </ul>
+          <a href="{{ pathPrefix }}/calculators/" class="home-cta">{{ t('meta.home.pillars.calcCta') }}</a>
+        </article>
+
+        <article class="pillar-card">
+          <h3>{{ t('meta.home.pillars.underTitle') }}</h3>
+          <p>{{ t('meta.home.pillars.underDesc') }}</p>
+          <ul>
+            <li>{{ t('meta.home.pillars.underLi1') }}</li>
+            <li>{{ t('meta.home.pillars.underLi2') }}</li>
+            <li>{{ t('meta.home.pillars.underLi3') }}</li>
+            <li>{{ t('meta.home.pillars.underLi4') }}</li>
+            <li>{{ t('meta.home.pillars.underLi5') }}</li>
+            <li>{{ t('meta.home.pillars.underLi6') }}</li>
+          </ul>
+          <a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/" class="home-cta">{{ t('meta.home.pillars.underCta') }}</a>
+        </article>
+
+        <article class="pillar-card">
+          <h3>{{ t('meta.home.pillars.beyondTitle') }}</h3>
+          <p>{{ t('meta.home.pillars.beyondDesc') }}</p>
+          <a href="{{ pathPrefix }}/essays/" class="home-cta">{{ t('meta.home.pillars.beyondCta') }}</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="home-section card" aria-labelledby="questions-heading">
+      <h2 id="questions-heading" class="home-section-heading">{{ t('meta.home.questions.heading') }}</h2>
+      <p class="questions-intro">{{ t('meta.home.questions.intro') }}</p>
+      <ul class="questions-list">
+        <li><a href="{{ pathPrefix }}/calculators/advisor-fee/">{{ t('meta.home.questions.q1') }}</a></li>
+        <li><a href="{{ pathPrefix }}/calculators/pay-off-mortgage-vs-invest/">{{ t('meta.home.questions.q2') }}</a></li>
+        <li><a href="{{ pathPrefix }}/calculators/inflation-time-machine/">{{ t('meta.home.questions.q3') }}</a></li>
+        <li><a href="{{ pathPrefix }}/calculators/tfsa-rrsp-fhsa/">{{ t('meta.home.questions.q4') }}</a></li>
+      </ul>
+    </section>
+
+    <section class="home-section card" aria-labelledby="inspectable-heading">
+      <div class="home-text-narrow">
+        <h2 id="inspectable-heading" class="home-section-heading">{{ t('meta.home.inspectable.heading') }}</h2>
+        <div class="inspectable-text">
+          <p>{{ t('meta.home.inspectable.p1') }}</p>
+          <p>{{ t('meta.home.inspectable.p2') }}</p>
+          <ul>
+            <li>{{ t('meta.home.inspectable.li1') }}</li>
+            <li>{{ t('meta.home.inspectable.li2') }}</li>
+            <li>{{ t('meta.home.inspectable.li3') }}</li>
+          </ul>
+          <p>{{ t('meta.home.inspectable.p3') }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-section" aria-labelledby="featured-heading">
+      <h2 id="featured-heading" class="home-section-heading">{{ t('meta.home.featured.heading') }}</h2>
+      <p class="featured-tools-intro">{{ t('meta.home.featured.intro') }}</p>
+      <div class="featured-tools-grid">
+        <article class="card featured-tool-card">
+          <h3>{{ t('meta.home.featured.advTitle') }}</h3>
+          <p class="featured-tool-desc">{{ t('meta.home.featured.advDesc') }}</p>
+          <div class="featured-tool-buttons">
+            <a href="{{ pathPrefix }}/calculators/advisor-fee/" class="home-cta home-cta-primary">{{ t('meta.home.featured.advOpen') }}</a>
+            <a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/the-true-cost-of-financial-advisor-fees/" class="home-cta">{{ t('meta.home.featured.advExplain') }}</a>
+          </div>
+        </article>
+        <article class="card featured-tool-card">
+          <h3>{{ t('meta.home.featured.inflTitle') }}</h3>
+          <p class="featured-tool-desc">{{ t('meta.home.featured.inflDesc') }}</p>
+          <div class="featured-tool-buttons">
+            <a href="{{ pathPrefix }}/calculators/inflation-time-machine/" class="home-cta home-cta-primary">{{ t('meta.home.featured.inflOpen') }}</a>
+            <a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/inflation/" class="home-cta">{{ t('meta.home.featured.inflExplain') }}</a>
+          </div>
+        </article>
+        <article class="card featured-tool-card">
+          <h3>{{ t('meta.home.featured.mortTitle') }}</h3>
+          <p class="featured-tool-desc">{{ t('meta.home.featured.mortDesc') }}</p>
+          <div class="featured-tool-buttons">
+            <a href="{{ pathPrefix }}/calculators/pay-off-mortgage-vs-invest/" class="home-cta home-cta-primary">{{ t('meta.home.featured.mortOpen') }}</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="home-section card" aria-labelledby="start-here-heading">
+      <h2 id="start-here-heading" class="home-section-heading">{{ t('meta.home.start.heading') }}</h2>
+      <p class="questions-intro">{{ t('meta.home.start.intro') }}</p>
+      <ul class="start-here-list">
+        <li><a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/what-is-investing/">{{ t('meta.home.start.link1') }}</a></li>
+        <li><a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/what-is-the-stock-market/">{{ t('meta.home.start.link2') }}</a></li>
+        <li><a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/asset-classes-for-investing/">{{ t('meta.home.start.link3') }}</a></li>
+        <li><a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/compound-interest/">{{ t('meta.home.start.link4') }}</a></li>
+        <li><a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/inflation/">{{ t('meta.home.start.link5') }}</a></li>
+      </ul>
+      <p style="margin:1.25rem 0 0;">
+        <a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/" class="home-cta">{{ t('meta.home.start.browseCta') }}</a>
+      </p>
+    </section>
+
+    <section class="home-section card" aria-labelledby="future-heading">
+      <div class="home-text-narrow">
+        <h2 id="future-heading" class="home-section-heading">{{ t('meta.home.future.heading') }}</h2>
+        <p class="future-text">{{ t('meta.home.future.intro') }}</p>
+        <ul class="future-list">
+          <li>{{ t('meta.home.future.li1') }}</li>
+          <li>{{ t('meta.home.future.li2') }}</li>
+          <li>{{ t('meta.home.future.li3') }}</li>
+          <li>{{ t('meta.home.future.li4') }}</li>
+        </ul>
+        <p class="future-text">{{ t('meta.home.future.closing') }}</p>
+      </div>
+    </section>
+
+    <section class="home-section card final-cta" aria-labelledby="final-heading">
+      <h2 id="final-heading" class="home-section-heading">{{ t('meta.home.final.heading') }}</h2>
+      <p>{{ t('meta.home.final.p') }}</p>
+      <div class="final-cta-buttons">
+        <a href="{{ pathPrefix }}/calculators/advisor-fee/" class="home-cta home-cta-primary">{{ t('meta.home.final.ctaAdvisor') }}</a>
+        <a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/" class="home-cta">{{ t('meta.home.final.ctaUnderstanding') }}</a>
+      </div>
+    </section>
+
+{% endblock %}
+{% block footScripts %}
+<script>
+window.__HOME_FEE_I18N__ = {
+  locale: {% if lang == 'fr' %}"fr-CA"{% else %}"en-CA"{% endif %},
+  selectedFeeLabel: {{ t('meta.home.proof.selectedFeeLabel') | jsonstr }},
+  summaryLive: {{ t('meta.home.proof.summaryLive') | jsonstr }}
+};
+</script>
+<script src="/assets/js/home-fee-demo.js"></script>
 {% endblock %}

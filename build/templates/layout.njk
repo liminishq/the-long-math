@@ -23,7 +23,7 @@
   </script>
   {% block headExtra %}{% endblock %}
 </head>
-<body>
+<body{% if bodyClass %} class="{{ bodyClass }}"{% endif %}>
   {# Header/footer come from /assets/partials/header(-fr).html and footer(-fr).html via site.js #}
   <div id="site-header"></div>
   <div class="wrap">

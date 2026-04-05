@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspectable Arithmetic – Student Debt at Graduation Calculator | The Long Math</title>
+  <meta name="description" content="Formulae, definitions, and assumptions for the Student Debt at Graduation Calculator." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/student-debt-at-graduation/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { anonymize_ip: true });
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <h1>Inspectable Arithmetic for the Student Debt at Graduation Calculator</h1>
+      <p class="methodology-meta">Version 1.0<br />Last updated: April 2026</p>
+
+      <p>Transparent arithmetic is the operating system of this calculator.</p>
+      <p>No opinions. No hidden assumptions. Just arithmetic.</p>
+
+      <h2>Purpose</h2>
+      <p>
+        This calculator estimates projected debt at graduation by comparing total education costs against the total amount the user can fund
+        without borrowing, across one or more programs of study.
+      </p>
+
+      <h2>Core formula</h2>
+      <div class="formula-block">Projected Debt at Graduation = max(0, Total Education Cost − Total Non-Debt Funding)</div>
+
+      <h2>Definitions</h2>
+      <ul>
+        <li><strong>Total Education Cost</strong> = sum across all programs of (years × annual cost)</li>
+        <li>
+          <strong>Annual cost</strong> = tuition + books/supplies/fees + living expenses + other annual costs (each non-negative; blank or invalid inputs are treated as zero)
+        </li>
+        <li><strong>Total Non-Debt Funding</strong> = sum across all programs of (years × annual amount funded without borrowing)</li>
+      </ul>
+
+      <h2>Clarifications</h2>
+      <ul>
+        <li>This calculator estimates debt at graduation only.</li>
+        <li>It does not model interest during study.</li>
+        <li>It does not model repayment after graduation.</li>
+        <li>It does not include government aid rules or loan forgiveness programs.</li>
+        <li>It assumes user-entered values are annual averages for each program.</li>
+        <li>Funding surpluses and shortfalls are pooled at the scenario level: scenario debt uses total cost minus total funding across all programs.</li>
+      </ul>
+
+      <p>
+        The live results are produced by <code>computeStudentDebtScenario</code> in
+        <code>/calculators/student-debt-at-graduation/engine.js</code> and bound in <code>ui.js</code>.
+      </p>
+      <p>
+        If any discrepancy is identified between this documentation and the live engine, the engine’s arithmetic is the source of truth; this page
+        should be updated to match.
+      </p>
+
+      <p><a href="/calculators/student-debt-at-graduation/">← Back to Student Debt at Graduation Calculator</a></p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>
