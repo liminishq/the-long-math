@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moyenne du coût en dollars : définition, fonctionnement et quand elle a du sens | The Long Math</title>
+  <meta name="description" content="Découvrez ce qu’est la moyenne du coût en dollars (MCD), comment elle fonctionne et dans quels cas elle est pertinente. Comparaison versement forfaitaire vs MCD, argument comportemental de l’investissement automatique et idées reçues courantes." />
+  <link rel="canonical" href="https://thelongmath.com/fr/articles/investing-and-financial-literacy/dollar-cost-averaging/" />
+  
+  <link rel="alternate" hreflang="en" href="https://thelongmath.com/articles/investing-and-financial-literacy/dollar-cost-averaging/" />
+  
+  <link rel="alternate" hreflang="fr" href="https://thelongmath.com/fr/articles/investing-and-financial-literacy/dollar-cost-averaging/" />
+  
+  <link rel="alternate" hreflang="x-default" href="https://thelongmath.com/articles/investing-and-financial-literacy/dollar-cost-averaging/" />
+  
+
+  <script src="/assets/js/theme-init.js"></script>
+  <script src="/assets/js/i18n.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script defer src="/assets/js/site.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+  
+<style>
+    .article-content { max-width: 980px; margin: 0 auto; line-height: 1.7; font-size: 1.05rem; }
+    .article-content h2 { margin: 0 0 0.75em; }
+    .article-content h3 { margin: 1.25em 0 0.5em; }
+    .article-content ul, .article-content ol { margin: 1em 0; padding-left: 2em; }
+    .article-content li { margin: 0.5em 0; }
+    .article-content p { margin: 0.9em 0; }
+
+    .article-content table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.95em; }
+    .article-content th, .article-content td { border: 1px solid var(--border); padding: 10px 12px; }
+    .article-content th { background: var(--card-bg, rgba(0, 0, 0, 0.03)); font-weight: 600; text-align: left; }
+    .article-content td.num, .article-content th.num { text-align: right; }
+
+    .section-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      margin: 18px 0;
+      background: var(--card-bg, var(--surface, #fff));
+      box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+    }
+    .section-card.intro-card { margin-top: 14px; }
+
+    .lm-formula {
+      display: inline-block;
+      padding: 10px 14px;
+      border: 1px solid var(--accent, #d6b36a);
+      border-radius: 12px;
+      background: rgba(0,0,0,0.12);
+      color: var(--text, #ffffff);
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .quick-answer-block {
+      border-left: 4px solid var(--accent, #d6b36a);
+      background: var(--accentSoft, rgba(217,180,106,.08));
+    }
+
+    .related-articles h2 { font-size: 18px; margin: 0 0 10px; }
+    .related-articles h3 { font-size: 16px; margin: 1em 0 8px; }
+    .related-articles ul { list-style: none; padding-left: 0; margin: 0; }
+    .related-articles li { margin: 12px 0; }
+    .related-articles a { color: var(--accent); text-decoration: none; }
+    .related-articles a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      .article-content table { font-size: 0.88em; display: block; overflow-x: auto; }
+      .article-content th, .article-content td { padding: 8px 10px; }
+    }
+  </style>
+
+  <meta name="article:modified" content="mars 2026" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Moyenne du coût en dollars : définition, fonctionnement et quand elle a du sens | The Long Math" />
+  <meta property="og:description" content="Découvrez ce qu’est la moyenne du coût en dollars (MCD), comment elle fonctionne et dans quels cas elle est pertinente. Comparaison versement forfaitaire vs MCD, argument comportemental de l’investissement automatique et idées reçues courantes." />
+  <meta property="og:url" content="https://thelongmath.com/fr/articles/investing-and-financial-literacy/dollar-cost-averaging/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Moyenne du coût en dollars : définition, fonctionnement et quand elle a du sens | The Long Math" />
+  <meta name="twitter:description" content="Découvrez ce qu’est la moyenne du coût en dollars (MCD), comment elle fonctionne et dans quels cas elle est pertinente. Comparaison versement forfaitaire vs MCD, argument comportemental de l’investissement automatique et idées reçues courantes." />
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Accueil","item":"https://thelongmath.com/fr"},{"@type":"ListItem","position":2,"name":"Investissement et culture financière","item":"https://thelongmath.com/fr/articles/investing-and-financial-literacy/"},{"@type":"ListItem","position":3,"name":"Moyenne du coût en dollars : définition, fonctionnement et quand elle a du sens","item":"https://thelongmath.com/fr/articles/investing-and-financial-literacy/dollar-cost-averaging/"}]}</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Moyenne du coût en dollars : définition, fonctionnement et quand elle a du sens","description":"Découvrez ce qu’est la moyenne du coût en dollars (MCD), comment elle fonctionne et dans quels cas elle est pertinente. Comparaison versement forfaitaire vs MCD, argument comportemental de l’investissement automatique et idées reçues courantes.","author":{"@type":"Person","name":"Phil Evans"},"publisher":{"@type":"Organization","name":"The Long Math","logo":{"@type":"ImageObject","url":"https://thelongmath.com/assets/logo.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://thelongmath.com/fr/articles/investing-and-financial-literacy/dollar-cost-averaging/"},"datePublished":"2026-03-01","dateModified":"2026-03-01"}</script>
+
+
+</head>
+<body>
+  
+  <div id="site-header"></div>
+  <div class="wrap">
+    
+<article class="article-content">
+      <header>
+        <h1>Moyenne du coût en dollars : définition, fonctionnement et quand elle a du sens</h1>
+
+        <p class="reading-time">Lecture d’environ 8 minutes</p>
+
+        <p class="last-updated">Dernière mise à jour : mars 2026</p>
+
+        
+      </header>
+
+      <!-- Quick Answer -->
+      <section class="section-card quick-answer-block" id="quick-answer" aria-labelledby="quick-answer-heading">
+        <h2 id="quick-answer-heading">Réponse rapide</h2>
+        <p>La moyenne du coût en dollars (MCD), ou <em>dollar cost averaging</em> (DCA), est une stratégie d’investissement où vous placez un montant fixe à intervalles réguliers — peu importe ce que font les marchés.</p>
+        <p>Au lieu d’essayer de chronométrer le marché, vous achetez de façon constante dans le temps. Quand les prix sont élevés, votre contribution achète moins d’actions. Quand les prix sont bas, la même contribution en achète plus. Sur de nombreux achats, le prix moyen payé tend à se lisser entre ces hauts et ces bas.</p>
+        <p>La moyenne du coût en dollars ne garantit pas un rendement supérieur à celui d’un versement forfaitaire investi immédiatement. Les marchés ont historiquement tendance à monter dans le temps ; investir plus tôt produit souvent un rendement espéré plus élevé.</p>
+        <p>Le principal avantage de la moyenne du coût en dollars est de réduire le risque de timing et de rendre l’investissement plus facile à tenir dans le temps.</p>
+      </section>
+
+      <!-- What Is Dollar Cost Averaging? -->
+      <section class="section-card">
+        <h2>Qu’est-ce que la moyenne du coût en dollars ?</h2>
+        <p>La plupart des gens n’investissent pas en un seul grand geste. Ils investissent à partir d’une paie, d’un surplus mensuel, d’une distribution trimestrielle. L’argent arrive graduellement et il est mis au travail graduellement. C’est la moyenne du coût en dollars — pas une manœuvre sophistiquée, mais une description de la façon dont la plupart investissent vraiment.</p>
+        <p>La définition formelle : investir un montant fixe à intervalles réguliers, quelles que soient les conditions de marché.</p>
+        <p>En pratique, cela ressemble à ceci :</p>
+        <ul>
+          <li>Investir 500 $ chaque mois</li>
+          <li>Acheter le même placement à chaque fois</li>
+          <li>Poursuivre que les marchés montent ou descendent</li>
+        </ul>
+        <p>La stratégie retire délibérément l’une des questions les plus paralysantes du placement : est-ce le bon moment ? En vous engageant sur un calendrier, la réponse est toujours la même. Il ne reste qu’à décider si vous tenez le cap.</p>
+      </section>
+
+      <!-- How Dollar Cost Averaging Works -->
+      <section class="section-card">
+        <h2>Comment fonctionne la moyenne du coût en dollars</h2>
+        <p>Imaginons un investisseur qui cotise 1 000 $ par mois à un fonds indiciel à large marché.</p>
+        <div class="table-wrap" style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Mois</th>
+                <th class="num">Prix par action</th>
+                <th class="num">Montant investi</th>
+                <th class="num">Actions achetées</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Janvier</td><td class="num">100 $</td><td class="num">1 000 $</td><td class="num">10,00</td></tr>
+              <tr><td>Février</td><td class="num">80 $</td><td class="num">1 000 $</td><td class="num">12,50</td></tr>
+              <tr><td>Mars</td><td class="num">125 $</td><td class="num">1 000 $</td><td class="num">8,00</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Après trois mois :</p>
+        <ul>
+          <li>Total investi : 3 000 $</li>
+          <li>Total d’actions détenues : 30,5</li>
+          <li>Prix d’achat moyen : 98,36 $ par action</li>
+        </ul>
+        <p>Les prix ont varié de 80 $ à 125 $, pourtant le coût moyen payé se situe sous le point milieu de cette fourchette. Cela se produit automatiquement : parce que le montant de la contribution reste fixe, les prix plus bas génèrent mécaniquement plus d’actions achetées. L’investisseur n’a rien fait d’ingénieux. La structure a fait le travail.</p>
+      </section>
+
+      <!-- Why Investors Use Dollar Cost Averaging -->
+      <section class="section-card">
+        <h2>Pourquoi les investisseurs utilisent la moyenne du coût en dollars</h2>
+        <p>Deux réalités pratiques font de cette stratégie le réflexe par défaut pour la plupart des investisseurs.</p>
+        <p><strong>Le revenu arrive graduellement.</strong> Attendre d’avoir amassé une grosse somme avant d’investir retarde la capitalisation — parfois pendant des années. La moyenne du coût en dollars permet de commencer dès que l’argent est disponible, aussi modeste soit-il. Chaque mois en bourse est un mois où la capitalisation travaille.</p>
+        <p><strong>Chronométrer le marché est plus difficile qu’il n’y paraît.</strong> Les mouvements à court terme sont réellement difficiles à prédire — pas seulement pour les particuliers, mais aussi pour les professionnels avec des équipes d’analystes. Ceux qui attendent un « meilleur point d’entrée » se retrouvent souvent en liquidités pendant des hausses imprévues, puis réentrent après que les prix se sont déjà redressés. La moyenne du coût en dollars supprime entièrement cette décision. L’investissement devient une routine plutôt qu’un jugement répété.</p>
+      </section>
+
+      <!-- Lump Sum vs. Dollar Cost Averaging -->
+      <section class="section-card">
+        <h2>Versement forfaitaire et moyenne du coût en dollars</h2>
+        <p>Si un investisseur a déjà une grosse somme — un héritage, une prime, le produit de la vente d’une maison — la question devient plus intéressante.</p>
+        <p>Historiquement, investir un versement forfaitaire immédiatement produit un rendement espéré plus élevé que d’étaler le même montant dans le temps. La raison est simple : les marchés ont tendance à monter sur de longues périodes, et l’argent déployé plus tôt a plus de temps pour profiter de cette croissance.</p>
+        <p>Mais le versement forfaitaire comporte un vrai risque de timing. Un gros placement fait juste avant une baisse marquée du marché peut entraîner des pertes à court terme douloureuses — et surtout, rendre psychologiquement difficile de rester investi.</p>
+        <div class="table-wrap" style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Stratégie</th>
+                <th>Avantage</th>
+                <th>Inconvénient</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Versement forfaitaire</td><td>Rendement espéré plus élevé</td><td>Risque de timing plus élevé</td></tr>
+              <tr><td>Moyenne du coût en $</td><td>Risque de timing plus faible</td><td>Rendement espéré légèrement plus faible</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>La stratégie mathématiquement optimale n’est pas toujours celle qu’on peut tenir psychologiquement. Un investisseur qui déploie un versement forfaitaire puis panique lors de la première correction n’a pas battu quelqu’un qui moyenne méthodiquement — il a pris plus de risque pour un pire résultat. Pour ceux qui savent qu’ils remettent en question les grosses décisions, déployer graduellement un coup de fortune n’est pas irrationnel. C’est un compromis raisonnable : accepter une décote modeste sur le rendement espéré en échange de rester investi.</p>
+      </section>
+
+      <!-- When Dollar Cost Averaging Makes the Most Sense -->
+      <section class="section-card">
+        <h2>Quand la moyenne du coût en dollars a le plus de sens</h2>
+        <p>La moyenne du coût en dollars convient particulièrement bien à :</p>
+        <ul>
+          <li>l’investissement à partir d’un salaire ou de revenus d’entreprise réguliers ;</li>
+          <li>la constitution progressive d’un portefeuille à partir de l’épargne ;</li>
+          <li>le début du placement dans un contexte incertain ou volatile ;</li>
+          <li>le maintien de la discipline lorsque les manchettes font croire chaque semaine que c’est le pire moment pour investir ;</li>
+          <li>la mise en place de cotisations mensuelles automatiques qui retirent l’investissement de votre liste de décisions.</li>
+        </ul>
+        <p>Ce dernier point est sous-estimé. Beaucoup d’investisseurs à long terme finissent par automatiser entièrement leurs cotisations — l’argent va vers les placements chaque mois sans nouvelle décision. L’investissement automatique, ici, est moins une stratégie qu’un dispositif d’engagement : quand le processus tourne tout seul, il n’y a plus matière à se parler hors du plan.</p>
+      </section>
+
+      <!-- The Behavioral Advantage of Dollar Cost Averaging -->
+      <section class="section-card">
+        <h2>L’avantage comportemental de la moyenne du coût en dollars</h2>
+        <p>Les marchés ne baissent pas en silence. Les retournements s’accompagnent de manchettes, de commentaires d’experts et d’un sentiment que cette fois c’est différent. Ce contexte tend — pas par intention, mais en pratique — à déclencher exactement la mauvaise réaction : vendre ce qui baisse, attendre la clarté, réentrer quand on se sent en sécurité.</p>
+        <p>Le problème, c’est qu’au moment où tout semble plus sûr, les prix se sont en général déjà redressés.</p>
+        <p>La moyenne du coût en dollars brise ce schéma structurellement. Lorsqu’un investisseur s’est engagé à cotiser 500 $ le premier de chaque mois, une baisse de 20 % du marché ne crée pas une nouvelle décision — elle crée plus d’actions à moindre prix. Celui qui tient le cap pendant une correction n’est pas héroïque : il suit un plan qu’il a déjà arrêté.</p>
+        <p>C’est l’avantage le plus durable de la stratégie. Non pas le calcul, qui est réel mais modeste, mais la façon dont un calendrier fixe transforme la volatilité du marché d’une menace en opportunité mécanique.</p>
+      </section>
+
+      <!-- The Real Cost of Waiting -->
+      <section class="section-card">
+        <h2>Le vrai coût d’attendre</h2>
+        <p>Les investisseurs qui retardent — en attendant la clarté, un recul, un moment plus confortable — sous-estiment souvent ce que ce délai coûte. Ce n’est pas spectaculaire. Ça ne ressemble rarement à une erreur. Mais le temps hors marché, c’est de la capitalisation qui ne s’est pas produite, et la capitalisation est le mécanisme qui fait fonctionner l’investissement à long terme.</p>
+        <p>Les mathématiques de la capitalisation expliquent pourquoi investir tôt et de façon constante compte autant.</p>
+        <p><span class="lm-formula">A = P(1 + r/n)<sup>nt</sup></span></p>
+        <p>Pour approfondir cet effet :</p>
+        <ul>
+          <li><a href="/fr/articles/investing-and-financial-literacy/compound-interest/">Intérêts composés : le moteur ultime de la richesse</a> — comment la capitalisation accélère la croissance du placement à long terme</li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/what-is-investing/">Qu’est-ce que l’investissement ?</a> — introduction aux mécanismes et à l’objectif de l’investissement</li>
+        </ul>
+      </section>
+
+      <!-- Common Misunderstandings About Dollar Cost Averaging -->
+      <section class="section-card">
+        <h2>Idées reçues sur la moyenne du coût en dollars</h2>
+        <p><strong>La moyenne du coût en dollars élimine-t-elle le risque de marché ?</strong> Non. Si les marchés chutent fortement, un portefeuille en MCD perdra tout de même de la valeur. La stratégie réduit le risque de timing à l’entrée — celui d’investir une grosse somme juste avant une baisse — pas le risque sous-jacent de détenir des actions.</p>
+        <p><strong>La moyenne du coût en dollars garantit-elle un prix d’achat moyen plus bas ?</strong> Pas exactement. L’effet mécanique d’acheter plus d’actions quand les prix sont bas est réel, mais c’est un effet secondaire, pas l’objectif. L’objectif est de bâtir une habitude d’investissement constant qui survive aux marchés volatils. Prendre la baisse du prix pour objectif dénature ce que la stratégie fait vraiment.</p>
+        <p><strong>La moyenne du coût en dollars est-elle meilleure que le versement forfaitaire ?</strong> Cela dépend de ce qu’on entend par « meilleure ». Si l’objectif est de maximiser le rendement espéré, le versement forfaitaire l’emporte en général lorsque l’argent est déjà disponible — les marchés ont historiquement monté dans le temps, et un déploiement plus précoce signifie plus de temps en bourse. Si l’objectif est de réduire le risque psychologique d’un gros placement mal chronométré, la MCD offre un avantage réel. Les deux stratégies optimisent des choses différentes.</p>
+        <p><strong>La moyenne du coût en dollars est-elle réservée aux petits investisseurs ?</strong> Non. La stratégie s’applique de la même façon quel que soit le montant. Ce qui change avec des sommes plus importantes, c’est que le compromis versement forfaitaire devient plus marquant — à la fois en rendement espéré et en risque de timing. Beaucoup d’investisseurs qui reçoivent un coup de fortune choisissent de le déployer graduellement pour des raisons psychologiques, en acceptant une modeste décote sur le rendement espéré pour une entrée plus lisse.</p>
+      </section>
+
+      <!-- How Most Investors Use Dollar Cost Averaging -->
+      <section class="section-card">
+        <h2>Comment la plupart des investisseurs utilisent la moyenne du coût en dollars</h2>
+        <p>En pratique, la plupart mettent en œuvre cette stratégie par l’automatisation :</p>
+        <ul>
+          <li>Virements automatiques vers des comptes de courtage à une date fixe</li>
+          <li>Achats récurrents de FNB</li>
+          <li>Cotisations à un régime de retraite d’employeur prélevées sur la paie</li>
+          <li>Cotisations mensuelles au CELI ou au REER</li>
+        </ul>
+        <p>L’automatisation est la partie qui compte vraiment. Un projet d’investir chaque mois est facile à abandonner quand les marchés sont bas et les nouvelles mauvaises. Une instruction permanente qui s’exécute quand même est beaucoup plus difficile à dérailler. Le rôle de l’investisseur n’est plus de prendre une bonne décision chaque mois, mais d’avoir pris une bonne décision une fois.</p>
+      </section>
+
+      <!-- Key Takeaways -->
+      <section class="section-card">
+        <h2>Points clés</h2>
+        <ul>
+          <li>La moyenne du coût en dollars, c’est investir un montant fixe à intervalles réguliers, quelles que soient les conditions de marché.</li>
+          <li>Elle répartit automatiquement les achats sur différents niveaux de prix — plus d’actions quand les prix sont bas, moins quand ils sont élevés.</li>
+          <li>La stratégie réduit le risque de timing mais ne garantit pas un rendement supérieur au versement forfaitaire.</li>
+          <li>Lorsque l’argent est déjà disponible, le versement forfaitaire produit en général un rendement espéré plus élevé.</li>
+          <li>L’avantage le plus durable de la MCD est comportemental : un calendrier fixe supprime la tentation récurrente d’attendre un meilleur moment.</li>
+        </ul>
+        <p>Pour la plupart des investisseurs, l’approche la plus efficace est la plus simple — investir régulièrement, ignorer le bruit à court terme et laisser le temps capitaliser les résultats.</p>
+      </section>
+
+      <!-- Related Articles -->
+      <section class="section-card related-articles">
+        <h2>Articles connexes</h2>
+        <ul>
+          <li><a href="/fr/articles/investing-and-financial-literacy/compound-interest/">Intérêts composés : le moteur ultime de la richesse</a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/what-is-investing/">Qu’est-ce que l’investissement ?</a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/asset-classes-for-investing/">Classes d’actifs pour investir</a></li>
+        </ul>
+      </section>
+
+      <!-- Related Tools -->
+      <section class="section-card related-articles">
+        <h2>Outils connexes</h2>
+        <ul>
+          <li><a href="/fr/calculators/investment-simple/">Calculateur de croissance du placement</a></li>
+          <li><a href="/fr/calculators/compound-multipliers/">Calculateur d’intérêts composés</a></li>
+          <li><a href="/fr/calculators/inflation-time-machine/">Calculateur d’inflation</a></li>
+        </ul>
+      </section>
+    </article>
+
+    <!-- Disclaimer -->
+<div class="disclaimer"><p>
+        <strong>Avis de non-responsabilité :</strong> Tout le contenu publié sur The Long Math — articles, essais, calculateurs, outils ou tout autre matériel — est fourni à des fins éducatives et informatives uniquement et ne constitue pas des conseils financiers, fiscaux, juridiques ou en placement. Les résultats ou projections reposent sur des modèles simplifiés, des hypothèses et des données fournies par l’utilisateur et peuvent ne pas refléter la réalité. Vous êtes responsable d’évaluer l’exactitude et la pertinence de l’information et de mener vos propres vérifications. Avant de prendre des décisions financières, consultez un professionnel qualifié.
+      </p></div>
+
+  </div>
+  
+  <div id="footerMount"></div>
+</body>
+</html>
