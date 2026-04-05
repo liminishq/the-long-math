@@ -3,15 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tools and Calculators – The Long Math</title>
+  <title>Outils et calculateurs – The Long Math</title>
+  <meta name="description" content="Parcourez les calculateurs financiers interactifs sur The Long Math — impôt sur le revenu, placement, inflation, hypothèques, frais de conseil et comparaisons à long terme avec des hypothèses explicites." />
+  <link rel="canonical" href="https://thelongmath.com/fr/calculators/" />
+  
+  <link rel="alternate" hreflang="en" href="https://thelongmath.com/calculators/" />
+  
+  <link rel="alternate" hreflang="fr" href="https://thelongmath.com/fr/calculators/" />
+  
+  <link rel="alternate" hreflang="x-default" href="https://thelongmath.com/calculators/" />
+  
 
-  <!-- Site-wide theme + styles -->
   <script src="/assets/js/theme-init.js"></script>
-  <link rel="stylesheet" href="/assets/css/styles.css">
-  <link rel="stylesheet" href="/calculators/landing.css">
   <script src="/assets/js/i18n.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
   <script defer src="/assets/js/site.js"></script>
-  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
   <script>
   window.dataLayer = window.dataLayer || [];
@@ -19,187 +25,216 @@
   gtag('js', new Date());
   gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
   </script>
+  
+  <link rel="stylesheet" href="/calculators/landing.css">
+
 </head>
 <body>
-  <div id="site-header"></div>
   
+  <div id="site-header"></div>
   <div class="wrap">
+    
 
-    <!-- Header -->
     <header>
-      <h1>Tools and Calculators</h1>
+      <h1>Outils et calculateurs</h1>
 
-	<p><strong>This page lists the interactive financial calculators available on The Long Math.</strong> These tools help you estimate income tax, project investment growth, adjust for inflation, calculate mortgage costs, measure advisory fees, and compare long-term financial decisions using explicit assumptions and transparent arithmetic.</p>
+      <p><strong>Cette page recense les calculateurs financiers interactifs disponibles sur The Long Math.</strong> Ces outils permettent d’estimer l’impôt sur le revenu, de projeter la croissance des placements, d’ajuster pour l’inflation, de calculer le coût d’une hypothèque, de mesurer les frais de conseil et de comparer des décisions financières à long terme à partir d’hypothèses explicites et d’une arithmétique transparente.</p>
 
-	<p>Each calculator models a specific financial question over time. Inputs, formulas, and outputs are visible and inspectable. Tools are updated independently and may differ in scope, inputs, and jurisdiction.</p>
+      <p>Chaque calculateur modélise une question financière précise dans le temps. Les entrées, les formules et les résultats sont visibles et vérifiables. Les outils sont mis à jour indépendamment et peuvent différer par portée, entrées et juridiction.</p>
 
-	<p>Unlike many online calculators, these tools do not embed hidden assumptions or prepackaged projections. Every result is derived directly from the inputs you provide and the formulas shown on the page — nothing more, nothing less.</p>
+      <p>Contrairement à de nombreux calculateurs en ligne, ces outils n’intègrent pas d’hypothèses cachées ni de projections préemballées. Chaque résultat dérive directement des valeurs que vous fournissez et des formules indiquées sur la page — rien de plus, rien de moins.</p>
 
-      
       <div class="lede">
-        <p>Arithmetic-first calculators with explicit assumptions and inspectable outputs.</p>
+        <p>Des calculateurs centrés sur l’arithmétique, avec des hypothèses explicites et des résultats inspectables.</p>
       </div>
     </header>
 
-    <!-- Income & Tax -->
+    
     <section class="calc-cat-card">
-      <h2>Income & Tax</h2>
-      <p class="calc-cat-desc">Estimate what you owe and understand the rules behind the numbers.</p>
+      <h2>Revenu et fiscalité</h2>
+      <p class="calc-cat-desc">Estimez ce que vous devez et comprenez les règles derrière les chiffres.</p>
       <ul class="calc-cat-list">
+        
         <li class="calc-cat-item">
-          <a href="/calculators/canada-income-tax/">Canada Personal Income Tax Calculator 2025</a>
-          <span class="calc-cat-item-desc">Estimates Canadian personal income tax with transparent breakdowns. Shows federal and provincial tax calculations, CPP/EI contributions, dividend gross-ups, capital gains inclusion, and detailed "show the math" sections.</span>
+          <a href="/fr/calculators/canada-income-tax/">Calculateur d’impôt sur le revenu des particuliers au Canada 2025</a>
+          <span class="calc-cat-item-desc">Estime l’impôt sur le revenu des particuliers au Canada avec des ventilations transparentes. Affiche le calcul fédéral et provincial, les cotisations RPC/AE, les majorations de dividendes, l’inclusion des gains en capital et des sections « montrer le calcul » détaillées.</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/calculators/capital-gains-tax-canada/">Canada Capital Gains Tax Calculator</a>
-          <span class="calc-cat-item-desc">Estimate capital gains tax on a Canadian asset sale. Enter ACB, proceeds, inclusion rate, and marginal tax rate. Handles capital losses and optional primary residence exemption (educational only).</span>
+          <a href="/fr/calculators/capital-gains-tax-canada/">Calculateur d’impôt sur les gains en capital (Canada)</a>
+          <span class="calc-cat-item-desc">Estime l’impôt sur les gains en capital lors de la vente d’un actif au Canada. Saisissez le prix de base ajusté, le produit, le taux d’inclusion et le taux marginal. Gère les pertes en capital et l’exemption pour résidence principale (à titre éducatif seulement).</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/calculators/ccpc-tax/">CCPC Tax Calculator 2025</a>
-          <span class="calc-cat-item-desc">Estimates corporate and personal tax for Canadian Controlled Private Corporations (CCPCs), showing the combined tax burden of corporate income and distributions to shareholders.</span>
+          <a href="/fr/calculators/ccpc-tax/">Calculateur fiscal pour SPCC 2025</a>
+          <span class="calc-cat-item-desc">Estime l’impôt des sociétés et des particuliers pour les sociétés privées sous contrôle canadien (SPCC), en montrant la charge fiscale combinée du revenu d’entreprise et des distributions aux actionnaires.</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/tools/income-tax-brackets-canada/">Canada Income Tax Brackets — Federal and Provincial (2025)</a>
-          <span class="calc-cat-item-desc">Reference tables for 2025 federal and provincial/territorial personal income tax brackets used by the Canada income tax calculator.</span>
+          <a href="/fr/tools/income-tax-brackets-canada/">Tranches d’impôt sur le revenu au Canada — fédéral et provincial (2025)</a>
+          <span class="calc-cat-item-desc">Tableaux de référence pour 2025 : tranches d’impôt sur le revenu des particuliers au fédéral et par province ou territoire, utilisées par le calculateur d’impôt canadien.</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/tools/inflation-tables/">Historical Inflation Rates (CPI)</a>
-          <span class="calc-cat-item-desc">Historical Consumer Price Index (CPI) inflation rates by year for Canada and the United States.</span>
+          <a href="/fr/tools/inflation-tables/">Taux d’inflation historiques (IPC)</a>
+          <span class="calc-cat-item-desc">Taux d’inflation historiques selon l’indice des prix à la consommation (IPC) par année pour le Canada et les États-Unis.</span>
         </li>
+        
       </ul>
     </section>
-
-    <!-- Investing & Compounding -->
+    
     <section class="calc-cat-card">
-      <h2>Investing & Compounding</h2>
-      <p class="calc-cat-desc">See how money grows over time — in nominal dollars or inflation-adjusted buying power.</p>
+      <h2>Placement et capitalisation</h2>
+      <p class="calc-cat-desc">Voyez comment l’argent croît dans le temps — en dollars nominaux ou en pouvoir d’achat réel après inflation.</p>
       <ul class="calc-cat-list">
+        
         <li class="calc-cat-item">
-          <a href="/calculators/investment-simple/">Simple Investment Calculator</a>
-          <span class="calc-cat-item-desc">Quick compound growth estimates with recurring contributions and optional inflation adjustment for a first-pass view.</span>
+          <a href="/fr/calculators/investment-simple/">Calculateur de placement simple</a>
+          <span class="calc-cat-item-desc">Estimations rapides de croissance composée avec cotisations récurrentes et ajustement d’inflation facultatif pour une première lecture.</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/calculators/investment-calculator-inflation-adjusted/">Inflation-Adjusted Investment Calculator</a>
-          <span class="calc-cat-item-desc">Estimate investment growth with monthly contributions and compounding, then compare inflation-adjusted (real) buying power to nominal dollars.</span>
+          <a href="/fr/calculators/investment-calculator-inflation-adjusted/">Calculateur de placement ajusté à l’inflation</a>
+          <span class="calc-cat-item-desc">Estime la croissance du placement avec cotisations mensuelles et capitalisation, puis compare le pouvoir d’achat réel (après inflation) aux dollars nominaux.</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/calculators/inflation-time-machine/">Inflation Time Machine (Then ↔ Now)</a>
-          <span class="calc-cat-item-desc">Convert a dollar amount between two years using annual CPI index ratios. Multi-country: Canada, United States, Australia, United Kingdom. Whole dollars only.</span>
+          <a href="/fr/calculators/inflation-time-machine/">Machine à remonter l’inflation (Alors ↔ Maintenant)</a>
+          <span class="calc-cat-item-desc">Convertit un montant entre deux années à l’aide des ratios d’indice IPC annuels. Plusieurs pays : Canada, États-Unis, Australie, Royaume-Uni. Dollars entiers seulement.</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/calculators/compound-multipliers/">Compound Interest Multipliers Table</a>
-          <span class="calc-cat-item-desc">Static grid of (1+r)^t for annual rates 1%–15% over 0–50 years. No inputs—just the arithmetic table for transparent, inspectable compounding.</span>
+          <a href="/fr/calculators/compound-multipliers/">Table des multiplicateurs d’intérêts composés</a>
+          <span class="calc-cat-item-desc">Grille statique de (1+r)^t pour des taux annuels de 1 % à 15 % sur 0 à 50 ans. Pas d’entrées — uniquement le tableau arithmétique pour une capitalisation transparente et vérifiable.</span>
         </li>
+        
       </ul>
     </section>
-
-    <!-- Fees & Advisors -->
+    
     <section class="calc-cat-card">
-      <h2>Fees & Advisors</h2>
-      <p class="calc-cat-desc">Quantify how fees and advice costs compound over time.</p>
+      <h2>Frais et conseillers</h2>
+      <p class="calc-cat-desc">Quantifiez la façon dont les frais et le coût des conseils se capitalisent dans le temps.</p>
       <ul class="calc-cat-list">
+        
         <li class="calc-cat-item">
-          <a href="/fees/">Fees Hub</a>
-          <span class="calc-cat-item-desc">Four fee questions with short answers and links to the canonical calculators.</span>
+          <a href="/fr/fees/">Espace frais</a>
+          <span class="calc-cat-item-desc">Quatre questions sur les frais avec réponses courtes et liens vers les calculateurs de référence.</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/fr/calculators/advisor-fee/">Cost of a Financial Advisor (AUM Model - most common)</a>
-          <span class="calc-cat-item-desc">Quantifies the long-term impact of advisory fees and lost compounding using explicit assumptions and inspectable math.</span>
+          <a href="/fr/calculators/advisor-fee/">Coût d’un conseiller financier (modèle sur les actifs — le plus courant)</a>
+          <span class="calc-cat-item-desc">Mesure l’impact à long terme des frais de conseil et de la capitalisation perdue, avec des hypothèses explicites et des calculs vérifiables.</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/calculators/flat-fee-or-hourly/">Flat-Fee or Hourly Advisor Cost</a>
-          <span class="calc-cat-item-desc">Calculates the true cost of flat-fee or hourly advisor fees, including fees paid and lost compounding, with AUM-fee equivalent comparison.</span>
+          <a href="/fr/calculators/flat-fee-or-hourly/">Coût d’un conseiller à honoraires fixes ou horaires</a>
+          <span class="calc-cat-item-desc">Calcule le coût réel des honoraires fixes ou horaires, y compris les frais payés et la capitalisation perdue, avec comparaison équivalente aux frais sur les actifs.</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/calculators/fee-cost-1percent/">Cost of a 1% annual fee</a>
-          <span class="calc-cat-item-desc">The long-term cost of a 1% annual investment fee versus no fee, with inspectable arithmetic.</span>
+          <a href="/fr/calculators/fee-cost-1percent/">Coût d’un frais annuel de 1 %</a>
+          <span class="calc-cat-item-desc">Coût à long terme d’un frais de placement annuel de 1 % par rapport à l’absence de frais, avec arithmétique vérifiable.</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/calculators/fee-cost-0-5percent/">Cost of a 0.5% annual fee</a>
-          <span class="calc-cat-item-desc">The long-term cost of a 0.5% annual investment fee versus no fee, with inspectable arithmetic.</span>
+          <a href="/fr/calculators/fee-cost-0-5percent/">Coût d’un frais annuel de 0,5 %</a>
+          <span class="calc-cat-item-desc">Coût à long terme d’un frais de placement annuel de 0,5 % par rapport à l’absence de frais, avec arithmétique vérifiable.</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/calculators/required-return-to-offset-fee/">How Much Extra Return Is Required to Offset Investment and Management Fees</a>
-          <span class="calc-cat-item-desc">The additional annual return required to fully offset investment and management fees over time.</span>
+          <a href="/fr/calculators/required-return-to-offset-fee/">Quel rendement supplémentaire faut-il pour compenser les frais de placement et de gestion</a>
+          <span class="calc-cat-item-desc">Rendement annuel supplémentaire requis pour compenser entièrement les frais de placement et de gestion dans le temps.</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/calculators/active-vs-passive-break-even/">Active vs Passive Break-Even</a>
-          <span class="calc-cat-item-desc">Compares overall returns of active vs passive investments and real returns required to break even.</span>
+          <a href="/fr/calculators/active-vs-passive-break-even/">Seuil de rentabilité actif vs passif</a>
+          <span class="calc-cat-item-desc">Compare les rendements globaux des placements actifs et passifs et les rendements réels nécessaires pour atteindre le seuil de rentabilité.</span>
         </li>
+        
       </ul>
     </section>
-
-    <!-- Mortgage & Debt -->
+    
     <section class="calc-cat-card">
-      <h2>Mortgage & Debt</h2>
-      <p class="calc-cat-desc">Understand the true cost of borrowing and payoff decisions.</p>
+      <h2>Hypothèque et dette</h2>
+      <p class="calc-cat-desc">Comprenez le coût réel de l’emprunt et des choix de remboursement.</p>
       <ul class="calc-cat-list">
+        
         <li class="calc-cat-item">
-          <a href="/calculators/mortgage-calculator/">Mortgage Calculator — Payments, Interest, and Amortization</a>
-          <span class="calc-cat-item-desc">Calculate mortgage payments, remaining balance, and total interest over the full amortization period. See how payments and costs evolve over time with interactive graphs.</span>
+          <a href="/fr/calculators/mortgage-calculator/">Calculateur d’hypothèque — paiements, intérêts et amortissement</a>
+          <span class="calc-cat-item-desc">Calcule les paiements hypothécaires, le solde restant et les intérêts totaux sur toute la période d’amortissement. Visualisez l’évolution des paiements et des coûts avec des graphiques interactifs.</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/calculators/loan-repayment/">Loan Repayment Calculator — See Your True Interest Cost Over Time</a>
-          <span class="calc-cat-item-desc">Calculate fixed-rate loan payments, total interest, and remaining balance over time with a full amortization schedule and inspectable arithmetic.</span>
+          <a href="/fr/calculators/loan-repayment/">Calculateur de remboursement de prêt — coût d’intérêt réel dans le temps</a>
+          <span class="calc-cat-item-desc">Calcule les paiements à taux fixe, les intérêts totaux et le solde dans le temps avec un échéancier complet d’amortissement et une arithmétique vérifiable.</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/calculators/student-debt-at-graduation/">Student Debt at Graduation Calculator</a>
-          <span class="calc-cat-item-desc">Estimate total education costs, subtract non-debt funding across one or more programs, and see projected debt at graduation. Optional two-scenario comparison.</span>
+          <a href="/fr/calculators/student-debt-at-graduation/">Calculateur de dette étudiante à la diplomation</a>
+          <span class="calc-cat-item-desc">Estime le coût total des études, retranche le financement non emprunté pour un ou plusieurs programmes et affiche la dette projetée à la diplomation. Comparaison facultative entre deux scénarios.</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/calculators/pay-off-mortgage-vs-invest/">Pay Off Mortgage vs Invest</a>
-          <span class="calc-cat-item-desc">Compare paying down a mortgage faster versus investing the same monthly cash under a strict cash-flow-neutral rule.</span>
+          <a href="/fr/calculators/pay-off-mortgage-vs-invest/">Rembourser l’hypothèque ou investir</a>
+          <span class="calc-cat-item-desc">Compare un remboursement hypothécaire accéléré à l’investissement du même flux monétaire mensuel selon une règle stricte de neutralité de trésorerie.</span>
         </li>
+        
       </ul>
     </section>
-
-    <!-- Account Strategy (Canada) -->
+    
     <section class="calc-cat-card">
-      <h2>Account Strategy (Canada)</h2>
-      <p class="calc-cat-desc">Choose accounts and contribution strategies with explicit rules.</p>
+      <h2>Stratégie de comptes (Canada)</h2>
+      <p class="calc-cat-desc">Choisissez les comptes et les stratégies de cotisation avec des règles explicites.</p>
       <ul class="calc-cat-list">
+        
         <li class="calc-cat-item">
-          <a href="/calculators/rrsp-contribution-room-tax-refund/">RRSP Contribution Room &amp; Tax Refund Calculator</a>
-          <span class="calc-cat-item-desc">Estimate available RRSP room, deductible contribution amount, refund, after-tax contribution cost, and remaining room using explicit assumptions.</span>
+          <a href="/fr/calculators/rrsp-contribution-room-tax-refund/">Calculateur d’espace de cotisation REER et de remboursement d’impôt</a>
+          <span class="calc-cat-item-desc">Estime l’espace REER disponible, la cotisation déductible, le remboursement, le coût après impôt de la cotisation et l’espace restant à partir d’hypothèses explicites.</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/calculators/tfsa-room/">TFSA Contribution Room Calculator</a>
-          <span class="calc-cat-item-desc">Estimate available TFSA room using explicit year-by-year limits and clear withdrawal timing rules.</span>
+          <a href="/fr/calculators/tfsa-room/">Calculateur d’espace de cotisation au CELI</a>
+          <span class="calc-cat-item-desc">Estime l’espace CELI disponible avec des plafonds année par année explicites et des règles claires sur le moment des retraits.</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/calculators/tfsa-rrsp-fhsa/">TFSA vs RRSP vs FHSA Calculator (Canada)</a>
-          <span class="calc-cat-item-desc">Compare after-tax outcomes for TFSA, RRSP, and FHSA contributions under explicit assumptions, including FHSA eligibility and refund handling.</span>
+          <a href="/fr/calculators/tfsa-rrsp-fhsa/">Calculateur CELI vs REER vs CELIAPP (Canada)</a>
+          <span class="calc-cat-item-desc">Compare les résultats après impôt pour des cotisations au CELI, au REER et au CELIAPP selon des hypothèses explicites, y compris l’admissibilité au CELIAPP et le traitement du remboursement.</span>
         </li>
+        
         <li class="calc-cat-item">
-          <a href="/calculators/tfsa-over-contribution-penalty-calculator/">TFSA Over-Contribution Penalty Calculator</a>
-          <span class="calc-cat-item-desc">Estimate CRA TFSA over-contribution penalties based on the highest excess in each calendar month (1% per month). Supports contributions, withdrawals, and Jan 1 room.</span>
+          <a href="/fr/calculators/tfsa-over-contribution-penalty-calculator/">Calculateur de pénalité pour cotisation excédentaire au CELI</a>
+          <span class="calc-cat-item-desc">Estime les pénalités de l’ARC pour cotisation excédentaire au CELI d’après l’excédent le plus élevé pour chaque mois civil (1 % par mois). Prend en charge cotisations, retraits et espace au 1er janvier.</span>
         </li>
+        
       </ul>
     </section>
+    
 
-    <!-- In Development -->
     <section class="calc-cat-card calc-cat-dev">
-      <h2>In Development</h2>
+      <h2>En développement</h2>
       <ul class="calc-cat-list calc-cat-dev-list">
-        <li class="calc-cat-dev-item">TFSA vs RRSP vs Non-Registered (apples-to-apples)</li>
-        <li class="calc-cat-dev-item">Historical Return Simulator</li>
+        
+        <li class="calc-cat-dev-item">CELI vs REER vs compte non enregistré (comparaisons équivalentes)</li>
+        
+        <li class="calc-cat-dev-item">Simulateur de rendement historique</li>
+        
       </ul>
-      <p class="calc-cat-dev-note">Not live yet. Currently working hard to create these high quality calculators with no opinions, no hidden assumptions, just arithmetic.</p>
+      <p class="calc-cat-dev-note">Pas encore en ligne. Nous travaillons à des calculateurs de grande qualité, sans opinions ni hypothèses cachées — seulement l’arithmétique.</p>
     </section>
 
-    <h2>Scope and limitations</h2>
-    <p>Calculators on this page are designed for educational inspection of arithmetic relationships. Jurisdiction, tax year, assumptions, and data sources vary by tool and are stated on each calculator page.</p>
+    <h2>Portée et limites</h2>
+    <p>Les calculateurs de cette page visent une inspection éducative des relations arithmétiques. La juridiction, l’année fiscale, les hypothèses et les sources de données varient selon l’outil et sont indiquées sur chaque page de calculateur.</p>
 
-    <!-- Disclaimer -->
     <div class="disclaimer">
       <p>
-        <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
+        <strong>Avis de non-responsabilité:</strong> Tout le contenu de The Long Math — articles, essais, calculateurs, outils ou tout autre matériel — est fourni uniquement à des fins éducatives et d’information et ne constitue pas un conseil financier, fiscal, juridique ou en placement. Tout résultat ou projection repose sur des modèles simplifiés, des hypothèses et des données fournies par l’utilisateur et peut ne pas refléter la réalité. Vous êtes responsable d’évaluer l’exactitude et la pertinence de l’information et de faire vos propres vérifications. Avant toute décision financière, consultez un professionnel qualifié.
       </p>
     </div>
 
-    <div id="footerMount"></div>
 
   </div>
-
+  
+  <div id="footerMount"></div>
 </body>
 </html>

@@ -28,6 +28,11 @@ const LANGS = [
 const PAGES = [
   { id: "index", logicalPath: "/", metaKey: "home", template: "pages/index.njk" },
   {
+    id: "calculators-hub",
+    logicalPath: "/calculators/",
+    template: "pages/calculators-hub.njk",
+  },
+  {
     id: "advisor-fee",
     logicalPath: "/calculators/advisor-fee/",
     metaKey: "advisorFee",
@@ -73,11 +78,32 @@ function getHreflangUrls(logicalPath) {
 }
 
 /**
+ * Calculators landing page copy (EN/FR JSON under assets/i18n/{lang}/calculators-hub.json).
+ */
+function loadCalculatorsHubPage(root, lang) {
+  const p = path.join(root, "assets", "i18n", lang, "calculators-hub.json");
+  let raw;
+  try {
+    raw = fs.readFileSync(p, "utf8");
+  } catch (e) {
+    raw = null;
+  }
+  if (!raw) {
+    if (lang === "en") {
+      throw new Error("Missing assets/i18n/en/calculators-hub.json");
+    }
+    return loadCalculatorsHubPage(root, "en");
+  }
+  return JSON.parse(raw);
+}
+
+/**
  * Skip static HTML for sections we generate from i18n JSON.
  */
 function shouldCopyToDist(srcPath) {
   const rel = path.relative(ROOT, srcPath).split(path.sep).join("/");
   if (rel === "index.html") return false;
+  if (rel === "calculators/index.html") return false;
   if (rel === "articles/investing-and-financial-literacy/index.html") return false;
   if (/^articles\/investing-and-financial-literacy\/[^/]+\/index\.html$/.test(rel)) return false;
   return true;
@@ -158,9 +184,18 @@ function build() {
         { hreflang: "x-default", url: hreflangUrlsObj.xDefault },
       ];
 
-      const meta = merged.meta && merged.meta[page.metaKey];
-      const title = (meta && meta.title) || page.id;
-      const description = (meta && meta.description) || "";
+      let title;
+      let description;
+      let calculatorsHub = null;
+      if (page.id === "calculators-hub") {
+        calculatorsHub = loadCalculatorsHubPage(ROOT, code);
+        title = calculatorsHub.title;
+        description = calculatorsHub.description;
+      } else {
+        const meta = merged.meta && page.metaKey && merged.meta[page.metaKey];
+        title = (meta && meta.title) || page.id;
+        description = (meta && meta.description) || "";
+      }
 
       const ctx = {
         lang: code,
@@ -174,6 +209,7 @@ function build() {
         t: tFn,
         pageId: page.id,
         bodyClass: page.id === "index" ? "home" : "",
+        calculatorsHub,
       };
 
       const html = nunjucks.render(page.template, ctx);
@@ -281,6 +317,7 @@ function build() {
   syncFrenchArticlesHtmlToSource();
   syncFrenchStaticHtmlToSource();
   syncEnglishHomeHtmlToSource();
+  syncEnglishCalculatorsHubToSource();
 
   console.log("Build complete. Output: " + DIST);
 }
@@ -321,7 +358,6 @@ function emitFrenchStaticMirrors() {
     "about/index.html",
     "essays/index.html",
     "contact/index.html",
-    "calculators/index.html",
   ];
   for (const rel of rels) {
     const src = path.join(DIST, rel);
@@ -370,6 +406,18 @@ function syncEnglishHomeHtmlToSource() {
   if (!fs.existsSync(src)) return;
   fs.copyFileSync(src, dest);
   console.log("Mirrored English homepage to index.html (for local static server from repo root).");
+}
+
+/**
+ * Mirror generated English calculators hub from dist/ to repo root calculators/index.html.
+ */
+function syncEnglishCalculatorsHubToSource() {
+  const src = path.join(DIST, "calculators", "index.html");
+  const dest = path.join(ROOT, "calculators", "index.html");
+  if (!fs.existsSync(src)) return;
+  ensureDir(path.dirname(dest));
+  fs.copyFileSync(src, dest);
+  console.log("Mirrored English calculators hub to calculators/index.html (for local static server from repo root).");
 }
 
 /**

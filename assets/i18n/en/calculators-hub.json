@@ -1,0 +1,176 @@
+{
+  "title": "Tools and Calculators – The Long Math",
+  "description": "Browse interactive financial calculators on The Long Math — income tax, investing, inflation, mortgages, advisory fees, and long-term comparisons with explicit assumptions.",
+  "h1": "Tools and Calculators",
+  "intro": {
+    "p1Lead": "This page lists the interactive financial calculators available on The Long Math.",
+    "p1Rest": "These tools help you estimate income tax, project investment growth, adjust for inflation, calculate mortgage costs, measure advisory fees, and compare long-term financial decisions using explicit assumptions and transparent arithmetic.",
+    "p2": "Each calculator models a specific financial question over time. Inputs, formulas, and outputs are visible and inspectable. Tools are updated independently and may differ in scope, inputs, and jurisdiction.",
+    "p3": "Unlike many online calculators, these tools do not embed hidden assumptions or prepackaged projections. Every result is derived directly from the inputs you provide and the formulas shown on the page — nothing more, nothing less."
+  },
+  "lede": "Arithmetic-first calculators with explicit assumptions and inspectable outputs.",
+  "categories": [
+    {
+      "title": "Income & Tax",
+      "desc": "Estimate what you owe and understand the rules behind the numbers.",
+      "items": [
+        {
+          "path": "/calculators/canada-income-tax/",
+          "title": "Canada Personal Income Tax Calculator 2025",
+          "desc": "Estimates Canadian personal income tax with transparent breakdowns. Shows federal and provincial tax calculations, CPP/EI contributions, dividend gross-ups, capital gains inclusion, and detailed \"show the math\" sections."
+        },
+        {
+          "path": "/calculators/capital-gains-tax-canada/",
+          "title": "Canada Capital Gains Tax Calculator",
+          "desc": "Estimate capital gains tax on a Canadian asset sale. Enter ACB, proceeds, inclusion rate, and marginal tax rate. Handles capital losses and optional primary residence exemption (educational only)."
+        },
+        {
+          "path": "/calculators/ccpc-tax/",
+          "title": "CCPC Tax Calculator 2025",
+          "desc": "Estimates corporate and personal tax for Canadian Controlled Private Corporations (CCPCs), showing the combined tax burden of corporate income and distributions to shareholders."
+        },
+        {
+          "path": "/tools/income-tax-brackets-canada/",
+          "title": "Canada Income Tax Brackets — Federal and Provincial (2025)",
+          "desc": "Reference tables for 2025 federal and provincial/territorial personal income tax brackets used by the Canada income tax calculator."
+        },
+        {
+          "path": "/tools/inflation-tables/",
+          "title": "Historical Inflation Rates (CPI)",
+          "desc": "Historical Consumer Price Index (CPI) inflation rates by year for Canada and the United States."
+        }
+      ]
+    },
+    {
+      "title": "Investing & Compounding",
+      "desc": "See how money grows over time — in nominal dollars or inflation-adjusted buying power.",
+      "items": [
+        {
+          "path": "/calculators/investment-simple/",
+          "title": "Simple Investment Calculator",
+          "desc": "Quick compound growth estimates with recurring contributions and optional inflation adjustment for a first-pass view."
+        },
+        {
+          "path": "/calculators/investment-calculator-inflation-adjusted/",
+          "title": "Inflation-Adjusted Investment Calculator",
+          "desc": "Estimate investment growth with monthly contributions and compounding, then compare inflation-adjusted (real) buying power to nominal dollars."
+        },
+        {
+          "path": "/calculators/inflation-time-machine/",
+          "title": "Inflation Time Machine (Then ↔ Now)",
+          "desc": "Convert a dollar amount between two years using annual CPI index ratios. Multi-country: Canada, United States, Australia, United Kingdom. Whole dollars only."
+        },
+        {
+          "path": "/calculators/compound-multipliers/",
+          "title": "Compound Interest Multipliers Table",
+          "desc": "Static grid of (1+r)^t for annual rates 1%–15% over 0–50 years. No inputs—just the arithmetic table for transparent, inspectable compounding."
+        }
+      ]
+    },
+    {
+      "title": "Fees & Advisors",
+      "desc": "Quantify how fees and advice costs compound over time.",
+      "items": [
+        {
+          "path": "/fees/",
+          "title": "Fees Hub",
+          "desc": "Four fee questions with short answers and links to the canonical calculators."
+        },
+        {
+          "path": "/calculators/advisor-fee/",
+          "title": "Cost of a Financial Advisor (AUM Model - most common)",
+          "desc": "Quantifies the long-term impact of advisory fees and lost compounding using explicit assumptions and inspectable math."
+        },
+        {
+          "path": "/calculators/flat-fee-or-hourly/",
+          "title": "Flat-Fee or Hourly Advisor Cost",
+          "desc": "Calculates the true cost of flat-fee or hourly advisor fees, including fees paid and lost compounding, with AUM-fee equivalent comparison."
+        },
+        {
+          "path": "/calculators/fee-cost-1percent/",
+          "title": "Cost of a 1% annual fee",
+          "desc": "The long-term cost of a 1% annual investment fee versus no fee, with inspectable arithmetic."
+        },
+        {
+          "path": "/calculators/fee-cost-0-5percent/",
+          "title": "Cost of a 0.5% annual fee",
+          "desc": "The long-term cost of a 0.5% annual investment fee versus no fee, with inspectable arithmetic."
+        },
+        {
+          "path": "/calculators/required-return-to-offset-fee/",
+          "title": "How Much Extra Return Is Required to Offset Investment and Management Fees",
+          "desc": "The additional annual return required to fully offset investment and management fees over time."
+        },
+        {
+          "path": "/calculators/active-vs-passive-break-even/",
+          "title": "Active vs Passive Break-Even",
+          "desc": "Compares overall returns of active vs passive investments and real returns required to break even."
+        }
+      ]
+    },
+    {
+      "title": "Mortgage & Debt",
+      "desc": "Understand the true cost of borrowing and payoff decisions.",
+      "items": [
+        {
+          "path": "/calculators/mortgage-calculator/",
+          "title": "Mortgage Calculator — Payments, Interest, and Amortization",
+          "desc": "Calculate mortgage payments, remaining balance, and total interest over the full amortization period. See how payments and costs evolve over time with interactive graphs."
+        },
+        {
+          "path": "/calculators/loan-repayment/",
+          "title": "Loan Repayment Calculator — See Your True Interest Cost Over Time",
+          "desc": "Calculate fixed-rate loan payments, total interest, and remaining balance over time with a full amortization schedule and inspectable arithmetic."
+        },
+        {
+          "path": "/calculators/student-debt-at-graduation/",
+          "title": "Student Debt at Graduation Calculator",
+          "desc": "Estimate total education costs, subtract non-debt funding across one or more programs, and see projected debt at graduation. Optional two-scenario comparison."
+        },
+        {
+          "path": "/calculators/pay-off-mortgage-vs-invest/",
+          "title": "Pay Off Mortgage vs Invest",
+          "desc": "Compare paying down a mortgage faster versus investing the same monthly cash under a strict cash-flow-neutral rule."
+        }
+      ]
+    },
+    {
+      "title": "Account Strategy (Canada)",
+      "desc": "Choose accounts and contribution strategies with explicit rules.",
+      "items": [
+        {
+          "path": "/calculators/rrsp-contribution-room-tax-refund/",
+          "title": "RRSP Contribution Room & Tax Refund Calculator",
+          "desc": "Estimate available RRSP room, deductible contribution amount, refund, after-tax contribution cost, and remaining room using explicit assumptions."
+        },
+        {
+          "path": "/calculators/tfsa-room/",
+          "title": "TFSA Contribution Room Calculator",
+          "desc": "Estimate available TFSA room using explicit year-by-year limits and clear withdrawal timing rules."
+        },
+        {
+          "path": "/calculators/tfsa-rrsp-fhsa/",
+          "title": "TFSA vs RRSP vs FHSA Calculator (Canada)",
+          "desc": "Compare after-tax outcomes for TFSA, RRSP, and FHSA contributions under explicit assumptions, including FHSA eligibility and refund handling."
+        },
+        {
+          "path": "/calculators/tfsa-over-contribution-penalty-calculator/",
+          "title": "TFSA Over-Contribution Penalty Calculator",
+          "desc": "Estimate CRA TFSA over-contribution penalties based on the highest excess in each calendar month (1% per month). Supports contributions, withdrawals, and Jan 1 room."
+        }
+      ]
+    }
+  ],
+  "dev": {
+    "heading": "In Development",
+    "items": [
+      "TFSA vs RRSP vs Non-Registered (apples-to-apples)",
+      "Historical Return Simulator"
+    ],
+    "note": "Not live yet. Currently working hard to create these high quality calculators with no opinions, no hidden assumptions, just arithmetic."
+  },
+  "scopeHeading": "Scope and limitations",
+  "scopeP": "Calculators on this page are designed for educational inspection of arithmetic relationships. Jurisdiction, tax year, assumptions, and data sources vary by tool and are stated on each calculator page.",
+  "disclaimerLabel": "Disclaimer",
+  "disclaimerText": "All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional."
+}

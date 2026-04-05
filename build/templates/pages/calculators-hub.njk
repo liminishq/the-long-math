@@ -1,0 +1,55 @@
+{% extends "layout.njk" %}
+{% block headExtra %}
+  <link rel="stylesheet" href="/calculators/landing.css">
+{% endblock %}
+{% block content %}
+
+    <header>
+      <h1>{{ calculatorsHub.h1 }}</h1>
+
+      <p><strong>{{ calculatorsHub.intro.p1Lead }}</strong> {{ calculatorsHub.intro.p1Rest }}</p>
+
+      <p>{{ calculatorsHub.intro.p2 }}</p>
+
+      <p>{{ calculatorsHub.intro.p3 }}</p>
+
+      <div class="lede">
+        <p>{{ calculatorsHub.lede }}</p>
+      </div>
+    </header>
+
+    {% for cat in calculatorsHub.categories %}
+    <section class="calc-cat-card">
+      <h2>{{ cat.title }}</h2>
+      <p class="calc-cat-desc">{{ cat.desc }}</p>
+      <ul class="calc-cat-list">
+        {% for item in cat.items %}
+        <li class="calc-cat-item">
+          <a href="{{ pathPrefix }}{{ item.path }}">{{ item.title }}</a>
+          <span class="calc-cat-item-desc">{{ item.desc }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endfor %}
+
+    <section class="calc-cat-card calc-cat-dev">
+      <h2>{{ calculatorsHub.dev.heading }}</h2>
+      <ul class="calc-cat-list calc-cat-dev-list">
+        {% for line in calculatorsHub.dev.items %}
+        <li class="calc-cat-dev-item">{{ line }}</li>
+        {% endfor %}
+      </ul>
+      <p class="calc-cat-dev-note">{{ calculatorsHub.dev.note }}</p>
+    </section>
+
+    <h2>{{ calculatorsHub.scopeHeading }}</h2>
+    <p>{{ calculatorsHub.scopeP }}</p>
+
+    <div class="disclaimer">
+      <p>
+        <strong>{{ calculatorsHub.disclaimerLabel }}:</strong> {{ calculatorsHub.disclaimerText }}
+      </p>
+    </div>
+
+{% endblock %}

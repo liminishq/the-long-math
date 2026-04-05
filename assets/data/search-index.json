@@ -757,6 +757,17 @@
   },
   {
     "type": "calculator",
+    "title": "Outils et calculateurs",
+    "url": "/fr/calculators/",
+    "desc": "",
+    "keywords": [
+      "Outils et calculateurs",
+      "calculateurs",
+      "The Long Math"
+    ]
+  },
+  {
+    "type": "calculator",
     "title": "Inflation Time Machine (Then ↔ Now)",
     "url": "/calculators/inflation-time-machine/",
     "desc": "Convert a dollar amount between two years using official CPI data. Compare inflation across Canada, the United States, Australia, and the United Kingdom. Whole dollars only. No currency conversion.",
