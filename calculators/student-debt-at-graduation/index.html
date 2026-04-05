@@ -119,7 +119,7 @@
 <body>
   <div id="site-header"></div>
 
-  <div class="sd-wrap wrap">
+  <div class="sd-wrap wrap" id="sd-page-wrap">
     <header class="sd-header">
       <h1>Student Debt at Graduation Calculator</h1>
       <p class="lead">
@@ -143,7 +143,7 @@
       <a href="/calculators/student-debt-at-graduation/methodology/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">Inspect the Arithmetic</a>
     </div>
 
-    <div class="sd-card">
+    <div class="sd-card" id="sd-inputs-card">
       <div class="sd-mode-row">
         <span class="sd-mode-label" id="sd-mode-label">Mode</span>
         <div class="sd-mode-toggle" role="group" aria-labelledby="sd-mode-label">
@@ -152,36 +152,42 @@
         </div>
       </div>
 
-      <div id="sd-compare-only" class="hidden">
-        <div class="sd-compare-names">
-          <div class="loan-field">
-            <label for="sd-scenario-name-a">Scenario A name</label>
-            <input id="sd-scenario-name-a" type="text" autocomplete="off" value="Baseline" />
-          </div>
-          <div class="loan-field">
-            <label for="sd-scenario-name-b">Scenario B name</label>
-            <input id="sd-scenario-name-b" type="text" autocomplete="off" value="Alternative" />
-          </div>
-        </div>
+      <div id="sd-compare-chrome" class="hidden">
         <div class="sd-copy-row">
           <button type="button" id="sd-copy-a-to-b">Copy Scenario A to Scenario B</button>
-        </div>
-        <div class="sd-tabs" role="tablist" aria-label="Scenario inputs">
-          <button type="button" role="tab" id="sd-tab-a" aria-selected="true" aria-controls="sd-panel-a">Edit Scenario A</button>
-          <button type="button" role="tab" id="sd-tab-b" aria-selected="false" aria-controls="sd-panel-b">Edit Scenario B</button>
         </div>
       </div>
 
       <h2 class="sd-section-title">Enter Your Education Path</h2>
 
-      <div id="sd-panel-a" role="tabpanel" aria-labelledby="sd-tab-a">
-        <div id="sd-mount-a" class="sd-programs-mount" data-scenario="a"></div>
-        <button type="button" class="sd-add-prog" id="sd-add-a">+ Add another program</button>
-      </div>
+      <div class="sd-inputs-columns" id="sd-inputs-columns">
+        <section class="sd-scenario-column" id="sd-column-a" aria-label="Scenario A">
+          <header class="sd-scenario-pillar-head hidden" id="sd-pillar-head-a">
+            <h3 class="sd-scenario-pillar-title">Scenario A</h3>
+            <div class="loan-field">
+              <label for="sd-scenario-name-a">Name for this scenario</label>
+              <input id="sd-scenario-name-a" type="text" autocomplete="off" value="Baseline" />
+            </div>
+          </header>
+          <div id="sd-panel-a">
+            <div id="sd-mount-a" class="sd-programs-mount" data-scenario="a"></div>
+            <button type="button" class="sd-add-prog" id="sd-add-a">+ Add another program</button>
+          </div>
+        </section>
 
-      <div id="sd-panel-b" class="hidden" role="tabpanel" aria-labelledby="sd-tab-b">
-        <div id="sd-mount-b" class="sd-programs-mount" data-scenario="b"></div>
-        <button type="button" class="sd-add-prog" id="sd-add-b">+ Add another program</button>
+        <section class="sd-scenario-column hidden" id="sd-column-b" aria-label="Scenario B">
+          <header class="sd-scenario-pillar-head" id="sd-pillar-head-b">
+            <h3 class="sd-scenario-pillar-title">Scenario B</h3>
+            <div class="loan-field">
+              <label for="sd-scenario-name-b">Name for this scenario</label>
+              <input id="sd-scenario-name-b" type="text" autocomplete="off" value="Alternative" />
+            </div>
+          </header>
+          <div id="sd-panel-b">
+            <div id="sd-mount-b" class="sd-programs-mount" data-scenario="b"></div>
+            <button type="button" class="sd-add-prog" id="sd-add-b">+ Add another program</button>
+          </div>
+        </section>
       </div>
     </div>
 

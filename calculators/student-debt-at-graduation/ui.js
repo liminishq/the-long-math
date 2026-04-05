@@ -486,10 +486,6 @@
     return $("sd-mode-compare").getAttribute("aria-pressed") === "true";
   }
 
-  function activeScenarioTab() {
-    return $("sd-tab-a").getAttribute("aria-selected") === "true" ? "a" : "b";
-  }
-
   function scenarioDisplayName(letter) {
     const raw =
       letter === "a"
@@ -651,25 +647,14 @@
 
   function updateModeUi() {
     const compare = isCompareMode();
-    $("sd-compare-only").classList.toggle("hidden", !compare);
+    $("sd-compare-chrome").classList.toggle("hidden", !compare);
     $("sd-mode-single").setAttribute("aria-pressed", compare ? "false" : "true");
     $("sd-mode-compare").setAttribute("aria-pressed", compare ? "true" : "false");
 
-    $("sd-panel-b").classList.toggle("hidden", !compare);
-
-    if (!compare) {
-      $("sd-panel-a").classList.remove("hidden");
-    } else {
-      syncTabs();
-    }
-  }
-
-  function syncTabs() {
-    const tab = activeScenarioTab();
-    $("sd-tab-a").setAttribute("aria-selected", tab === "a" ? "true" : "false");
-    $("sd-tab-b").setAttribute("aria-selected", tab === "b" ? "true" : "false");
-    $("sd-panel-a").classList.toggle("hidden", tab !== "a");
-    $("sd-panel-b").classList.toggle("hidden", tab !== "b");
+    $("sd-column-b").classList.toggle("hidden", !compare);
+    $("sd-pillar-head-a").classList.toggle("hidden", !compare);
+    $("sd-inputs-columns").classList.toggle("sd-inputs-compare-active", compare);
+    $("sd-page-wrap").classList.toggle("sd-wrap--compare-inputs", compare);
   }
 
   function wireMount(mount, scenario) {
@@ -724,18 +709,6 @@
       $("sd-mode-compare").setAttribute("aria-pressed", "true");
       updateModeUi();
       refreshComputations();
-    });
-
-    $("sd-tab-a").addEventListener("click", function () {
-      $("sd-tab-a").setAttribute("aria-selected", "true");
-      $("sd-tab-b").setAttribute("aria-selected", "false");
-      syncTabs();
-    });
-
-    $("sd-tab-b").addEventListener("click", function () {
-      $("sd-tab-b").setAttribute("aria-selected", "true");
-      $("sd-tab-a").setAttribute("aria-selected", "false");
-      syncTabs();
     });
 
     $("sd-copy-a-to-b").addEventListener("click", function () {

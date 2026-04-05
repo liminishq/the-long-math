@@ -68,6 +68,11 @@ html[data-theme="light"] .sd-wrap .loan-field select {
   padding: 0 16px 40px;
 }
 
+/* Wider content when both scenarios are shown side by side */
+.sd-wrap.sd-wrap--compare-inputs {
+  max-width: 1120px;
+}
+
 .sd-wrap .inspect-bar {
   margin-top: 4px;
   margin-bottom: 2px;
@@ -175,21 +180,8 @@ html[data-theme="light"] .sd-quick-block {
   outline-offset: 2px;
 }
 
-.sd-compare-names {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-@media (max-width: 600px) {
-  .sd-compare-names {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
 .sd-copy-row {
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .sd-copy-row button {
@@ -211,34 +203,73 @@ html[data-theme="light"] .sd-quick-block {
   background: var(--accentSoft);
 }
 
-.sd-tabs {
+/* Compare mode: two scenario columns (stack on small screens) */
+.sd-inputs-columns {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sd-inputs-columns.sd-inputs-compare-active {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0;
+  margin-top: 4px;
+}
+
+.sd-scenario-column {
+  flex: 1;
+  min-width: 0;
+}
+
+.sd-inputs-compare-active .sd-scenario-column:first-child {
+  padding-right: 18px;
+  border-right: 1px solid var(--border);
+}
+
+.sd-inputs-compare-active .sd-scenario-column:last-child {
+  padding-left: 18px;
+}
+
+.sd-scenario-pillar-head {
   margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.sd-tabs button {
-  padding: 8px 16px;
-  font-size: 13px;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.15);
-  color: var(--muted);
+html[data-theme="light"] .sd-scenario-pillar-head {
+  border-bottom-color: rgba(0, 0, 0, 0.1);
 }
 
-.sd-tabs button[aria-selected="true"] {
-  border-color: var(--accent2);
+.sd-scenario-pillar-title {
+  margin: 0 0 10px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   color: var(--text);
-  background: var(--accentSoft);
 }
 
-.sd-tabs button:focus-visible {
-  outline: 2px solid var(--accent2);
-  outline-offset: 2px;
+.sd-inputs-compare-active .sd-field-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (max-width: 880px) {
+  .sd-inputs-columns.sd-inputs-compare-active {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .sd-inputs-compare-active .sd-scenario-column:first-child {
+    padding-right: 0;
+    border-right: none;
+    padding-bottom: 20px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sd-inputs-compare-active .sd-scenario-column:last-child {
+    padding-left: 0;
+  }
 }
 
 .sd-section-title {
