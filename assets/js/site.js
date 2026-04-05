@@ -109,11 +109,19 @@
 
     searchUiPromise = fetch("/assets/partials/search-modal.html")
       .then(function (r) {
+        if (!r.ok) throw new Error("search-modal HTTP " + r.status);
         return r.text();
       })
       .then(function (html) {
+        var trimmed = (html || "").trim();
+        // Hosts that map unknown paths to index.html return a full document; never append that to body.
+        if (!/id\s*=\s*["']searchOverlay["']/.test(trimmed)) {
+          console.warn("Search UI: unexpected partial HTML; skipping inject (avoid duplicating page content).");
+          searchUiPromise = null;
+          return Promise.resolve();
+        }
         var holder = document.createElement("div");
-        holder.innerHTML = html.trim();
+        holder.innerHTML = trimmed;
         while (holder.firstChild) {
           document.body.appendChild(holder.firstChild);
         }
@@ -224,10 +232,31 @@
       var lang = getPartialLang();
       var headerUrl = lang === "fr" ? "/assets/partials/header-fr.html" : "/assets/partials/header.html";
       var footerUrl = lang === "fr" ? "/assets/partials/footer-fr.html" : "/assets/partials/footer.html";
-      Promise.all([
-        fetch(headerUrl).then(function (r) { return r.text(); }).catch(function () { return ""; }),
-        fetch(footerUrl).then(function (r) { return r.text(); }).catch(function () { return ""; })
-      ]).then(function (results) {
+      function loadPartialText(url, kind) {
+        return fetch(url)
+          .then(function (r) {
+            if (!r.ok) return "";
+            return r.text();
+          })
+          .then(function (text) {
+            var t = (text || "").trim();
+            if (!t) return "";
+            if (kind === "header" && (!/<header[\s>]/.test(t) || t.indexOf("sitehead") === -1)) {
+              console.warn("Header partial missing or invalid:", url);
+              return "";
+            }
+            if (kind === "footer" && (!/<footer[\s>]/.test(t) || t.indexOf("site-footer") === -1)) {
+              console.warn("Footer partial missing or invalid:", url);
+              return "";
+            }
+            return t;
+          })
+          .catch(function () {
+            return "";
+          });
+      }
+
+      Promise.all([loadPartialText(headerUrl, "header"), loadPartialText(footerUrl, "footer")]).then(function (results) {
         var headerHtml = results[0];
         var footerHtml = results[1];
         var wrap = document.querySelector(".wrap");
