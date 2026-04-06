@@ -45,7 +45,7 @@
     "common.export.exportResults": "Export results",
     "common.export.mortgageSchedule12": "Mortgage — first 12 months (monthly)",
     "common.export.mortgageScheduleAnnual": "Mortgage — annual summary",
-    "common.export.loanAmortizationSection": "Loan amortization schedule"
+    "common.export.loanAmortizationSection": "Loan amortization schedule",
   };
 
   function t(key) {
@@ -119,6 +119,192 @@
       };
       document.head.appendChild(s);
     });
+  }
+
+  function loadHtml2Canvas() {
+    return new Promise(function (resolve, reject) {
+      if (typeof window.html2canvas === "function") {
+        resolve(window.html2canvas);
+        return;
+      }
+      var s = document.createElement("script");
+      s.src = "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js";
+      s.crossOrigin = "anonymous";
+      s.onload = function () {
+        if (typeof window.html2canvas === "function") resolve(window.html2canvas);
+        else reject(new Error("html2canvas not available"));
+      };
+      s.onerror = function () {
+        reject(new Error("Failed to load html2canvas"));
+      };
+      document.head.appendChild(s);
+    });
+  }
+
+  function canvasToGrayscale(canvas) {
+    var ctx = canvas.getContext("2d");
+    if (!ctx) return canvas;
+    var w = canvas.width;
+    var h = canvas.height;
+    var img = ctx.getImageData(0, 0, w, h);
+    var d = img.data;
+    for (var i = 0; i < d.length; i += 4) {
+      var r = d[i];
+      var g = d[i + 1];
+      var b = d[i + 2];
+      var v = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+      d[i] = v;
+      d[i + 1] = v;
+      d[i + 2] = v;
+    }
+    ctx.putImageData(img, 0, 0);
+    return canvas;
+  }
+
+  /**
+   * Region to rasterize: outer card when present (inspect bar + grid), else the main grid/tool card.
+   */
+  function findPdfCaptureRoot() {
+    var wrap = getCalculatorWrap();
+    if (!wrap) return null;
+
+    var mt = findMultTableAnchor();
+    if (mt) {
+      var tc = mt.closest(".tool-card");
+      if (tc) return tc;
+      return mt;
+    }
+
+    var inner = findPrimaryCalcRoot();
+    if (!inner) return null;
+
+    if (inner.classList && inner.classList.contains("tool-card")) return inner;
+
+    var p = inner.parentElement;
+    if (!p) return inner;
+
+    if (p.classList && p.classList.contains("card")) {
+      if (p.querySelector(".inspect-bar") || p.querySelector(".mortgage-grid, .calc-grid")) {
+        return p;
+      }
+    }
+
+    if (p.classList && (p.classList.contains("loan-card") || p.id === "calc_card")) {
+      return p;
+    }
+
+    return inner;
+  }
+
+  function setExportUiHidden(hidden) {
+    document.querySelectorAll(".tlm-export-dropdown").forEach(function (el) {
+      el.style.visibility = hidden ? "hidden" : "";
+    });
+  }
+
+  function addGrayscaleCanvasToPdf(doc, canvas) {
+    var pageW = doc.internal.pageSize.getWidth();
+    var pageH = doc.internal.pageSize.getHeight();
+    var margin = 10;
+    var headerBand = 14;
+    var contentW = pageW - 2 * margin;
+    var imgH_mm = (canvas.height * contentW) / canvas.width;
+
+    var yPx = 0;
+    var pageIndex = 0;
+
+    while (yPx < canvas.height) {
+      if (pageIndex > 0) doc.addPage();
+
+      var topMm = pageIndex === 0 ? headerBand : margin;
+      var maxHmm =
+        pageIndex === 0 ? pageH - headerBand - margin : pageH - 2 * margin;
+
+      var remainingMm = ((canvas.height - yPx) / canvas.height) * imgH_mm;
+      var thisHmm = Math.min(maxHmm, remainingMm);
+      var slicePx = Math.round((thisHmm / imgH_mm) * canvas.height);
+      slicePx = Math.min(slicePx, canvas.height - yPx);
+      if (slicePx <= 0) break;
+
+      var slice = document.createElement("canvas");
+      slice.width = canvas.width;
+      slice.height = slicePx;
+      var sctx = slice.getContext("2d");
+      sctx.drawImage(canvas, 0, yPx, canvas.width, slicePx, 0, 0, canvas.width, slicePx);
+
+      var drawHmm = (slicePx / canvas.height) * imgH_mm;
+      var dataUrl = slice.toDataURL("image/jpeg", 0.9);
+      doc.addImage(dataUrl, "JPEG", margin, topMm, contentW, drawHmm);
+
+      yPx += slicePx;
+      pageIndex += 1;
+    }
+  }
+
+  function renderPdfHeaderBand(doc, data) {
+    var pageW = doc.internal.pageSize.getWidth();
+    var margin = 10;
+    doc.setFillColor(252);
+    doc.rect(0, 0, pageW, 12, "F");
+    doc.setDrawColor(210);
+    doc.line(0, 12, pageW, 12);
+    doc.setTextColor(55);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text(normText(document.title) || data.pageTitle, margin, 8);
+    doc.setFontSize(7);
+    doc.setTextColor(100);
+    var ts = t("common.export.generatedAt") + ": " + data.generatedAt.toLocaleString();
+    doc.text(ts, pageW - margin, 8, { align: "right" });
+  }
+
+  function renderScreenshotPdf(JsPdf, html2canvas, data) {
+    var target = findPdfCaptureRoot();
+    if (!target || target.offsetWidth < 8 || target.offsetHeight < 8) {
+      renderStructuredPdf(JsPdf, data);
+      return Promise.resolve();
+    }
+
+    var scale = Math.min(2, (window.devicePixelRatio || 1) * 1.25);
+
+    setExportUiHidden(true);
+
+    return html2canvas(target, {
+      scale: scale,
+      useCORS: true,
+      logging: false,
+      backgroundColor: null,
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: target.scrollWidth,
+      windowHeight: target.scrollHeight,
+      onclone: function (clonedDoc) {
+        clonedDoc.querySelectorAll(".tlm-export-dropdown").forEach(function (n) {
+          n.remove();
+        });
+      }
+    })
+      .then(function (canvas) {
+        setExportUiHidden(false);
+        if (!canvas || canvas.width < 4) {
+          renderStructuredPdf(JsPdf, data);
+          return;
+        }
+        canvasToGrayscale(canvas);
+        var doc = new JsPdf({ unit: "mm", format: "a4" });
+        renderPdfHeaderBand(doc, data);
+        addGrayscaleCanvasToPdf(doc, canvas);
+        doc.save(baseFilename() + ".pdf");
+      })
+      .catch(function (err) {
+        setExportUiHidden(false);
+        console.warn("export-results visual PDF:", err);
+        try {
+          renderStructuredPdf(JsPdf, data);
+        } catch (e2) {
+          console.warn(e2);
+        }
+      });
   }
 
   function slugFromPath() {
@@ -795,8 +981,14 @@
 
   function downloadPdf(data) {
     loadJsPdf()
-      .then(function (jsPDF) {
-        renderStructuredPdf(jsPDF, data);
+      .then(function (JsPdf) {
+        return loadHtml2Canvas()
+          .then(function (h2c) {
+            return renderScreenshotPdf(JsPdf, h2c, data);
+          })
+          .catch(function () {
+            renderStructuredPdf(JsPdf, data);
+          });
       })
       .catch(function (err) {
         console.warn(err);
