@@ -57,6 +57,7 @@ const ARTICLE_SLUGS = [
   "dollar-cost-averaging",
   "inflation",
   "investing-vs-trading",
+  "leveraged-investing",
   "norberts-gambit",
   "what-is-a-non-registered-account",
   "rrsp-vs-tfsa-vs-fhsa",
