@@ -24,6 +24,7 @@ const SLUGS = [
   "inflation",
   "investing-vs-trading",
   "norberts-gambit",
+  "what-is-a-non-registered-account",
   "rrsp-vs-tfsa-vs-fhsa",
   "the-true-cost-of-financial-advisor-fees",
   "tfsa-withdrawal-rules-over-contribution-penalties",
