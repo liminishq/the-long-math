@@ -1285,5 +1285,31 @@
       "médecine",
       "The Long Math"
     ]
+  },
+  {
+    "type": "article",
+    "title": "About",
+    "url": "/about/",
+    "desc": "What The Long Math is, where it came from, who it is for, and what it is not — educational tools with inspectable arithmetic.",
+    "keywords": [
+      "About",
+      "The Long Math",
+      "mission",
+      "physician",
+      "calculators",
+      "disclaimer"
+    ]
+  },
+  {
+    "type": "article",
+    "title": "À propos",
+    "url": "/fr/about/",
+    "desc": "Présentation de The Long Math, origine du site, public visé et limites — outils pédagogiques à arithmétique vérifiable.",
+    "keywords": [
+      "À propos",
+      "The Long Math",
+      "mission",
+      "calculateurs"
+    ]
   }
 ]

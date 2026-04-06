@@ -1,0 +1,62 @@
+{% extends "layout.njk" %}
+{% block content %}
+
+    <article class="article-content">
+      <header>
+        <h1>{{ aboutPage.h1 }}</h1>
+      </header>
+
+      <h2>{{ aboutPage.whatTitle }}</h2>
+      {% for p in aboutPage.whatParagraphs %}
+      <p>{{ p | safe }}</p>
+      {% endfor %}
+
+      <hr>
+
+      <h2>{{ aboutPage.whereTitle }}</h2>
+      {% for p in aboutPage.whereParagraphs %}
+      <p>{{ p | safe }}</p>
+      {% endfor %}
+
+      <hr>
+
+      <h2>{{ aboutPage.whoTitle }}</h2>
+      {% for p in aboutPage.whoParagraphs %}
+      <p>{{ p | safe }}</p>
+      {% endfor %}
+
+      <hr>
+
+      <h2>{{ aboutPage.howTitle }}</h2>
+
+      <ul>
+        {% for item in aboutPage.howListItems %}
+        <li>{{ item | safe }}</li>
+        {% endfor %}
+      </ul>
+
+      <hr>
+
+      <h2>{{ aboutPage.notTitle }}</h2>
+      {% for p in aboutPage.notParagraphs %}
+      <p>{{ p | safe }}</p>
+      {% endfor %}
+
+      <hr>
+
+      <p>
+        {% for line in aboutPage.mottoLines %}
+        {{ line | safe }}{% if not loop.last %}<br>{% endif %}
+        {% endfor %}
+      </p>
+
+      <hr>
+    </article>
+
+    <div class="disclaimer">
+      <p>
+        <strong>{{ aboutPage.disclaimerLabel }}:</strong> {{ aboutPage.disclaimerText }}
+      </p>
+    </div>
+
+{% endblock %}
