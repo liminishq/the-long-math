@@ -1,0 +1,33 @@
+{
+  "title": "Au-delà des chiffres | The Long Math",
+  "description": "Essais sur une vie et une carrière en médecine vus par le prisme des finances et de l’entreprise — formation, revenu, incitatifs, coût d’opportunité et arbitrages à long terme.",
+  "h1": "Au-delà des chiffres",
+  "heroLede": "Un regard financier sur le coût réel de devenir médecin.",
+  "introP1": "Au-delà des chiffres examine les réalités financières d’une carrière en médecine. Ces essais explorent la durée de la formation, les frais de scolarité, les revenus retardés, les incitatifs, la fiscalité et les arbitrages à long terme sous un angle à la fois personnel et d’affaires.",
+  "introP2": "La médecine est souvent évoquée en termes de prestige, de vocation et de service. On parle beaucoup moins de l’arithmétique du parcours : années de revenus reportés, coût d’opportunité de la formation, structures de rémunération et long horizon financier qui façonne la vie d’un médecin.",
+  "featured": {
+    "path": "/beyond-the-numbers/is-med-school-financially-worth-it/",
+    "ariaLabel": "La médecine vaut-elle financièrement le coup ? — lire l’essai",
+    "kicker": "Essai en vedette",
+    "title": "La médecine vaut-elle financièrement le coup ?",
+    "excerpt": "La médecine compte parmi les professions les plus respectées. C’est aussi l’un des parcours les plus longs et les plus inhabituels financièrement. Cet essai retrace la chronologie financière complète pour devenir médecin — des frais de scolarité et du revenu de résidence à la capitalisation reportée qui s’ensuit.",
+    "cta": "Lire l’essai →",
+    "statusPublished": "Publié"
+  },
+  "upcomingHeading": "Essais à venir",
+  "upcoming": [
+    {
+      "title": "Le prix du sarrau blanc",
+      "excerpt": "Frais de scolarité, années de revenus perdus et coût d’opportunité sur toute la chaîne de formation, des études de premier cycle jusqu’à la résidence.",
+      "status": "Bientôt"
+    },
+    {
+      "title": "Comparer des carrières : une question de flux de trésorerie sur 30 ans",
+      "excerpt": "Comment la médecine se compare financièrement à d’autres carrières professionnelles lorsqu’on intègre le calendrier des revenus, la durée de formation et la capitalisation.",
+      "status": "Bientôt"
+    }
+  ],
+  "footerNote": "D’autres essais sur les incitatifs, la structure de carrière et les arbitrages financiers en médecine seront ajoutés à cette section au fil du temps.",
+  "disclaimerLabel": "Avis de non-responsabilité",
+  "disclaimerText": "Les essais de cette section reflètent des perspectives et analyses personnelles. Ils sont fournis uniquement à des fins éducatives et d’information et ne constituent pas un conseil financier, juridique ou de carrière. Les décisions concernant la formation, la carrière ou les finances doivent reposer sur vos propres recherches et votre situation et, le cas échéant, sur l’avis de professionnels qualifiés."
+}

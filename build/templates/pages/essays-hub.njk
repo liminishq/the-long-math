@@ -1,0 +1,62 @@
+{% extends "layout.njk" %}
+{% block headExtra %}
+  <link rel="stylesheet" href="/assets/css/essays-hub.css">
+{% endblock %}
+{% block content %}
+
+    <header>
+      <h1>{{ essaysHub.h1 }}</h1>
+
+      <p class="hero-lede">
+        {{ essaysHub.heroLede }}
+      </p>
+
+      <p>
+        {{ essaysHub.introP1 }}
+      </p>
+
+      <p>
+        {{ essaysHub.introP2 }}
+      </p>
+    </header>
+
+    <section class="card featured-essay">
+      <a href="{{ pathPrefix }}{{ essaysHub.featured.path }}" class="featured-essay-link" aria-label="{{ essaysHub.featured.ariaLabel }}"></a>
+
+      <h2>{{ essaysHub.featured.kicker }}</h2>
+
+      <h3>{{ essaysHub.featured.title }}</h3>
+
+      <p>
+        {{ essaysHub.featured.excerpt }}
+      </p>
+
+      <p class="essay-card-cta">{{ essaysHub.featured.cta }}</p>
+
+      <p class="essay-status">{{ essaysHub.featured.statusPublished }}</p>
+    </section>
+
+    <section class="card">
+      <h2>{{ essaysHub.upcomingHeading }}</h2>
+
+      {% for item in essaysHub.upcoming %}
+      <div class="essay-item">
+        <h3>{{ item.title }}</h3>
+        <p>
+          {{ item.excerpt }}
+        </p>
+        <span class="essay-status">{{ item.status }}</span>
+      </div>
+      {% endfor %}
+
+    </section>
+
+    <p class="muted">
+      {{ essaysHub.footerNote }}
+    </p>
+
+    <p class="disclaimer">
+      <strong>{{ essaysHub.disclaimerLabel }}:</strong> {{ essaysHub.disclaimerText }}
+    </p>
+
+{% endblock %}

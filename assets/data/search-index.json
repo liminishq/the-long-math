@@ -1273,5 +1273,17 @@
       "cost",
       "term"
     ]
+  },
+  {
+    "type": "essay",
+    "title": "Au-delà des chiffres",
+    "url": "/fr/essays/",
+    "desc": "Essais sur une vie et une carrière en médecine vus par le prisme des finances et de l’entreprise.",
+    "keywords": [
+      "Au-delà des chiffres",
+      "essais",
+      "médecine",
+      "The Long Math"
+    ]
   }
 ]
