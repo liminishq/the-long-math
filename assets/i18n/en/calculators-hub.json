@@ -161,14 +161,6 @@
       ]
     }
   ],
-  "dev": {
-    "heading": "In Development",
-    "items": [
-      "TFSA vs RRSP vs Non-Registered (apples-to-apples)",
-      "Historical Return Simulator"
-    ],
-    "note": "Not live yet. Currently working hard to create these high quality calculators with no opinions, no hidden assumptions, just arithmetic."
-  },
   "scopeHeading": "Scope and limitations",
   "scopeP": "Calculators on this page are designed for educational inspection of arithmetic relationships. Jurisdiction, tax year, assumptions, and data sources vary by tool and are stated on each calculator page.",
   "disclaimerLabel": "Disclaimer",
