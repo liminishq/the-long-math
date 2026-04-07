@@ -59,7 +59,7 @@
     }
 
     .featured-concepts {
-      margin: 3rem 0;
+      margin: 3rem 0 2.25rem;
     }
     .featured-concepts h2 {
       margin: 0 0 1.25rem;
@@ -104,43 +104,37 @@
       line-height: 1.55;
     }
 
-    .foundations-section {
-      margin-top: 1.5rem;
+    .journey-section {
+      margin-top: 1.2rem;
     }
-    .foundations-grid {
-      display: grid;
-      gap: 16px;
+    .journey-section + .journey-section {
+      margin-top: 1.1rem;
     }
-    @media (min-width: 820px) {
-      .foundations-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-    .foundation-card {
+    .journey-card {
       padding: 18px 16px 18px;
     }
-    .foundation-card h2 {
-      margin: 0 0 0.5rem;
-      font-size: 1rem;
+    .journey-card h2 {
+      margin: 0 0 0.45rem;
+      font-size: 1.03rem;
     }
-    .foundation-card > p {
-      margin: 0 0 1.25rem;
+    .journey-card > p {
+      margin: 0 0 1rem;
       font-size: 0.9rem;
       color: var(--muted);
       line-height: 1.6;
     }
-    .foundation-list {
+    .journey-list {
       list-style: none;
       margin: 0;
       padding: 0;
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    .foundation-item {
-      margin: 0 0 0.75rem;
+    @media (max-width: 760px) {
+      .journey-list { grid-template-columns: 1fr; }
     }
-    .foundation-item:last-child {
-      margin-bottom: 0;
-    }
-    .foundation-item-link {
+    .journey-item-link {
       display: block;
       padding: 0.85rem 0.9rem;
       border: 1px solid var(--border);
@@ -149,20 +143,20 @@
       color: inherit;
       transition: background 0.15s ease, border-color 0.15s ease;
     }
-    .foundation-item-link:hover {
+    .journey-item-link:hover {
       background: var(--accentSoft);
       border-color: rgba(217, 180, 106, 0.35);
     }
-    .foundation-item-link:hover .foundation-item-title {
+    .journey-item-link:hover .journey-item-title {
       text-decoration: underline;
     }
-    .foundation-item-title {
+    .journey-item-title {
       font-size: 0.95rem;
       font-weight: 600;
       margin: 0 0 0.35rem;
       color: var(--accent);
     }
-    .foundation-item-desc {
+    .journey-item-desc {
       margin: 0;
       font-size: 0.85rem;
       color: var(--muted);
@@ -187,7 +181,6 @@
       </div>
     </section>
 
-    <!-- Featured concepts: compound interest and inflation -->
     <section class="featured-concepts" aria-labelledby="featured-concepts-heading">
       <h2 id="featured-concepts-heading">Featured Concepts</h2>
       <div class="featured-grid">
@@ -202,141 +195,67 @@
       </div>
     </section>
 
-    <!-- Article groupings -->
-    <section class="foundations-section">
-      <div class="foundations-grid">
-        <!-- Core investing concepts -->
-        <article class="card foundation-card">
-          <h2>Core Concepts</h2>
-          <p>Start here for the basic ideas behind investing and markets.</p>
-          <ul class="foundation-list">
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/what-is-investing/" class="foundation-item-link">
-                <h3 class="foundation-item-title">What Is Investing?</h3>
-                <p class="foundation-item-desc">A simple definition for beginners and new investors. What investing is, why people invest, and how time can work in your favor.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/investing-vs-trading/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Investing vs Trading: Key Differences Explained</h3>
-                <p class="foundation-item-desc">Investing and trading are fundamentally different activities. Learn how they differ in time horizon, taxes, costs, skill set, and long-term arithmetic.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/leveraged-investing/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Investing with Leverage: When Borrowed Money Works For You — and When It Doesn't</h3>
-                <p class="foundation-item-desc">Mortgages, margin, leveraged ETFs, and the Smith Manoeuvre: how borrowed money amplifies gains and losses, and when the bad scenario breaks the strategy.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/how-does-a-mortgage-work-in-canada/" class="foundation-item-link">
-                <h3 class="foundation-item-title">How Does a Mortgage Work in Canada?</h3>
-                <p class="foundation-item-desc">Principal vs interest, term vs amortization, fixed vs variable, down payments, stress tests, renewal risk — and why total cost matters more than the monthly payment.</p>
-              </a>
-            </li>            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/pay-off-your-mortgage-faster-or-invest/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Pay Off Your Mortgage Faster or Invest?</h3>
-                <p class="foundation-item-desc">Compare accelerated mortgage paydown versus investing the same extra cash using break-even returns, time horizon, fees, and registered accounts.</p>
-              </a>
-            </li>
+    <section class="journey-section">
+      <article class="card journey-card">
+        <h2>Start Here</h2>
+        <p>Core definitions and market basics before account and strategy choices.</p>
+        <ul class="journey-list">
+          <li><a href="/articles/investing-and-financial-literacy/what-is-investing/" class="journey-item-link"><h3 class="journey-item-title">What Is Investing?</h3><p class="journey-item-desc">A simple beginner definition and the long-term logic behind investing.</p></a></li>
+          <li><a href="/articles/investing-and-financial-literacy/what-is-a-stock/" class="journey-item-link"><h3 class="journey-item-title">What Is a Stock? (In Simple Terms)</h3><p class="journey-item-desc">What ownership means and how stock returns are created.</p></a></li>
+          <li><a href="/articles/investing-and-financial-literacy/what-is-the-stock-market/" class="journey-item-link"><h3 class="journey-item-title">What Is the Stock Market?</h3><p class="journey-item-desc">How buyers and sellers set prices and why markets trend over time.</p></a></li>
+          <li><a href="/articles/investing-and-financial-literacy/asset-classes-for-investing/" class="journey-item-link"><h3 class="journey-item-title">Asset Classes for Investing</h3><p class="journey-item-desc">Stocks, bonds, cash, and real assets in one framework.</p></a></li>
+          <li><a href="/articles/investing-and-financial-literacy/investing-vs-trading/" class="journey-item-link"><h3 class="journey-item-title">Investing vs Trading</h3><p class="journey-item-desc">How horizon, taxes, and behavior change expected outcomes.</p></a></li>
+        </ul>
+      </article>
+    </section>
 
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/what-is-a-stock/" class="foundation-item-link">
-                <h3 class="foundation-item-title">What Is a Stock? (In Simple Terms)</h3>
-                <p class="foundation-item-desc">What a share represents, how stocks make money, and why stock prices move — explained with simple arithmetic.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/what-is-the-stock-market/" class="foundation-item-link">
-                <h3 class="foundation-item-title">What Is the Stock Market?</h3>
-                <p class="foundation-item-desc">What the stock market is, how it works, and why it can grow over time.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/asset-classes-for-investing/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Asset Classes for Investing</h3>
-                <p class="foundation-item-desc">The major asset classes — stocks, bonds, cash, and real assets — and why asset allocation matters.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/dollar-cost-averaging/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Dollar Cost Averaging: What It Is, How It Works, and When It Makes Sense</h3>
-                <p class="foundation-item-desc">What DCA is, how it works, lump sum vs. DCA, the behavioural case for automatic investing, and common misunderstandings.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/xeqt-and-chill-low-cost-etf-investing/" class="foundation-item-link">
-                <h3 class="foundation-item-title">What "XEQT and Chill" Really Means — The Arithmetic Behind Low-Cost ETF Investing</h3>
-                <p class="foundation-item-desc">What the phrase means, how fee arithmetic drives the approach, and when it does not fit.</p>
-              </a>
-            </li>
-          </ul>
-        </article>
+    <section class="journey-section">
+      <article class="card journey-card">
+        <h2>Build Your Portfolio</h2>
+        <p>Execution choices that shape returns, behavior, and fee drag.</p>
+        <ul class="journey-list">
+          <li><a href="/articles/investing-and-financial-literacy/dollar-cost-averaging/" class="journey-item-link"><h3 class="journey-item-title">Dollar Cost Averaging</h3><p class="journey-item-desc">When staged contributions improve behavior and consistency.</p></a></li>
+          <li><a href="/articles/investing-and-financial-literacy/xeqt-and-chill-low-cost-etf-investing/" class="journey-item-link"><h3 class="journey-item-title">What “XEQT and Chill” Really Means</h3><p class="journey-item-desc">The arithmetic behind low-cost globally diversified ETFs.</p></a></li>
+          <li><a href="/articles/investing-and-financial-literacy/the-true-cost-of-financial-advisor-fees/" class="journey-item-link"><h3 class="journey-item-title">The True Cost of Financial Advisor Fees</h3><p class="journey-item-desc">How fee drag compounds over decades.</p></a></li>
+        </ul>
+      </article>
+    </section>
 
-        <!-- Time and compounding -->
-        <article class="card foundation-card">
-          <h2>Time and Compounding</h2>
-          <p>How time and compounding interact with fees, costs, and long horizons.</p>
-          <ul class="foundation-list">
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/the-true-cost-of-financial-advisor-fees/" class="foundation-item-link">
-                <h3 class="foundation-item-title">The True Cost of Financial Advisor Fees</h3>
-                <p class="foundation-item-desc">How advisory fees, fund costs, and lost compounding interact over decades.</p>
-              </a>
-            </li>
-          </ul>
-        </article>
+    <section class="journey-section">
+      <article class="card journey-card">
+        <h2>Canadian Accounts and Tax</h2>
+        <p>Account structure determines tax drag, flexibility, and contribution strategy.</p>
+        <ul class="journey-list">
+          <li><a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/" class="journey-item-link"><h3 class="journey-item-title">What Is a TFSA?</h3><p class="journey-item-desc">Tax-free growth, contribution room, and withdrawal mechanics.</p></a></li>
+          <li><a href="/articles/investing-and-financial-literacy/what-is-an-rrsp/" class="journey-item-link"><h3 class="journey-item-title">What Is an RRSP?</h3><p class="journey-item-desc">Deduction math, tax deferral, and retirement planning implications.</p></a></li>
+          <li><a href="/articles/investing-and-financial-literacy/what-is-an-fhsa/" class="journey-item-link"><h3 class="journey-item-title">What Is an FHSA?</h3><p class="journey-item-desc">How first-home savings benefits from dual tax advantages.</p></a></li>
+          <li><a href="/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/" class="journey-item-link"><h3 class="journey-item-title">RRSP vs TFSA vs FHSA</h3><p class="journey-item-desc">Compare account choices with side-by-side arithmetic.</p></a></li>
+          <li><a href="/articles/investing-and-financial-literacy/what-is-a-non-registered-account/" class="journey-item-link"><h3 class="journey-item-title">What Is a Non-Registered Account?</h3><p class="journey-item-desc">Taxable investing and asset-location tradeoffs.</p></a></li>
+          <li><a href="/articles/investing-and-financial-literacy/tfsa-withdrawal-rules-over-contribution-penalties/" class="journey-item-link"><h3 class="journey-item-title">TFSA Withdrawal Rules and Over-Contribution Penalties</h3><p class="journey-item-desc">The January 1 rule and common contribution pitfalls.</p></a></li>
+          <li><a href="/articles/investing-and-financial-literacy/norberts-gambit/" class="journey-item-link"><h3 class="journey-item-title">Norbert’s Gambit</h3><p class="journey-item-desc">Reduce CAD/USD conversion costs for cross-border investing.</p></a></li>
+        </ul>
+      </article>
+    </section>
 
-        <!-- Accounts and rules (Canada) -->
-        <article class="card foundation-card">
-          <h2>Accounts and Rules (Canada)</h2>
-          <p>How Canadian registered accounts and withdrawal rules change the arithmetic.</p>
-          <ul class="foundation-list">
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/" class="foundation-item-link">
-                <h3 class="foundation-item-title">What Is a TFSA? Tax-Free Savings Account Explained (Canada)</h3>
-                <p class="foundation-item-desc">Contribution room, the January 1 withdrawal rule, what you can hold inside, and why tax-free growth matters.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/what-is-an-rrsp/" class="foundation-item-link">
-                <h3 class="foundation-item-title">What Is an RRSP? Registered Retirement Savings Plan Explained (Canada)</h3>
-                <p class="foundation-item-desc">How the tax deduction works, why tax-sheltered growth matters, and how to think about RRSP vs TFSA using the math.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/" class="foundation-item-link">
-                <h3 class="foundation-item-title">RRSP vs TFSA vs FHSA in Canada: Which Account Is Best?</h3>
-                <p class="foundation-item-desc">Compare tax math, contribution limits, and worked examples across RRSP, TFSA, and FHSA.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/what-is-an-fhsa/" class="foundation-item-link">
-                <h3 class="foundation-item-title">What Is an FHSA? First Home Savings Account Explained (Canada)</h3>
-                <p class="foundation-item-desc">How the FHSA works, its tax treatment, limits, and interaction with other accounts.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/what-is-a-non-registered-account/" class="foundation-item-link">
-                <h3 class="foundation-item-title">What Is a Non-Registered Account? Taxable Investing in Canada, Explained</h3>
-                <p class="foundation-item-desc">How interest, dividends, and capital gains are taxed outside registered accounts, tax drag, asset location, and what usually belongs in a taxable account.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/tfsa-withdrawal-rules-over-contribution-penalties/" class="foundation-item-link">
-                <h3 class="foundation-item-title">TFSA Withdrawal Rules: The January 1 Rule and Over-Contribution Penalties</h3>
-                <p class="foundation-item-desc">Why withdrawn TFSA room returns on January 1, how over-contributions happen, and how penalties are calculated.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/articles/investing-and-financial-literacy/norberts-gambit/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Norbert's Gambit: How Canadian Investors Convert CAD to USD Without Paying Hidden Currency Fees (2026 Guide)</h3>
-                <p class="foundation-item-desc">How to convert CAD to USD (and back) at the real market exchange rate, avoid hidden brokerage FX spreads, and when the strategy is worth using.</p>
-              </a>
-            </li>
-          </ul>
-        </article>
-      </div>
+    <section class="journey-section">
+      <article class="card journey-card">
+        <h2>Housing and Mortgage Decisions</h2>
+        <p>Mortgage structure, cash-flow tradeoffs, and long-run household net worth.</p>
+        <ul class="journey-list">
+          <li><a href="/articles/investing-and-financial-literacy/how-does-a-mortgage-work-in-canada/" class="journey-item-link"><h3 class="journey-item-title">How Does a Mortgage Work in Canada?</h3><p class="journey-item-desc">Principal, interest, amortization, term, renewal, and total cost.</p></a></li>
+          <li><a href="/articles/investing-and-financial-literacy/pay-off-your-mortgage-faster-or-invest/" class="journey-item-link"><h3 class="journey-item-title">Pay Off Your Mortgage Faster or Invest?</h3><p class="journey-item-desc">Break-even returns under equal monthly cash flow.</p></a></li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="journey-section">
+      <article class="card journey-card">
+        <h2>Leverage and Risk (Advanced)</h2>
+        <p>How borrowed money can amplify outcomes in both directions.</p>
+        <ul class="journey-list">
+          <li><a href="/articles/investing-and-financial-literacy/leveraged-investing/" class="journey-item-link"><h3 class="journey-item-title">Investing with Leverage</h3><p class="journey-item-desc">Mortgages, margin, leveraged ETFs, and Smith Manoeuvre risk math.</p></a></li>
+        </ul>
+      </article>
     </section>
 
     <!-- Disclaimer -->

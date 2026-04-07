@@ -59,7 +59,7 @@
     }
 
     .featured-concepts {
-      margin: 3rem 0;
+      margin: 3rem 0 2.25rem;
     }
     .featured-concepts h2 {
       margin: 0 0 1.25rem;
@@ -104,43 +104,37 @@
       line-height: 1.55;
     }
 
-    .foundations-section {
-      margin-top: 1.5rem;
+    .journey-section {
+      margin-top: 1.2rem;
     }
-    .foundations-grid {
-      display: grid;
-      gap: 16px;
+    .journey-section + .journey-section {
+      margin-top: 1.1rem;
     }
-    @media (min-width: 820px) {
-      .foundations-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-    .foundation-card {
+    .journey-card {
       padding: 18px 16px 18px;
     }
-    .foundation-card h2 {
-      margin: 0 0 0.5rem;
-      font-size: 1rem;
+    .journey-card h2 {
+      margin: 0 0 0.45rem;
+      font-size: 1.03rem;
     }
-    .foundation-card > p {
-      margin: 0 0 1.25rem;
+    .journey-card > p {
+      margin: 0 0 1rem;
       font-size: 0.9rem;
       color: var(--muted);
       line-height: 1.6;
     }
-    .foundation-list {
+    .journey-list {
       list-style: none;
       margin: 0;
       padding: 0;
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    .foundation-item {
-      margin: 0 0 0.75rem;
+    @media (max-width: 760px) {
+      .journey-list { grid-template-columns: 1fr; }
     }
-    .foundation-item:last-child {
-      margin-bottom: 0;
-    }
-    .foundation-item-link {
+    .journey-item-link {
       display: block;
       padding: 0.85rem 0.9rem;
       border: 1px solid var(--border);
@@ -149,20 +143,20 @@
       color: inherit;
       transition: background 0.15s ease, border-color 0.15s ease;
     }
-    .foundation-item-link:hover {
+    .journey-item-link:hover {
       background: var(--accentSoft);
       border-color: rgba(217, 180, 106, 0.35);
     }
-    .foundation-item-link:hover .foundation-item-title {
+    .journey-item-link:hover .journey-item-title {
       text-decoration: underline;
     }
-    .foundation-item-title {
+    .journey-item-title {
       font-size: 0.95rem;
       font-weight: 600;
       margin: 0 0 0.35rem;
       color: var(--accent);
     }
-    .foundation-item-desc {
+    .journey-item-desc {
       margin: 0;
       font-size: 0.85rem;
       color: var(--muted);
@@ -180,14 +174,13 @@
     <section class="foundations-hero" aria-labelledby="foundations-heading">
       <div class="foundations-hero-inner">
         <h1 id="foundations-heading">Investissement et culture financière</h1>
-        <p class="hero-path">Commencez par deux idées qui façonnent le plus les résultats financiers à long terme : les intérêts composés et l’inflation.</p>
+        <p class="hero-path">Commencez par les deux idées qui façonnent le plus les résultats financiers à long terme : la capitalisation et l’inflation.</p>
         <div class="lede">
-          <p>Voici une série d’articles accessibles qui rendent la finance et l’investissement compréhensibles, avec un langage clair et des hypothèses explicites.</p>
+          <p>Voici une collection d’articles accessibles qui rendent la finance et l’investissement compréhensibles, avec un langage clair et des hypothèses explicites.</p>
         </div>
       </div>
     </section>
 
-    <!-- Featured concepts: compound interest and inflation -->
     <section class="featured-concepts" aria-labelledby="featured-concepts-heading">
       <h2 id="featured-concepts-heading">Concepts à l’affiche</h2>
       <div class="featured-grid">
@@ -197,146 +190,72 @@
         </a>
         <a class="featured-card" href="/fr/articles/investing-and-financial-literacy/inflation/">
           <h3>Inflation : les maths qui rétrécissent l’argent de demain</h3>
-          <p>Pourquoi le pouvoir d’achat baisse avec le temps et pourquoi il faut ajuster les rendements pour l’inflation.</p>
+          <p>Pourquoi le pouvoir d’achat baisse avec le temps et pourquoi les rendements doivent être ajustés.</p>
         </a>
       </div>
     </section>
 
-    <!-- Article groupings -->
-    <section class="foundations-section">
-      <div class="foundations-grid">
-        <!-- Core investing concepts -->
-        <article class="card foundation-card">
-          <h2>Concepts fondamentaux</h2>
-          <p>Par ici pour les bases de l’investissement et des marchés.</p>
-          <ul class="foundation-list">
-            <li class="foundation-item">
-              <a href="/fr/articles/investing-and-financial-literacy/what-is-investing/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Qu’est-ce que l’investissement?</h3>
-                <p class="foundation-item-desc">Une définition simple pour les débutants. Ce qu’est l’investissement, pourquoi les gens investissent et comment le temps peut jouer en votre faveur.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/fr/articles/investing-and-financial-literacy/investing-vs-trading/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Investir ou trader : différences essentielles</h3>
-                <p class="foundation-item-desc">Deux activités fondamentalement différentes : horizon, fiscalité, coûts, compétences et arithmétique à long terme.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/fr/articles/investing-and-financial-literacy/leveraged-investing/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Investir avec effet de levier : quand l’argent emprunté joue pour vous — et quand il ne le fait pas</h3>
-                <p class="foundation-item-desc">Hypothèques, marge, FNB à levier et manœuvre Smith : comment l’emprunt amplifie gains et pertes, et quand le scénario défavorable brise la stratégie.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/fr/articles/investing-and-financial-literacy/how-does-a-mortgage-work-in-canada/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Comment fonctionne une hypothèque au Canada?</h3>
-                <p class="foundation-item-desc">Capital vs intérêts, durée vs amortissement, taux fixe ou variable, mise de fonds, test de résistance, renouvellement — et pourquoi le coût total compte plus que le paiement mensuel.</p>
-              </a>
-            </li>            <li class="foundation-item">
-              <a href="/fr/articles/investing-and-financial-literacy/pay-off-your-mortgage-faster-or-invest/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Rembourser son hypothèque plus vite ou investir?</h3>
-                <p class="foundation-item-desc">Comparez le remboursement accéléré de l'hypothèque et l'investissement du même surplus selon le rendement d'équilibre, l'horizon, les frais et les comptes enregistrés.</p>
-              </a>
-            </li>
+    <section class="journey-section">
+      <article class="card journey-card">
+        <h2>Commencer ici</h2>
+        <p>Les bases à maîtriser avant les choix de compte et de stratégie.</p>
+        <ul class="journey-list">
+          <li><a href="/fr/articles/investing-and-financial-literacy/what-is-investing/" class="journey-item-link"><h3 class="journey-item-title">Qu’est-ce que l’investissement?</h3><p class="journey-item-desc">Définition simple et logique long terme de l’investissement.</p></a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/what-is-a-stock/" class="journey-item-link"><h3 class="journey-item-title">Qu’est-ce qu’une action?</h3><p class="journey-item-desc">Ce qu’on possède réellement et d’où viennent les rendements.</p></a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/what-is-the-stock-market/" class="journey-item-link"><h3 class="journey-item-title">Qu’est-ce que la bourse?</h3><p class="journey-item-desc">Comment les prix se forment et pourquoi les marchés évoluent.</p></a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/asset-classes-for-investing/" class="journey-item-link"><h3 class="journey-item-title">Les classes d’actifs</h3><p class="journey-item-desc">Actions, obligations, liquidités et actifs réels dans un cadre unique.</p></a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/investing-vs-trading/" class="journey-item-link"><h3 class="journey-item-title">Investir ou trader</h3><p class="journey-item-desc">Horizon, fiscalité et comportement : ce qui change vraiment.</p></a></li>
+        </ul>
+      </article>
+    </section>
 
-            <li class="foundation-item">
-              <a href="/fr/articles/investing-and-financial-literacy/what-is-a-stock/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Qu’est-ce qu’une action? (en termes simples)</h3>
-                <p class="foundation-item-desc">Ce que représente une action, comment les actions rapportent de l’argent et pourquoi les cours bougent — expliqué avec de l’arithmétique simple.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/fr/articles/investing-and-financial-literacy/what-is-the-stock-market/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Qu’est-ce que la bourse?</h3>
-                <p class="foundation-item-desc">Ce qu’est le marché boursier, comment il fonctionne et pourquoi il peut croître dans le temps.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/fr/articles/investing-and-financial-literacy/asset-classes-for-investing/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Les classes d’actifs pour investir</h3>
-                <p class="foundation-item-desc">Les grandes classes — actions, obligations, liquidités et actifs réels — et pourquoi l’allocation d’actifs compte.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/fr/articles/investing-and-financial-literacy/dollar-cost-averaging/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Moyenne d’achat en dollars : principe, fonctionnement et pertinence</h3>
-                <p class="foundation-item-desc">Ce qu’est la MAC (DCA), somme forfaitaire contre versements réguliers, l’argument comportemental et les idées fausses courantes.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/fr/articles/investing-and-financial-literacy/xeqt-and-chill-low-cost-etf-investing/" class="foundation-item-link">
-                <h3 class="foundation-item-title">« XEQT and chill » : l’arithmétique des FNB à faible coût</h3>
-                <p class="foundation-item-desc">Ce que signifie l’expression, comment les frais structurent l’approche et quand elle ne convient pas.</p>
-              </a>
-            </li>
-          </ul>
-        </article>
+    <section class="journey-section">
+      <article class="card journey-card">
+        <h2>Construire votre portefeuille</h2>
+        <p>Les choix d’exécution qui influencent les rendements et les frais.</p>
+        <ul class="journey-list">
+          <li><a href="/fr/articles/investing-and-financial-literacy/dollar-cost-averaging/" class="journey-item-link"><h3 class="journey-item-title">Moyenne d’achat en dollars</h3><p class="journey-item-desc">Quand les versements réguliers améliorent la discipline.</p></a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/xeqt-and-chill-low-cost-etf-investing/" class="journey-item-link"><h3 class="journey-item-title">« XEQT and chill » expliqué</h3><p class="journey-item-desc">L’arithmétique des FNB globaux à faible coût.</p></a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/the-true-cost-of-financial-advisor-fees/" class="journey-item-link"><h3 class="journey-item-title">Le coût réel des honoraires</h3><p class="journey-item-desc">Comment les frais grugent la capitalisation sur des décennies.</p></a></li>
+        </ul>
+      </article>
+    </section>
 
-        <!-- Time and compounding -->
-        <article class="card foundation-card">
-          <h2>Temps et capitalisation</h2>
-          <p>Comment le temps et les intérêts composés interagissent avec les frais et les longs horizons.</p>
-          <ul class="foundation-list">
-            <li class="foundation-item">
-              <a href="/fr/articles/investing-and-financial-literacy/the-true-cost-of-financial-advisor-fees/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Le coût réel des honoraires du conseiller financier</h3>
-                <p class="foundation-item-desc">Honoraires de conseil, frais des fonds et capitalisation perdue sur des décennies.</p>
-              </a>
-            </li>
-          </ul>
-        </article>
+    <section class="journey-section">
+      <article class="card journey-card">
+        <h2>Comptes canadiens et fiscalité</h2>
+        <p>La structure des comptes change la traînée fiscale et la flexibilité.</p>
+        <ul class="journey-list">
+          <li><a href="/fr/articles/investing-and-financial-literacy/what-is-a-tfsa/" class="journey-item-link"><h3 class="journey-item-title">Qu’est-ce qu’un CELI?</h3><p class="journey-item-desc">Croissance libre d’impôt, espace de cotisation et retraits.</p></a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/what-is-an-rrsp/" class="journey-item-link"><h3 class="journey-item-title">Qu’est-ce qu’un REER?</h3><p class="journey-item-desc">Déduction fiscale, report d’impôt et retraite.</p></a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/what-is-an-fhsa/" class="journey-item-link"><h3 class="journey-item-title">Qu’est-ce qu’un CELIAPP?</h3><p class="journey-item-desc">Double avantage fiscal pour l’achat d’une première propriété.</p></a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/" class="journey-item-link"><h3 class="journey-item-title">REER vs CELI vs CELIAPP</h3><p class="journey-item-desc">Comparer les comptes avec des exemples chiffrés.</p></a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/what-is-a-non-registered-account/" class="journey-item-link"><h3 class="journey-item-title">Compte non enregistré</h3><p class="journey-item-desc">Investir en compte imposable et arbitrages de fiscalité.</p></a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/tfsa-withdrawal-rules-over-contribution-penalties/" class="journey-item-link"><h3 class="journey-item-title">Règles de retrait CELI</h3><p class="journey-item-desc">Règle du 1er janvier et pénalités de surcotisation.</p></a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/norberts-gambit/" class="journey-item-link"><h3 class="journey-item-title">Gambit de Norbert</h3><p class="journey-item-desc">Réduire les coûts de conversion CAD/USD.</p></a></li>
+        </ul>
+      </article>
+    </section>
 
-        <!-- Accounts and rules (Canada) -->
-        <article class="card foundation-card">
-          <h2>Comptes et règles (Canada)</h2>
-          <p>Comment les comptes enregistrés canadiens et les règles de retrait changent l’arithmétique.</p>
-          <ul class="foundation-list">
-            <li class="foundation-item">
-              <a href="/fr/articles/investing-and-financial-literacy/what-is-a-tfsa/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Qu’est-ce qu’un CELI? Compte d’épargne libre d’impôt (Canada)</h3>
-                <p class="foundation-item-desc">Plafond de cotisation, règle du 1er janvier pour les retraits, titres admissibles et pourquoi la croissance sans impôt compte.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/fr/articles/investing-and-financial-literacy/what-is-an-rrsp/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Qu’est-ce qu’un REER? Régime enregistré d’épargne-retraite (Canada)</h3>
-                <p class="foundation-item-desc">La déduction fiscale, la croissance à l’abri d’impôt et REER contre CELI avec la même logique mathématique.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/fr/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/" class="foundation-item-link">
-                <h3 class="foundation-item-title">REER, CELI ou CELIAPP : quel compte choisir?</h3>
-                <p class="foundation-item-desc">Comparer la fiscalité, les plafonds et des exemples chiffrés entre REER, CELI et CELIAPP.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/fr/articles/investing-and-financial-literacy/what-is-an-fhsa/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Qu’est-ce qu’un CELIAPP? Compte d’épargne libre d’impôt pour l’achat d’une première propriété (Canada)</h3>
-                <p class="foundation-item-desc">Fonctionnement, traitement fiscal, plafonds et interaction avec les autres comptes.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/fr/articles/investing-and-financial-literacy/what-is-a-non-registered-account/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Qu’est-ce qu’un compte non enregistré? Investissement imposable au Canada, expliqué</h3>
-                <p class="foundation-item-desc">Fiscalité des intérêts, dividendes et gains en capital hors comptes enregistrés, traînée fiscale, placement d’actifs et ce qui convient habituellement à un compte imposable.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/fr/articles/investing-and-financial-literacy/tfsa-withdrawal-rules-over-contribution-penalties/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Retraits CELI : règle du 1er janvier et cotisations excédentaires</h3>
-                <p class="foundation-item-desc">Pourquoi l’espace revient le 1er janvier, comment les surcotisations arrivent et comment les pénalités sont calculées.</p>
-              </a>
-            </li>
-            <li class="foundation-item">
-              <a href="/fr/articles/investing-and-financial-literacy/norberts-gambit/" class="foundation-item-link">
-                <h3 class="foundation-item-title">Gambit de Norbert : CAD vers USD sans frais de change cachés (guide 2026)</h3>
-                <p class="foundation-item-desc">Convertir dollars canadiens et américains au taux du marché, éviter les marges des courtiers et quand la stratégie vaut la peine.</p>
-              </a>
-            </li>
-          </ul>
-        </article>
-      </div>
+    <section class="journey-section">
+      <article class="card journey-card">
+        <h2>Immobilier et décisions hypothécaires</h2>
+        <p>Structure du prêt, arbitrages de trésorerie et coût total long terme.</p>
+        <ul class="journey-list">
+          <li><a href="/fr/articles/investing-and-financial-literacy/how-does-a-mortgage-work-in-canada/" class="journey-item-link"><h3 class="journey-item-title">Comment fonctionne une hypothèque au Canada?</h3><p class="journey-item-desc">Capital, intérêts, amortissement, terme, renouvellement, coût total.</p></a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/pay-off-your-mortgage-faster-or-invest/" class="journey-item-link"><h3 class="journey-item-title">Rembourser son hypothèque plus vite ou investir?</h3><p class="journey-item-desc">Rendement d’équilibre avec sorties mensuelles identiques.</p></a></li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="journey-section">
+      <article class="card journey-card">
+        <h2>Levier et risque (avancé)</h2>
+        <p>Comment l’endettement amplifie les résultats dans les deux sens.</p>
+        <ul class="journey-list">
+          <li><a href="/fr/articles/investing-and-financial-literacy/leveraged-investing/" class="journey-item-link"><h3 class="journey-item-title">Investir avec effet de levier</h3><p class="journey-item-desc">Hypothèques, marge, FNB à levier et risques de la manœuvre Smith.</p></a></li>
+        </ul>
+      </article>
     </section>
 
     <!-- Disclaimer -->
