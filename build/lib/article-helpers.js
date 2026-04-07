@@ -118,8 +118,12 @@ function buildFaqPageSchema(items) {
 function buildBreadcrumbSchema(items, baseUrl, pathPrefix) {
   const prefix = pathPrefix || "";
   function fullUrl(p) {
-    const pathPart = p === "/" ? "" : p;
-    return baseUrl + prefix + (pathPart === "" ? "" : pathPart);
+    if (p === "/") {
+      return baseUrl + prefix + "/";
+    }
+    const pathPart = p.startsWith("/") ? p : "/" + p;
+    const normalized = pathPart.endsWith("/") ? pathPart : pathPart + "/";
+    return baseUrl + prefix + normalized;
   }
   return {
     "@context": "https://schema.org",
@@ -139,7 +143,7 @@ function buildBreadcrumbSchema(items, baseUrl, pathPrefix) {
  */
 function buildArticleSchema(article, canonical) {
   const m = article.meta || {};
-  return {
+  const schema = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: m.headline || m.ogTitle || "",
@@ -148,12 +152,16 @@ function buildArticleSchema(article, canonical) {
     publisher: {
       "@type": "Organization",
       name: "The Long Math",
-      logo: { "@type": "ImageObject", url: "https://thelongmath.com/assets/logo.png" },
+      logo: { "@type": "ImageObject", url: "https://www.thelongmath.com/assets/logo.png" },
     },
     mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
-    datePublished: m.datePublished || "",
-    dateModified: m.dateModified || m.datePublished || "",
   };
+  const pub = (m.datePublished && String(m.datePublished).trim()) || "";
+  const mod = (m.dateModified && String(m.dateModified).trim()) || "";
+  if (pub) schema.datePublished = pub;
+  if (mod) schema.dateModified = mod;
+  else if (pub) schema.dateModified = pub;
+  return schema;
 }
 
 module.exports = {

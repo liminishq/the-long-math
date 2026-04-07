@@ -18,7 +18,7 @@ const {
 const ROOT = path.resolve(__dirname, "..");
 const DIST = path.join(ROOT, "dist");
 const TEMPLATES_DIR = path.join(__dirname, "templates");
-const BASE_URL = "https://thelongmath.com";
+const BASE_URL = "https://www.thelongmath.com";
 
 const LANGS = [
   { code: "en", pathPrefix: "" },
@@ -84,10 +84,17 @@ function ensureDir(dir) {
 }
 
 function getHreflangUrls(logicalPath) {
+  if (logicalPath === "/") {
+    return {
+      en: BASE_URL + "/",
+      fr: BASE_URL + "/fr/",
+      xDefault: BASE_URL + "/",
+    };
+  }
   return {
-    en: BASE_URL + (logicalPath === "/" ? "" : logicalPath),
-    fr: BASE_URL + "/fr" + (logicalPath === "/" ? "" : logicalPath),
-    xDefault: BASE_URL + (logicalPath === "/" ? "" : logicalPath),
+    en: BASE_URL + logicalPath,
+    fr: BASE_URL + "/fr" + logicalPath,
+    xDefault: BASE_URL + logicalPath,
   };
 }
 
@@ -191,7 +198,8 @@ function build() {
     noCache: true,
   });
   env.addFilter("jsonstr", function (str) {
-    return JSON.stringify(str == null ? "" : String(str));
+    var out = JSON.stringify(str == null ? "" : String(str));
+    return new nunjucks.runtime.SafeString(out);
   });
 
   console.log("Copying project to dist...");
@@ -231,7 +239,8 @@ function build() {
       const merged = getMergedDict(ROOT, code, dictEn);
       const tFn = (key) => t(merged, key);
       const logicalPath = page.logicalPath;
-      const currentPath = pathPrefix + (logicalPath === "/" ? "" : logicalPath);
+      const currentPath =
+        logicalPath === "/" ? (pathPrefix ? pathPrefix + "/" : "/") : pathPrefix + logicalPath;
       const canonical = BASE_URL + currentPath;
       const hreflangUrlsObj = getHreflangUrls(logicalPath);
       const hreflangLinks = [
@@ -408,8 +417,8 @@ function rewriteHtmlForFrStaticMirror(html) {
     );
   }
   s = s.replace(
-    /https:\/\/thelongmath\.com\/(about|essays|contact)\//g,
-    "https://thelongmath.com/fr/$1/"
+    /https:\/\/www\.thelongmath\.com\/(about|essays|contact)\//g,
+    "https://www.thelongmath.com/fr/$1/"
   );
   const hrefPairs = [
     ['href="/calculators/advisor-fee/', 'href="/fr/calculators/advisor-fee/'],
