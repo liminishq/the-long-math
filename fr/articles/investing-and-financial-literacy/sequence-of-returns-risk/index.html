@@ -110,6 +110,7 @@
       line-height: 1.45;
     }
     .sor-stat strong { display: block; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 6px; }
+    .sor-stat-caption { display: block; margin-top: 8px; font-size: 0.76rem; font-weight: 400; text-transform: none; letter-spacing: normal; color: var(--muted); line-height: 1.35; }
     .sor-footnote { font-size: 0.8rem; color: var(--muted); line-height: 1.5; margin: 12px 0 0; }
   </style>
 
@@ -177,9 +178,9 @@
             </div>
           </div>
           <div class="sor-stat-grid">
-            <div class="sor-stat"><strong>Best sequence</strong><span id="sor-stat-best"></span></div>
-            <div class="sor-stat"><strong>Worst sequence</strong><span id="sor-stat-worst"></span></div>
-            <div class="sor-stat"><strong>Historical sequence</strong><span id="sor-stat-hist"></span></div>
+            <div class="sor-stat"><strong>Best sequence</strong><span id="sor-stat-best"></span><span class="sor-stat-caption">Best years front-loaded</span></div>
+            <div class="sor-stat"><strong>Worst sequence</strong><span id="sor-stat-worst"></span><span class="sor-stat-caption">Worst years front-loaded</span></div>
+            <div class="sor-stat"><strong>Historical sequence</strong><span id="sor-stat-hist"></span><span class="sor-stat-caption">Actual 1995–2024 sequence</span></div>
           </div>
           <p class="sor-footnote">Returns are S&amp;P 500 total returns (dividends reinvested), 1995–2024, used to illustrate the sequence of returns mechanism. A Canadian equity portfolio would produce a different historical sequence but the same underlying dynamic. Source: S&amp;P 500 annual total returns (1995–2024), compiled from Slickcharts.</p>
         </div>
