@@ -111,6 +111,7 @@
     }
     .sor-stat strong { display: block; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 6px; }
     .sor-stat-caption { display: block; margin-top: 8px; font-size: 0.76rem; font-weight: 400; text-transform: none; letter-spacing: normal; color: var(--muted); line-height: 1.35; }
+    #sor-stat-best.sor-stat-depleted, #sor-stat-worst.sor-stat-depleted, #sor-stat-hist.sor-stat-depleted { color: #c73e3e; font-weight: 600; }
     .sor-footnote { font-size: 0.8rem; color: var(--muted); line-height: 1.5; margin: 12px 0 0; }
   </style>
 
@@ -418,8 +419,11 @@
       return "Year 30 balance: " + fmtMoney(p.end) + ".";
     }
     elB.textContent = statLine(pb);
+    elB.classList.toggle("sor-stat-depleted", pb.deplete != null);
     elWo.textContent = statLine(pw);
+    elWo.classList.toggle("sor-stat-depleted", pw.deplete != null);
     elH.textContent = statLine(ph);
+    elH.classList.toggle("sor-stat-depleted", ph.deplete != null);
     var dpr = window.devicePixelRatio || 1;
     var rect = canvas.getBoundingClientRect();
     var W = Math.max(320, rect.width);
