@@ -432,14 +432,22 @@
     canvas.height = Math.floor(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
-    var padL = 54, padR = 14, padT = 16, padB = 36;
-    var plotW = W - padL - padR, plotH = H - padT - padB;
+    var padR = 14, padT = 16, padB = 36;
     var refPts = path(BEST, start, 0).pts;
     var maxV = start;
     for (var ri = 0; ri < refPts.length; ri++) {
       if (refPts[ri] > maxV) maxV = refPts[ri];
     }
     maxV = Math.max(maxV * 1.12, start * 1.02);
+    ctx.font = "11px system-ui,sans-serif";
+    var axisLabelMaxW = 0;
+    for (var gi = 0; gi <= 4; gi++) {
+      var axisLab = fmtMoney(maxV * (1 - gi / 4));
+      var tw = ctx.measureText(axisLab).width;
+      if (tw > axisLabelMaxW) axisLabelMaxW = tw;
+    }
+    var padL = Math.max(56, Math.ceil(axisLabelMaxW) + 14);
+    var plotW = W - padL - padR, plotH = H - padT - padB;
     function xAt(t) { return padL + (t / 30) * plotW; }
     function yAt(v) { return padT + plotH - (v / maxV) * plotH; }
     ctx.strokeStyle = "rgba(128,128,128,0.2)";
@@ -452,7 +460,6 @@
       ctx.stroke();
     }
     ctx.fillStyle = "rgba(120,120,120,0.7)";
-    ctx.font = "11px system-ui,sans-serif";
     ctx.textAlign = "right";
     for (g = 0; g <= 4; g++) {
       var val = maxV * (1 - g / 4);
