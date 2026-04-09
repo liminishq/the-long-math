@@ -29,6 +29,7 @@ const SLUGS = [
   "pay-off-your-mortgage-faster-or-invest",
   "what-is-a-non-registered-account",
   "rrsp-vs-tfsa-vs-fhsa",
+  "sequence-of-returns-risk",
   "the-true-cost-of-financial-advisor-fees",
   "tfsa-withdrawal-rules-over-contribution-penalties",
   "what-is-a-stock",

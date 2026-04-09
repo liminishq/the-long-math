@@ -73,36 +73,21 @@
     "desc": "How Canadian mortgages work: principal vs interest, term vs amortization, fixed vs variable, down payments, CMHC insurance, stress tests, renewal risk, and the arithmetic behind total cost.",
     "keywords": [
       "How Does a Mortgage Work in Canada?",
-      "mortgage",
-      "Canada",
-      "Canadian mortgage",
+      "how does a mortgage work in canada",
+      "canadian",
+      "mortgages",
+      "work",
+      "principal",
+      "interest",
+      "term",
       "amortization",
-      "mortgage term",
-      "stress test",
-      "renewal",
-      "down payment",
-      "CMHC",
-      "fixed rate",
-      "variable rate",
-      "GDS",
-      "TDS"
-    ]
-  },
-  {
-    "type": "article",
-    "title": "Pay Off Your Mortgage Faster or Invest?",
-    "url": "/articles/investing-and-financial-literacy/pay-off-your-mortgage-faster-or-invest/",
-    "desc": "Compare paying down your mortgage faster versus investing the same extra cash. See how mortgage rates, expected returns, fees, time horizon, and registered accounts affect the outcome.",
-    "keywords": [
-      "Pay Off Your Mortgage Faster or Invest?",
-      "pay off mortgage",
-      "mortgage vs invest",
-      "break-even return",
-      "mortgage paydown",
-      "TFSA",
-      "RRSP",
-      "time horizon",
-      "investment fees"
+      "fixed",
+      "variable",
+      "payments",
+      "cmhc",
+      "insurance",
+      "stress",
+      "tests"
     ]
   },
   {
@@ -177,14 +162,23 @@
     "url": "/articles/investing-and-financial-literacy/leveraged-investing/",
     "desc": "Learn what leverage means in investing, how mortgages, margin, leveraged ETFs, and the Smith Manoeuvre work, and when borrowed money magnifies losses instead of returns.",
     "keywords": [
+      "Investing with Leverage: When Borrowed Money Works For You — and When It Doesn&#39;t",
       "Investing with Leverage: When Borrowed Money Works For You — and When It Doesn't",
+      "leveraged investing",
       "leverage",
+      "means",
+      "investing",
+      "mortgages",
       "margin",
-      "leveraged ETF",
-      "Smith Manoeuvre",
-      "mortgage",
-      "volatility decay",
-      "Canada"
+      "leveraged",
+      "etfs",
+      "smith",
+      "manoeuvre",
+      "work",
+      "borrowed",
+      "money",
+      "magnifies",
+      "losses"
     ]
   },
   {
@@ -214,6 +208,30 @@
   },
   {
     "type": "article",
+    "title": "Pay Off Your Mortgage Faster or Invest?",
+    "url": "/articles/investing-and-financial-literacy/pay-off-your-mortgage-faster-or-invest/",
+    "desc": "Compare paying down your mortgage faster versus investing the same extra cash. See how mortgage rates, expected returns, fees, time horizon, and registered accounts affect the outcome.",
+    "keywords": [
+      "Pay Off Your Mortgage Faster or Invest?",
+      "pay off your mortgage faster or invest",
+      "compare",
+      "paying",
+      "mortgage",
+      "faster",
+      "versus",
+      "investing",
+      "same",
+      "extra",
+      "cash",
+      "see",
+      "rates",
+      "expected",
+      "returns",
+      "fees"
+    ]
+  },
+  {
+    "type": "article",
     "title": "RRSP vs TFSA vs FHSA in Canada: Which Account Is Best?",
     "url": "/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/",
     "desc": "RRSP vs TFSA vs FHSA in Canada—compare tax math, contribution limits, and worked examples to see when each account wins based on marginal tax rates and first-home eligibility.",
@@ -234,6 +252,30 @@
       "see",
       "account",
       "wins"
+    ]
+  },
+  {
+    "type": "article",
+    "title": "Sequence of Returns Risk: Why the Order of Returns Matters in Retirement",
+    "url": "/articles/investing-and-financial-literacy/sequence-of-returns-risk/",
+    "desc": "Sequence of returns risk explains why poor returns early in retirement can damage a portfolio more than the same returns later. See the mechanism, the math, and the retirement levers that change your exposure.",
+    "keywords": [
+      "Sequence of Returns Risk: Why the Order of Returns Matters in Retirement",
+      "sequence of returns risk",
+      "sequence",
+      "returns",
+      "risk",
+      "explains",
+      "poor",
+      "early",
+      "retirement",
+      "damage",
+      "portfolio",
+      "same",
+      "later",
+      "see",
+      "mechanism",
+      "math"
     ]
   },
   {
@@ -286,6 +328,30 @@
   },
   {
     "type": "article",
+    "title": "What Is a Non-Registered Account? Taxable Investing in Canada, Explained",
+    "url": "/articles/investing-and-financial-literacy/what-is-a-non-registered-account/",
+    "desc": "A non-registered account is a taxable investment account with no contribution limits and no special tax shelter. Here&#39;s how interest, dividends, and capital gains are each taxed — and what usually belongs in one.",
+    "keywords": [
+      "What Is a Non-Registered Account? Taxable Investing in Canada, Explained",
+      "what is a non registered account",
+      "non",
+      "registered",
+      "account",
+      "taxable",
+      "investment",
+      "contribution",
+      "limits",
+      "special",
+      "tax",
+      "shelter",
+      "interest",
+      "dividends",
+      "capital",
+      "gains"
+    ]
+  },
+  {
+    "type": "article",
     "title": "What Is a Stock? (In Simple Terms)",
     "url": "/articles/investing-and-financial-literacy/what-is-a-stock/",
     "desc": "What is a stock? Learn how stocks work, what a share represents, how stocks make money, and why stock prices move — explained with simple arithmetic.",
@@ -328,26 +394,6 @@
       "tax",
       "free",
       "growth"
-    ]
-  },
-  {
-    "type": "article",
-    "title": "What Is a Non-Registered Account? Taxable Investing in Canada, Explained",
-    "url": "/articles/investing-and-financial-literacy/what-is-a-non-registered-account/",
-    "desc": "A non-registered account is a taxable investment account with no contribution limits and no special tax shelter. How interest, dividends, and capital gains are taxed, tax drag, asset location, and ACB tracking.",
-    "keywords": [
-      "What Is a Non-Registered Account? Taxable Investing in Canada, Explained",
-      "non-registered account",
-      "taxable account",
-      "open account",
-      "Canada",
-      "capital gains",
-      "dividend tax credit",
-      "tax drag",
-      "asset location",
-      "adjusted cost base",
-      "ACB",
-      "margin account"
     ]
   },
   {
@@ -824,21 +870,23 @@
     "type": "calculator",
     "title": "Tools and Calculators",
     "url": "/calculators/",
-    "desc": "",
+    "desc": "Browse interactive financial calculators on The Long Math — income tax, investing, inflation, mortgages, advisory fees, and long-term comparisons with explicit assumptions.",
     "keywords": [
       "Tools and Calculators",
-      "calculators"
-    ]
-  },
-  {
-    "type": "calculator",
-    "title": "Outils et calculateurs",
-    "url": "/fr/calculators/",
-    "desc": "",
-    "keywords": [
-      "Outils et calculateurs",
-      "calculateurs",
-      "The Long Math"
+      "calculators",
+      "browse",
+      "interactive",
+      "financial",
+      "math",
+      "income",
+      "tax",
+      "investing",
+      "inflation",
+      "mortgages",
+      "advisory",
+      "fees",
+      "term",
+      "comparisons"
     ]
   },
   {
@@ -1347,44 +1395,6 @@
       "opportunity",
       "cost",
       "term"
-    ]
-  },
-  {
-    "type": "essay",
-    "title": "Au-delà des chiffres",
-    "url": "/fr/essays/",
-    "desc": "Essais sur une vie et une carrière en médecine vus par le prisme des finances et de l’entreprise.",
-    "keywords": [
-      "Au-delà des chiffres",
-      "essais",
-      "médecine",
-      "The Long Math"
-    ]
-  },
-  {
-    "type": "article",
-    "title": "About",
-    "url": "/about/",
-    "desc": "What The Long Math is, where it came from, who it is for, and what it is not — educational tools with inspectable arithmetic.",
-    "keywords": [
-      "About",
-      "The Long Math",
-      "mission",
-      "physician",
-      "calculators",
-      "disclaimer"
-    ]
-  },
-  {
-    "type": "article",
-    "title": "À propos",
-    "url": "/fr/about/",
-    "desc": "Présentation de The Long Math, origine du site, public visé et limites — outils pédagogiques à arithmétique vérifiable.",
-    "keywords": [
-      "À propos",
-      "The Long Math",
-      "mission",
-      "calculateurs"
     ]
   }
 ]
