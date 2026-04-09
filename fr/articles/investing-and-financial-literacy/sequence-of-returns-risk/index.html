@@ -429,13 +429,12 @@
     ctx.clearRect(0, 0, W, H);
     var padL = 54, padR = 14, padT = 16, padB = 36;
     var plotW = W - padL - padR, plotH = H - padT - padB;
-    var series = [pb.pts, pw.pts, ph.pts];
-    var maxV = 0;
-    for (var si = 0; si < series.length; si++) {
-      for (var j = 0; j < series[si].length; j++) if (series[si][j] > maxV) maxV = series[si][j];
+    var refPts = path(BEST, start, 0).pts;
+    var maxV = start;
+    for (var ri = 0; ri < refPts.length; ri++) {
+      if (refPts[ri] > maxV) maxV = refPts[ri];
     }
-    if (maxV < start * 0.5) maxV = start;
-    maxV *= 1.08;
+    maxV = Math.max(maxV * 1.12, start * 1.02);
     function xAt(t) { return padL + (t / 30) * plotW; }
     function yAt(v) { return padT + plotH - (v / maxV) * plotH; }
     ctx.strokeStyle = "rgba(128,128,128,0.2)";
