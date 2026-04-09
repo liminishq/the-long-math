@@ -181,7 +181,7 @@
             <div class="sor-stat"><strong>Worst sequence</strong><span id="sor-stat-worst"></span></div>
             <div class="sor-stat"><strong>Historical sequence</strong><span id="sor-stat-hist"></span></div>
           </div>
-          <p class="sor-footnote">Returns are S&amp;P 500 total returns (dividends reinvested), 1995–2024, used to illustrate the sequence of returns mechanism. A Canadian equity portfolio would produce a different historical sequence but the same underlying dynamic. Source: US500.com</p>
+          <p class="sor-footnote">Returns are S&amp;P 500 total returns (dividends reinvested), 1995–2024, used to illustrate the sequence of returns mechanism. A Canadian equity portfolio would produce a different historical sequence but the same underlying dynamic. Source: S&amp;P 500 annual total returns (1995–2024), compiled from Slickcharts.</p>
         </div>
 
         <p>The historical line shows the actual 1995–2024 order of returns. The best and worst lines use those same annual returns rearranged into the most favorable and least favorable sequence. Try setting the annual withdrawal to $0. All three lines converge — same returns, same result. Add withdrawals back and watch the gap open. That gap is sequence of returns risk.</p>
@@ -374,7 +374,7 @@
       </section>
     </article><script>
 (function () {
-  var HIST = [0.814454,0.560886,0.595324,0.473814,0.393048,0.069999,0.008505,-0.048136,0.474563,0.350365,0.294152,0.390177,0.291397,-0.211239,0.748136,0.410435,0.261144,0.464853,0.618702,0.43164,0.272364,0.40921,0.493182,0.203986,0.557162,0.450102,0.490956,0.008944,0.450558,0.504787];
+  var HIST = [0.3758,0.2296,0.3336,0.2858,0.2104,-0.0910,-0.1189,-0.2210,0.2868,0.1088,0.0491,0.1579,0.0549,-0.3700,0.2646,0.1506,0.0211,0.1600,0.3239,0.1369,0.0138,0.1196,0.2183,-0.0438,0.3149,0.1840,0.2871,-0.1811,0.2629,0.2502];
   var BEST = HIST.slice().sort(function (a, b) { return b - a; });
   var WORST = HIST.slice().sort(function (a, b) { return a - b; });
   function path(returns, start, withdraw) {
