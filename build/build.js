@@ -184,6 +184,42 @@ function buildLdJsonBlocks(article, canonical, pathPrefix) {
   return blocks;
 }
 
+/**
+ * Newsletter signup block before FAQ section, or before related-articles,
+ * or before closing </article> if neither marker exists.
+ */
+function injectNewsletterBeforeFaq(html, env) {
+  const block = env.render("partials/newsletter-article-block.njk", {
+    newsletterHeadingId: "newsletter-article-heading",
+  });
+
+  const faqMarkers = [
+    '<h2 id="faq">',
+    "Frequently Asked Questions",
+    "Frequently asked questions",
+    'class="faq-accordion"',
+  ];
+
+  for (const marker of faqMarkers) {
+    const markerIdx = html.indexOf(marker);
+    if (markerIdx === -1) continue;
+    const sectionStart = html.lastIndexOf("<section", markerIdx);
+    if (sectionStart !== -1) {
+      return html.slice(0, sectionStart) + block + "\n" + html.slice(sectionStart);
+    }
+  }
+
+  const relatedNeedle = '<section class="section-card related-articles">';
+  if (html.includes(relatedNeedle)) {
+    return html.replace(relatedNeedle, block + "\n" + relatedNeedle);
+  }
+
+  const close = "</article>";
+  const idx = html.lastIndexOf(close);
+  if (idx === -1) return html;
+  return html.slice(0, idx) + block + "\n" + html.slice(idx);
+}
+
 function build() {
   console.log("Loading i18n...");
   const baseEn = loadLang(ROOT, "en");
@@ -372,7 +408,10 @@ function build() {
         t: tFn,
         pageId: "article-" + slug,
         article,
-        wrapMainHtml: prefixRootRelativeLinks(article.wrapMainHtml || "", pathPrefix),
+        wrapMainHtml: injectNewsletterBeforeFaq(
+          prefixRootRelativeLinks(article.wrapMainHtml || "", pathPrefix),
+          env
+        ),
         disclaimerHtml: prefixRootRelativeLinks(article.disclaimerHtml || "", pathPrefix),
         ldJsonBlocks,
       };

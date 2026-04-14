@@ -1,0 +1,47 @@
+/* Newsletter signup blocks (beehiiv embed + copy) — dark/light via site tokens */
+
+.newsletter-signup {
+  margin-top: 2rem;
+  padding: 1.25rem 1.25rem 1.35rem;
+  text-align: left;
+}
+
+.newsletter-signup-heading {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  line-height: 1.35;
+  color: var(--text);
+}
+
+.newsletter-signup-copy {
+  max-width: 42rem;
+  margin: 0 0 0.5rem;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.newsletter-signup-meta {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.newsletter-embed-wrap {
+  margin-top: 0.5rem;
+  line-height: 0;
+}
+
+.newsletter-embed-wrap iframe.beehiiv-embed {
+  display: block;
+  max-width: 100%;
+}
+
+@media (max-width: 400px) {
+  .newsletter-embed-wrap iframe.beehiiv-embed {
+    width: 100% !important;
+    min-width: 0;
+  }
+}

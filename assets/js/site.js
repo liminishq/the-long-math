@@ -381,6 +381,37 @@
     }
   }
 
+  // -------------------------
+  // Article FAQ accordion buttons (custom .faq-question blocks)
+  // -------------------------
+  function initFaqQuestionAccordions() {
+    var buttons = document.querySelectorAll(".faq-question");
+    if (!buttons || !buttons.length) return;
+
+    buttons.forEach(function (btn) {
+      if (btn.dataset.tlmFaqBound === "1") return;
+      btn.dataset.tlmFaqBound = "1";
+      btn.setAttribute("type", "button");
+
+      btn.addEventListener("click", function () {
+        var item = btn.closest(".faq-item");
+        if (!item) return;
+        var isOpen = item.classList.contains("open");
+        item.classList.toggle("open", !isOpen);
+        btn.setAttribute("aria-expanded", isOpen ? "false" : "true");
+      });
+    });
+  }
+
+  function injectBeehiivEmbedScript() {
+    if (!document.querySelector(".beehiiv-embed")) return;
+    if (document.querySelector('script[src*="subscribe-forms.beehiiv.com/embed.js"]')) return;
+    var s = document.createElement("script");
+    s.async = true;
+    s.src = "https://subscribe-forms.beehiiv.com/embed.js";
+    document.head.appendChild(s);
+  }
+
   function loadCalculatorExportScript() {
     var path = (window.location && window.location.pathname) || "";
     if (path.indexOf("/calculators/") === -1) return;
@@ -399,6 +430,8 @@
     initMenu();
     initReadingTime();
     initLastUpdated();
+    initFaqQuestionAccordions();
+    injectBeehiivEmbedScript();
     loadCalculatorExportScript();
   });
 })();
