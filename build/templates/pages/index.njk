@@ -81,9 +81,6 @@
       </div>
     </section>
 
-    {% set newsletterHeadingId = 'newsletter-home-heading' %}
-    {% include "partials/newsletter-home-section.njk" %}
-
     <section class="home-section card home-proof" aria-labelledby="proof-heading">
       <h2 id="proof-heading" class="home-section-heading">{{ t('meta.home.proof.heading') }}</h2>
       <p class="home-proof-subtitle">{{ t('meta.home.proof.subtitle') }}</p>
@@ -162,6 +159,9 @@
         </div>
       </div>
     </section>
+
+    {% set newsletterHeadingId = 'newsletter-home-heading' %}
+    {% include "partials/newsletter-home-section.njk" %}
 
     <section class="home-section" aria-labelledby="pillars-heading">
       <h2 id="pillars-heading" class="home-section-heading">{{ t('meta.home.pillars.heading') }}</h2>

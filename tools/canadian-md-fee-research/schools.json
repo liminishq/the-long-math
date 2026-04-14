@@ -1,0 +1,137 @@
+{
+  "notes": [
+    "Primary URLs point to official MD/registrar fee pages as of project setup. Sites change; verify HTTP status in manifest after each run.",
+    "Quebec schools often list fees in French on the registrar site; English pages may mirror the same tables.",
+    "For cross-checking all schools in one table (with survey lag), see AFMC CMES Section A Table A-3 in the annual PDF.",
+    "If a saved HTML file is a bot/WAF block page, re-open the same URL in a normal browser and copy figures from there."
+  ],
+  "aggregate_sources": [
+    {
+      "id": "afmc-cmes",
+      "title": "AFMC — Canadian Medical Education Statistics (CMES)",
+      "description": "Annual PDF; Section A includes Table A-3 tuition and other compulsory fees for all 17 faculties (survey timing may lag the upcoming academic year).",
+      "url": "https://www.afmc.ca/publications/canadian-medical-education-statistics-cmes/"
+    }
+  ],
+  "schools": [
+    {
+      "id": "memorial",
+      "name": "Memorial University — Faculty of Medicine",
+      "province": "NL",
+      "primary_url": "https://www.mun.ca/finance/fees/tuition_fees/med_undergrad.php",
+      "secondary_url": "https://mun.ca/medicine/administrative-departments/learner-well-being-and-success/financial-guidance/cost-of-medical-school/"
+    },
+    {
+      "id": "dalhousie",
+      "name": "Dalhousie University — Faculty of Medicine",
+      "province": "NS",
+      "primary_url": "https://www.dal.ca/admissions/money_matters/tuition_payments/Tuition_Fees/Tuition_Fee_Schedules.html",
+      "secondary_url": "https://cdn.dal.ca/content/dam/dalhousie/pdf/admissions/MoneyMatters/Dentistry%20and%20Medicine%202025-2026.pdf"
+    },
+    {
+      "id": "laval",
+      "name": "Université Laval — Faculté de médecine",
+      "province": "QC",
+      "primary_url": "https://www.ulaval.ca/etudes/droits-de-scolarite/etudiant-quebecois/automne-2025-hiver-2026",
+      "secondary_url": "https://www.ulaval.ca/etudes/programmes/doctorat-en-medecine"
+    },
+    {
+      "id": "sherbrooke",
+      "name": "Université de Sherbrooke — Faculté de médecine et des sciences de la santé",
+      "province": "QC",
+      "primary_url": "https://www.usherbrooke.ca/admission/couts-et-aide-financiere/frais-scolarite",
+      "secondary_url": "https://www.usherbrooke.ca/medecine/"
+    },
+    {
+      "id": "montreal",
+      "name": "Université de Montréal — Faculté de médecine",
+      "province": "QC",
+      "primary_url": "https://registraire.umontreal.ca/droits-de-scolarite/",
+      "secondary_url": "https://registraire.umontreal.ca/droits-de-scolarite/calculateur-des-frais-de-scolarite/"
+    },
+    {
+      "id": "mcgill",
+      "name": "McGill University — Faculty of Medicine and Health Sciences",
+      "province": "QC",
+      "primary_url": "https://www.mcgill.ca/student-accounts/doctor-medicine-and-master-surgery-mdcm-5",
+      "secondary_url": "https://www.mcgill.ca/medadmissions/prospective/fees"
+    },
+    {
+      "id": "ottawa",
+      "name": "University of Ottawa — Faculty of Medicine",
+      "province": "ON",
+      "primary_url": "https://www.uottawa.ca/university-fees/tuition-fees-can-undergraduate",
+      "secondary_url": "https://www.uottawa.ca/faculty-medicine/undergraduate/application-process"
+    },
+    {
+      "id": "nosm",
+      "name": "NOSM University",
+      "province": "ON",
+      "primary_url": "https://www.nosm.ca/en/education/current-learners/student-accounts/tuition-fees",
+      "secondary_url": "https://www.nosm.ca/en/education/md-program"
+    },
+    {
+      "id": "toronto",
+      "name": "University of Toronto — Temerty Faculty of Medicine",
+      "province": "ON",
+      "primary_url": "https://md.utoronto.ca/current-fees",
+      "secondary_url": "https://applymd.utoronto.ca/tuition-fees"
+    },
+    {
+      "id": "mcmaster",
+      "name": "McMaster University — DeGroote School of Medicine",
+      "province": "ON",
+      "primary_url": "https://registrar.mcmaster.ca/fees/undergraduate/",
+      "secondary_url": null
+    },
+    {
+      "id": "western",
+      "name": "Western University — Schulich School of Medicine & Dentistry",
+      "province": "ON",
+      "primary_url": "https://registrar.uwo.ca/student_finances/fees_refunds/fee_refund_schedules.html",
+      "secondary_url": "https://www.schulich.uwo.ca/find-your-program/medicine/md.html"
+    },
+    {
+      "id": "queens",
+      "name": "Queen's University — School of Medicine",
+      "province": "ON",
+      "primary_url": "https://www.queensu.ca/registrar/tuition-fees/undergraduate-25-26",
+      "secondary_url": "https://meds.queensu.ca/academics/mdprogram/admissions-queens-lakeridge-health-md-family-medicine-program/financial"
+    },
+    {
+      "id": "manitoba",
+      "name": "University of Manitoba — Max Rady College of Medicine",
+      "province": "MB",
+      "primary_url": "https://umanitoba.ca/registrar/tuition-fees/undergraduate",
+      "secondary_url": "https://umanitoba.ca/explore/undergraduate-admissions/requirements/medicine"
+    },
+    {
+      "id": "saskatchewan",
+      "name": "University of Saskatchewan — College of Medicine",
+      "province": "SK",
+      "primary_url": "https://students.usask.ca/money/tuition-fees/undergraduate-tuition.php",
+      "secondary_url": "https://admissions.usask.ca/medicine.php"
+    },
+    {
+      "id": "alberta",
+      "name": "University of Alberta — Faculty of Medicine & Dentistry",
+      "province": "AB",
+      "primary_url": "https://www.ualberta.ca/registrar/costs-tuition-fees/undergraduate-tuition/dentistry-medicine-and-pgme-fees.html",
+      "secondary_url": "https://www.ualberta.ca/medicine/programs/md-program/"
+    },
+    {
+      "id": "calgary",
+      "name": "University of Calgary — Cumming School of Medicine",
+      "province": "AB",
+      "primary_url": "https://cumming.ucalgary.ca/mdprogram/current-students/financial-aid/medical-school-costs",
+      "secondary_url": "https://ucalgary.ca/registrar/finances/tuition-and-fees"
+    },
+    {
+      "id": "ubc",
+      "name": "University of British Columbia — Faculty of Medicine",
+      "province": "BC",
+      "primary_url": "https://students.ubc.ca/enrolment/finances/tuition-fees",
+      "secondary_url": "https://mdprogram.med.ubc.ca/student-affairs/financial-support/cost-of-an-md-student/"
+    }
+  ]
+}
