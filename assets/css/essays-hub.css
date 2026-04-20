@@ -2,12 +2,14 @@
 .page-essays .hero-lede {
   color: var(--accent);
 }
-.page-essays .featured-essay {
+.page-essays .featured-essay,
+.page-essays .linked-essay-card {
   position: relative;
   border-left: 4px solid var(--accent);
   cursor: pointer;
 }
-.page-essays .featured-essay .featured-essay-link {
+.page-essays .featured-essay .featured-essay-link,
+.page-essays .linked-essay-card .linked-essay-card-link {
   position: absolute;
   top: 0;
   left: 0;
@@ -18,7 +20,8 @@
   text-decoration: none;
   color: transparent;
 }
-.page-essays .featured-essay:has(.featured-essay-link:hover) {
+.page-essays .featured-essay:has(.featured-essay-link:hover),
+.page-essays .linked-essay-card:has(.linked-essay-card-link:hover) {
   border-left-color: var(--accent2);
 }
 .page-essays .card h2 {
@@ -36,7 +39,8 @@
 .page-essays .card h3 + p {
   margin: 0 0 0.35rem;
 }
-.page-essays .featured-essay .essay-card-cta {
+.page-essays .featured-essay .essay-card-cta,
+.page-essays .linked-essay-card .essay-card-cta {
   margin: 0.75rem 0 0;
   font-size: 0.95rem;
   font-weight: 600;
