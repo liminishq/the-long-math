@@ -36,15 +36,31 @@
       <p class="essay-status">{{ essaysHub.featured.statusPublished }}</p>
     </section>
 
+    {% if essaysHub.essayCards and essaysHub.essayCards.length %}
+    {% for card in essaysHub.essayCards %}
+    <section class="card linked-essay-card">
+      <a href="{{ pathPrefix }}{{ card.path }}" class="linked-essay-card-link" aria-label="{{ card.ariaLabel }}"></a>
+
+      <h2>{{ card.kicker }}</h2>
+
+      <h3>{{ card.title }}</h3>
+
+      <p>{{ card.excerpt }}</p>
+
+      <p class="essay-card-cta">{{ card.cta }}</p>
+
+      <p class="essay-status">{{ card.statusPublished }}</p>
+    </section>
+    {% endfor %}
+    {% endif %}
+
     <section class="card">
       <h2>{{ essaysHub.upcomingHeading }}</h2>
 
       {% for item in essaysHub.upcoming %}
       <div class="essay-item">
         <h3>{{ item.title }}</h3>
-        <p>
-          {{ item.excerpt }}
-        </p>
+        <p>{{ item.excerpt }}</p>
         <span class="essay-status">{{ item.status }}</span>
       </div>
       {% endfor %}
