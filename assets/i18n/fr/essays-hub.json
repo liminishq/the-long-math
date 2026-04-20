@@ -14,13 +14,19 @@
     "cta": "Lire l’essai →",
     "statusPublished": "Publié"
   },
-  "upcomingHeading": "Essais à venir",
-  "upcoming": [
+  "essayCards": [
     {
+      "path": "/beyond-the-numbers/the-price-of-the-white-coat/",
+      "ariaLabel": "Le prix du sarrau blanc — lire l’essai",
+      "kicker": "Essai",
       "title": "Le prix du sarrau blanc",
       "excerpt": "Frais de scolarité, années de revenus perdus et coût d’opportunité sur toute la chaîne de formation, des études de premier cycle jusqu’à la résidence.",
-      "status": "Bientôt"
-    },
+      "cta": "Lire l’essai →",
+      "statusPublished": "Publié"
+    }
+  ],
+  "upcomingHeading": "Essais à venir",
+  "upcoming": [
     {
       "title": "Comparer des carrières : une question de flux de trésorerie sur 30 ans",
       "excerpt": "Comment la médecine se compare financièrement à d’autres carrières professionnelles lorsqu’on intègre le calendrier des revenus, la durée de formation et la capitalisation.",

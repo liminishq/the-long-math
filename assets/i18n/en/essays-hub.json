@@ -14,13 +14,19 @@
     "cta": "Read the essay →",
     "statusPublished": "Published"
   },
-  "upcomingHeading": "Upcoming Essays",
-  "upcoming": [
+  "essayCards": [
     {
+      "path": "/beyond-the-numbers/the-price-of-the-white-coat/",
+      "ariaLabel": "The Price of the White Coat — read the essay",
+      "kicker": "Essay",
       "title": "The Price of the White Coat",
       "excerpt": "Tuition, lost earning years, and opportunity cost across the full training pipeline from undergraduate studies through residency.",
-      "status": "Coming soon"
-    },
+      "cta": "Read the essay →",
+      "statusPublished": "Published"
+    }
+  ],
+  "upcomingHeading": "Upcoming Essays",
+  "upcoming": [
     {
       "title": "Comparing Career Paths: A 30-Year Cash-Flow Question",
       "excerpt": "How medicine compares financially with alternative professional careers when income timing, training length, and compounding are included.",

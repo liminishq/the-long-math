@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The Price of the White Coat | The Long Math</title>
+  <meta name="description" content="The real cost of medical training in Canada: tuition, living costs financed by debt, interest, residency, and training-related debt before independent practice." />
+  <link rel="canonical" href="https://www.thelongmath.com/beyond-the-numbers/the-price-of-the-white-coat/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script defer src="/assets/js/site.js"></script>
+
+  <style>
+    .article-content {
+      max-width: 980px;
+      margin: 0 auto;
+      line-height: 1.7;
+      font-size: 1.05rem;
+    }
+    .article-content p { margin: 0.9em 0; }
+    .article-content h2 { margin: 1.5em 0 0.75em; font-size: 1.35rem; }
+    .article-content h3 { margin: 1.25em 0 0.5em; font-size: 1.15rem; }
+    .article-content h4 { margin: 1.15em 0 0.45em; font-size: 1.05rem; font-weight: 600; }
+    .article-content ul, .article-content ol { margin: 1em 0; padding-left: 2em; }
+    .article-content li { margin: 0.5em 0; }
+    .article-content table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.95em; }
+    .article-content th, .article-content td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; }
+    .article-content th { background: var(--card, rgba(255,255,255,.04)); font-weight: 600; }
+    .article-content td.num, .article-content th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .essay-lede { color: var(--muted); font-style: italic; margin-top: 0.25em; }
+
+    .section-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      margin: 18px 0;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .debt-widget-card { margin: 1.5em 0; }
+    .debt-widget-card h3 { margin: 0 0 0.75em; font-size: 1.1rem; }
+    .debt-widget-chart-wrap { position: relative; width: 100%; margin: 0.5em 0 1em; }
+    #residencyDebtChart {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      background: rgba(0,0,0,.12);
+    }
+    .debt-widget-slider {
+      margin: 1em 0 0.5em;
+    }
+    .debt-widget-slider label {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.95rem;
+    }
+    .debt-widget-slider input[type="range"] {
+      flex: 1;
+      min-width: 160px;
+      accent-color: var(--accent);
+    }
+    .debt-widget-slider input[type="range"]:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .debt-widget-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px 16px;
+      font-size: 0.92rem;
+      margin-top: 0.75em;
+    }
+    .debt-widget-stats div { padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .debt-widget-stats dt { color: var(--muted); font-size: 0.85em; margin: 0 0 2px; }
+    .debt-widget-stats dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .debt-widget-assumptions {
+      margin-top: 1em;
+      padding-top: 0.75em;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .debt-widget-assumptions ul { margin: 0.5em 0 0; padding-left: 1.25em; }
+
+    .ledger-details { margin: 1.25em 0; border: 1px solid var(--border); border-radius: 12px; background: rgba(255,255,255,.02); }
+    .ledger-details > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 14px 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .ledger-details > summary::-webkit-details-marker { display: none; }
+    .ledger-details > summary::after {
+      content: "+";
+      color: var(--accent);
+      font-size: 1.2em;
+      flex-shrink: 0;
+    }
+    .ledger-details[open] > summary::after { content: "\2212"; }
+    .ledger-details > summary:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 10px;
+    }
+    .ledger-details .ledger-inner { padding: 0 16px 16px; }
+    .ledger-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-top: 0.75em;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .ledger-scroll table { margin: 0; font-size: 0.8rem; min-width: 720px; }
+    .ledger-scroll th, .ledger-scroll td { white-space: nowrap; }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+    }
+    .faq-item:last-of-type { border-bottom: none; }
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 14px 0;
+      font-size: 1em;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      line-height: 1.4;
+    }
+    .faq-question:hover { color: var(--accent); }
+    .faq-question:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .faq-icon { flex-shrink: 0; font-size: 1.2em; color: var(--accent); transition: transform 0.25s ease; }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      padding: 0;
+      line-height: 1.7;
+    }
+    .faq-item.open .faq-answer { max-height: 800px; padding-bottom: 14px; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+
+    .related-tools ul { list-style: none; padding: 0; margin: 0; }
+    .related-tools li { margin: 10px 0; }
+  </style>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <a href="/beyond-the-numbers/" class="home-link">Back to Beyond the Numbers</a>
+
+    <article class="article-content">
+      <header>
+        <h1>The Price of the White Coat</h1>
+        <p class="essay-lede">Tuition, debt, delayed earnings, and the financial runway that precedes independent practice.</p>
+      </header>
+
+      <p>Before a physician earns a full staff income, the medical training pipeline can leave them entering practice with training-related debt deep into the six figures. Tuition is only one part of the cost. The real burden accumulates across time: in compulsory fees, in borrowed living expenses, in interest on debt that grows while training continues, and in the years in which full earnings still have not arrived.</p>
+
+      <h2 id="residency-debt-widget-title">How Training Length Changes Debt</h2>
+
+      <p>Below is an interactive graph showing the debt trajectory for the base-case Dalhousie-to-orthopaedics path, from the start of undergraduate study through the end of residency.</p>
+
+      <section class="section-card debt-widget-card" aria-labelledby="residency-debt-widget-title">
+        <div class="debt-widget-chart-wrap">
+          <canvas id="residencyDebtChart" width="720" height="360" role="img" aria-label="Line chart of Scenario 2 base-case debt from Undergrad Year 1 through Residency PGY5"></canvas>
+        </div>
+        <div class="debt-widget-slider">
+          <label for="residencyYearsSlider">
+            <span>Training year</span>
+            <input type="range" id="residencyYearsSlider" name="residencyYears" min="0" max="14" step="1" value="7" />
+            <span id="residencyYearsSliderVal" aria-live="polite">MD Year 2</span>
+          </label>
+        </div>
+        <div class="debt-widget-assumptions">
+          <strong>Assumptions (Scenario 2 base case)</strong>
+          <ul>
+            <li>Base case from <strong>Scenario 2</strong></li>
+            <li>Dalhousie BSc &rarr; Dalhousie MSc &rarr; Dalhousie MD &rarr; Orthopaedic Surgery</li>
+            <li>Borrowing rate: 4.45%</li>
+            <li>Summer income only during undergrad</li>
+            <li>Repayment rule: 10% of after-tax resident income</li>
+            <li>Scenario uses the rebuilt month-by-month base-case ledger</li>
+          </ul>
+        </div>
+      </section>
+
+      <p>This is a narrower question than whether medicine is worth it financially. The first essay in this series dealt with that directly. This one asks something more technical: what does the training pipeline itself cost before independent practice begins? Once that question is stated plainly, the arithmetic becomes less flattering and considerably more useful.</p>
+
+      <p>The easiest mistake is to treat the cost of medical training as though it were the tuition invoice. That is the visible bill, but it is not the whole bill. Medical students still need housing, food, transportation, books, licensing exams, elective travel, and the CaRMS application that stands between medical school and residency. During undergraduate study, many students can partially offset those costs with summer employment. During medical school, that flexibility shrinks sharply. The academic calendar is longer, clerkship is less forgiving, and the windows between academic years do not function like a normal student summer. Debt, not income, carries more of the load &mdash; and interest accrues on that debt whether or not training is finished.</p>
+
+      <p>That is the piece most conversations miss.</p>
+
+      <h2>The Five Layers of Cost</h2>
+
+      <p>The financial cost of medical training has five layers. The first is direct education cost: tuition, compulsory fees, books, exams, applications, and travel built into the path. The second is debt-funded living cost during training: the rent and daily expenses that do not disappear during medical school and can no longer be offset by meaningful summer income. The third is financing cost: interest accruing on balances that remain outstanding throughout the training years. The fourth is delayed earning: the years in which physician-level income has not yet begun. The fifth is delayed compounding: the investing runway that disappears while the earlier four layers are still in motion.</p>
+
+      <p>This essay concentrates on the first three. The fourth and fifth become the center of the analysis in Essay 3.</p>
+
+      <h2>The Pipeline Is the Financial Story</h2>
+
+      <p>Medical school in Canada is four years at most institutions. McMaster and Calgary are the notable three-year exceptions. After graduation, residency is mandatory for clinical work: two years for family medicine, five years for most surgical specialties, and longer for paths that include fellowship. The endpoint varies by specialty. The financial consequence does not. Every additional year of training delays independent practice, extends borrowing, and gives interest more time to work before a physician has full control over their earning power.</p>
+
+      <p>A future family physician who starts undergraduate studies at eighteen typically begins independent practice around twenty-eight. A future orthopaedic surgeon on a path that includes graduate school may not reach that point until thirty-three. Those are not the same starting line, and the difference is not cosmetic. It is financial.</p>
+
+      <h2>Medical School Tuition in Canada: The Visible Part of the Bill</h2>
+
+      <p>The published tuition numbers are substantial even before living costs and interest enter the model. I have chosen two examples to illustrate real numbers: NOSM in Northern Ontario and Dalhousie in Halifax. In doing so, I have intentionally avoided some of Canada&rsquo;s most expensive cities. Even in lower-cost settings, the math is still dramatic.</p>
+
+      <p>Using NOSM&rsquo;s current MD fee schedule, annual tuition is listed at $23,247, with total annual fees of $24,283.62 in Year 1 and $24,183.62 in Years 2 through 4 &mdash; a four-year total of approximately $96,835 in direct MD tuition and fees. Dalhousie&rsquo;s current medicine schedule lists annual tuition of $25,568.40 with total annual fees of $27,300.20, producing a four-year MD total of approximately $109,201. Neither figure is trivial, and neither tells the whole story.</p>
+
+      <p>The undergraduate layer precedes the MD. At Lakehead University, a domestic Ontario-resident Science student on the current fee schedule pays $7,457.70 in first year, declining to $6,787.35 by Year 4, for a four-year all-in total of approximately $28,894. At Dalhousie, the current Halifax Science estimate runs approximately $12,005.80 per year including incidentals, for a four-year total of approximately $48,023. A Dalhousie thesis-based Science master&rsquo;s degree adds a further approximately $26,896 over two years at current published rates.</p>
+
+      <p>These numbers are real and they are large. They are also only the most visible part of the bill.</p>
+
+      <h2>The Costs That Rarely Make the Conversation</h2>
+
+      <p>Beyond tuition and fees, the training pipeline includes several direct costs that tend to be individually underestimated and collectively ignored. The MCCQE, the LMCC application fee, CaRMS participation and program application fees, away electives, interview travel, required equipment and materials, and provincial licensing fees at the transition to practice all add to the debt load. None of those items usually dominates the spreadsheet by itself. Together, they are large enough to matter, and they are financed through the same debt carrying the tuition.</p>
+
+      <p>The larger omission, though, is living cost. It is where the most judgment is required, so it deserves explicit treatment rather than a single headline number.</p>
+
+      <h2>Living Costs: What the Schools Actually Say</h2>
+
+      <p>Thunder Bay is meaningfully less expensive than Halifax. Both are more expensive than they were five years ago, and medical school usually carries higher living costs than undergraduate study for reasons tied to the training structure, not just inflation.</p>
+
+      <p>For the Lakehead undergraduate years, Thunder Bay remains the cheaper setting. A student sharing accommodation and spending carefully can plausibly live on much less than they would in a larger city. For this reason, the Lakehead portion of the model uses three undergrad living-cost cases: frugal, base case, and living alone.</p>
+
+      <p>For the NOSM medical school years, the institution&rsquo;s own budgeting guidance is clearer. NOSM states that the cost of living today for one individual in Ontario is approximately $3,500 per month, or $42,000 per year. That figure is used as the base case for the NOSM MD years. The frugal and living-alone cases move below and above it respectively, but the school&rsquo;s own number anchors the range.</p>
+
+      <p>For the Halifax years covering Dalhousie undergraduate study, graduate school, and the Dalhousie MD, the rental market is materially more expensive than Thunder Bay. Shared housing can keep costs down. Living alone pushes them higher. The Dalhousie example therefore also uses three scenarios: frugal, base case, and living alone.</p>
+
+      <p>The frugal case is not fantasy. It assumes shared housing and restrained spending, not heroic deprivation.</p>
+
+      <h2>Tuition Tax Credits: Deferred Relief, Not Cash</h2>
+
+      <p>Tuition credits are real and should be handled correctly &mdash; which means neither ignoring them nor treating them as cash that reduces debt while school is still in session.</p>
+
+      <p>At the federal level, eligible tuition generates a non-refundable credit at 15%. Unused amounts carry forward indefinitely but can only offset tax owing &mdash; they do not produce refunds against zero income. During school, most medical students pay little or no income tax, so credits accumulate as a carryforward. Once residency salary arrives and tax is actually payable, those carryforwards reduce the effective tax bill, increasing net-of-tax income and therefore the cash available for debt repayment. That becomes much easier to inspect once you actually run the numbers through the <a href="/calculators/canada-income-tax/">Canada Income Tax Calculator</a>.</p>
+
+      <p>The provincial treatment is not uniform. Ontario eliminated its provincial tuition and education amounts for tuition paid after 2017. A student enrolled today in an Ontario medical school accumulates no new Ontario provincial tuition credit. Nova Scotia still maintains a provincial tuition schedule, with the basic provincial credit rate at 8.79% of eligible tuition. Like the federal credit, it is non-refundable and only useful once tax is owing.</p>
+
+      <p>The correct way to model these credits is to apply them in residency, when tax is actually payable, rather than during school, when they are accumulating but not yet usable.</p>
+
+      <h2>How the Debt Grows</h2>
+
+      <p>Most Canadian medical students finance their training through a professional student line of credit from one of the major banks. These products allow the balance to accumulate throughout undergraduate and professional school years with no required principal payments, and charge interest at prime plus zero. At Canada&rsquo;s current prime rate of 4.45%, a $300,000 outstanding balance accrues $13,350 in annual interest before a single additional dollar is borrowed.</p>
+
+      <p>The mechanism is straightforward but easy to underestimate: interest on a growing balance compounds whether or not training is finished. Every year the balance grows, the next year&rsquo;s interest charge is larger.</p>
+
+      <p>Undergrad summer earnings have to be modeled in the months they are actually earned. They do not reduce borrowing in the preceding winter months. The student still borrows throughout the academic year, interest still accrues on that running balance, and the summer job arrives only later, after much of that damage is already done.</p>
+
+      <p>The standard credit limit on these LOC products is usually $350,000 to $400,000. For longer training paths, the debt does not politely stop when the preferred LOC reaches its nominal ceiling. It migrates to other sources: government student loans, family loans, additional credit products, or some combination of all three. The correct model for those paths is therefore uncapped debt, not capped credit.</p>
+
+      <p>Once the balance is this large, repayment stops being intuitive and becomes a math problem, which is exactly what the <a href="/calculators/loan-repayment/">Loan Repayment Calculator</a> is for.</p>
+
+      <h2>Two Worked Examples</h2>
+
+      <p>What follows are two worked examples built from current fee schedules, living-cost anchors, and resident salary grids. Because living costs vary materially across individuals, each example is shown in three versions: frugal, base case, and living alone.</p>
+
+      <h3>Common assumptions</h3>
+
+      <ul>
+        <li>Professional LOC at prime + 0% (4.45%)</li>
+        <li>Tuition and institutional fees drawn annually</li>
+        <li>Living costs drawn monthly throughout pre-residency training</li>
+        <li>Undergrad summer earnings of $10,000 per year, modeled when actually earned in summer months rather than smoothed across the year</li>
+        <li>Medical school years include no summer-income offset</li>
+        <li>Residency cash flows are modeled as shown in each scenario ledger, with 10% of after-tax residency income applied to debt repayment</li>
+        <li>Federal tuition credit carryforwards applied in residency years when tax is actually payable</li>
+        <li>No new Ontario provincial tuition credit for post-2017 tuition</li>
+        <li>Nova Scotia provincial tuition credits applied where relevant</li>
+        <li>Output: training-related debt at the start of independent practice</li>
+        <li>Opportunity cost excluded &mdash; that comparison is the subject of Essay 3</li>
+      </ul>
+
+      <h3>Example 1: Lakehead &rarr; NOSM &rarr; Family Medicine (Ontario)</h3>
+
+      <p>This is the shorter path: four years of undergraduate Science at Lakehead, four years of medical school at NOSM, and two years of family medicine residency in Ontario.</p>
+
+      <h4>Direct education costs</h4>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th class="num">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Lakehead BSc, 4 years (tuition + ancillary fees)</td>
+            <td class="num">$28,894</td>
+          </tr>
+          <tr>
+            <td>NOSM MD, 4 years (tuition + fees)</td>
+            <td class="num">$96,835</td>
+          </tr>
+          <tr>
+            <td>MCCQE, LMCC, CaRMS, electives, travel, licensing (estimated)</td>
+            <td class="num">$6,000</td>
+          </tr>
+          <tr>
+            <td>Direct education subtotal</td>
+            <td class="num">$131,729</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>Living-cost assumptions</h4>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th class="num">Frugal</th>
+            <th class="num">Base Case</th>
+            <th class="num">Living Alone</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Lakehead undergrad: gross monthly all-in</td>
+            <td class="num">$1,600</td>
+            <td class="num">$2,000</td>
+            <td class="num">$2,400</td>
+          </tr>
+          <tr>
+            <td>NOSM med school: monthly</td>
+            <td class="num">$2,800</td>
+            <td class="num">$3,500</td>
+            <td class="num">$4,200</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Undergrad summer earnings are modeled when actually earned during the summer months, not smoothed across the year.</p>
+
+      <h4>Debt outcomes</h4>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Scenario</th>
+            <th class="num">Debt at End of Med School</th>
+            <th class="num">Training-Related Debt at Start of Practice</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Frugal</td>
+            <td class="num">$342,500</td>
+            <td class="num">$370,100</td>
+          </tr>
+          <tr>
+            <td>Base case</td>
+            <td class="num">$400,000</td>
+            <td class="num">$438,100</td>
+          </tr>
+          <tr>
+            <td>Living alone</td>
+            <td class="num">$462,600</td>
+            <td class="num">$504,400</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>On these assumptions, the shorter path still ends with roughly $370,100 in the frugal case, roughly $438,100 in the base case (per the month-by-month ledger below), and $504,400 in the living-alone case.</p>
+
+      <p>The full month-by-month debt ledger is below.</p>
+
+      <details class="ledger-details">
+        <summary>Scenario 1 monthly debt accumulation table</summary>
+        <div class="ledger-inner">
+          <div class="ledger-scroll" id="ledgerMount1" data-csv="/assets/data/scenario1_monthly_debt_schedule.csv" tabindex="0" role="region" aria-label="Scenario 1 monthly debt schedule table"></div>
+        </div>
+      </details>
+
+      <p>For readers who want a simpler baseline before looking at the full ledger, <a href="/calculators/student-debt-at-graduation/">Student Debt at Graduation</a> is the closest tool on the site to a stripped-down version of the same idea.</p>
+
+      <h3>Example 2: Dalhousie &rarr; Dalhousie MSc &rarr; Dalhousie MD &rarr; Orthopaedic Surgery (Maritimes)</h3>
+
+      <p>This is the longer path: four years of undergraduate Science at Dalhousie, two years of a thesis-based MSc at Dalhousie, four years of medical school at Dalhousie, and five years of orthopaedic surgery residency.</p>
+
+      <h4>Direct education costs</h4>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th class="num">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Dalhousie BSc, 4 years (tuition + fees)</td>
+            <td class="num">$48,023</td>
+          </tr>
+          <tr>
+            <td>Dalhousie MSc Science thesis, 2 years</td>
+            <td class="num">$26,896</td>
+          </tr>
+          <tr>
+            <td>Dalhousie MD, 4 years (tuition + fees)</td>
+            <td class="num">$109,201</td>
+          </tr>
+          <tr>
+            <td>MCCQE, LMCC, CaRMS, electives, travel, licensing (estimated)</td>
+            <td class="num">$10,000</td>
+          </tr>
+          <tr>
+            <td>Direct education subtotal</td>
+            <td class="num">$194,120</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>Living-cost assumptions</h4>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th class="num">Frugal</th>
+            <th class="num">Base Case</th>
+            <th class="num">Living Alone</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Halifax monthly all-in</td>
+            <td class="num">$1,900</td>
+            <td class="num">$2,500</td>
+            <td class="num">$2,900</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Again, the undergrad summer income is modeled when actually earned during the summer months, not smoothed across the full year. MSc and MD years receive no summer-income offset.</p>
+
+      <h4>Debt outcomes</h4>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Scenario</th>
+            <th class="num">Debt at End of Med School</th>
+            <th class="num">Training-Related Debt at Start of Practice</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Frugal</td>
+            <td class="num">$461,400</td>
+            <td class="num">$549,800</td>
+          </tr>
+          <tr>
+            <td>Base case</td>
+            <td class="num">$547,400</td>
+            <td class="num">$660,000</td>
+          </tr>
+          <tr>
+            <td>Living alone</td>
+            <td class="num">$609,400</td>
+            <td class="num">$737,300</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>On the assumptions used here, the longer path still ends with roughly $549,800 in the frugal case, roughly $660,000 in the base case (per the month-by-month ledger below), and roughly $737,300 in the living-alone case.</p>
+
+      <p>This example does not model MSc stipend offsets. Many students receive them. Many do not. Acknowledging that funding possibility is enough here; building it into the base case would blur the debt structure the example is trying to show.</p>
+
+      <p>The full month-by-month debt ledger is below.</p>
+
+      <details class="ledger-details">
+        <summary>Scenario 2 monthly debt accumulation table</summary>
+        <div class="ledger-inner">
+          <div class="ledger-scroll" id="ledgerMount2" data-csv="/assets/data/scenario2_monthly_debt_schedule.csv" tabindex="0" role="region" aria-label="Scenario 2 monthly debt schedule table"></div>
+        </div>
+      </details>
+
+      <h2>What the Two Examples Show</h2>
+
+      <p>The difference between the two examples is not whether a debt problem exists. It is how long the runway runs and how much time interest has to work before independent practice income finally arrives.</p>
+
+      <p>Even under conservative assumptions, the shorter path still ends with debt measured in the high hundreds of thousands. The longer one ends with materially more. The base-case scenarios are not outliers. They are the point. A long training pipeline financed at ordinary interest rates produces a balance sheet that does not quietly repair itself the moment salary begins.</p>
+
+      <p>That is the part of the physician financial story that should be understood before later-career income is allowed to dominate the conversation.</p>
+
+      <h2>The Compounding That Never Happened</h2>
+
+      <p>Even the six-figure debt figures above understate the full cost of the training pipeline, because they record debt accumulated but not wealth never built.</p>
+
+      <p>A $10,000 contribution made at age 28 and compounded at 6% annually until age 62 grows to approximately $72,500. The same contribution made at age 33 grows to approximately $54,200 by the same date &mdash; roughly 25% less, from the same starting amount, purely because the clock started five years later. Extend that across every year of delayed investing, and across the cash flow that must service debt before investing can become meaningful, and the compounding dimension of the training cost becomes substantial.</p>
+
+      <p>The price of the white coat is not the tuition invoice. It is the direct educational costs, the borrowed living expenses, the interest compounding on both throughout the training years, and the investing runway that never existed because the pipeline consumed the years in which it would have started. The shorter route reaches the point of meaningful saving earlier. The longer route reaches it later and with much more debt still demanding attention. The result is not just a larger liability. It is a shorter investing runway, and it is exactly the kind of arithmetic described in <a href="/articles/investing-and-financial-literacy/compound-interest/">Compound Interest: The Ultimate Wealth Builder</a>.</p>
+
+      <p>And that still does not compare either path to a peer who began earning, saving, and investing much earlier. That comparison belongs in Essay 3.</p>
+
+      <section class="section-card" id="faq">
+        <h2>FAQ</h2>
+
+        <div class="faq-item">
+          <button type="button" class="faq-question" aria-expanded="false">
+            How much medical training debt can a Canadian physician accumulate before practice?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>In the worked examples here, the family medicine path produces roughly $370,100 to $504,400 in training-related debt at the start of practice, depending on living-cost assumptions. The orthopaedic path produces roughly $549,800 to $737,300.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button type="button" class="faq-question" aria-expanded="false">
+            Does residency salary reduce medical school debt?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Yes, but often not nearly as much as people assume. Residency salary can slow the deterioration and support some repayment, but it arrives after years of debt accumulation and interest.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button type="button" class="faq-question" aria-expanded="false">
+            Do tuition tax credits reduce debt during medical school?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>No. They are deferred relief, not immediate cash. They become useful once tax is actually payable, which usually means during residency rather than during school.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button type="button" class="faq-question" aria-expanded="false">
+            Why does a longer residency increase debt so much?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Because time is doing more than one thing at once. Interest continues to accrue, full staff income is delayed, and meaningful investing is postponed. More years of residency means more years for the balance sheet to remain under pressure.</p>
+          </div>
+        </div>
+      </section>
+    </article>
+  </div>
+
+  <div id="footerMount"></div>
+
+  <script>
+  (function () {
+    "use strict";
+
+    var TRAINING_POINTS = [
+      { label: "Undergrad Year 1", debt: 33174.53 },
+      { label: "Undergrad Year 2", debt: 67866.22 },
+      { label: "Undergrad Year 3", debt: 104128.81 },
+      { label: "Undergrad Year 4", debt: 142041.42 },
+      { label: "MSc Year 1", debt: 193248.21 },
+      { label: "MSc Year 2", debt: 246813.26 },
+      { label: "MD Year 1", debt: 317269.88 },
+      { label: "MD Year 2", debt: 390932.42 },
+      { label: "MD Year 3", debt: 467946.77 },
+      { label: "MD Year 4", debt: 547436.36 },
+      { label: "Residency PGY1", debt: 570757.73 },
+      { label: "Residency PGY2", debt: 589718.21 },
+      { label: "Residency PGY3", debt: 610369.2 },
+      { label: "Residency PGY4", debt: 632180.16 },
+      { label: "Residency PGY5", debt: 659984.62 }
+    ];
+
+    var DEFAULT_TRAINING_INDEX = Math.floor((TRAINING_POINTS.length - 1) / 2);
+
+    function fmtCAD(n) {
+      return n.toLocaleString("en-CA", {
+        style: "currency",
+        currency: "CAD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function getCssColor(name, fallback) {
+      var v = getComputedStyle(document.documentElement).getPropertyValue(name);
+      v = (v || "").trim();
+      return v || fallback;
+    }
+
+    function drawChart(canvas, yearsIdx) {
+      var ctx = canvas.getContext("2d");
+      var maxYears = TRAINING_POINTS.length - 1;
+      var axisLabels = [
+        "UG1", "UG2", "UG3", "UG4",
+        "MSc1", "MSc2",
+        "MD1", "MD2", "MD3", "MD4",
+        "PGY1", "PGY2", "PGY3", "PGY4", "PGY5"
+      ];
+      if (!canvas.dataset.baseWidth) {
+        canvas.dataset.baseWidth = String(canvas.clientWidth || canvas.width || 720);
+      }
+      if (!canvas.dataset.baseHeight) {
+        canvas.dataset.baseHeight = String(canvas.height || 320);
+      }
+      var w = Number(canvas.dataset.baseWidth) || 720;
+      var h = Number(canvas.dataset.baseHeight) || 320;
+      var dpr = window.devicePixelRatio || 1;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = "100%";
+      canvas.style.height = "auto";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      var pad = { t: 16, r: 18, b: 44, l: 72 };
+      var cw = w - pad.l - pad.r;
+      var ch = h - pad.t - pad.b;
+
+      var debtValues = TRAINING_POINTS.map(function (p) { return p.debt; });
+      var yMin = Math.min.apply(null, debtValues);
+      var yMax = Math.max.apply(null, debtValues);
+      var yPad = (yMax - yMin) * 0.06 || 1000;
+      yMin -= yPad;
+      yMax += yPad;
+
+      function sx(x) {
+        return pad.l + (x / maxYears) * cw;
+      }
+      function sy(y) {
+        return pad.t + (1 - (y - yMin) / (yMax - yMin)) * ch;
+      }
+
+      ctx.clearRect(0, 0, w, h);
+
+      ctx.strokeStyle = getCssColor("--border", "rgba(238,242,247,.2)");
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(pad.l, pad.t + ch);
+      ctx.lineTo(pad.l + cw, pad.t + ch);
+      ctx.stroke();
+      for (var g = 0; g <= maxYears; g++) {
+        ctx.beginPath();
+        ctx.moveTo(sx(g), pad.t + ch);
+        ctx.lineTo(sx(g), pad.t + ch + 6);
+        ctx.stroke();
+      }
+
+      var lineColor = getCssColor("--accent", "#d9b46a");
+      ctx.strokeStyle = lineColor;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (var i = 0; i < TRAINING_POINTS.length; i++) {
+        var px = sx(i);
+        var py = sy(TRAINING_POINTS[i].debt);
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      ctx.fillStyle = lineColor;
+      for (var j = 0; j < TRAINING_POINTS.length; j++) {
+        ctx.beginPath();
+        ctx.arc(sx(j), sy(TRAINING_POINTS[j].debt), j === yearsIdx ? 6 : 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      var selected = TRAINING_POINTS[yearsIdx];
+      var selX = sx(yearsIdx);
+      var selY = sy(selected.debt);
+      ctx.strokeStyle = lineColor;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(selX, pad.t);
+      ctx.lineTo(selX, pad.t + ch);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = getCssColor("--muted", "rgba(238,242,247,.72)");
+      ctx.font = "11px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      for (var gx = 0; gx <= maxYears; gx++) {
+        ctx.fillText(axisLabels[gx] || String(gx + 1), sx(gx), h - 18);
+      }
+      ctx.fillStyle = getCssColor("--text", "#eef2f7");
+      ctx.font = "12px system-ui, sans-serif";
+      ctx.fillText("Training Year", pad.l + cw / 2, h - 4);
+
+      var labelColor = getCssColor("--text", "#eef2f7");
+      var valueFontSize = w < 560 ? 24 : 30;
+      var titleFontSize = w < 560 ? 14 : 16;
+      ctx.textAlign = "left";
+      ctx.fillStyle = labelColor;
+      ctx.font = "700 " + titleFontSize + "px system-ui, sans-serif";
+      ctx.fillText(selected.label, pad.l + 10, pad.t + 24);
+      ctx.font = "700 " + valueFontSize + "px system-ui, sans-serif";
+      ctx.fillText(fmtCAD(selected.debt), pad.l + 10, pad.t + 56);
+
+      ctx.beginPath();
+      ctx.arc(selX, selY, 8, 0, Math.PI * 2);
+      ctx.strokeStyle = lineColor;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function updateWidget(years) {
+      var point = TRAINING_POINTS[years];
+      var elVal = document.getElementById("residencyYearsSliderVal");
+      if (elVal && point) elVal.textContent = point.label;
+      var c = document.getElementById("residencyDebtChart");
+      if (c) drawChart(c, years);
+    }
+
+    var slider = document.getElementById("residencyYearsSlider");
+    if (slider) {
+      slider.value = String(DEFAULT_TRAINING_INDEX);
+      slider.addEventListener("input", function () {
+        updateWidget(Number(slider.value));
+      });
+      updateWidget(DEFAULT_TRAINING_INDEX);
+    }
+
+    window.addEventListener("resize", function () {
+      if (slider) updateWidget(Number(slider.value));
+    });
+
+    function parseCsv(text) {
+      var lines = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n").filter(function (l) {
+        return l.trim().length > 0;
+      });
+      return lines.map(function (line) {
+        var row = [];
+        var cur = "";
+        var q = false;
+        for (var i = 0; i < line.length; i++) {
+          var ch = line[i];
+          if (ch === "\"") {
+            q = !q;
+            continue;
+          }
+          if (!q && ch === ",") {
+            row.push(cur);
+            cur = "";
+            continue;
+          }
+          cur += ch;
+        }
+        row.push(cur);
+        return row;
+      });
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function renderLedgerTable(mount) {
+      var url = mount.getAttribute("data-csv");
+      if (!url || mount.dataset.loaded === "1") return;
+      mount.dataset.loaded = "1";
+      mount.textContent = "Loading\u2026";
+      fetch(url)
+        .then(function (r) {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.text();
+        })
+        .then(function (text) {
+          var rows = parseCsv(text);
+          if (!rows.length) {
+            mount.textContent = "No data.";
+            return;
+          }
+          var thead = "<thead><tr>";
+          rows[0].forEach(function (h) {
+            var isNum = /balance|interest|draws|repayment|accrued|total/i.test(h);
+            thead += "<th" + (isNum ? " class=\"num\"" : "") + ">" + escapeHtml(h) + "</th>";
+          });
+          thead += "</tr></thead>";
+          var tbody = "<tbody>";
+          for (var r = 1; r < rows.length; r++) {
+            tbody += "<tr>";
+            for (var c = 0; c < rows[r].length; c++) {
+              var cell = rows[r][c];
+              var num = /^-?[0-9,]+(\.[0-9]+)?$/.test(cell.replace(/,/g, ""));
+              tbody += "<td" + (num ? " class=\"num\"" : "") + ">" + escapeHtml(cell) + "</td>";
+            }
+            tbody += "</tr>";
+          }
+          tbody += "</tbody>";
+          mount.innerHTML = "<table>" + thead + tbody + "</table>";
+        })
+        .catch(function () {
+          mount.textContent = "Unable to load this table.";
+          mount.dataset.loaded = "";
+        });
+    }
+
+    function bindLedger(mountId) {
+      var mount = document.getElementById(mountId);
+      if (!mount) return;
+      var det = mount.closest("details");
+      if (det) {
+        det.addEventListener("toggle", function () {
+          if (det.open) renderLedgerTable(mount);
+        });
+      }
+    }
+
+    bindLedger("ledgerMount1");
+    bindLedger("ledgerMount2");
+  })();
+  </script>
+</body>
+</html>
