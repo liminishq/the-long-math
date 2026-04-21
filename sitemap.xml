@@ -135,6 +135,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.thelongmath.com/articles/investing-and-financial-literacy/fixed-vs-variable-mortgage-in-canada/</loc>
+    <lastmod>2026-04-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.thelongmath.com/articles/investing-and-financial-literacy/pay-off-your-mortgage-faster-or-invest/</loc>
     <lastmod>2026-04-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -464,6 +470,12 @@
   </url>
   <url>
     <loc>https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/how-does-a-mortgage-work-in-canada/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/fixed-vs-variable-mortgage-in-canada/</loc>
+    <lastmod>2026-04-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

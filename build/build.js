@@ -55,6 +55,7 @@ const ARTICLE_SLUGS = [
   "asset-classes-for-investing",
   "compound-interest",
   "dollar-cost-averaging",
+  "fixed-vs-variable-mortgage-in-canada",
   "how-does-a-mortgage-work-in-canada",
   "inflation",
   "investing-vs-trading",
