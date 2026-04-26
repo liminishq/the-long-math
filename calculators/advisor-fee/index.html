@@ -138,6 +138,7 @@
           <h2 class="section-title" data-i18n="calculators.advisorFee.results">Calculated Results</h2>
           <a href="/calculators/advisor-fee/methodology/" class="inspect-arithmetic-btn" data-locale-path="/calculators/advisor-fee/methodology/" target="_blank" rel="noopener noreferrer" data-i18n="calculators.advisorFee.inspectArithmetic">Inspect the Arithmetic</a>
         </div>
+        <p id="shared_scenario_banner" class="shared-scenario-banner" hidden>Shared calculator scenario loaded. Review the assumptions below and run your own numbers.</p>
 
         <div class="results">
 
@@ -146,6 +147,18 @@
             <p class="v" id="out_total_cost">$–</p>
             <p class="subl" data-i18n="calculators.advisorFee.totalCostSubl">Fees paid + lost compounding</p>
           </div>
+
+          <section class="result-share-block" aria-labelledby="share-result-heading">
+            <h3 id="share-result-heading" class="result-share-title">Share this result</h3>
+            <p class="result-share-copy">Snapshot your estimate as a shareable image.</p>
+            <p class="result-share-helper">Shares an image plus a link to this calculator scenario.</p>
+            <div class="result-share-actions">
+              <button type="button" id="share_result_btn">Share image</button>
+              <button type="button" id="download_result_btn">Download PNG</button>
+              <button type="button" id="copy_result_link_btn">Copy result link</button>
+            </div>
+            <p class="result-share-status" id="result_share_status" aria-live="polite"></p>
+          </section>
 
           <div class="result">
             <p class="k" data-i18n="calculators.advisorFee.breakeven">Break-even advisor performance</p>
@@ -177,24 +190,14 @@
         <p class="meta" id="out_meta">
           Calculated using the assumptions shown above.
         </p>
+
+        <section class="calculator-updates-cta" aria-labelledby="calculator-updates-heading">
+          <h3 id="calculator-updates-heading">Get new calculators when they go live</h3>
+          <p>The Long Math is building calculators for Canadian investing, tax, mortgage, and fee decisions. Join the list to get new tools as they’re published.</p>
+          <a href="https://subscribe-forms.beehiiv.com/bfdc64a5-2697-4bb0-bec5-5a557c9f274b" class="calculator-updates-btn" target="_blank" rel="noopener noreferrer">Get calculator updates</a>
+        </section>
       </section>
     </div>
-
-        <section class="newsletter-signup card" aria-labelledby="newsletter-calc-heading">
-      <h2 id="newsletter-calc-heading" class="newsletter-signup-heading">Want new calculators like this when they go live?</h2>
-      <p class="newsletter-signup-copy">Get one concise monthly email when The Long Math publishes new calculators, articles, and essays.</p>
-      <div class="newsletter-embed-wrap">
-        <iframe
-          src="https://subscribe-forms.beehiiv.com/bfdc64a5-2697-4bb0-bec5-5a557c9f274b"
-          class="beehiiv-embed"
-          data-test-id="beehiiv-embed"
-          frameborder="0"
-          scrolling="no"
-          style="width: 330px; height: 53px; margin: 0; border-radius: 0; background-color: transparent; box-shadow: 0 0 #0000; max-width: 100%;"
-          title="Newsletter signup"
-        ></iframe>
-      </div>
-    </section>
 
 <div class="report-issue-wrap">
       <a href="/contact/" class="report-issue-link" data-locale-path="/contact/" data-i18n="common.links.reportIssue">Report an Issue</a>
@@ -306,6 +309,7 @@
 
   <!-- Logic -->
   <script defer src="/assets/js/calculator.engine.js"></script>
+  <script defer src="/assets/js/calculator-share.js"></script>
   <script defer src="/assets/js/calculator.ui.js"></script>
   <script src="/assets/js/theme.js"></script>
   <div id="footerMount"></div>
