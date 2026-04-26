@@ -37,6 +37,18 @@
   }
 
   function canvasToBlob(canvas) {
+    if (typeof canvas.toBlob !== "function") {
+      // Older Safari fallback.
+      var dataUrl = canvas.toDataURL("image/png");
+      var parts = dataUrl.split(",");
+      var mimeMatch = parts[0].match(/:(.*?);/);
+      var mime = (mimeMatch && mimeMatch[1]) || "image/png";
+      var binary = atob(parts[1] || "");
+      var len = binary.length;
+      var bytes = new Uint8Array(len);
+      for (var i = 0; i < len; i += 1) bytes[i] = binary.charCodeAt(i);
+      return Promise.resolve(new Blob([bytes], { type: mime }));
+    }
     return new Promise(function (resolve, reject) {
       canvas.toBlob(function (blob) {
         if (blob) resolve(blob);
@@ -47,6 +59,17 @@
 
   function triggerDownload(blob, filename) {
     var objectUrl = URL.createObjectURL(blob);
+
+    // iOS Safari often ignores download attr; opening the image still lets users Save Image.
+    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent || "");
+    if (isIOS) {
+      window.open(objectUrl, "_blank");
+      setTimeout(function () {
+        URL.revokeObjectURL(objectUrl);
+      }, 10000);
+      return;
+    }
+
     var link = document.createElement("a");
     link.href = objectUrl;
     link.download = filename;
@@ -198,7 +221,6 @@
   async function shareResultCard(config) {
     var blob = await generateImageBlob(config);
     var shareUrl = config.url || window.location.href;
-    var file = new File([blob], getFilename(config.calculatorName), { type: "image/png" });
     var payload = {
       title: config.title || "The Long Math calculator result",
       text: config.shareText || (config.headline ? config.headline + " - estimate based on assumptions." : "Calculator estimate"),
@@ -206,7 +228,17 @@
     };
 
     if (navigator.share) {
-      var supportsFileShare = !!(navigator.canShare && navigator.canShare({ files: [file] }));
+      var supportsFileShare = false;
+      var file = null;
+      if (typeof File === "function") {
+        try {
+          file = new File([blob], getFilename(config.calculatorName), { type: "image/png" });
+          supportsFileShare = !!(navigator.canShare && navigator.canShare({ files: [file] }));
+        } catch (_fileErr) {
+          supportsFileShare = false;
+          file = null;
+        }
+      }
 
       if (supportsFileShare) {
         try {
@@ -250,12 +282,18 @@
       calculator_name: config.calculatorName || "calculator",
       mode: "share-fallback",
     });
-    await copyText(shareUrl);
-    track("calculator_result_link_copied", {
-      calculator_name: config.calculatorName || "calculator",
-      mode: "share-fallback",
-    });
-    return { mode: "download-and-copy-fallback" };
+    var copied = false;
+    try {
+      await copyText(shareUrl);
+      copied = true;
+      track("calculator_result_link_copied", {
+        calculator_name: config.calculatorName || "calculator",
+        mode: "share-fallback",
+      });
+    } catch (_copyErr) {
+      copied = false;
+    }
+    return { mode: "download-and-copy-fallback", copied: copied };
   }
 
   async function downloadResultCard(config) {

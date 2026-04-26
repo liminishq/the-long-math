@@ -389,7 +389,11 @@
         try {
           var result = await window.TLM.shareCard.shareResultCard(latestSharePayload);
           if (result && result.mode === "download-and-copy-fallback") {
-            setShareStatus("Shared via fallback: PNG downloaded and scenario link copied.");
+            if (result.copied) {
+              setShareStatus("Shared via fallback: PNG opened/downloaded and scenario link copied.");
+            } else {
+              setShareStatus("PNG opened/downloaded. Copy result link manually if needed.");
+            }
           } else if (result && result.mode === "native-share-link") {
             setShareStatus("Share dialog opened with result summary and scenario link.");
           } else {
