@@ -176,7 +176,17 @@
     ctx.font = "500 40px Arial, sans-serif";
     drawWrappedText(ctx, config.subline || "", left, y, contentWidth, 50);
 
-    if (config.contextLine) {
+    if (Array.isArray(config.contextLines) && config.contextLines.length) {
+      y += 120;
+      ctx.fillStyle = subtle;
+      ctx.font = "400 34px Arial, sans-serif";
+      for (var cl = 0; cl < config.contextLines.length; cl += 1) {
+        var line = String(config.contextLines[cl] || "").trim();
+        if (!line) continue;
+        y += drawWrappedText(ctx, line, left, y, contentWidth, 44) * 44;
+        y += 10;
+      }
+    } else if (config.contextLine) {
       y += 120;
       ctx.fillStyle = subtle;
       ctx.font = "400 34px Arial, sans-serif";

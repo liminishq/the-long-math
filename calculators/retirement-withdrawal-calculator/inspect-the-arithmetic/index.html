@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Retirement Withdrawal Calculator: Inspect the Arithmetic | The Long Math</title>
+  <meta name="description" content="See the formulas and assumptions behind the Retirement Withdrawal Calculator, including withdrawal frequency, depletion timing, and inflation-adjusted values." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/retirement-withdrawal-calculator/inspect-the-arithmetic/" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Retirement Withdrawal Calculator (Methodology)",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "url": "https://thelongmath.com/calculators/retirement-withdrawal-calculator/inspect-the-arithmetic/",
+    "description": "Methodology for the Retirement Withdrawal Calculator: periodic compounding, fixed withdrawals, depletion timing, and inflation-adjusted display values."
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Does this calculator use nominal or real dollars?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The main projection uses nominal dollars. If the inflation toggle is turned on, the calculator also shows the projected portfolio balance in today’s dollars." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does inflation change the withdrawal amount?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. In this version, inflation does not automatically increase withdrawals each year. The inflation input only adjusts displayed future balances into today’s dollars." }
+      },
+      {
+        "@type": "Question",
+        "name": "Why does withdrawal frequency affect the result?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Withdrawal frequency affects timing. Monthly withdrawals remove money earlier than annual withdrawals, which slightly changes how much remains invested and compounding during the year." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does this calculator model market volatility?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. It uses a fixed annual return. It does not model good years, bad years, or sequence-of-returns risk." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is this a full retirement income calculator?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. This is a simplified portfolio withdrawal calculator. A full retirement income calculator would need to include taxes, CPP, OAS, pensions, RRSPs, RRIFs, TFSAs, non-registered accounts, and inflation-indexed spending." }
+      }
+    ]
+  }
+  </script>
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <p style="margin: 0 0 0.5rem;">
+      <a class="inline-link" href="/calculators/retirement-withdrawal-calculator/">Use the Retirement Withdrawal Calculator</a>
+    </p>
+
+    <div class="methodology-content">
+      <h1>Retirement Withdrawal Calculator: Inspect the Arithmetic</h1>
+      <p class="methodology-meta">Version 1.0<br>Last updated: April 2026</p>
+
+      <p>
+        This page explains the arithmetic behind the <a class="inline-link" href="/calculators/retirement-withdrawal-calculator/">Retirement Withdrawal Calculator</a>.
+      </p>
+
+      <p>
+        The calculator answers a narrow question:
+      </p>
+      <p>
+        If a portfolio starts with a given balance, earns a fixed annual return, and supports fixed withdrawals, how long does the money last?
+      </p>
+
+      <p>
+        It does not model taxes, CPP, OAS, pensions, RRIF minimum withdrawals, account-specific rules, market volatility, or sequence-of-returns risk. It is a simplified drawdown model based on user-supplied assumptions.
+      </p>
+
+      <h2>Inputs</h2>
+      <p>The calculator uses the following inputs:</p>
+      <div class="table-scroll">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Input</th>
+              <th>Meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Starting portfolio value at retirement</td>
+              <td>The amount available when the drawdown period begins.</td>
+            </tr>
+            <tr>
+              <td>Expected annual return</td>
+              <td>The assumed annual investment return, before withdrawals.</td>
+            </tr>
+            <tr>
+              <td>Retirement withdrawal period</td>
+              <td>The number of years to model withdrawals.</td>
+            </tr>
+            <tr>
+              <td>Withdrawal type</td>
+              <td>Either a fixed dollar amount or a percentage withdrawal rate.</td>
+            </tr>
+            <tr>
+              <td>Withdrawal frequency</td>
+              <td>How often withdrawals are taken: weekly, bi-weekly, monthly, quarterly, or annually.</td>
+            </tr>
+            <tr>
+              <td>Inflation rate</td>
+              <td>Optional input used to show future balances in today’s dollars.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Step 1: Start with the retirement portfolio balance</h2>
+      <p>
+        The calculator begins with the portfolio value available when withdrawals start. This value is not projected inside the calculator. If a user needs to estimate how today’s savings may grow before retirement, they can use the <a class="inline-link" href="/calculators/investment-simple/">Simple Investment Calculator</a> first and enter that projected retirement-start value here.
+      </p>
+      <div class="formula-block">
+        Starting withdrawal balance = starting portfolio value at retirement
+      </div>
+
+      <h2>Step 2: Convert the annual return to a periodic return</h2>
+      <p>
+        Withdrawals can happen monthly, weekly, bi-weekly, quarterly, or annually.
+        The calculator converts the annual return into a return for each withdrawal period.
+      </p>
+      <div class="formula-block">
+        Periodic return = (1 + annual return) <sup>1 / periods per year</sup> − 1
+      </div>
+      <p>Periods per year:</p>
+      <div class="table-scroll">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Frequency</th>
+              <th>Periods per year</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Weekly</td><td>52</td></tr>
+            <tr><td>Bi-weekly</td><td>26</td></tr>
+            <tr><td>Monthly</td><td>12</td></tr>
+            <tr><td>Quarterly</td><td>4</td></tr>
+            <tr><td>Annually</td><td>1</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        <strong>Example</strong> for monthly withdrawals and a 5% annual return:
+      </p>
+      <div class="formula-block">
+        Monthly return = 1.05 <sup>1/12</sup> − 1 ≈ 0.4074%
+      </div>
+
+      <h2>Step 3: Determine the withdrawal amount</h2>
+      <h3>Dollar amount mode</h3>
+      <p>
+        The user enters a fixed withdrawal amount and frequency.
+      </p>
+      <p>
+        <strong>Example:</strong> $2,500 per month
+      </p>
+      <div class="formula-block">
+        Annual withdrawal = withdrawal amount × periods per year
+      </div>
+      <p>
+        <strong>Example:</strong> $2,500 × 12 = $30,000 per year
+      </p>
+      <div class="formula-block">
+        Starting withdrawal rate = annual withdrawal ÷ portfolio at withdrawal start
+      </div>
+
+      <h3>Withdrawal rate mode</h3>
+      <p>
+        The user enters an annual withdrawal rate. The calculator applies that rate to the portfolio value when withdrawals begin.
+      </p>
+      <div class="formula-block">
+        Annual withdrawal = portfolio at withdrawal start × withdrawal rate
+      </div>
+      <p>
+        <strong>Example:</strong> $500,000 × 4% = $20,000 per year
+      </p>
+      <p>
+        Then the calculator converts that annual amount into the selected withdrawal frequency.
+      </p>
+      <div class="formula-block">
+        Periodic withdrawal = annual withdrawal ÷ periods per year
+      </div>
+      <p>
+        <strong>Example (monthly):</strong> $20,000 ÷ 12 = $1,666.67 per month
+      </p>
+
+      <h2>Step 4: Apply growth and withdrawals over time</h2>
+      <p>
+        For each withdrawal period, the calculator applies investment growth, then subtracts the withdrawal.
+      </p>
+      <div class="formula-block">
+        Ending balance = starting balance × (1 + periodic return) − periodic withdrawal
+      </div>
+      <p>
+        This process repeats until one of two things happens:
+      </p>
+      <ol>
+        <li>The selected retirement period ends.</li>
+        <li>The portfolio balance reaches zero.</li>
+      </ol>
+      <p>
+        If the balance reaches zero before the end of the selected retirement period, the calculator reports the estimated depletion timing.
+        If a period would end below zero, the implementation treats depletion as occurring partway through that period (a practical approximation for a fixed-withdrawal schedule).
+      </p>
+
+      <h2>Step 5: Estimate how long the money lasts</h2>
+      <p>
+        The calculator tracks the portfolio balance after each withdrawal period.
+        If the portfolio remains above zero through the full retirement period, the calculator reports that the portfolio lasts for the full period.
+      </p>
+      <p>
+        If the portfolio reaches zero during the modelled period, the calculator reports the approximate time until depletion, such as: “depleted after approximately 24.6 years”.
+      </p>
+
+      <h2>Step 6: Calculate the ending balance</h2>
+      <p>
+        If the portfolio lasts through the full selected retirement period, the calculator reports the estimated ending balance as the balance after the final modelled period.
+      </p>
+      <p>
+        If the portfolio is depleted before the end of the period, the ending balance is shown as $0, and the calculator reports when depletion occurs.
+      </p>
+
+      <h2>Step 7: Calculate inflation-adjusted values</h2>
+      <p>
+        The inflation toggle does not change the withdrawal projection. It only adds a second value showing the future portfolio balance in today’s dollars.
+      </p>
+      <div class="formula-block">
+        Inflation-adjusted value = nominal future value ÷ (1 + inflation rate) <sup>years</sup>
+      </div>
+      <p>
+        <strong>Example:</strong> $300,000 ÷ 1.025 <sup>20</sup> = $183,052
+      </p>
+      <p>
+        So a $300,000 balance 20 years from now is equal to about $183,052 in today’s dollars if inflation averages 2.5% per year.
+        For a broader walkthrough of inflation and purchasing power, see
+        <a class="inline-link" href="/articles/investing-and-financial-literacy/inflation/">Inflation: The Math That Makes Future Money Smaller</a>.
+      </p>
+
+      <h2>Chart arithmetic</h2>
+      <p>
+        The chart shows projected portfolio value by retirement year. The bars show nominal portfolio balance at the end of each retirement year (year 0 is the starting portfolio at withdrawal start).
+      </p>
+      <p>
+        If the inflation toggle is on, the chart also overlays a line for inflation-adjusted balance at the end of each year, derived from the nominal series.
+      </p>
+
+      <h2>Important limitations</h2>
+      <p>This calculator is intentionally simplified. It does not include:</p>
+      <ul>
+        <li>Income taxes</li>
+        <li>CPP</li>
+        <li>OAS</li>
+        <li>Employer pensions</li>
+        <li>RRSP or RRIF withdrawal rules</li>
+        <li>TFSA-specific treatment</li>
+        <li>Non-registered investment taxes</li>
+        <li>Capital gains, dividends, or interest income classification</li>
+        <li>Management fees</li>
+        <li>Market volatility</li>
+        <li>Sequence-of-returns risk</li>
+        <li>Inflation-indexed withdrawals</li>
+        <li>One-time deposits or withdrawals</li>
+      </ul>
+      <p>
+        The calculator assumes a fixed annual return and fixed nominal withdrawals. Real retirement outcomes can differ materially.
+        For a deeper look at the order-of-returns problem, read
+        <a class="inline-link" href="/articles/investing-and-financial-literacy/sequence-of-returns-risk/">Sequence of returns risk</a>.
+      </p>
+
+      <h2>Not a safe withdrawal guarantee</h2>
+      <p>
+        This calculator can show the result of a withdrawal rate, but it does not prove that the rate is safe. A true safe-withdrawal analysis would need to account for uncertain returns, inflation-indexed spending, taxes, account structure, and the order in which market returns occur.
+      </p>
+      <p>
+        This calculator shows arithmetic under fixed assumptions. It does not provide financial, tax, legal, or investment advice.
+      </p>
+
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-accordion">
+        <details class="faq-accordion-item">
+          <summary>Does this calculator use nominal or real dollars?</summary>
+          <div class="faq-accordion-body">
+            <p>The main projection uses nominal dollars. If the inflation toggle is turned on, the calculator also shows the projected portfolio balance in today’s dollars.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>Does inflation change the withdrawal amount?</summary>
+          <div class="faq-accordion-body">
+            <p>No. In this version, inflation does not automatically increase withdrawals each year. The inflation input only adjusts displayed future balances into today’s dollars.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>Why does withdrawal frequency affect the result?</summary>
+          <div class="faq-accordion-body">
+            <p>Withdrawal frequency affects timing. Monthly withdrawals remove money earlier than annual withdrawals, which slightly changes how much remains invested and compounding during the year.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>Does this calculator model market volatility?</summary>
+          <div class="faq-accordion-body">
+            <p>No. It uses a fixed annual return. It does not model good years, bad years, or sequence-of-returns risk.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>Is this a full retirement income calculator?</summary>
+          <div class="faq-accordion-body">
+            <p>No. This is a simplified portfolio withdrawal calculator. A full retirement income calculator would need to include taxes, CPP, OAS, pensions, RRSPs, RRIFs, TFSAs, non-registered accounts, and inflation-indexed spending.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div class="disclaimer" style="margin-top: 18px;">
+      <p>
+        <strong>Disclaimer:</strong> This page describes educational methodology only. It is not financial, tax, legal, or investment advice.
+      </p>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+</body>
+</html>
