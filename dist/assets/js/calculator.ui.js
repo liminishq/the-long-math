@@ -62,6 +62,140 @@
 
   // Slider config (percent units)
   const AR = { min: 0, max: 15, step: 0.25 };
+  var latestSharePayload = null;
+  var hasUserInteracted = false;
+  var sharedScenarioLoaded = false;
+
+  function setShareStatus(message, isError) {
+    var statusEl = document.getElementById("result_share_status");
+    if (!statusEl) return;
+    statusEl.textContent = message || "";
+    statusEl.style.color = isError ? "#e7b4b4" : "";
+  }
+
+  function markShareReady() {
+    if (hasUserInteracted) return;
+    hasUserInteracted = true;
+    var shareBlock = document.querySelector(".result-share-block");
+    if (shareBlock) shareBlock.classList.add("is-ready-to-share");
+  }
+
+  function setSharedScenarioBanner(visible) {
+    var banner = document.getElementById("shared_scenario_banner");
+    if (!banner) return;
+    banner.hidden = !visible;
+  }
+
+  function parseBoolParam(raw) {
+    if (raw == null) return null;
+    var v = String(raw).trim().toLowerCase();
+    if (v === "1" || v === "true" || v === "yes") return true;
+    if (v === "0" || v === "false" || v === "no") return false;
+    return null;
+  }
+
+  function applySharedScenarioFromQuery() {
+    var params = new URLSearchParams(window.location.search || "");
+    if (!params.toString()) return false;
+
+    var hasSupportedParam = false;
+
+    var initial = num(params.get("initial"));
+    if (Number.isFinite(initial)) {
+      $("starting_balance").value = String(clamp(initial, 0, 10000000));
+      hasSupportedParam = true;
+    }
+
+    var monthly = num(params.get("monthly"));
+    var annual = num(params.get("annual"));
+    if (Number.isFinite(monthly)) {
+      $("monthly_contribution").value = String(clamp(monthly, 0, 50000));
+      hasSupportedParam = true;
+    } else if (Number.isFinite(annual)) {
+      $("monthly_contribution").value = String(clamp(annual / 12, 0, 50000));
+      hasSupportedParam = true;
+    }
+
+    var years = num(params.get("years"));
+    if (Number.isFinite(years)) {
+      $("horizon_years").value = String(clamp(years, 1, 50));
+      hasSupportedParam = true;
+    }
+
+    var returnPct = num(params.get("return"));
+    if (Number.isFinite(returnPct)) {
+      $("annual_return").value = String(clamp(returnPct, AR.min, AR.max));
+      hasSupportedParam = true;
+    }
+
+    var useDefaultParam = parseBoolParam(params.get("useDefaultFee"));
+    var feePct = num(params.get("fee"));
+    if (useDefaultParam !== null) {
+      $("use_default_fee").checked = useDefaultParam;
+      hasSupportedParam = true;
+    }
+    if (Number.isFinite(feePct)) {
+      $("custom_advisor_fee").value = String(clamp(feePct, 0, 15));
+      if (useDefaultParam === null) $("use_default_fee").checked = false;
+      hasSupportedParam = true;
+    }
+
+    var includeMerParam = parseBoolParam(params.get("includeMer"));
+    var merPct = num(params.get("mer"));
+    if (includeMerParam !== null) {
+      $("include_mer").checked = includeMerParam;
+      hasSupportedParam = true;
+    }
+    if (Number.isFinite(merPct)) {
+      $("mer_pct").value = String(clamp(merPct, 0, 15));
+      if (includeMerParam === null) $("include_mer").checked = true;
+      hasSupportedParam = true;
+    }
+
+    if (!hasSupportedParam) return false;
+
+    sharedScenarioLoaded = true;
+    setSharedScenarioBanner(true);
+    markShareReady();
+    if (window.TLM && window.TLM.shareCard && window.TLM.shareCard.track) {
+      window.TLM.shareCard.track("calculator_shared_scenario_loaded", { calculator_name: "advisor-fee" });
+    }
+    return true;
+  }
+
+  function buildSharePayload(result, inputs) {
+    if (!result || !window.TLM || !window.TLM.shareCard) return null;
+
+    var horizonYears = Math.round(clamp(num($("horizon_years").value), 1, 50));
+    var totalCost = Number(result.total_calculated_cost);
+    if (!window.TLM.shareCard.isFiniteNumber(totalCost)) return null;
+
+    var scenario = {
+      initial: Math.round(inputs.starting_balance),
+      monthly: Math.round(inputs.monthly_contribution),
+      annual: Math.round(inputs.monthly_contribution * 12),
+      years: Math.round(inputs.horizon_years),
+      return: Number((inputs.annual_return * 100).toFixed(2)),
+      useDefaultFee: inputs.use_default_fee ? 1 : 0,
+      fee: Number(inputs.custom_advisor_fee_pct.toFixed(2)),
+      includeMer: inputs.include_mer ? 1 : 0,
+      mer: Number(inputs.mer_pct.toFixed(2)),
+    };
+
+    var shareUrl = window.TLM.shareCard.buildResultUrl(window.location.href, scenario);
+
+    return {
+      calculatorName: "advisor-fee",
+      title: "The Long Math calculator result",
+      headline: "Projected cost of fees and lost compounding",
+      mainValue: fmtCAD(totalCost),
+      subline: "Over a " + horizonYears + "-year investing horizon",
+      contextLine: "Based on user inputs",
+      footer: "Run your own numbers at TheLongMath.com",
+      shareText: "Estimated fee drag over " + horizonYears + " years: " + fmtCAD(totalCost) + ". Run your own numbers:",
+      url: shareUrl,
+    };
+  }
 
   // -----------------------------
   // Pull inputs -> payload for engine
@@ -115,6 +249,7 @@
     $("out_breakeven").textContent = fmtPct(result.break_even_return);
 
     $("out_meta").textContent = (window.TLM && window.TLM.i18n && window.TLM.i18n.t) ? window.TLM.i18n.t("calculators.advisorFee.metaLine") : "Calculated using the assumptions shown above.";
+    latestSharePayload = buildSharePayload(result, inp);
   }
 
   // -----------------------------
@@ -200,13 +335,23 @@
     $("annual_return_slider").step = String(AR.step);
 
     // Presets
-    $("preset-starting").addEventListener("click", () => applyPreset("starting"));
-    $("preset-mid").addEventListener("click", () => applyPreset("mid"));
-    $("preset-retire").addEventListener("click", () => applyPreset("retire"));
+    $("preset-starting").addEventListener("click", () => {
+      markShareReady();
+      applyPreset("starting");
+    });
+    $("preset-mid").addEventListener("click", () => {
+      markShareReady();
+      applyPreset("mid");
+    });
+    $("preset-retire").addEventListener("click", () => {
+      markShareReady();
+      applyPreset("retire");
+    });
 
     // Inputs recalc
     ["starting_balance", "monthly_contribution", "horizon_years", "annual_return", "custom_advisor_fee", "mer_pct"].forEach((id) => {
       $(id).addEventListener("input", () => {
+        markShareReady();
         if (id === "annual_return") syncSliderFromAnnualReturn();
         render();
       });
@@ -214,20 +359,72 @@
 
     // Slider -> text
     $("annual_return_slider").addEventListener("input", () => {
+      markShareReady();
       syncAnnualReturnFromSlider();
       render();
     });
 
     // Toggles
     $("use_default_fee").addEventListener("change", () => {
+      markShareReady();
       setAdvisorOverrideEnabledUI();
       render();
     });
 
     $("include_mer").addEventListener("change", () => {
+      markShareReady();
       setMEREnabledUI();
       render();
     });
+
+    var shareBtn = document.getElementById("share_result_btn");
+    var downloadBtn = document.getElementById("download_result_btn");
+    var copyBtn = document.getElementById("copy_result_link_btn");
+
+    if (shareBtn && downloadBtn && copyBtn && window.TLM && window.TLM.shareCard) {
+      shareBtn.addEventListener("click", async function () {
+        if (!latestSharePayload) return;
+        setShareStatus("Preparing image...");
+        window.TLM.shareCard.track("calculator_result_share_clicked", { calculator_name: latestSharePayload.calculatorName });
+        try {
+          var result = await window.TLM.shareCard.shareResultCard(latestSharePayload);
+          if (result && result.mode === "download-and-copy-fallback") {
+            if (result.copied) {
+              setShareStatus("Shared via fallback: PNG opened/downloaded and scenario link copied.");
+            } else {
+              setShareStatus("PNG opened/downloaded. Copy result link manually if needed.");
+            }
+          } else if (result && result.mode === "native-share-link") {
+            setShareStatus("Share dialog opened with result summary and scenario link.");
+          } else {
+            setShareStatus("Share dialog opened with image, summary, and scenario link.");
+          }
+        } catch (_err) {
+          setShareStatus("Share cancelled or unavailable. Try Download PNG instead.", true);
+        }
+      });
+
+      downloadBtn.addEventListener("click", async function () {
+        if (!latestSharePayload) return;
+        setShareStatus("Generating PNG...");
+        try {
+          await window.TLM.shareCard.downloadResultCard(latestSharePayload);
+          setShareStatus("PNG downloaded.");
+        } catch (_err) {
+          setShareStatus("Could not generate PNG. Please try again.", true);
+        }
+      });
+
+      copyBtn.addEventListener("click", async function () {
+        if (!latestSharePayload) return;
+        try {
+          await window.TLM.shareCard.copyResultLink(latestSharePayload);
+          setShareStatus("Result link copied.");
+        } catch (_err) {
+          setShareStatus("Could not copy link on this browser.", true);
+        }
+      });
+    }
   }
 
   // -----------------------------
@@ -243,6 +440,8 @@
   if (!Number.isFinite(num($("mer_pct").value))) $("mer_pct").value = String(DEFAULTS.mer_pct);
 
   $("use_default_fee").checked = true;
+
+  applySharedScenarioFromQuery();
 
   syncSliderFromAnnualReturn();
   setAdvisorOverrideEnabledUI();

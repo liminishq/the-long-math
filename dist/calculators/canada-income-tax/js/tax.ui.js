@@ -8,6 +8,8 @@ import { loadTaxData, getFederalData, getProvincialData } from './tax.data.js';
 import { formatCurrency, formatPercent, parseInput } from './format.js';
 
 let taxDataLoaded = false;
+let latestTotals = null;
+let latestSharePayload = null;
 
 // Province codes in alphabetical order
 const PROVINCES = [
@@ -101,6 +103,7 @@ export async function initUI() {
 
   // Attach event listeners
   attachEventListeners();
+  wireShareButtons();
 
   // Initial calculation (will trigger after data loads)
   calculate();
@@ -327,8 +330,11 @@ function renderResults(result) {
 
   if (!totals) {
     console.error('No totals in result:', result);
+    latestTotals = null;
+    latestSharePayload = null;
     return;
   }
+  latestTotals = totals;
 
   document.getElementById('totalIncome').textContent = formatCurrency(totals.totalIncome);
   document.getElementById('taxableIncome').textContent = formatCurrency(totals.taxableIncome);
@@ -369,6 +375,8 @@ function renderResults(result) {
     refundOwingEl.textContent = '$–';
     refundOwingResult.className = 'result';
   }
+
+  latestSharePayload = buildSharePayload();
 }
 
 /**
@@ -588,6 +596,130 @@ function clearResults() {
   const refundOwingResult = document.getElementById('refundOrOwingResult');
   if (refundOwingResult) {
     refundOwingResult.className = 'result';
+  }
+  latestTotals = null;
+  latestSharePayload = null;
+}
+
+function setShareStatus(msg, isError = false) {
+  const el = document.getElementById('tax_result_share_status');
+  if (!el) return;
+  el.textContent = msg || '';
+  el.style.color = isError ? 'var(--error)' : '';
+}
+
+function buildSharePayload() {
+  if (!latestTotals || !window.TLM || !window.TLM.shareCard) return null;
+  const provinceEl = document.getElementById('province');
+  const provinceLabel = (provinceEl && provinceEl.selectedOptions && provinceEl.selectedOptions[0])
+    ? provinceEl.selectedOptions[0].textContent
+    : 'Selected province';
+  return {
+    calculatorName: 'canada-income-tax',
+    title: 'Canada Personal Income Tax Calculator | The Long Math',
+    brand: 'The Long Math',
+    headline: 'Canada Personal Income Tax Estimate',
+    mainValue: formatCurrency(latestTotals.totalBurden),
+    subline: 'Estimated total tax burden (income tax + CPP + EI)',
+    contextLines: [
+      'Take-home pay: ' + formatCurrency(latestTotals.takeHomeAfterPayroll || 0),
+      'Average tax rate: ' + formatPercent(latestTotals.avgRate || 0),
+      'Marginal tax rate: ' + formatPercent(latestTotals.marginalRate || 0),
+      'Province/territory: ' + provinceLabel
+    ],
+    footer: 'Run your own numbers at TheLongMath.com',
+    shareText: 'Canada personal income tax estimate: total burden ' + formatCurrency(latestTotals.totalBurden),
+    url: window.location.href
+  };
+}
+
+function exportCsv() {
+  if (!latestTotals) return;
+  const provinceEl = document.getElementById('province');
+  const provinceLabel = (provinceEl && provinceEl.selectedOptions && provinceEl.selectedOptions[0])
+    ? provinceEl.selectedOptions[0].textContent
+    : '';
+  const rows = [
+    'Canada Personal Income Tax Calculator (export)',
+    'Generated,' + new Date().toISOString(),
+    'Province/Territory,' + provinceLabel,
+    '',
+    'Metric,Value',
+    'Total Income,' + (latestTotals.totalIncome || 0),
+    'Taxable Income,' + (latestTotals.taxableIncome || 0),
+    'Total Tax Burden,' + (latestTotals.totalBurden || 0),
+    'Federal Income Tax,' + (latestTotals.federalTax || 0),
+    'Provincial/Territorial Income Tax,' + (latestTotals.provTax || 0),
+    'CPP Contributions,' + (latestTotals.cpp || 0),
+    'EI Contributions,' + (latestTotals.ei || 0),
+    'Take-Home Pay,' + (latestTotals.takeHomeAfterPayroll || 0),
+    'Average Tax Rate,' + ((latestTotals.avgRate || 0) * 100).toFixed(3) + '%',
+    'Marginal Tax Rate,' + ((latestTotals.marginalRate || 0) * 100).toFixed(3) + '%',
+    'Refund or Owing,' + (latestTotals.refundOrOwing || 0)
+  ];
+  const blob = new Blob([rows.join('\n') + '\n'], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'thelongmath-canada-income-tax-results.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+function wireShareButtons() {
+  const shareBtn = document.getElementById('tax_share_result_btn');
+  const downloadBtn = document.getElementById('tax_download_result_btn');
+  const copyBtn = document.getElementById('tax_copy_result_link_btn');
+  const csvBtn = document.getElementById('tax_export_csv_btn');
+  if (csvBtn) {
+    csvBtn.addEventListener('click', () => {
+      exportCsv();
+      setShareStatus('CSV downloaded.');
+    });
+  }
+  if (!window.TLM || !window.TLM.shareCard) return;
+
+  if (shareBtn) {
+    shareBtn.addEventListener('click', async () => {
+      const payload = latestSharePayload || buildSharePayload();
+      if (!payload) return;
+      setShareStatus('Preparing image...');
+      try {
+        const result = await window.TLM.shareCard.shareResultCard(payload);
+        if (result && result.mode === 'download-and-copy-fallback') {
+          setShareStatus(result.copied ? 'PNG downloaded and link copied.' : 'PNG downloaded.');
+        } else {
+          setShareStatus('Share dialog opened.');
+        }
+      } catch (_e) {
+        setShareStatus('Share cancelled or unavailable.', true);
+      }
+    });
+  }
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', async () => {
+      const payload = latestSharePayload || buildSharePayload();
+      if (!payload) return;
+      setShareStatus('Generating PNG...');
+      try {
+        await window.TLM.shareCard.downloadResultCard(payload);
+        setShareStatus('PNG downloaded.');
+      } catch (_e) {
+        setShareStatus('Could not generate PNG.', true);
+      }
+    });
+  }
+  if (copyBtn) {
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await window.TLM.shareCard.copyResultLink({ url: window.location.href, calculatorName: 'canada-income-tax' });
+        setShareStatus('Result link copied.');
+      } catch (_e) {
+        setShareStatus('Could not copy link.', true);
+      }
+    });
   }
 }
 

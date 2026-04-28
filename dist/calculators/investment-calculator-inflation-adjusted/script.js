@@ -73,7 +73,7 @@
   // Compounding is ALWAYS annual. Simulation timestep matches contribution frequency.
   function simulateInvestment(){
     const P0 = clampNonNeg(toNumber(startingAmount.value));
-    const contribPerPeriod = clampNonNeg(toNumber(monthlyContribution.value));
+    const contribPerPeriod = toNumber(monthlyContribution.value);
     const years = Math.max(1, Math.min(60, Math.round(toNumber(timeHorizon.value))));
     const rNomAnnual = toNumber(expectedReturn.value) / 100; // Nominal annual return
     const inflationAnnual = clampNonNeg(toNumber(inflationRate.value) / 100); // Annual inflation
@@ -232,12 +232,15 @@
     breakdownGrowth.textContent = fmtMoney(results.growth);
     
     // Update breakdown bar
-    const total = results.finalBalanceReal;
-    if (total > 0) {
-      const startPct = (results.startingAmount / total) * 100;
-      const contribPct = (results.totalContributions / total) * 100;
-      const growthPct = (results.growth / total) * 100;
-      
+    const positiveStarting = Math.max(0, results.startingAmount);
+    const positiveContrib = Math.max(0, results.totalContributions);
+    const positiveGrowth = Math.max(0, results.growth);
+    const totalPositive = positiveStarting + positiveContrib + positiveGrowth;
+    if (totalPositive > 0) {
+      const startPct = (positiveStarting / totalPositive) * 100;
+      const contribPct = (positiveContrib / totalPositive) * 100;
+      const growthPct = (positiveGrowth / totalPositive) * 100;
+
       barStarting.style.width = startPct + "%";
       barContributions.style.width = contribPct + "%";
       barGrowth.style.width = growthPct + "%";

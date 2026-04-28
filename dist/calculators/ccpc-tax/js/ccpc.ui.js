@@ -10,6 +10,8 @@ import { formatCurrency, formatPercent, parseInput } from './format.js';
 
 let corporateDataLoaded = false;
 let personalDataLoaded = false;
+let latestInputs = null;
+let latestResult = null;
 
 // Province codes in alphabetical order
 const PROVINCES = [
@@ -60,6 +62,7 @@ export async function initUI() {
 
   // Attach event listeners
   attachEventListeners();
+  wireShareButtons();
 
   // Show/hide province note based on selection
   updateProvinceNote();
@@ -226,6 +229,8 @@ function calculate() {
     }
 
     const result = computeCCPCTax(inputs);
+    latestInputs = inputs;
+    latestResult = result;
 
     renderResults(result);
     renderBreakdown(result);
@@ -404,6 +409,8 @@ function clearResults() {
     const el = document.getElementById(id);
     if (el) el.textContent = id.includes('Effective') ? '–%' : '$–';
   });
+  latestInputs = null;
+  latestResult = null;
 }
 
 /**
@@ -412,6 +419,134 @@ function clearResults() {
 function showError(message) {
   console.error(message);
   // Could add an error display element if needed
+}
+
+function setShareStatus(msg, isError = false) {
+  const el = document.getElementById('ccpc_result_share_status');
+  if (!el) return;
+  el.textContent = msg || '';
+  el.style.color = isError ? 'var(--error)' : '';
+}
+
+function buildSharePayload() {
+  if (!latestResult || !window.TLM || !window.TLM.shareCard) return null;
+  const { combined, incomeSplitting } = latestResult;
+  const provinceEl = document.getElementById('province');
+  const provinceLabel = (provinceEl && provinceEl.selectedOptions && provinceEl.selectedOptions[0])
+    ? provinceEl.selectedOptions[0].textContent
+    : 'Selected province';
+  return {
+    calculatorName: 'ccpc-tax',
+    title: 'CCPC Tax Calculator 2025 | The Long Math',
+    brand: 'The Long Math',
+    headline: 'CCPC Tax Estimate (2025)',
+    mainValue: formatCurrency(combined.totalTaxBurden || 0),
+    subline: 'Combined corporate + personal tax burden',
+    contextLines: [
+      'Effective overall tax rate: ' + formatPercent(combined.effectiveTaxRate || 0),
+      'Net personal take-home: ' + formatCurrency(combined.netPersonalTakeHome || 0),
+      'Retained earnings: ' + formatCurrency(combined.retainedEarnings || 0),
+      'Mode: ' + (incomeSplitting ? 'Two-shareholder split' : 'Single shareholder'),
+      'Province/territory: ' + provinceLabel
+    ],
+    footer: 'Run your own numbers at TheLongMath.com',
+    shareText: 'CCPC estimate: total tax burden ' + formatCurrency(combined.totalTaxBurden || 0),
+    url: window.location.href
+  };
+}
+
+function exportCsv() {
+  if (!latestResult || !latestInputs) return;
+  const { corporate, combined, personal, personal1, personal2, incomeSplitting } = latestResult;
+  const rows = [
+    'CCPC Tax Calculator (export)',
+    'Generated,' + new Date().toISOString(),
+    'Income splitting mode,' + (incomeSplitting ? 'Yes' : 'No'),
+    'Gross corporate revenue,' + (latestInputs.grossRevenue || 0),
+    'Business expenses,' + (latestInputs.expenses || 0),
+    '',
+    'Metric,Value',
+    'Corporate taxable income,' + (corporate.taxableIncome || 0),
+    'Corporate tax,' + (corporate.totalCorporateTax || 0),
+    'After-tax corporate cash,' + (corporate.afterTaxCash || 0),
+    'Retained earnings,' + (combined.retainedEarnings || 0),
+    'Total tax burden,' + (combined.totalTaxBurden || 0),
+    'Effective overall tax rate,' + ((combined.effectiveTaxRate || 0) * 100).toFixed(3) + '%'
+  ];
+  if (incomeSplitting) {
+    rows.push('Shareholder 1 personal tax,' + (personal1.totalIncomeTax || 0));
+    rows.push('Shareholder 1 net take-home,' + (personal1.takeHomeAfterPayroll || 0));
+    rows.push('Shareholder 2 personal tax,' + (personal2.totalIncomeTax || 0));
+    rows.push('Shareholder 2 net take-home,' + (personal2.takeHomeAfterPayroll || 0));
+  } else if (personal) {
+    rows.push('Personal tax,' + (personal.totalIncomeTax || 0));
+    rows.push('Net personal take-home,' + (combined.netPersonalTakeHome || 0));
+  }
+  const blob = new Blob([rows.join('\n') + '\n'], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'thelongmath-ccpc-tax-results.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+function wireShareButtons() {
+  const csvBtn = document.getElementById('ccpc_export_csv_btn');
+  const shareBtn = document.getElementById('ccpc_share_result_btn');
+  const pngBtn = document.getElementById('ccpc_download_result_btn');
+  const copyBtn = document.getElementById('ccpc_copy_result_link_btn');
+
+  if (csvBtn) {
+    csvBtn.addEventListener('click', () => {
+      exportCsv();
+      setShareStatus('CSV downloaded.');
+    });
+  }
+  if (!window.TLM || !window.TLM.shareCard) return;
+
+  if (shareBtn) {
+    shareBtn.addEventListener('click', async () => {
+      const payload = buildSharePayload();
+      if (!payload) return;
+      setShareStatus('Preparing image...');
+      try {
+        const result = await window.TLM.shareCard.shareResultCard(payload);
+        if (result && result.mode === 'download-and-copy-fallback') {
+          setShareStatus(result.copied ? 'PNG downloaded and link copied.' : 'PNG downloaded.');
+        } else {
+          setShareStatus('Share dialog opened.');
+        }
+      } catch (_e) {
+        setShareStatus('Share cancelled or unavailable.', true);
+      }
+    });
+  }
+  if (pngBtn) {
+    pngBtn.addEventListener('click', async () => {
+      const payload = buildSharePayload();
+      if (!payload) return;
+      setShareStatus('Generating PNG...');
+      try {
+        await window.TLM.shareCard.downloadResultCard(payload);
+        setShareStatus('PNG downloaded.');
+      } catch (_e) {
+        setShareStatus('Could not generate PNG.', true);
+      }
+    });
+  }
+  if (copyBtn) {
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await window.TLM.shareCard.copyResultLink({ url: window.location.href, calculatorName: 'ccpc-tax' });
+        setShareStatus('Result link copied.');
+      } catch (_e) {
+        setShareStatus('Could not copy link.', true);
+      }
+    });
+  }
 }
 
 // Initialize on load

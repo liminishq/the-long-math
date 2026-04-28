@@ -201,6 +201,18 @@
             <p class="v" id="refundOrOwing">$–</p>
           </div>
         </div>
+
+        <section class="result-share-block" id="tax_share_block" aria-labelledby="tax-share-heading">
+          <h3 id="tax-share-heading" class="result-share-title">Export &amp; share</h3>
+          <p class="result-share-copy">Save your result summary or share this calculator with your current assumptions.</p>
+          <div class="result-share-actions">
+            <button type="button" id="tax_export_csv_btn">Download CSV</button>
+            <button type="button" id="tax_share_result_btn">Share image</button>
+            <button type="button" id="tax_download_result_btn">Download PNG</button>
+            <button type="button" id="tax_copy_result_link_btn">Copy result link</button>
+          </div>
+          <p class="result-share-status" id="tax_result_share_status" aria-live="polite"></p>
+        </section>
       </section>
       </div>
     </div>
@@ -305,6 +317,7 @@
 
   </div>
 
+  <script defer src="/assets/js/calculator-share.js?v=20260426"></script>
   <script type="module">
     import { initUI } from './js/tax.ui.js';
     initUI();

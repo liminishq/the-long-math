@@ -1,0 +1,30 @@
+---
+description: Never replace a live article slug with a different topic; new articles use new slugs.
+alwaysApply: true
+---
+
+# Preserve published articles (The Long Math)
+
+## Non-negotiable
+
+- **Never** repurpose an existing article URL (same slug under `articles/investing-and-financial-literacy/{slug}/` or matching `assets/i18n/**/articles/{slug}.json`) for a **different title, topic, or variant article**. That erases a live page and breaks bookmarks, search, and cross-links.
+- **Default:** keep existing published content and URLs intact. The author makes **small edits** to the same piece over time and adds **new** articles as separate pages — not wholesale rewrites that change what the URL means.
+
+## New article (new topic)
+
+- Add a **new kebab-case slug** and new source JSON: `assets/i18n/en/articles/{new-slug}.json` (and FR when applicable).
+- Register the slug in `build/build.js` (`ARTICLE_SLUGS`) and keep `tools/extract-articles-to-json.cjs` in sync if that list is maintained.
+- Update hubs, sitemap, `assets/data/search-index.json`, and cross-links — **without** removing or retargeting the old article’s slug.
+
+## When unsure
+
+- If the request could be read as “put this new piece where article X already lives,” **stop and ask the user** before changing slug ownership. Do not assume replacing is OK.
+
+## Allowed
+
+- Editing **in place** the same article (same slug): copy tweaks, corrections, dates, SEO — same topic and intent.
+
+## Forbidden
+
+- Replacing `meta.title` / headline / body with a **different** article concept while keeping the old filename/slug.
+- Deleting or emptying an existing article JSON to “make room” for something else.

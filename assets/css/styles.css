@@ -589,9 +589,10 @@ input[type="range"]{ width:100%; }
 .result-share-block{
   margin-top:14px;
   padding:14px;
-  border:1px solid var(--border);
+  border:1px solid rgba(77,163,255,.45);
   border-radius:14px;
-  background:var(--surface);
+  background:linear-gradient(180deg,rgba(77,163,255,.17),rgba(77,163,255,.08));
+  box-shadow:0 0 0 2px rgba(77,163,255,.18);
   transition:border-color .18s ease, box-shadow .18s ease, background .18s ease, transform .18s ease;
 }
 
@@ -599,19 +600,19 @@ input[type="range"]{ width:100%; }
   margin:0 0 4px;
   font-size:15px;
   font-weight:700;
-  color:var(--text);
+  color:#d8ebff;
 }
 
 .result-share-copy{
   margin:0 0 10px;
   font-size:13px;
-  color:var(--muted);
+  color:#cde4ff;
 }
 
 .result-share-helper{
   margin:0 0 10px;
   font-size:11px;
-  color:var(--muted);
+  color:#b9d8fb;
 }
 
 .result-share-actions{
@@ -629,7 +630,18 @@ input[type="range"]{ width:100%; }
   margin:10px 0 0;
   min-height:1.1em;
   font-size:12px;
-  color:var(--muted);
+  color:#cde4ff;
+}
+
+.result-share-block .result-share-actions button{
+  border-color:#2f8ef5;
+  background:#2f8ef5;
+  color:#f5faff;
+}
+
+.result-share-block .result-share-actions button:hover{
+  border-color:#4da3ff;
+  background:#4da3ff;
 }
 
 .shared-scenario-banner{

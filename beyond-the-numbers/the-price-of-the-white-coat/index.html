@@ -635,7 +635,8 @@
       canvas.style.height = "auto";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      var pad = { t: 16, r: 18, b: 44, l: 72 };
+      var isMobile = w < 560;
+      var pad = { t: 16, r: 18, b: isMobile ? 52 : 44, l: 72 };
       var cw = w - pad.l - pad.r;
       var ch = h - pad.t - pad.b;
 
@@ -702,7 +703,9 @@
       ctx.fillStyle = getCssColor("--muted", "rgba(238,242,247,.72)");
       ctx.font = "11px system-ui, sans-serif";
       ctx.textAlign = "center";
+      var mobileTickSet = { 0: true, 3: true, 5: true, 9: true, 14: true };
       for (var gx = 0; gx <= maxYears; gx++) {
+        if (isMobile && !mobileTickSet[gx] && gx !== yearsIdx) continue;
         ctx.fillText(axisLabels[gx] || String(gx + 1), sx(gx), h - 18);
       }
       ctx.fillStyle = getCssColor("--text", "#eef2f7");

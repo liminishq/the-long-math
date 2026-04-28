@@ -5,6 +5,8 @@
 
   const E = window.CapitalGainsTaxCanada;
   if (!E) throw new Error("CapitalGainsTaxCanada engine not loaded");
+  let latestInputs = null;
+  let latestResult = null;
 
   function $(id) {
     const el = document.getElementById(id);
@@ -124,8 +126,127 @@
   function update() {
     const inputs = readInputs();
     const result = E.calculate(inputs);
+    latestInputs = inputs;
+    latestResult = result;
     renderResults(result);
     renderShowMath(inputs, result);
+  }
+
+  function setShareStatus(msg, isError) {
+    const el = $("cg_result_share_status");
+    if (!el) return;
+    el.textContent = msg || "";
+    el.style.color = isError ? "var(--error)" : "";
+  }
+
+  function buildSharePayload() {
+    if (!latestInputs || !latestResult || !window.TLM || !window.TLM.shareCard) return null;
+    return {
+      calculatorName: "capital-gains-tax-canada",
+      title: "Canada Capital Gains Tax Calculator | The Long Math",
+      brand: "The Long Math",
+      headline: "Canada Capital Gains Tax Estimate",
+      mainValue: fmtCAD(latestResult.taxOwing),
+      subline: "Estimated tax owing",
+      contextLines: [
+        "Capital gain/loss: " + fmtCAD(latestResult.gain),
+        "Taxable capital gain: " + fmtCAD(latestResult.taxableGain),
+        "After-tax proceeds: " + fmtCAD(latestResult.afterTaxProceeds),
+        "Inclusion rate: " + latestInputs.inclusionRate + "%"
+      ],
+      footer: "Run your own numbers at TheLongMath.com",
+      shareText: "Canada capital gains estimate: tax owing " + fmtCAD(latestResult.taxOwing),
+      url: window.location.href
+    };
+  }
+
+  function exportCsv() {
+    if (!latestInputs || !latestResult) return;
+    const rows = [
+      "Canada Capital Gains Tax Calculator (export)",
+      "Generated," + new Date().toISOString(),
+      "",
+      "Input,Value",
+      "Proceeds," + latestInputs.proceeds,
+      "Adjusted Cost Base (ACB)," + latestInputs.acb,
+      "Inclusion rate," + latestInputs.inclusionRate + "%",
+      "Marginal tax rate," + latestInputs.marginalTaxRate + "%",
+      "Primary residence exemption," + (latestInputs.primaryResidenceExemption ? "Yes" : "No"),
+      "",
+      "Output,Value",
+      "Capital gain/loss," + latestResult.gain,
+      "Taxable capital gain," + latestResult.taxableGain,
+      "Estimated tax owing," + latestResult.taxOwing,
+      "After-tax proceeds," + latestResult.afterTaxProceeds
+    ];
+    const blob = new Blob([rows.join("\n") + "\n"], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "thelongmath-capital-gains-tax-results.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+  }
+
+  function wireShareActions() {
+    const csvBtn = $("cg_export_csv_btn");
+    const shareBtn = $("cg_share_result_btn");
+    const pngBtn = $("cg_download_result_btn");
+    const copyBtn = $("cg_copy_result_link_btn");
+
+    if (csvBtn) {
+      csvBtn.addEventListener("click", function () {
+        exportCsv();
+        setShareStatus("CSV downloaded.", false);
+      });
+    }
+
+    if (!window.TLM || !window.TLM.shareCard) return;
+
+    if (shareBtn) {
+      shareBtn.addEventListener("click", async function () {
+        const payload = buildSharePayload();
+        if (!payload) return;
+        setShareStatus("Preparing image...", false);
+        try {
+          const res = await window.TLM.shareCard.shareResultCard(payload);
+          if (res && res.mode === "download-and-copy-fallback") {
+            setShareStatus(res.copied ? "PNG downloaded and link copied." : "PNG downloaded.", false);
+          } else {
+            setShareStatus("Share dialog opened.", false);
+          }
+        } catch (_err) {
+          setShareStatus("Share cancelled or unavailable.", true);
+        }
+      });
+    }
+
+    if (pngBtn) {
+      pngBtn.addEventListener("click", async function () {
+        const payload = buildSharePayload();
+        if (!payload) return;
+        setShareStatus("Generating PNG...", false);
+        try {
+          await window.TLM.shareCard.downloadResultCard(payload);
+          setShareStatus("PNG downloaded.", false);
+        } catch (_err) {
+          setShareStatus("Could not generate PNG.", true);
+        }
+      });
+    }
+
+    if (copyBtn) {
+      copyBtn.addEventListener("click", async function () {
+        try {
+          await window.TLM.shareCard.copyResultLink({ url: window.location.href, calculatorName: "capital-gains-tax-canada" });
+          setShareStatus("Result link copied.", false);
+        } catch (_err) {
+          setShareStatus("Could not copy link.", true);
+        }
+      });
+    }
   }
 
   function formatNumberInput(el) {
@@ -175,6 +296,7 @@
       }
     });
 
+    wireShareActions();
     update();
   }
 

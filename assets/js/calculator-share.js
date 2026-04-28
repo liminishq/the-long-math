@@ -36,6 +36,21 @@
     return lines.length;
   }
 
+  function drawRoundedRect(ctx, x, y, width, height, radius) {
+    var r = Math.max(0, Math.min(radius || 0, Math.min(width, height) / 2));
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + width - r, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+    ctx.lineTo(x + width, y + height - r);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+    ctx.lineTo(x + r, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
   function canvasToBlob(canvas) {
     if (typeof canvas.toBlob !== "function") {
       // Older Safari fallback.
@@ -139,6 +154,9 @@
     var bgTop = "#1f2a3d";
     var bgBottom = "#141c2b";
     var accent = "#d9b46a";
+    var accentBlue = "#4da3ff";
+    var accentBlueSoft = "rgba(77,163,255,0.24)";
+    var accentBluePanel = "rgba(77,163,255,0.11)";
     var text = "#eef2f7";
     var muted = "rgba(238,242,247,0.82)";
     var subtle = "rgba(238,242,247,0.62)";
@@ -147,6 +165,13 @@
     grad.addColorStop(0, bgTop);
     grad.addColorStop(1, bgBottom);
     ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+    // Add subtle blue energy in the background so cards look less flat in social feeds.
+    var glow = ctx.createRadialGradient(WIDTH * 0.5, 350, 40, WIDTH * 0.5, 350, 520);
+    glow.addColorStop(0, "rgba(77,163,255,0.24)");
+    glow.addColorStop(1, "rgba(77,163,255,0)");
+    ctx.fillStyle = glow;
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
     ctx.fillStyle = "rgba(217,180,106,0.12)";
@@ -167,9 +192,33 @@
     drawWrappedText(ctx, config.headline || "Estimated result", left, y, contentWidth, 62);
 
     y += 180;
+    // Highlight the main value with a blue panel + glow for stronger visual punch.
+    var mainValue = String(config.mainValue || "—");
+    ctx.font = "700 110px Arial, sans-serif";
+    var mvWidth = ctx.measureText(mainValue).width;
+    var badgeX = left - 20;
+    var badgeY = y - 112;
+    var badgeW = Math.min(contentWidth, mvWidth + 40);
+    var badgeH = 132;
+    ctx.shadowColor = "rgba(77,163,255,0.34)";
+    ctx.shadowBlur = 26;
+    ctx.fillStyle = accentBluePanel;
+    drawRoundedRect(ctx, badgeX, badgeY, badgeW, badgeH, 20);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = accentBlueSoft;
+    ctx.lineWidth = 2;
+    drawRoundedRect(ctx, badgeX, badgeY, badgeW, badgeH, 20);
+    ctx.stroke();
+
     ctx.fillStyle = text;
     ctx.font = "700 110px Arial, sans-serif";
-    ctx.fillText(config.mainValue || "—", left, y);
+    ctx.fillText(mainValue, left, y);
+
+    // Thin blue accent bar under the number panel.
+    ctx.fillStyle = accentBlue;
+    drawRoundedRect(ctx, badgeX, badgeY + badgeH + 10, Math.min(220, badgeW), 7, 4);
+    ctx.fill();
 
     y += 100;
     ctx.fillStyle = muted;

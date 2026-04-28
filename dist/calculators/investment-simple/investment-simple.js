@@ -194,7 +194,7 @@
   function recalc(){
     const P0 = clampNonNeg(toNumber(startingAmount.value));
     const ppy = Math.max(1, Math.round(toNumber(contribFreq.value)));
-    const PMT = clampNonNeg(toNumber(contribAmount.value));
+    const PMT = toNumber(contribAmount.value);
     const Y = clampNonNeg(toNumber(years.value));
     const rAnnual = effectiveAnnualReturn();
 
