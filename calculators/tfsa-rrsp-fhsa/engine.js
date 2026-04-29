@@ -42,6 +42,8 @@ export function computeMonthlyRate({ annualReturnPct, annualFeePct, inflationPct
  * strategyKey: one of:
  *   - "ALL_TFSA"
  *   - "ALL_RRSP"
+ *   - "TFSA_THEN_RRSP"
+ *   - "RRSP_THEN_TFSA"
  *   - "ALL_FHSA"
  *   - "FHSA_FIRST_THEN_TFSA"
  *   - "FHSA_FIRST_THEN_RRSP"
@@ -58,7 +60,10 @@ function runStrategy(baseInputs, strategyKey) {
     fhsaEligible,
     fhsaHomeQualified,
     fhsaAnnualRoom,
-    fhsaAnnualRoomStart
+    fhsaAnnualRoomStart,
+    tfsaRoomAvailable,
+    rrspRoomAvailable,
+    fhsaRoomAvailable
   } = baseInputs;
 
   const months = Math.max(1, Math.round(horizonYears * 12));
@@ -83,6 +88,18 @@ function runStrategy(baseInputs, strategyKey) {
   let B_rrsp = 0;
   let B_fhsa = 0;
   let B_refund = 0; // refund bucket for this strategy
+  let B_unallocated = 0; // contribution cash that could not fit into modeled registered room
+  const firstYearAllocation = { tfsa: 0, rrsp: 0, fhsa: 0, unallocated: 0 };
+
+  let tfsaRoomRemaining = Number.isFinite(tfsaRoomAvailable)
+    ? Math.max(0, Number(tfsaRoomAvailable))
+    : Number.POSITIVE_INFINITY;
+  let rrspRoomRemaining = Number.isFinite(rrspRoomAvailable)
+    ? Math.max(0, Number(rrspRoomAvailable))
+    : Number.POSITIVE_INFINITY;
+  let fhsaRoomRemaining = Number.isFinite(fhsaRoomAvailable)
+    ? Math.max(0, Number(fhsaRoomAvailable))
+    : Number.POSITIVE_INFINITY;
 
   // FHSA room per year (index 0..T-1). Values are in contribution dollars.
   const years = Math.ceil(horizonYears);
@@ -101,66 +118,85 @@ function runStrategy(baseInputs, strategyKey) {
 
     const yearIndex = Math.min(fhsaRoomByYear.length - 1, Math.floor(monthIndex / 12));
 
-    let g_tfsa = 0;
-    let g_rrsp = 0;
-    let g_fhsa = 0;
-
     const g = grossContribution;
+    let remaining = g;
+
+    function consumeTfsa(amount) {
+      if (amount <= 0) return 0;
+      const used = Math.min(amount, tfsaRoomRemaining);
+      tfsaRoomRemaining -= used;
+      B_tfsa += used;
+      if (monthIndex < 12) firstYearAllocation.tfsa += used;
+      return used;
+    }
+
+    function consumeRrsp(amount) {
+      if (amount <= 0) return 0;
+      const used = Math.min(amount, rrspRoomRemaining);
+      rrspRoomRemaining -= used;
+      B_rrsp += used;
+      if (monthIndex < 12) firstYearAllocation.rrsp += used;
+      const refund = used * tNow;
+      if (refundMode === "reinvest") {
+        B_refund += refund;
+      }
+      return used;
+    }
+
+    function consumeFhsa(amount) {
+      if (amount <= 0 || !fhsaEligible) return 0;
+      const annualRoomLeft = Math.max(0, fhsaRoomByYear[yearIndex] ?? 0);
+      const effectiveRoom = Math.min(annualRoomLeft, fhsaRoomRemaining);
+      const used = Math.min(amount, effectiveRoom);
+      if (used <= 0) return 0;
+      fhsaRoomByYear[yearIndex] = annualRoomLeft - used;
+      fhsaRoomRemaining -= used;
+      B_fhsa += used;
+      if (monthIndex < 12) firstYearAllocation.fhsa += used;
+      const refund = used * tNow;
+      if (refundMode === "reinvest") {
+        B_refund += refund;
+      }
+      return used;
+    }
 
     if (!fhsaEligible) {
-      // No FHSA paths; just ALL_TFSA or ALL_RRSP.
-      if (strategyKey === "ALL_RRSP") {
-        g_rrsp = g;
+      // No FHSA paths; apply chosen account first, then overflow to the other registered account.
+      if (strategyKey === "ALL_RRSP" || strategyKey === "RRSP_THEN_TFSA") {
+        remaining -= consumeRrsp(remaining);
+        remaining -= consumeTfsa(remaining);
       } else {
-        g_tfsa = g;
+        // ALL_TFSA / TFSA_THEN_RRSP
+        remaining -= consumeTfsa(remaining);
+        remaining -= consumeRrsp(remaining);
       }
     } else {
       // FHSA strategies
       if (strategyKey === "ALL_TFSA") {
-        g_tfsa = g;
+        remaining -= consumeTfsa(remaining);
+        remaining -= consumeRrsp(remaining);
       } else if (strategyKey === "ALL_RRSP") {
-        g_rrsp = g;
+        remaining -= consumeRrsp(remaining);
+        remaining -= consumeTfsa(remaining);
       } else {
         // Strategies that use FHSA first when eligible
-        let remaining = g;
-        let room = fhsaRoomByYear[yearIndex] ?? 0;
-
-        if (room > 0 && (strategyKey === "ALL_FHSA" || strategyKey === "FHSA_FIRST_THEN_TFSA" || strategyKey === "FHSA_FIRST_THEN_RRSP")) {
-          const useForFhsa = Math.min(remaining, room);
-          g_fhsa += useForFhsa;
-          remaining -= useForFhsa;
-          fhsaRoomByYear[yearIndex] = room - useForFhsa;
-        }
-
+        remaining -= consumeFhsa(remaining);
         if (remaining > 0) {
           if (strategyKey === "FHSA_FIRST_THEN_RRSP") {
-            g_rrsp += remaining;
+            remaining -= consumeRrsp(remaining);
+            remaining -= consumeTfsa(remaining);
           } else {
-            // ALL_FHSA spills remainder to TFSA in v1; FHSA_FIRST_THEN_TFSA does as well
-            g_tfsa += remaining;
+            // ALL_FHSA and FHSA_FIRST_THEN_TFSA spill to TFSA first, then RRSP.
+            remaining -= consumeTfsa(remaining);
+            remaining -= consumeRrsp(remaining);
           }
         }
       }
     }
 
-    // Apply deposits and refunds
-    if (g_tfsa > 0) {
-      B_tfsa += g_tfsa;
-    }
-    if (g_rrsp > 0) {
-      B_rrsp += g_rrsp;
-      const refund = g_rrsp * tNow;
-      if (refundMode === "reinvest") {
-        B_refund += refund;
-      }
-      // refundMode === "spend" → ignore
-    }
-    if (g_fhsa > 0) {
-      B_fhsa += g_fhsa;
-      const refund = g_fhsa * tNow;
-      if (refundMode === "reinvest") {
-        B_refund += refund;
-      }
+    if (remaining > 0) {
+      B_unallocated += remaining;
+      if (monthIndex < 12) firstYearAllocation.unallocated += remaining;
     }
   }
 
@@ -183,6 +219,7 @@ function runStrategy(baseInputs, strategyKey) {
       B_rrsp *= growthFactor;
       B_fhsa *= growthFactor;
       B_refund *= growthFactor;
+      B_unallocated *= growthFactor;
     }
   }
 
@@ -198,7 +235,7 @@ function runStrategy(baseInputs, strategyKey) {
     }
   }
 
-  const finalAfterTax = afterTaxTfsa + afterTaxRrsp + afterTaxFhsa + B_refund;
+  const finalAfterTax = afterTaxTfsa + afterTaxRrsp + afterTaxFhsa + B_refund + B_unallocated;
 
   // For allocationSummary, we care about how much FHSA room actually used per year 1.
   const fhsaUsedYear1 = fhsaEligible
@@ -211,10 +248,12 @@ function runStrategy(baseInputs, strategyKey) {
       tfsa: B_tfsa,
       rrspPretax: B_rrsp,
       fhsa: B_fhsa,
-      refund: B_refund
+      refund: B_refund,
+      unallocated: B_unallocated
     },
     meta: {
-      fhsaUsedYear1
+      fhsaUsedYear1,
+      firstYearAllocation
     }
   };
 }
@@ -238,6 +277,9 @@ function runStrategy(baseInputs, strategyKey) {
  *  - fhsaHomeQualified: boolean
  *  - fhsaAnnualRoom: number (default 8000)
  *  - fhsaAnnualRoomStart: number (optional; default fhsaAnnualRoom)
+ *  - tfsaRoomAvailable: number (optional; if omitted, treated as unbounded)
+ *  - rrspRoomAvailable: number (optional; if omitted, treated as unbounded)
+ *  - fhsaRoomAvailable: number (optional; if omitted, constrained only by annual FHSA room)
  */
 export function runAccountStrategySimulation(rawInputs) {
   if (!rawInputs || typeof rawInputs !== "object") {
@@ -259,7 +301,10 @@ export function runAccountStrategySimulation(rawInputs) {
     fhsaEligible = false,
     fhsaHomeQualified = false,
     fhsaAnnualRoom = 8000,
-    fhsaAnnualRoomStart
+    fhsaAnnualRoomStart,
+    tfsaRoomAvailable,
+    rrspRoomAvailable,
+    fhsaRoomAvailable
   } = rawInputs;
 
   // Basic validation / clamping
@@ -287,7 +332,10 @@ export function runAccountStrategySimulation(rawInputs) {
     fhsaEligible: !!fhsaEligible,
     fhsaHomeQualified: !!fhsaHomeQualified,
     fhsaAnnualRoom: Number(fhsaAnnualRoom) || 0,
-    fhsaAnnualRoomStart
+    fhsaAnnualRoomStart,
+    tfsaRoomAvailable: Number.isFinite(tfsaRoomAvailable) ? Number(tfsaRoomAvailable) : undefined,
+    rrspRoomAvailable: Number.isFinite(rrspRoomAvailable) ? Number(rrspRoomAvailable) : undefined,
+    fhsaRoomAvailable: Number.isFinite(fhsaRoomAvailable) ? Number(fhsaRoomAvailable) : undefined
   };
 
   // Strategies to simulate
@@ -295,6 +343,8 @@ export function runAccountStrategySimulation(rawInputs) {
 
   strategies.ALL_TFSA = runStrategy(baseInputs, "ALL_TFSA");
   strategies.ALL_RRSP = runStrategy(baseInputs, "ALL_RRSP");
+  strategies.TFSA_THEN_RRSP = runStrategy(baseInputs, "TFSA_THEN_RRSP");
+  strategies.RRSP_THEN_TFSA = runStrategy(baseInputs, "RRSP_THEN_TFSA");
 
   let optimalKey = "ALL_TFSA";
 
@@ -314,15 +364,20 @@ export function runAccountStrategySimulation(rawInputs) {
 
     strategies.OPTIMAL = {
       ...strategies[better],
+      optimalSourceKey: better,
       allocationSummary: buildAllocationSummary(baseInputs, strategies[better], better === keyRrsp ? "RRSP" : "TFSA")
     };
   } else {
-    // No FHSA available: optimal is TFSA vs RRSP only
-    const best = strategies.ALL_TFSA.finalAfterTax >= strategies.ALL_RRSP.finalAfterTax ? "ALL_TFSA" : "ALL_RRSP";
+    // No FHSA available: choose the better room-aware ordering.
+    const best =
+      strategies.RRSP_THEN_TFSA.finalAfterTax >= strategies.TFSA_THEN_RRSP.finalAfterTax
+        ? "RRSP_THEN_TFSA"
+        : "TFSA_THEN_RRSP";
     optimalKey = best;
     strategies.OPTIMAL = {
       ...strategies[best],
-      allocationSummary: buildAllocationSummary(baseInputs, strategies[best], best === "ALL_RRSP" ? "RRSP" : "TFSA")
+      optimalSourceKey: best,
+      allocationSummary: buildAllocationSummary(baseInputs, strategies[best], best === "RRSP_THEN_TFSA" ? "RRSP" : "TFSA")
     };
   }
 
@@ -378,6 +433,7 @@ function buildAllocationSummary(baseInputs, strategyResult, remainderDestination
         : (Number(contributionAmount) || 0); // lump treated as one-time "annual" for summary text
 
   let fhsaUsedAnnual = 0;
+  const firstYearAlloc = strategyResult?.meta?.firstYearAllocation || {};
   if (fhsaEligible && strategyResult && strategyResult.meta && Number.isFinite(strategyResult.meta.fhsaUsedYear1)) {
     fhsaUsedAnnual = strategyResult.meta.fhsaUsedYear1;
   }
@@ -404,7 +460,13 @@ function buildAllocationSummary(baseInputs, strategyResult, remainderDestination
     fhsaUsedAnnual: cappedFhsaUsed,
     remainderAnnual,
     remainderDestination,
-    noteText
+    noteText,
+    firstYearAllocation: {
+      tfsa: Number(firstYearAlloc.tfsa) || 0,
+      rrsp: Number(firstYearAlloc.rrsp) || 0,
+      fhsa: Number(firstYearAlloc.fhsa) || 0,
+      unallocated: Number(firstYearAlloc.unallocated) || 0
+    }
   };
 }
 

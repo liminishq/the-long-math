@@ -254,8 +254,9 @@
         <li>All simulations use monthly time steps with deterministic compounding and fixed contribution schedules.</li>
         <li>Investment returns, fees, and (optionally) inflation are modeled as constant over the full horizon.</li>
         <li>RRSP and FHSA refunds are either treated as immediately spent (default) or reinvested in a TFSA-like bucket; actual tax timing and withholding are more complex in practice.</li>
-        <li>Tax rates t<sub>now</sub> and t<sub>ret</sub> are user-supplied and held constant; the calculator does not derive marginal rates from taxable income.</li>
-        <li>FHSA modeling uses only the annual room you specify; lifetime FHSA contribution caps, carry-forward mechanics, and detailed withdrawal conditions are not modeled.</li>
+        <li>Tax rates t<sub>now</sub> and t<sub>ret</sub> are held constant over the horizon. t<sub>now</sub> can be user-entered or estimated from employment income + province using the Canada income tax engine.</li>
+        <li>TFSA/RRSP/FHSA available room inputs cap modeled registered allocations. Amounts that exceed modeled room are tracked as unallocated cash in this version.</li>
+        <li>FHSA modeling uses annual room and optional current available room. Lifetime FHSA contribution caps, full carry-forward mechanics, and detailed withdrawal conditions are not modeled.</li>
         <li>Non-registered (taxable) accounts are not included in this version; it is an account-to-account comparison between registered options.</li>
         <li>All results are rounded for display; internal calculations use full floating-point precision.</li>
       </ol>

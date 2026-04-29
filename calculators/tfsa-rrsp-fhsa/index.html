@@ -72,6 +72,38 @@
       font-weight: 800;
       font-size: 20px;
     }
+    .allocation-steps {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .allocation-step {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .allocation-step.primary {
+      border-color: var(--accent);
+      background: var(--accentSoft);
+    }
+    .allocation-step .step-k {
+      margin: 0 0 4px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .allocation-step .step-v {
+      margin: 0 0 4px;
+      font-size: 18px;
+      font-weight: 800;
+    }
+    .allocation-step .step-note {
+      margin: 0;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
     .ranking-list {
       list-style: none;
       padding-left: 16px;
@@ -107,6 +139,104 @@
       font-size: 12px;
       color: var(--muted);
       margin-top: 4px;
+      line-height: 1.45;
+    }
+    .panel .field {
+      margin-bottom: 12px;
+    }
+    .panel .field > label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .panel .field > input:not([type="checkbox"]),
+    .panel .field > select {
+      width: 100%;
+    }
+    .panel .field.checkbox {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .panel .field.checkbox > label {
+      display: inline-block;
+      margin-bottom: 0;
+      font-weight: 500;
+      text-align: left;
+      flex: 1 1 auto;
+    }
+    .panel .field.checkbox > input[type="checkbox"] {
+      margin: 2px 0 0;
+      flex: 0 0 auto;
+    }
+    .panel .sep {
+      margin: 14px 0;
+    }
+    .panel .inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: nowrap;
+    }
+    .panel .inline input,
+    .panel .inline select {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .panel .inline .unit {
+      flex: 0 0 auto;
+      white-space: nowrap;
+      line-height: 1;
+      margin: 0;
+    }
+    @media (max-width: 980px) {
+      .account-grid {
+        gap: 12px;
+      }
+      .panel {
+        padding: 12px;
+      }
+      .panel .sep {
+        margin: 12px 0;
+      }
+    }
+    @media (max-width: 640px) {
+      .card {
+        padding: 10px;
+      }
+      .panel {
+        padding: 10px;
+      }
+      .panel .field {
+        margin-bottom: 10px;
+      }
+      .panel .field > label {
+        margin-bottom: 5px;
+        font-size: 13px;
+      }
+      .help-inline {
+        font-size: 11px;
+        margin-top: 3px;
+      }
+      .panel .inline {
+        gap: 6px;
+      }
+      .panel .inline .unit {
+        font-size: 12px;
+      }
+      .panel .field.checkbox {
+        margin-bottom: 6px;
+      }
+      .panel .field.checkbox > label {
+        font-size: 13px;
+        line-height: 1.35;
+      }
+      .inspect-arithmetic-btn {
+        padding: 6px 10px;
+        font-size: 11px;
+      }
     }
     .note-block {
       margin-top: 10px;
@@ -114,6 +244,11 @@
       border-radius: 10px;
       border: 1px solid var(--border);
       background: var(--surface2);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .updated-tag {
+      margin-top: 6px;
       font-size: 12px;
       color: var(--muted);
     }
@@ -142,6 +277,7 @@
       <p class="tagline" style="margin-top: 8px; font-size: 13px; color: var(--muted);">
         <em>No opinions. No hidden assumptions. Just arithmetic.</em>
       </p>
+      <p class="updated-tag">Updated April 2026</p>
     </header>
 
     <div class="card">
@@ -170,6 +306,29 @@
             <input id="contributionAmount" type="number" inputmode="decimal" min="0" step="50" value="1000" />
             <p class="help-inline">
               This is the cash you have available to allocate to these accounts under your current marginal tax rate.
+            </p>
+          </div>
+
+          <hr class="sep" />
+
+          <h2 class="section-title">Available contribution room (optional)</h2>
+
+          <div class="field">
+            <label for="tfsaRoomAvailable">TFSA contribution room available</label>
+            <div class="inline">
+              <input id="tfsaRoomAvailable" type="number" inputmode="decimal" min="0" step="100" placeholder="Leave blank to ignore cap" />
+              <span class="unit">$</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="rrspRoomAvailable">RRSP contribution room available</label>
+            <div class="inline">
+              <input id="rrspRoomAvailable" type="number" inputmode="decimal" min="0" step="100" placeholder="Leave blank to ignore cap" />
+              <span class="unit">$</span>
+            </div>
+            <p class="help-inline">
+              RRSP room is generally prior carry-forward room plus new room from earned income (typically 18%), up to the annual maximum (for example, $32,490 for 2025).
             </p>
           </div>
 
@@ -225,6 +384,50 @@
             </div>
           </div>
 
+          <div class="field checkbox">
+            <input id="useTaxEngineRate" type="checkbox" />
+            <label for="useTaxEngineRate">Estimate current marginal tax rate from taxable income + province</label>
+          </div>
+
+          <div id="taxEngineInputs" class="hidden">
+            <div class="field">
+              <label for="taxYearNow">Tax year for estimate</label>
+              <select id="taxYearNow">
+                <option value="2025" selected>2025</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="provinceNow">Province/territory</label>
+              <select id="provinceNow">
+                <option value="AB">Alberta</option>
+                <option value="BC">British Columbia</option>
+                <option value="MB">Manitoba</option>
+                <option value="NB">New Brunswick</option>
+                <option value="NL">Newfoundland and Labrador</option>
+                <option value="NS">Nova Scotia</option>
+                <option value="NT">Northwest Territories</option>
+                <option value="NU">Nunavut</option>
+                <option value="ON" selected>Ontario</option>
+                <option value="PE">Prince Edward Island</option>
+                <option value="QC">Quebec</option>
+                <option value="SK">Saskatchewan</option>
+                <option value="YT">Yukon</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="taxableIncomeNow">Current taxable income (for marginal rate estimate)</label>
+              <div class="inline">
+                <input id="taxableIncomeNow" type="number" inputmode="decimal" min="0" step="1000" value="120000" />
+                <span class="unit">$</span>
+              </div>
+            </div>
+            <p id="taxEngineRateHint" class="help-inline">
+              This estimate uses the Canada Personal Income Tax calculator engine (employment income only profile).
+            </p>
+          </div>
+
           <div class="field">
             <label for="tRet">Retirement marginal tax rate (t_ret)</label>
             <div class="inline">
@@ -241,11 +444,8 @@
 
           <div class="field checkbox">
             <input id="refundReinvest" type="checkbox" />
-            <label for="refundReinvest">Reinvest RRSP/FHSA refunds (assume TFSA-like)</label>
+            <label for="refundReinvest">Reinvest RRSP/FHSA refunds into TFSA (up to modeled TFSA room)</label>
           </div>
-          <p id="refundModeLabel" class="help-inline">
-            Spend refund immediately (default). Toggle to see a reinvested-refund scenario.
-          </p>
 
           <hr class="sep" />
 
@@ -257,6 +457,14 @@
           </div>
 
           <div id="fhsaFields" class="hidden">
+            <div class="field">
+              <label for="fhsaRoomAvailable">FHSA contribution room available now</label>
+              <div class="inline">
+                <input id="fhsaRoomAvailable" type="number" inputmode="decimal" min="0" step="100" placeholder="Leave blank to use annual room only" />
+                <span class="unit">$</span>
+              </div>
+            </div>
+
             <div class="field checkbox">
               <input id="fhsaHomeQualified" type="checkbox" />
               <label for="fhsaHomeQualified">Plan to buy a first home using FHSA (tax-free withdrawal)</label>
@@ -286,33 +494,55 @@
         <section class="panel">
           <h2 class="section-title">Results</h2>
 
-          <div class="winner-block">
-            <h2>Top strategy (after tax)</h2>
-            <div class="winner-name" id="winnerName">—</div>
-            <div class="winner-value" id="winnerValue">$—</div>
+          <div class="allocation-steps">
+            <div class="allocation-step primary">
+              <p class="step-k" id="step1Label">Step 1</p>
+              <p class="step-v" id="step1Value">$—</p>
+              <p class="step-note" id="step1Note">—</p>
+            </div>
+            <div class="allocation-step">
+              <p class="step-k" id="step2Label">Step 2</p>
+              <p class="step-v" id="step2Value">$—</p>
+              <p class="step-note" id="step2Note">—</p>
+            </div>
+            <div class="allocation-step">
+              <p class="step-k" id="step3Label">Step 3</p>
+              <p class="step-v" id="step3Value">$—</p>
+              <p class="step-note" id="step3Note">—</p>
+            </div>
+            <div class="allocation-step">
+              <p class="step-k" id="step4Label">Step 4</p>
+              <p class="step-v" id="step4Value">$—</p>
+              <p class="step-note" id="step4Note">—</p>
+            </div>
           </div>
 
+          <h3 style="margin: 12px 0 6px; font-size: 13px;">Projected ending totals by account</h3>
           <div class="result-tiles">
             <div class="result-tile">
-              <p class="k">All contributions to TFSA</p>
-              <p class="v" id="tfsaValue">$—</p>
+              <p class="k">TFSA ending total</p>
+              <p class="v" id="endingTfsa">$—</p>
             </div>
             <div class="result-tile">
-              <p class="k">All contributions to RRSP</p>
-              <p class="v" id="rrspValue">$—</p>
-              <p class="help-inline">RRSP withdrawals taxed at t_ret; RRSP/FHSA refunds handled using the toggle above.</p>
+              <p class="k">RRSP ending total (after tax at t_ret)</p>
+              <p class="v" id="endingRrsp">$—</p>
             </div>
-            <div class="result-tile hidden" id="fhsaTile">
-              <p class="k">FHSA first (overflow TFSA)</p>
-              <p class="v" id="fhsaValue">$—</p>
+            <div class="result-tile">
+              <p class="k">FHSA ending total</p>
+              <p class="v" id="endingFhsa">$—</p>
             </div>
-            <div class="result-tile primary hidden" id="optimalTile">
-              <p class="k">Optimal (FHSA first, then TFSA/RRSP)</p>
-              <p class="v" id="optimalValue">$—</p>
+            <div class="result-tile">
+              <p class="k">Non-registered ending total (residual funds)</p>
+              <p class="v" id="endingNonRegistered">$—</p>
             </div>
           </div>
 
-          <h3 style="margin: 12px 0 6px; font-size: 13px;">Ranking (after-tax future value)</h3>
+          <div class="winner-block" style="margin-top: 4px;">
+            <h2>Total projected ending value (all accounts)</h2>
+            <div class="winner-value" id="endingTotalAllAccounts">$—</div>
+          </div>
+
+          <h3 style="margin: 12px 0 6px; font-size: 13px;">Scenario comparison (after-tax future value)</h3>
           <ul id="rankingList" class="ranking-list">
           </ul>
 
@@ -323,6 +553,8 @@
             FHSA eligibility and annual room determine how much can be allocated to FHSA before spilling to TFSA or RRSP.
           </p>
           <p id="allocationNote" class="help-inline"></p>
+          <ul id="allocationBreakdownList" class="ranking-list" style="margin-top: 8px;"></ul>
+          <p id="allocationLeftoverNote" class="help-inline"></p>
 
           <p id="refundHint" class="help-inline" style="margin-top: 8px;"></p>
 
@@ -333,8 +565,9 @@
             <ul>
               <li><span class="muted">Refund default:</span> RRSP/FHSA refund is modeled as spent unless you toggle reinvestment.</li>
               <li><span class="muted">Returns:</span> same net return and fee structure for all accounts; no asset-location modeling.</li>
-              <li><span class="muted">Tax rates:</span> t_now and t_ret are constant over the horizon.</li>
-              <li><span class="muted">FHSA:</span> only annual room is modeled in this version; lifetime FHSA caps and contribution carry-forward are not modeled.</li>
+              <li><span class="muted">Tax rates:</span> t_now can be entered manually or estimated from income/province; t_ret is user-entered and constant over the horizon.</li>
+              <li><span class="muted">Room constraints:</span> TFSA/RRSP/FHSA available room inputs cap registered allocations in this model.</li>
+              <li><span class="muted">FHSA:</span> annual room and current available room are modeled; lifetime FHSA caps and full carry-forward mechanics are not modeled.</li>
               <li><span class="muted">Non-registered:</span> taxable accounts are not modeled; this is a registered-account comparison only.</li>
             </ul>
           </div>
