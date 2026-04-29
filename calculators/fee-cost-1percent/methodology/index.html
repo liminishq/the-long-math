@@ -27,7 +27,7 @@
   <div class="wrap">
     <div class="methodology-content">
       <h1>Inspect the Arithmetic — Cost of a 1% Annual Fee</h1>
-      <p class="methodology-meta">Version 1.0<br>Last updated: March 2026</p>
+      <p class="methodology-meta">Version 2.0<br>Last updated: April 2026</p>
 
       <p>
         Transparent arithmetic is the operating system of this calculator.
@@ -41,90 +41,56 @@
 
       <h2>Purpose</h2>
       <p>
-        This calculator compares the ending value of an investment with no annual fee versus the ending value with a 1% annual fee, under a simple
-        “net = gross − fee” return model with annual compounding and optional end-of-year contributions. It reports the dollar gap and the
-        percentage reduction in ending value caused by the fee.
+        This calculator compares the ending value with no fee versus the ending value with a 1% annual AUM-style fee, using the same
+        standardized-period simulation engine as the 0.5% page, the advisor fee calculator, and other fee-impact tools. It does <strong>not</strong> use
+        the rough shortcut “net return = gross return − fee.” Fees are modeled as recurring deductions from the portfolio balance.
       </p>
 
       <h2>Definitions</h2>
       <p>Let:</p>
       <ul>
         <li>P = starting balance (initial principal, CAD)</li>
-        <li>c = annual contribution (CAD), applied at the end of each year</li>
+        <li>C<sub>annual</sub> = annual contribution entered on the page (CAD)</li>
+        <li>C<sub>month</sub> = C<sub>annual</sub> / 12, deposited at the start of each standardized month (12 periods per year)</li>
         <li>t = investment horizon in years</li>
-        <li>r<sub>gross</sub> = gross annual return (decimal)</li>
-        <li>f = annual fee rate (decimal)</li>
-        <li>r<sub>net</sub> = net annual return after fee (decimal)</li>
-        <li>FV<sub>no_fee</sub> = ending value with no fee</li>
-        <li>FV<sub>with_fee</sub> = ending value with fee</li>
-        <li>ΔFV = dollar difference = FV<sub>no_fee</sub> − FV<sub>with_fee</sub></li>
-        <li>PctReduction = ΔFV / FV<sub>no_fee</sub> (reported as a percentage)</li>
+        <li>r = gross annual return (decimal), before fees</li>
+        <li>f = 0.01 for the default 1% annual fee (decimal)</li>
+        <li>Simulation uses standardized periods only (no calendar dates): monthly = 12 periods per year.</li>
       </ul>
 
-      <h2>Core Equations</h2>
-
-      <h3 id="fv-annual">1. Future Value with Annual Compounding</h3>
+      <h2>Model (summary)</h2>
       <p>
-        Both paths (with and without fee) use the same closed-form future value formula with annual compounding and contributions at the end of each
-        year:
-      </p>
-      <div class="formula-block">
-        FV(P, r, t, c) = P(1 + r)<sup>t</sup> + c · \frac{(1 + r)<sup>t</sup> − 1}{r}, &nbsp; if r ≠ 0<br>
-        FV(P, 0, t, c) = P + c · t, &nbsp; if r = 0
-      </div>
-
-      <h3 id="no-fee">2. Ending Value with No Fee</h3>
-      <p>
-        With no fee, the calculator uses the gross return r<sub>gross</sub> directly:
-      </p>
-      <div class="formula-block">
-        FV<sub>no_fee</sub> = FV(P, r<sub>gross</sub>, t, c)
-      </div>
-
-      <h3 id="with-fee">3. Ending Value with a 1% Annual Fee</h3>
-      <p>
-        Under the simplified “net = gross − fee” model, a 1% annual fee is treated as a constant subtraction from the annual return:
-      </p>
-      <div class="formula-block">
-        f = 0.01<br>
-        r<sub>net</sub> = r<sub>gross</sub> − f<br>
-        FV<sub>with_fee</sub> = FV(P, r<sub>net</sub>, t, c)
-      </div>
-      <p class="formula-meta">
-        This simplified model treats the fee as a constant reduction in annual return rather than modeling the fee as a proportional deduction from
-        assets each year.
+        Each standardized month: apply start-of-month contribution (if any), apply gross growth
+        (1 + r)<sup>1/12</sup> − 1 on the balance, then deduct the fee as f/12 × balance after growth.
+        The no-fee path uses the same contribution and growth steps with no fee deduction.
       </p>
 
-      <h3 id="difference">4. Dollar Difference and Percent Reduction</h3>
-      <p>
-        The calculator reports the fee impact in dollars and as a percentage of the no-fee ending value:
-      </p>
+      <h2>Outputs</h2>
       <div class="formula-block">
-        ΔFV = FV<sub>no_fee</sub> − FV<sub>with_fee</sub><br>
-        PctReduction = \frac{ΔFV}{FV<sub>no_fee</sub>}
+        ΔFV = Ending<sub>no fee</sub> − Ending<sub>with fee</sub><br>
+        PctReduction = ΔFV / Ending<sub>no fee</sub>
       </div>
 
       <h2>Implementation Notes</h2>
       <ul>
         <li>
-          The core arithmetic is implemented in <code>TLM_FeeMath.fvAnnual</code> and
-          <code>TLM_FeeMath.endingValueWithFee()</code> inside <code>/assets/js/fee-math.js</code>, and is wired to the page by
+          Engine: <code>simulatePortfolioScenario()</code> in <code>/assets/js/engines/portfolioSimulationEngine.js</code>, invoked from
           <code>initFeeCostPage()</code> in <code>/assets/js/fee-ui.js</code>.
         </li>
         <li>
-          Inputs are parsed from the fields <code>P</code>, <code>years</code>, <code>rGrossPct</code>, <code>feePct</code>, and
-          <code>contrib</code>. The fee cost pages fix <code>feePct</code> at 1.0% or 0.5% by default but allow user edits; the underlying math is
-          identical.
+          <strong>Updated calculation method:</strong> older versions used a closed-form annual formula; results may differ slightly from those versions.
         </li>
         <li>
-          All calculations use JavaScript’s standard floating-point arithmetic. Display formatting (rounding to whole dollars and formatted
-          percentages) occurs only in the UI layer.
+          Inputs: <code>P</code>, <code>years</code>, <code>rGrossPct</code>, <code>feePct</code>, <code>contrib</code>. Default <code>feePct</code> is 1.0% on this page and 0.5% on the sister page; math is otherwise identical.
+        </li>
+        <li>
+          Display rounding uses whole dollars for ending values; internal calculations use full floating-point precision.
         </li>
       </ul>
 
       <p style="margin-top: 2em; font-weight: 600;">
-        If any discrepancy is identified between this documentation and the live calculator engine, the engine’s arithmetic
-        (<code>TLM_FeeMath</code> + <code>initFeeCostPage()</code>) is the source of truth. This page will be updated to match the engine.
+        If any discrepancy is identified between this documentation and the live calculator output, the implementation in
+        <code>portfolioSimulationEngine.js</code> and <code>fee-ui.js</code> is the source of truth.
       </p>
     </div>
 

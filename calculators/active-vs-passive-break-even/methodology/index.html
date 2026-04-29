@@ -27,7 +27,7 @@
   <div class="wrap">
     <div class="methodology-content">
       <h1>Inspect the Arithmetic — Active vs Passive Break-Even</h1>
-      <p class="methodology-meta">Version 1.0<br>Last updated: March 2026</p>
+      <p class="methodology-meta">Version 2.0<br>Last updated: April 2026</p>
 
       <p>
         Transparent arithmetic is the operating system of this calculator.
@@ -41,104 +41,44 @@
 
       <h2>Purpose</h2>
       <p>
-        This calculator compares an active strategy to a passive strategy under a simple “net = gross − fee” model. It reports:
+        This calculator compares passive and active paths using the shared standardized-period simulation engine (monthly steps; fees as AUM deductions).
+        It reports:
       </p>
       <ul>
-        <li>the break-even excess return (alpha) implied by the fee difference between active and passive,</li>
-        <li>the break-even active gross return that would exactly match passive net performance, and</li>
-        <li>ending portfolio values for both strategies under the user’s assumed active portfolio return and at the break-even return.</li>
+        <li>the break-even <strong>active gross</strong> return such that the active path (with active fee) ends at the same value as the passive path (with passive fee), solved numerically;</li>
+        <li>the implied excess return α<sub>break</sub> = r<sub>active,break</sub> − r<sub>passive</sub> (not the shortcut “fee<sub>active</sub> − fee<sub>passive</sub>” unless they coincide numerically);</li>
+        <li>ending values for passive and active under the user’s assumed active gross return, and the active ending value at the break-even gross return.</li>
       </ul>
 
       <h2>Definitions</h2>
       <p>Let:</p>
       <ul>
-        <li>P = starting balance (initial principal, CAD)</li>
-        <li>c = annual contribution (CAD), applied at the end of each year</li>
-        <li>t = investment horizon in years</li>
-        <li>r<sub>passive</sub> = passive portfolio return before fees (decimal)</li>
-        <li>r<sub>active</sub> = assumed active portfolio return before fees (decimal)</li>
-        <li>f<sub>passive</sub> = passive annual fee rate (decimal)</li>
-        <li>f<sub>active</sub> = active annual fee rate (decimal)</li>
-        <li>α<sub>break</sub> = break-even excess return required by active over passive</li>
-        <li>r<sub>active,break</sub> = break-even active gross return</li>
-        <li>r<sub>passive,net</sub> = r<sub>passive</sub> − f<sub>passive</sub></li>
-        <li>r<sub>active,net</sub> = r<sub>active</sub> − f<sub>active</sub></li>
-        <li>r<sub>active,net,break</sub> = r<sub>active,break</sub> − f<sub>active</sub></li>
-        <li>FV(P, r, t, c) = future value with annual compounding and end-of-year contributions</li>
+        <li>P = starting balance (CAD)</li>
+        <li>C<sub>annual</sub> = annual contribution entered on the page; split into 12 monthly flows at standardized month start</li>
+        <li>t = horizon in years</li>
+        <li>r<sub>passive</sub>, r<sub>active</sub> = gross returns before fees</li>
+        <li>f<sub>passive</sub>, f<sub>active</sub> = annual fee rates; applied monthly as AUM deductions after growth within each month</li>
       </ul>
 
-      <h2>Core Equations</h2>
-
-      <h3 id="fv-annual">1. Future Value with Annual Compounding</h3>
+      <h2>Numerical break-even</h2>
       <p>
-        As with the other fee tools, ending values are computed via:
+        Let Ending<sub>passive</sub> be the passive simulation at (r<sub>passive</sub>, f<sub>passive</sub>). The break-even active gross return r<sub>active,break</sub> solves
+        Ending(r<sub>active,break</sub>, f<sub>active</sub>) = Ending<sub>passive</sub> via binary search (<code>solveAnnualReturnForEndingValue</code>).
       </p>
-      <div class="formula-block">
-        FV(P, r, t, c) = P(1 + r)<sup>t</sup> + c · \frac{(1 + r)<sup>t</sup> − 1}{r}, &nbsp; if r ≠ 0<br>
-        FV(P, 0, t, c) = P + c · t, &nbsp; if r = 0
-      </div>
-
-      <h3 id="breakeven-alpha">2. Break-Even Alpha from Fee Difference</h3>
-      <p>
-        Break-even is defined as the point where passive and active net returns are equal:
-      </p>
-      <div class="formula-block">
-        r<sub>passive</sub> − f<sub>passive</sub> = r<sub>active,break</sub> − f<sub>active</sub>
-      </div>
-      <p>
-        Rearranging for the break-even active gross return and identifying the implied excess return:
-      </p>
-      <div class="formula-block">
-        r<sub>active,break</sub> = r<sub>passive</sub> + (f<sub>active</sub> − f<sub>passive</sub>)<br>
-        α<sub>break</sub> = f<sub>active</sub> − f<sub>passive</sub>
-      </div>
-      <p>
-        The calculator displays α<sub>break</sub> as “Break-even alpha (fee diff)” and r<sub>active,break</sub> as “Break-even active gross return”.
-      </p>
-
-      <h3 id="net-returns">3. Net Returns Used for Ending Values</h3>
-      <p>The net annual returns used in the future value calculations are:</p>
-      <div class="formula-block">
-        r<sub>passive,net</sub> = r<sub>passive</sub> − f<sub>passive</sub><br>
-        r<sub>active,net</sub> = r<sub>active</sub> − f<sub>active</sub><br>
-        r<sub>active,net,break</sub> = r<sub>active,break</sub> − f<sub>active</sub>
-      </div>
-
-      <h3 id="ending-values">4. Ending Values and Differences</h3>
-      <p>
-        Using the net returns and contributions, the calculator computes three ending values:
-      </p>
-      <div class="formula-block">
-        FV<sub>passive</sub> = FV(P, r<sub>passive,net</sub>, t, c)<br>
-        FV<sub>active,assumed</sub> = FV(P, r<sub>active,net</sub>, t, c)<br>
-        FV<sub>active,break</sub> = FV(P, r<sub>active,net,break</sub>, t, c)
-      </div>
-      <p>
-        The difference between active and passive under the assumed active return is:
-      </p>
-      <div class="formula-block">
-        ΔFV = FV<sub>active,assumed</sub> − FV<sub>passive</sub>
-      </div>
 
       <h2>Implementation Notes</h2>
       <ul>
         <li>
-          All future values are computed via <code>TLM_FeeMath.endingValueWithFee()</code> in <code>/assets/js/fee-math.js</code>, using the
-          specified gross return and fee pair for each path.
+          Engine: <code>/assets/js/engines/portfolioSimulationEngine.js</code>; UI: <code>initActiveVsPassivePage()</code> in <code>/assets/js/fee-ui.js</code>.
         </li>
         <li>
-          The page-specific logic in <code>initActiveVsPassivePage()</code> inside <code>/assets/js/fee-ui.js</code> computes
-          α<sub>break</sub>, r<sub>active,break</sub>, and the three ending values, then formats them for display.
-        </li>
-        <li>
-          The equality of net returns at break-even means that, under this model and horizon, FV<sub>passive</sub> and
-          FV<sub>active,break</sub> are equal up to floating-point and rounding noise.
+          <strong>Updated calculation method:</strong> older versions used “net = gross − fee” closed-form FV; results may differ slightly.
         </li>
       </ul>
 
       <p style="margin-top: 2em; font-weight: 600;">
-        If any discrepancy is identified between this documentation and the live calculator engine, the engine’s arithmetic
-        (<code>TLM_FeeMath</code> + <code>initActiveVsPassivePage()</code>) is the source of truth. This page will be updated to match the engine.
+        If any discrepancy is identified between this documentation and the live calculator output, <code>portfolioSimulationEngine.js</code> and
+        <code>fee-ui.js</code> are the source of truth.
       </p>
     </div>
 

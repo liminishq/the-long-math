@@ -29,7 +29,7 @@
   }
   </script>
 
-  <script defer src="/assets/js/fee-math.js"></script>
+  <script defer src="/assets/js/engines/portfolioSimulationEngine.js"></script>
   <script defer src="/assets/js/fee-ui.js"></script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
@@ -115,8 +115,7 @@
       </div>
 
       <div class="math">
-        Formula: FV = P·(1+r)<sup>t</sup> + c·((1+r)<sup>t</sup> − 1)/r  
-        (computed once with r = gross return, once with r = gross − fee)
+        Model: standardized monthly steps; gross growth (1+r)<sup>1/12</sup> per month; 1% annual fee applied as a monthly AUM deduction (fee/12 × balance after growth). Annual contribution is split into 12 equal monthly amounts at month start. See Inspect the Arithmetic.
       </div>
     </div>
 

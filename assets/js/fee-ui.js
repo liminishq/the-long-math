@@ -1,5 +1,5 @@
 // fee-ui.js
-// UI glue for fee calculators. Reads inputs, calls fee-math, writes outputs.
+// UI glue for fee calculators. Uses TLM_PortfolioSimulation (shared engine).
 
 (function () {
   "use strict";
@@ -30,11 +30,11 @@
     return Math.round(n).toLocaleString("en-CA", {
       style: "currency",
       currency: "CAD",
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     });
   }
 
-  function fmtPctDec(nDec, digits = 2) {
+  function fmtPctDec(nDec, digits) {
     if (!Number.isFinite(nDec)) return "—";
     return (nDec * 100).toFixed(digits) + "%";
   }
@@ -44,12 +44,40 @@
     if (el) el.textContent = txt;
   }
 
+  /**
+   * Standardized-period scenario: annual contribution field is split into
+   * 12 equal monthly amounts, start of month; AUM fee monthly, end of month.
+   */
+  function makeFeeScenario({ principal, years, grossDec, feeAnnualDec, annualContrib }) {
+    const monthly = annualContrib / 12;
+    const fees = [];
+    if (feeAnnualDec > 0) {
+      fees.push({
+        type: "aumFlat",
+        annualRate: feeAnnualDec,
+        frequency: "monthly",
+        timing: "end",
+      });
+    }
+    return {
+      initialBalance: principal,
+      years,
+      annualGrossReturn: grossDec,
+      contribution:
+        monthly > 0
+          ? { amount: monthly, frequency: "monthly", timing: "start" }
+          : undefined,
+      fees,
+    };
+  }
+
   // -----------------------------
-  // Tool: Fee Cost pages
+  // Fee Cost pages (0.5%, 1%, etc.)
   // -----------------------------
   function initFeeCostPage() {
-    if (!window.TLM_FeeMath) {
-      console.error("TLM_FeeMath not available");
+    const PS = window.TLM_PortfolioSimulation;
+    if (!PS) {
+      console.error("TLM_PortfolioSimulation not available");
       return;
     }
 
@@ -60,8 +88,13 @@
       const fee = pctToDec(numFromInput("feePct"));
       const contrib = numFromInput("contrib");
 
-      const noFee = window.TLM_FeeMath.endingValueWithFee({ P, gross: rGross, fee: 0, years, contrib });
-      const withFee = window.TLM_FeeMath.endingValueWithFee({ P, gross: rGross, fee, years, contrib });
+      const noFee = PS.simulatePortfolioScenario(
+        makeFeeScenario({ principal: P, years, grossDec: rGross, feeAnnualDec: 0, annualContrib: contrib })
+      ).endingBalance;
+
+      const withFee = PS.simulatePortfolioScenario(
+        makeFeeScenario({ principal: P, years, grossDec: rGross, feeAnnualDec: fee, annualContrib: contrib })
+      ).endingBalance;
 
       if (!Number.isFinite(noFee) || !Number.isFinite(withFee)) {
         setText("outNoFee", "—");
@@ -88,11 +121,12 @@
   }
 
   // -----------------------------
-  // Tool: Required return to offset fee
+  // Legacy required-alpha tool (if used on a page)
   // -----------------------------
   function initRequiredReturnPage() {
-    if (!window.TLM_FeeMath) {
-      console.error("TLM_FeeMath not available");
+    const PS = window.TLM_PortfolioSimulation;
+    if (!PS) {
+      console.error("TLM_PortfolioSimulation not available");
       return;
     }
 
@@ -103,24 +137,71 @@
       const fee = pctToDec(numFromInput("feePct"));
       const contrib = numFromInput("contrib");
 
-      // Under this model, alphaRequired == fee (exactly).
-      const alphaRequired = window.TLM_FeeMath.requiredAlphaToOffsetFeeSimple({ fee });
-      const grossRequired = rGross + alphaRequired;
-
-      const endNoFee = window.TLM_FeeMath.endingValueWithFee({ P, gross: rGross, fee: 0, years, contrib });
-      const endWithFee = window.TLM_FeeMath.endingValueWithFee({ P, gross: rGross, fee, years, contrib });
-      const endDiff = endNoFee - endWithFee;
-
-      // Extra annual contribution needed to offset the fee (keeping same gross return)
-      const extraContrib = window.TLM_FeeMath.extraAnnualContributionToOffsetFee({
-        P,
+      const noFeeSc = makeFeeScenario({
+        principal: P,
         years,
-        rGross,
-        fee,
-        contrib
+        grossDec: rGross,
+        feeAnnualDec: 0,
+        annualContrib: contrib,
+      });
+      const withFeeSc = makeFeeScenario({
+        principal: P,
+        years,
+        grossDec: rGross,
+        feeAnnualDec: fee,
+        annualContrib: contrib,
       });
 
-      if (![endNoFee, endWithFee, endDiff, alphaRequired, grossRequired, extraContrib].every(Number.isFinite)) {
+      const endNoFee = PS.simulatePortfolioScenario(noFeeSc).endingBalance;
+      const endWithFee = PS.simulatePortfolioScenario(withFeeSc).endingBalance;
+      const endDiff = endNoFee - endWithFee;
+
+      let alphaRequired = NaN;
+      let grossRequired = NaN;
+      if (fee > 0) {
+        const solved = PS.solveAnnualReturnForEndingValue({
+          scenarioFn: (rAnnual) =>
+            makeFeeScenario({
+              principal: P,
+              years,
+              grossDec: rAnnual,
+              feeAnnualDec: fee,
+              annualContrib: contrib,
+            }),
+          targetEnding: endNoFee,
+          lowAnnualReturn: 0,
+          highAnnualReturn: 1.0,
+        });
+        grossRequired = solved.annualReturn;
+        alphaRequired = grossRequired - rGross;
+      } else {
+        alphaRequired = 0;
+        grossRequired = rGross;
+      }
+
+      const extraContrib =
+        fee > 0
+          ? PS.solveExtraContributionPerPeriodForEnding({
+              baseScenario: withFeeSc,
+              feeScenarioBuilder: (base, extra) => {
+                if (!base.contribution) {
+                  return {
+                    ...base,
+                    contribution: { amount: extra, frequency: "monthly", timing: "start" },
+                  };
+                }
+                return {
+                  ...base,
+                  contribution: { ...base.contribution, amount: base.contribution.amount + extra },
+                };
+              },
+              targetEnding: endNoFee,
+            }) * 12
+          : 0;
+
+      if (
+        ![endNoFee, endWithFee, endDiff, alphaRequired, grossRequired, extraContrib].every(Number.isFinite)
+      ) {
         setText("outAlphaPct", "—");
         setText("outGrossReqPct", "—");
         setText("outEndNoFee", "—");
@@ -138,7 +219,6 @@
       setText("outEndDiff", fmtMoney(endDiff));
       setText("outExtraContrib", fmtMoney(extraContrib));
 
-      // Optional: explicit AEO/SEO sentence (if element exists on page)
       const sentenceEl = document.getElementById("seoSentence");
       if (sentenceEl) {
         const feePct = (fee * 100).toFixed(2).replace(/\.00$/, "");
@@ -151,18 +231,20 @@
     }
 
     ["P", "years", "rGrossPct", "feePct", "contrib"].forEach((id) => {
-      $(id).addEventListener("input", render);
+      const el = $(id);
+      if (el) el.addEventListener("input", render);
     });
 
     render();
   }
 
   // -----------------------------
-  // Tool: Active vs Passive
+  // Active vs Passive
   // -----------------------------
   function initActiveVsPassivePage() {
-    if (!window.TLM_FeeMath) {
-      console.error("TLM_FeeMath not available");
+    const PS = window.TLM_PortfolioSimulation;
+    if (!PS) {
+      console.error("TLM_PortfolioSimulation not available");
       return;
     }
 
@@ -175,46 +257,64 @@
       const feeActive = pctToDec(numFromInput("feeActivePct"));
       const contrib = numFromInput("contrib");
 
-      // Calculate implied alpha (for display only)
-      const alphaImplied = rActivePortfolio - rPassivePortfolio;
-
-      // Break-even alpha (fee difference)
-      const alphaBreakEven = feeActive - feePassive;
-      const rActiveBreakEven = rPassivePortfolio + alphaBreakEven;
-
-      // Net returns
-      const rPassiveNet = rPassivePortfolio - feePassive;
-      const rActiveNet = rActivePortfolio - feeActive;
-      const rActiveNetBreakEven = rActiveBreakEven - feeActive;
-
-      // Ending values
-      const endPassive = window.TLM_FeeMath.endingValueWithFee({
-        P,
-        gross: rPassivePortfolio,
-        fee: feePassive,
+      const passiveSc = makeFeeScenario({
+        principal: P,
         years,
-        contrib
+        grossDec: rPassivePortfolio,
+        feeAnnualDec: feePassive,
+        annualContrib: contrib,
+      });
+      const endPassive = PS.simulatePortfolioScenario(passiveSc).endingBalance;
+
+      const activeSc = makeFeeScenario({
+        principal: P,
+        years,
+        grossDec: rActivePortfolio,
+        feeAnnualDec: feeActive,
+        annualContrib: contrib,
+      });
+      const endActive = PS.simulatePortfolioScenario(activeSc).endingBalance;
+
+      const solved = PS.solveAnnualReturnForEndingValue({
+        scenarioFn: (rAnnual) =>
+          makeFeeScenario({
+            principal: P,
+            years,
+            grossDec: rAnnual,
+            feeAnnualDec: feeActive,
+            annualContrib: contrib,
+          }),
+        targetEnding: endPassive,
+        lowAnnualReturn: 0,
+        highAnnualReturn: 1.0,
       });
 
-      const endActive = window.TLM_FeeMath.endingValueWithFee({
-        P,
-        gross: rActivePortfolio,
-        fee: feeActive,
-        years,
-        contrib
-      });
+      const rActiveBreakEven = solved.annualReturn;
+      const alphaBreakEven = rActiveBreakEven - rPassivePortfolio;
 
-      const endActiveBreakEven = window.TLM_FeeMath.endingValueWithFee({
-        P,
-        gross: rActiveBreakEven,
-        fee: feeActive,
-        years,
-        contrib
-      });
+      const endActiveBreakEven = PS.simulatePortfolioScenario(
+        makeFeeScenario({
+          principal: P,
+          years,
+          grossDec: rActiveBreakEven,
+          feeAnnualDec: feeActive,
+          annualContrib: contrib,
+        })
+      ).endingBalance;
 
       const diff = endActive - endPassive;
 
-      if (![endPassive, endActive, endActiveBreakEven, diff, alphaBreakEven, rActiveBreakEven, rActivePortfolio].every(Number.isFinite)) {
+      if (
+        ![
+          endPassive,
+          endActive,
+          endActiveBreakEven,
+          diff,
+          alphaBreakEven,
+          rActiveBreakEven,
+          rActivePortfolio,
+        ].every(Number.isFinite)
+      ) {
         setText("outAlphaBreakEven", "—");
         setText("outActiveGrossBreakEven", "—");
         setText("outActivePortfolioAssumed", "—");
@@ -234,10 +334,12 @@
       setText("outEndActiveBreakEven", fmtMoney(endActiveBreakEven));
     }
 
-    ["P", "years", "rPassivePortfolioPct", "rActivePortfolioPct", "feePassivePct", "feeActivePct", "contrib"].forEach((id) => {
-      const el = $(id);
-      if (el) el.addEventListener("input", render);
-    });
+    ["P", "years", "rPassivePortfolioPct", "rActivePortfolioPct", "feePassivePct", "feeActivePct", "contrib"].forEach(
+      (id) => {
+        const el = $(id);
+        if (el) el.addEventListener("input", render);
+      }
+    );
 
     render();
   }

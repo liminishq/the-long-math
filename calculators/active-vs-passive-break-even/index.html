@@ -27,7 +27,7 @@
     .helper-text{font-size:12px;color:var(--muted);margin-top:4px}
   </style>
 
-  <script defer src="/assets/js/fee-math.js"></script>
+  <script defer src="/assets/js/engines/portfolioSimulationEngine.js"></script>
   <script defer src="/assets/js/fee-ui.js"></script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
@@ -51,7 +51,7 @@
         and (2) shows <strong>ending values</strong> under your assumed active portfolio return.
       </p>
       <div class="helper" style="margin-bottom: 12px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface);">
-        <strong>Break-even excess return</strong> equals (active fee − passive fee) under the net = gross − fee model.
+        <strong>Break-even excess return</strong> is solved numerically so the active path (with its fee) matches the passive ending value.
         The dollar consequences depend on balance, horizon, contributions, and the active portfolio return you assume.
       </div>
     </header>

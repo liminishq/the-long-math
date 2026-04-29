@@ -157,9 +157,16 @@
 
       <h2>Implementation Notes</h2>
       <ul>
-        <li>The model iterates month-by-month over the full horizon.</li>
-        <li>Fee dollars are tracked explicitly each month.</li>
-        <li>Break-even return is solved numerically.</li>
+        <li>
+          Core simulation lives in <code>/assets/js/engines/portfolioSimulationEngine.js</code> (<code>window.TLM_PortfolioSimulation</code>).
+          The advisor fee page uses <code>calculateLongMath</code> in <code>/assets/js/calculator.engine.js</code>, which builds scenarios for a no-fee path and a with-fee path.
+        </li>
+        <li>
+          Advisory AUM rate and MER (when enabled) are combined into a <strong>single</strong> monthly AUM fee on the post-growth balance each month
+          (equivalent to one deduction using the sum of the annualized rates, not two sequential multiplicative deductions).
+        </li>
+        <li>Fee dollars are tracked explicitly each month (combined rate × balance / 12).</li>
+        <li>Break-even return is solved numerically via <code>solveAnnualReturnForEndingValue</code>.</li>
         <li>All calculations use floating-point arithmetic; rounding occurs only for display.</li>
       </ul>
 

@@ -12,9 +12,13 @@ import { test } from "node:test";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 function loadCalculateLongMath() {
+  const engine = readFileSync(
+    join(__dirname, "..", "assets", "js", "engines", "portfolioSimulationEngine.js"),
+    "utf8"
+  );
   const code = readFileSync(join(__dirname, "..", "assets", "js", "calculator.engine.js"), "utf8");
   const sandbox = { window: {} };
-  runInNewContext(code, sandbox);
+  runInNewContext(engine + "\n" + code, sandbox);
   const fn = sandbox.window.calculateLongMath;
   assert.equal(typeof fn, "function");
   return fn;

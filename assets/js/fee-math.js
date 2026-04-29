@@ -1,5 +1,7 @@
 // fee-math.js
-// Pure math helpers for fee/return calculators. No DOM access.
+// Legacy closed-form helpers (annual "net = gross - fee" model). Kept for unit tests
+// and reference; production fee calculators use TLM_PortfolioSimulation instead.
+// Pure math helpers. No DOM access.
 
 (function () {
   "use strict";
