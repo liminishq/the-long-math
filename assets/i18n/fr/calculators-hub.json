@@ -139,6 +139,11 @@
       "desc": "Choisissez les comptes et les stratégies de cotisation avec des règles explicites.",
       "items": [
         {
+          "path": "/calculators/sole-proprietor-vs-corporation/",
+          "title": "Travailleur autonome vs société : capital investissable",
+          "desc": "Compare le capital investissable la première année après cotisations REER et dépenses personnelles, par rapport aux bénéfices retenus dans une société, pour le même niveau de dépenses après impôt."
+        },
+        {
           "path": "/calculators/rrsp-contribution-room-tax-refund/",
           "title": "Calculateur d’espace de cotisation REER et de remboursement d’impôt",
           "desc": "Estime l’espace REER disponible, la cotisation déductible, le remboursement, le coût après impôt de la cotisation et l’espace restant à partir d’hypothèses explicites."

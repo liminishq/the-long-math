@@ -1062,6 +1062,32 @@
   },
   {
     "type": "calculator",
+    "title": "Sole Proprietor vs Corporation Calculator",
+    "url": "/calculators/sole-proprietor-vs-corporation/",
+    "desc": "Compare earning business income personally versus through a corporation. First-year invested capital after RRSP, spending, and retained corporate earnings. Not tax advice.",
+    "keywords": [
+      "Sole Proprietor vs Corporation Calculator",
+      "sole proprietor vs corporation",
+      "CCPC retained earnings",
+      "RRSP comparison",
+      "Canadian business income",
+      "invested capital"
+    ]
+  },
+  {
+    "type": "calculator",
+    "title": "Inspect the Arithmetic: Sole Proprietor vs Corporation Calculator",
+    "url": "/calculators/sole-proprietor-vs-corporation/inspect-the-arithmetic/",
+    "desc": "Methodology for the Sole Proprietor vs Corporation Calculator: personal RRSP ledger, corporate tax split, withdrawals, and optional projection.",
+    "keywords": [
+      "sole proprietor vs corporation methodology",
+      "inspect the arithmetic",
+      "retained corporate earnings",
+      "RRSP refund ledger"
+    ]
+  },
+  {
+    "type": "calculator",
     "title": "Simple Investment Calculator",
     "url": "/calculators/investment-simple/",
     "desc": "Estimate compound investment growth with recurring contributions. Enter a starting balance, contribution amount, time horizon, and expected return — get a projected balance, milestone table, and money-weighted IRR in seconds.",

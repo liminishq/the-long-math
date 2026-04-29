@@ -27,7 +27,7 @@
   <div class="wrap">
     <div class="methodology-content">
       <h1>Inspect the Arithmetic — Flat-Fee or Hourly Advisor Cost Calculator</h1>
-      <p class="methodology-meta">Version 1.0<br>Last updated: March 2026</p>
+      <p class="methodology-meta">Version 2.0<br>Last updated: April 2026</p>
 
       <p>
         Transparent arithmetic is the operating system of this calculator.
@@ -51,7 +51,7 @@
       <ul>
         <li>B<sub>0</sub> = starting portfolio balance (initial value)</li>
         <li>B<sub>t</sub> = portfolio balance at the end of month t</li>
-        <li>C = monthly contribution (dollars added at end of month)</li>
+        <li>C = monthly contribution (dollars added at start of month)</li>
         <li>F = annual advisor fee in dollars (flat-fee or hourly model before monthly conversion)</li>
         <li>T = time horizon in years</li>
         <li>N = 12T = total number of months</li>
@@ -78,12 +78,12 @@
 
       <h3 id="without-fees">2. Growth Without Advisor Fees</h3>
       <p>
-        With no advisor fees, the portfolio is simulated month by month with contributions at the end of each month:
+        With no advisor fees, the portfolio is simulated month by month with contributions at the start of each month:
       </p>
       <div class="formula-block">
         B<sub>0</sub> = startingBalance<br>
         For t = 1, 2, …, N:<br>
-        &nbsp;&nbsp;B<sub>t</sub> = B<sub>t−1</sub>(1 + r<sub>m</sub>) + C
+        &nbsp;&nbsp;B<sub>t</sub> = (B<sub>t−1</sub> + C)(1 + r<sub>m</sub>)
       </div>
       <p>
         The ending value without fees is:
@@ -94,11 +94,11 @@
 
       <h3 id="with-fees">3. Growth With Flat, Hourly, or AUM Fees</h3>
       <p>
-        With advisor fees, the simulation still runs month by month with growth first, then fees, then contributions at the end of the month.
+        With advisor fees, the simulation runs month by month with standardized event ordering: start-of-month contribution, growth, then end-of-month fee deduction.
       </p>
       <p>Growth step (all models):</p>
       <div class="formula-block">
-        B<sub>t</sub><sup>gross</sup> = B<sub>t−1</sub>(1 + r<sub>m</sub>)
+        B<sub>t</sub><sup>gross</sup> = (B<sub>t−1</sub> + C)(1 + r<sub>m</sub>)
       </div>
       <p>Fee step depends on the model:</p>
       <ul>
@@ -126,13 +126,7 @@
         Fee<sub>t</sub> = monthly fee determined by the chosen model, capped so it cannot exceed B<sub>t</sub><sup>gross</sup><br>
         B<sub>t</sub><sup>net</sup> = B<sub>t</sub><sup>gross</sup> − Fee<sub>t</sub>
       </div>
-      <p>Contribution step (all models):</p>
-      <div class="formula-block">
-        B<sub>t</sub> = B<sub>t</sub><sup>net</sup> + C
-      </div>
-      <p>
-        Total fees are tracked as:
-      </p>
+      <p>Total fees are tracked as:</p>
       <div class="formula-block">
         TotalFees = Σ<sub>t=1</sub><sup>N</sup> Fee<sub>t</sub>
       </div>
@@ -177,12 +171,11 @@
       <h2>Implementation Notes</h2>
       <ul>
         <li>
-          The core arithmetic is implemented in <code>calculateFlatFeeOrHourlyCost()</code> inside
-          <code>/calculators/flat-fee-or-hourly/engine.js</code>, which calls helper functions to simulate paths with and without fees and to solve
-          for the AUM-equivalent rate.
+          Core simulation is delegated to <code>/assets/js/engines/portfolioSimulationEngine.js</code>. This calculator's
+          <code>engine.js</code> adapts flat/hourly/AUM fee models and computes the AUM-equivalent rate.
         </li>
         <li>
-          Contributions are always applied at the end of each month after growth and fee deduction, matching the description above.
+          Contributions are applied at start of month; fee deductions occur at end of month.
         </li>
         <li>
           All calculations use JavaScript’s standard floating-point arithmetic; any rounding is applied only when formatting numbers for display.

@@ -190,19 +190,42 @@
 .results-grid {
   display: grid;
   gap: 10px;
+  grid-template-columns: 1fr;
 }
 
-@media (min-width: 700px) {
-  .results-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
+/* Keep results stacked vertically across all widths for consistency. */
 
 .result-card {
   padding: 10px 11px;
   border-radius: 12px;
   background: linear-gradient(180deg, rgba(217, 180, 106, 0.10), rgba(217, 180, 106, 0.04));
   border: 1px solid rgba(217, 180, 106, 0.35);
+}
+
+.result-card.primary {
+  grid-column: 1 / -1;
+  border-color: rgba(217, 180, 106, 0.55);
+  background: linear-gradient(180deg, rgba(217, 180, 106, 0.16), rgba(217, 180, 106, 0.06));
+}
+
+.result-card.excess {
+  border-color: rgba(249, 115, 115, 0.55);
+  background: linear-gradient(
+    180deg,
+    rgba(249, 115, 115, 0.16),
+    rgba(249, 115, 115, 0.06)
+  );
+}
+
+.result-card .inline-meta {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--muted, #9ca3af);
+}
+
+.result-card .inline-meta .value {
+  font-weight: 700;
+  margin-left: 6px;
 }
 
 .result-title {
@@ -221,6 +244,17 @@
   font-size: 11px;
   color: var(--muted, #9ca3af);
   margin: 0;
+}
+
+.inline-warning{
+  margin: 8px 0 0;
+  font-size: 11px;
+  color: #f97373;
+  background: rgba(249,115,115,0.10);
+  border: 1px solid rgba(249,115,115,0.35);
+  padding: 7px 9px;
+  border-radius: 10px;
+  line-height: 1.35;
 }
 
 .secondary-results {

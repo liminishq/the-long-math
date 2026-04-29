@@ -68,8 +68,6 @@
           <h2 class="section-title">Inputs</h2>
 
           <section class="input-section">
-            <h3 class="section-label">1. Contribution Room Inputs</h3>
-
             <div class="field">
               <label for="tax_year">Tax year being evaluated</label>
               <select id="tax_year">
@@ -80,7 +78,7 @@
             </div>
 
             <div class="field">
-              <label for="unused_room">Unused RRSP room carried forward (CAD)</label>
+              <label for="unused_room">Unused RRSP room carried forward into this year (CAD)</label>
               <input id="unused_room" type="text" inputmode="decimal" placeholder="0" />
               <div class="help-text">
                 Total RRSP room carried forward into this year from past contribution room. Check your CRA Notice of Assessment or
@@ -91,18 +89,21 @@
           </section>
 
           <section class="input-section">
-            <h3 class="section-label">2. Income &amp; Contribution Scenario Inputs</h3>
-
             <div class="field">
-              <label for="taxable_before">This year’s taxable income before this RRSP deduction (CAD)</label>
+              <label for="taxable_before">This year’s taxable income before RRSP deduction (CAD)</label>
               <input id="taxable_before" type="text" inputmode="decimal" placeholder="0" />
-              <div class="help-text">Best estimate of your taxable income for this tax year before claiming this RRSP deduction. Required for the refund estimate.</div>
+              <div class="help-text">
+                Used only to estimate your tax refund (tax saved) from the RRSP deduction you plan to make.
+              </div>
             </div>
 
             <div class="field">
               <label for="prior_earned_income">Prior-year RRSP-eligible earned income (CAD)</label>
               <input id="prior_earned_income" type="text" inputmode="decimal" placeholder="0" />
-              <div class="help-text">Employment and other RRSP-eligible earned income from the prior tax year. Used only to estimate new RRSP room for this year.</div>
+              <div class="help-text">
+                Used only to estimate the <strong>new</strong> RRSP room for this tax year:
+                <span class="nowrap">18% × prior-year RRSP-eligible earned income (capped).</span>
+              </div>
             </div>
 
             <div class="field">
@@ -122,7 +123,7 @@
           </section>
 
           <section class="input-section advanced-only hidden">
-            <h3 class="section-label">3. Advanced Adjustments</h3>
+            <div class="section-label" style="margin-bottom:8px;">Advanced adjustments</div>
 
             <div class="field">
               <label for="pa">Pension adjustment (PA)</label>
@@ -172,24 +173,11 @@
           <h2 class="section-title">Results</h2>
 
           <div class="results-grid">
-            <div class="result-card">
+            <div class="result-card primary">
               <h3 class="result-title">Estimated RRSP contribution room</h3>
               <p class="result-value" id="out_estimated_room">$–</p>
               <p class="result-note" id="out_cra_override_note">
                 Based on 18% of prior-year earned income (capped) plus carryforward and pension adjustments.
-              </p>
-            </div>
-
-            <div class="result-card">
-              <h3 class="result-title">Planned contribution</h3>
-              <p class="result-value" id="out_planned_contribution">$–</p>
-            </div>
-
-            <div class="result-card">
-              <h3 class="result-title">Amount deductible</h3>
-              <p class="result-value" id="out_deductible">$–</p>
-              <p class="result-note">
-                Capped at the smaller of available RRSP room and your planned contribution.
               </p>
             </div>
 
@@ -202,25 +190,23 @@
             </div>
 
             <div class="result-card">
+              <h3 class="result-title">Remaining RRSP contribution room</h3>
+              <p class="result-value" id="out_remaining_room">$–</p>
+            </div>
+
+            <div class="result-card">
               <h3 class="result-title">After-tax cost of contribution</h3>
               <p class="result-value" id="out_after_tax_cost">$–</p>
             </div>
 
-            <div class="result-card">
-              <h3 class="result-title">Remaining RRSP room</h3>
-              <p class="result-value" id="out_remaining_room">$–</p>
+            <div class="result-card excess hidden" id="excess_contribution_card">
+              <h3 class="result-title">Excess contribution</h3>
+              <p class="result-value" id="out_excess_contribution">$–</p>
+              <p class="result-note" id="out_excess_contribution_note"></p>
             </div>
           </div>
 
           <div class="secondary-results">
-            <div class="secondary-row" id="over_contribution_row" aria-live="polite">
-              <div class="label">Over-contribution warning</div>
-              <div class="value" id="out_over_contribution">–</div>
-            </div>
-            <div class="secondary-row">
-              <div class="label">Excess contribution amount</div>
-              <div class="value" id="out_excess_contribution">$–</div>
-            </div>
             <div class="secondary-row">
               <div class="label">Marginal tax rate used (simple mode)</div>
               <div class="value" id="out_marginal_rate">–%</div>

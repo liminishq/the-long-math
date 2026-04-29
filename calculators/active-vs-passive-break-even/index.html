@@ -15,16 +15,52 @@
     /* Calculator-specific styles */
     .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:12px}
     @media(min-width:780px){ .grid{grid-template-columns:1fr 1fr} }
-    .panel{border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:12px}
+    .panel{border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:12px;min-width:0}
     .row{display:grid;grid-template-columns:1fr;gap:10px}
     @media(min-width:780px){ .row{grid-template-columns:1fr 1fr} }
     .out{display:grid;grid-template-columns:1fr;gap:10px}
     @media(min-width:780px){ .out{grid-template-columns:1fr 1fr} }
     .kv{padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+    .kv.primary{border-color:var(--accentSoft);background:rgba(217,180,106,0.08)}
     .k{font-size:12px;color:var(--muted)}
     .v{font-size:16px;font-weight:800}
     .math{margin-top:10px;font-size:13px;color:var(--muted)}
     .helper-text{font-size:12px;color:var(--muted);margin-top:4px}
+    .inputs-layout{display:grid;grid-template-columns:1fr;gap:10px;min-width:0}
+    .input-group-card{padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--surface);min-width:0}
+    .input-group-title{margin:0 0 8px;font-size:13px;font-weight:700;color:var(--muted)}
+    .portfolio-stack{display:grid;grid-template-columns:1fr;gap:10px;min-width:0}
+    .sub-row{display:grid;grid-template-columns:1fr;gap:10px}
+    .input-group-card input{width:100%}
+    .result-stack{display:grid;grid-template-columns:1fr;gap:10px}
+    .result-card{padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+    .result-card h3{margin:0 0 8px;font-size:13px;font-weight:700;color:var(--muted)}
+    .metric{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:6px 0;border-bottom:1px dashed var(--border)}
+    .metric:last-child{border-bottom:0}
+    .metric .label{font-size:12px;color:var(--muted)}
+    .metric .value{font-size:16px;font-weight:800;text-align:right}
+    .result-card.primary{
+      border-color:rgba(217,180,106,.55);
+      background:linear-gradient(180deg,rgba(217,180,106,.14),rgba(217,180,106,.06));
+    }
+    .result-card.primary .headline{
+      margin:0;
+      font-size:12px;
+      font-weight:700;
+      color:var(--accent2);
+      text-transform:uppercase;
+      letter-spacing:.3px;
+    }
+    .result-card.primary .big-value{
+      margin-top:8px;
+      font-size:32px;
+      font-weight:900;
+    }
+    .result-card.primary .big-value-note{
+      font-size:11px;
+      color:var(--muted);
+      margin-top:4px;
+    }
   </style>
 
   <script defer src="/assets/js/engines/portfolioSimulationEngine.js"></script>
@@ -60,38 +96,52 @@
       <div class="grid">
         <section class="panel">
           <h2>Inputs</h2>
-          <div class="row">
-            <div>
-              <label for="P">Starting balance (CAD)</label>
-              <input id="P" value="500000" />
-            </div>
-            <div>
-              <label for="years">Horizon (years)</label>
-              <input id="years" value="30" />
-            </div>
-
-            <div>
-              <label for="rPassivePortfolioPct">Passive portfolio return (%)</label>
-              <input id="rPassivePortfolioPct" value="6" />
-            </div>
-            <div>
-              <label for="feePassivePct">Passive fee (%)</label>
-              <input id="feePassivePct" value="0.30" />
-            </div>
-
-            <div>
-              <label for="feeActivePct">Active fee (%)</label>
-              <input id="feeActivePct" value="2.00" />
-            </div>
-            <div>
-              <label for="rActivePortfolioPct">Active portfolio return (%)</label>
-              <input id="rActivePortfolioPct" value="6" />
-              <div class="helper-text">The total annual return you expect from the active strategy before fees.</div>
+          <div class="inputs-layout">
+            <div class="input-group-card">
+              <h3 class="input-group-title">Shared assumptions</h3>
+              <div class="sub-row">
+                <div>
+                  <label for="P">Starting balance (CAD)</label>
+                  <input id="P" value="500000" />
+                </div>
+                <div>
+                  <label for="years">Horizon (years)</label>
+                  <input id="years" value="30" />
+                </div>
+                <div>
+                  <label for="contrib">Annual contribution (CAD)</label>
+                  <input id="contrib" value="0" />
+                </div>
+              </div>
             </div>
 
-            <div>
-              <label for="contrib">Annual contribution (CAD)</label>
-              <input id="contrib" value="0" />
+            <div class="input-group-card">
+              <h3 class="input-group-title">Active portfolio</h3>
+              <div class="sub-row">
+                <div>
+                  <label for="rActivePortfolioPct">Active portfolio return (%)</label>
+                  <input id="rActivePortfolioPct" value="6" />
+                  <div class="helper-text">Expected annual return before active fees.</div>
+                </div>
+                <div>
+                  <label for="feeActivePct">Active fee (%)</label>
+                  <input id="feeActivePct" value="2.00" />
+                </div>
+              </div>
+            </div>
+
+            <div class="input-group-card">
+              <h3 class="input-group-title">Passive portfolio</h3>
+              <div class="sub-row">
+                <div>
+                  <label for="rPassivePortfolioPct">Passive portfolio return (%)</label>
+                  <input id="rPassivePortfolioPct" value="6" />
+                </div>
+                <div>
+                  <label for="feePassivePct">Passive fee (%)</label>
+                  <input id="feePassivePct" value="0.30" />
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -101,42 +151,58 @@
             <h2>Results</h2>
             <a href="/calculators/active-vs-passive-break-even/methodology/" class="inspect-arithmetic-btn">Inspect the Arithmetic</a>
           </div>
-          <div class="out">
-            <div class="kv">
-              <div class="k">Break-even alpha (fee diff)</div>
-              <div class="v" id="outAlphaBreakEven">—</div>
+          <div class="result-stack">
+            <div class="result-card primary">
+              <p class="headline" id="outPrimaryLabel">Passive portfolio</p>
+              <p class="big-value" id="outDiff">—</p>
+              <p class="big-value-note">(versus active portfolio)</p>
             </div>
-            <div class="kv">
-              <div class="k">Break-even active gross return</div>
-              <div class="v" id="outActiveGrossBreakEven">—</div>
+
+            <div class="result-card">
+              <h3>Passive portfolio</h3>
+              <div class="metric">
+                <span class="label">Ending value (after fees)</span>
+                <span class="value" id="outEndPassive">—</span>
+              </div>
+              <div class="metric">
+                <span class="label">Functional annual return (after fees)</span>
+                <span class="value" id="outPassiveNetReturn">—</span>
+              </div>
+              <div class="metric">
+                <span class="label">Required return (after fees) to break even with active result</span>
+                <span class="value" id="outPassiveRequiredAfterFee">—</span>
+              </div>
             </div>
-            <div class="kv">
-              <div class="k">Assumed active portfolio return</div>
-              <div class="v" id="outActivePortfolioAssumed">—</div>
+
+            <div class="result-card">
+              <h3>Active portfolio</h3>
+              <div class="metric">
+                <span class="label">Ending value (after fees)</span>
+                <span class="value" id="outEndActive">—</span>
+              </div>
+              <div class="metric">
+                <span class="label">Functional annual return (after fees)</span>
+                <span class="value" id="outActiveNetReturn">—</span>
+              </div>
+              <div class="metric">
+                <span class="label">Required return (after fees) to break even with passive result</span>
+                <span class="value" id="outActiveRequiredAfterFee">—</span>
+              </div>
             </div>
-            <div class="kv">
-              <div class="k">Ending value (passive, after fee)</div>
-              <div class="v" id="outEndPassive">—</div>
-            </div>
-            <div class="kv">
-              <div class="k">Ending value (active, after fee, assumed active return)</div>
-              <div class="v" id="outEndActive">—</div>
-            </div>
-            <div class="kv">
-              <div class="k">Difference (active − passive)</div>
-              <div class="v" id="outDiff">—</div>
-            </div>
-            <div class="kv">
-              <div class="k">Ending value (active, at break-even)</div>
-              <div class="v" id="outEndActiveBreakEven">—</div>
+
+            <div style="display:none">
+              <span id="outAlphaBreakEven">—</span>
+              <span id="outActiveGrossBreakEven">—</span>
+              <span id="outActivePortfolioAssumed">—</span>
+              <span id="outEndActiveBreakEven">—</span>
             </div>
           </div>
         </section>
       </div>
 
       <div class="math">
-        Break-even condition: (r<sub>passive</sub> − fee<sub>passive</sub>) = (r<sub>active</sub> − fee<sub>active</sub>)  
-        ⇒ r<sub>active</sub> = r<sub>passive</sub> + (fee<sub>active</sub> − fee<sub>passive</sub>)
+        Break-even active return is solved numerically using the shared simulation engine so the active path (with active fee)
+        matches the passive ending value under the same shared assumptions.
       </div>
     </div>
 

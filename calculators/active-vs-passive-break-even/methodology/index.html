@@ -60,6 +60,19 @@
         <li>f<sub>passive</sub>, f<sub>active</sub> = annual fee rates; applied monthly as AUM deductions after growth within each month</li>
       </ul>
 
+      <h2>Input Grouping on Calculator Page</h2>
+      <p>
+        The calculator input card is organized into three groups to separate shared assumptions from portfolio-specific assumptions:
+      </p>
+      <ul>
+        <li><strong>Shared assumptions:</strong> starting balance P, horizon t, and annual contribution C<sub>annual</sub>.</li>
+        <li><strong>Active portfolio:</strong> active gross return r<sub>active</sub> and active fee f<sub>active</sub>.</li>
+        <li><strong>Passive portfolio:</strong> passive gross return r<sub>passive</sub> and passive fee f<sub>passive</sub>.</li>
+      </ul>
+      <p>
+        This grouping is a UI organization aid only. It does not change the underlying arithmetic.
+      </p>
+
       <h2>Numerical break-even</h2>
       <p>
         Let Ending<sub>passive</sub> be the passive simulation at (r<sub>passive</sub>, f<sub>passive</sub>). The break-even active gross return r<sub>active,break</sub> solves

@@ -39,6 +39,12 @@
     return (nDec * 100).toFixed(digits) + "%";
   }
 
+  function signedMoney(n) {
+    if (!Number.isFinite(n)) return "—";
+    const sign = n > 0 ? "+" : n < 0 ? "−" : "";
+    return sign + fmtMoney(Math.abs(n));
+  }
+
   function setText(id, txt) {
     const el = $(id);
     if (el) el.textContent = txt;
@@ -303,6 +309,34 @@
       ).endingBalance;
 
       const diff = endActive - endPassive;
+      const passiveRelative = endPassive - endActive;
+      const outPrimaryLabel = document.getElementById("outPrimaryLabel");
+      const outPassiveNetReturn = document.getElementById("outPassiveNetReturn");
+      const outActiveNetReturn = document.getElementById("outActiveNetReturn");
+      const outPassiveRequiredAfterFee = document.getElementById("outPassiveRequiredAfterFee");
+      const outActiveRequiredAfterFee = document.getElementById("outActiveRequiredAfterFee");
+
+      let passiveRequiredAfterFee = NaN;
+      const passiveReqSolved = PS.solveAnnualReturnForEndingValue({
+        scenarioFn: (rAnnual) =>
+          makeFeeScenario({
+            principal: P,
+            years,
+            grossDec: rAnnual,
+            feeAnnualDec: feePassive,
+            annualContrib: contrib,
+          }),
+        targetEnding: endActive,
+        lowAnnualReturn: 0,
+        highAnnualReturn: 1.0,
+      });
+      passiveRequiredAfterFee = passiveReqSolved.annualReturn - feePassive;
+
+      const passiveNetApprox =
+        Math.pow(Math.pow(1 + rPassivePortfolio, 1 / 12) * (1 - feePassive / 12), 12) - 1;
+      const activeNetApprox =
+        Math.pow(Math.pow(1 + rActivePortfolio, 1 / 12) * (1 - feeActive / 12), 12) - 1;
+      const activeRequiredAfterFee = rActiveBreakEven - feeActive;
 
       if (
         ![
@@ -313,8 +347,15 @@
           alphaBreakEven,
           rActiveBreakEven,
           rActivePortfolio,
+          passiveRequiredAfterFee,
+          activeRequiredAfterFee,
         ].every(Number.isFinite)
       ) {
+        if (outPrimaryLabel) outPrimaryLabel.textContent = "Passive portfolio";
+        if (outPassiveNetReturn) outPassiveNetReturn.textContent = "—";
+        if (outActiveNetReturn) outActiveNetReturn.textContent = "—";
+        if (outPassiveRequiredAfterFee) outPassiveRequiredAfterFee.textContent = "—";
+        if (outActiveRequiredAfterFee) outActiveRequiredAfterFee.textContent = "—";
         setText("outAlphaBreakEven", "—");
         setText("outActiveGrossBreakEven", "—");
         setText("outActivePortfolioAssumed", "—");
@@ -330,8 +371,17 @@
       setText("outActivePortfolioAssumed", fmtPctDec(rActivePortfolio, 2));
       setText("outEndPassive", fmtMoney(endPassive));
       setText("outEndActive", fmtMoney(endActive));
-      setText("outDiff", fmtMoney(diff));
+      setText("outDiff", signedMoney(passiveRelative));
       setText("outEndActiveBreakEven", fmtMoney(endActiveBreakEven));
+      if (outPrimaryLabel) {
+        outPrimaryLabel.textContent = "Passive portfolio";
+      }
+      if (outPassiveNetReturn) outPassiveNetReturn.textContent = fmtPctDec(passiveNetApprox, 2);
+      if (outActiveNetReturn) outActiveNetReturn.textContent = fmtPctDec(activeNetApprox, 2);
+      if (outPassiveRequiredAfterFee)
+        outPassiveRequiredAfterFee.textContent = fmtPctDec(passiveRequiredAfterFee, 2);
+      if (outActiveRequiredAfterFee)
+        outActiveRequiredAfterFee.textContent = fmtPctDec(activeRequiredAfterFee, 2);
     }
 
     ["P", "years", "rPassivePortfolioPct", "rActivePortfolioPct", "feePassivePct", "feeActivePct", "contrib"].forEach(

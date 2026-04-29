@@ -345,6 +345,18 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://www.thelongmath.com/calculators/sole-proprietor-vs-corporation/</loc>
+    <lastmod>2026-04-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.thelongmath.com/calculators/sole-proprietor-vs-corporation/inspect-the-arithmetic/</loc>
+    <lastmod>2026-04-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.thelongmath.com/calculators/loan-repayment/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

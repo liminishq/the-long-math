@@ -120,12 +120,6 @@
     document.getElementById("out_estimated_room").textContent =
       formatCurrency(estimatedRoomDisplay);
 
-    document.getElementById("out_planned_contribution").textContent =
-      formatCurrency(scenario.inputs.plannedContribution);
-
-    document.getElementById("out_deductible").textContent =
-      formatCurrency(scenario.deduction.deductibleContribution);
-
     document.getElementById("out_refund").textContent =
       formatCurrency(scenario.outputs.chosenRefund);
 
@@ -144,19 +138,36 @@
         "Based on 18% of prior-year earned income (capped) plus carryforward and pension adjustments.";
     }
 
-    const overRow = document.getElementById("over_contribution_row");
-    const overText = document.getElementById("out_over_contribution");
-    if (scenario.outputs.excessContribution > 0) {
-      overRow.classList.add("warning");
-      overText.textContent =
-        "Your planned contribution exceeds available RRSP room in this model. CRA over-contribution rules and penalties are not calculated here.";
-    } else {
-      overRow.classList.remove("warning");
-      overText.textContent = "None based on this estimate.";
-    }
+    const excessCard = document.getElementById("excess_contribution_card");
+    const outExcess = document.getElementById("out_excess_contribution");
+    const excessNote = document.getElementById(
+      "out_excess_contribution_note"
+    );
+    const excessContribution = Number(scenario.outputs.excessContribution) || 0;
 
-    document.getElementById("out_excess_contribution").textContent =
-      formatCurrency(scenario.outputs.excessContribution);
+    if (excessCard && outExcess && excessNote) {
+      if (excessContribution > 0) {
+        excessCard.classList.remove("hidden");
+        outExcess.textContent = formatCurrency(excessContribution);
+
+        const plannedContribution = scenario.inputs.plannedContribution;
+        const availableRoomForDeduction =
+          scenario.room.availableRoomForDeduction;
+
+        excessNote.textContent =
+          "Your planned contribution is " +
+          formatCurrency(plannedContribution) +
+          ", but your available RRSP room in this estimate is " +
+          formatCurrency(availableRoomForDeduction) +
+          ". The excess amount is " +
+          formatCurrency(excessContribution) +
+          ". Any excess amount may be subject to RRSP excess contribution tax/penalty under CRA rules.";
+      } else {
+        excessCard.classList.add("hidden");
+        outExcess.textContent = "$–";
+        excessNote.textContent = "";
+      }
+    }
 
     document.getElementById("out_marginal_rate").textContent =
       formatPercent(scenario.tax.marginalRate);
@@ -176,13 +187,17 @@
 
   function renderEmptyResults() {
     document.getElementById("out_estimated_room").textContent = "$–";
-    document.getElementById("out_planned_contribution").textContent = "$–";
-    document.getElementById("out_deductible").textContent = "$–";
     document.getElementById("out_refund").textContent = "$–";
     document.getElementById("out_after_tax_cost").textContent = "$–";
     document.getElementById("out_remaining_room").textContent = "$–";
-    document.getElementById("out_over_contribution").textContent = "–";
-    document.getElementById("out_excess_contribution").textContent = "$–";
+
+    const excessCard = document.getElementById("excess_contribution_card");
+    const outExcess = document.getElementById("out_excess_contribution");
+    const excessNote = document.getElementById("out_excess_contribution_note");
+    if (excessCard) excessCard.classList.add("hidden");
+    if (outExcess) outExcess.textContent = "$–";
+    if (excessNote) excessNote.textContent = "";
+
     document.getElementById("out_marginal_rate").textContent = "–%";
     document.getElementById("out_effective_refund").textContent = "–%";
   }

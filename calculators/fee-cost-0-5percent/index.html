@@ -12,6 +12,24 @@
   <script src="/assets/js/theme-init.js"></script>
   <link rel="stylesheet" href="/assets/css/styles.css" />
   <script defer src="/assets/js/site.js"></script>
+  <style>
+    .inputs-layout,.result-stack{display:grid;grid-template-columns:1fr;gap:10px;min-width:0}
+    .input-group-card,.result-card{padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--surface);min-width:0}
+    .input-group-title,.result-card h3{margin:0 0 8px;font-size:13px;font-weight:700;color:var(--muted)}
+    .sub-row{display:grid;grid-template-columns:1fr;gap:10px}
+    .input-group-card input{width:100%}
+    .metric{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:6px 0;border-bottom:1px dashed var(--border)}
+    .metric:last-child{border-bottom:0}
+    .metric .label{font-size:12px;color:var(--muted)}
+    .metric .value{font-size:16px;font-weight:800;text-align:right}
+    .result-card.primary{
+      border-color:rgba(217,180,106,.55);
+      background:linear-gradient(180deg,rgba(217,180,106,.14),rgba(217,180,106,.06));
+    }
+    .result-card.primary .headline{margin:0;font-size:12px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.3px}
+    .result-card.primary .big-value{margin-top:8px;font-size:32px;font-weight:900}
+    .result-card.primary .big-value-note{font-size:11px;color:var(--muted);margin-top:4px}
+  </style>
 
   <!-- AI-friendly structured data -->
   <script type="application/ld+json">
@@ -63,26 +81,36 @@
       <div class="calc-grid">
         <section class="panel">
           <h2 class="section-title">Inputs</h2>
-          <div class="row">
-            <div>
-              <label for="P">Starting balance (CAD)</label>
-              <input id="P" value="500000" />
+          <div class="inputs-layout">
+            <div class="input-group-card">
+              <h3 class="input-group-title">Portfolio assumptions</h3>
+              <div class="sub-row">
+                <div>
+                  <label for="P">Starting balance (CAD)</label>
+                  <input id="P" value="500000" />
+                </div>
+                <div>
+                  <label for="years">Horizon (years)</label>
+                  <input id="years" value="30" />
+                </div>
+                <div>
+                  <label for="rGrossPct">Gross return (annual %)</label>
+                  <input id="rGrossPct" value="6" />
+                </div>
+                <div>
+                  <label for="contrib">Annual contribution (CAD)</label>
+                  <input id="contrib" value="0" />
+                </div>
+              </div>
             </div>
-            <div>
-              <label for="years">Horizon (years)</label>
-              <input id="years" value="30" />
-            </div>
-            <div>
-              <label for="rGrossPct">Gross return (annual %)</label>
-              <input id="rGrossPct" value="6" />
-            </div>
-            <div>
-              <label for="feePct">Annual fee (%)</label>
-              <input id="feePct" value="0.5" />
-            </div>
-            <div>
-              <label for="contrib">Annual contribution (CAD)</label>
-              <input id="contrib" value="0" />
+            <div class="input-group-card">
+              <h3 class="input-group-title">Fee assumption</h3>
+              <div class="sub-row">
+                <div>
+                  <label for="feePct">Annual fee (%)</label>
+                  <input id="feePct" value="0.5" />
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -92,22 +120,29 @@
             <h2 class="section-title">Results</h2>
             <a href="/calculators/fee-cost-0-5percent/methodology/" class="inspect-arithmetic-btn">Inspect the Arithmetic</a>
           </div>
-          <div class="results">
-            <div class="result">
-              <p class="k">Ending value (no fee)</p>
-              <p class="v" id="outNoFee">—</p>
+          <div class="result-stack">
+            <div class="result-card primary">
+              <p class="headline">Estimated fee cost</p>
+              <p class="big-value" id="outDiff">—</p>
+              <p class="big-value-note">(difference in ending value versus no fee)</p>
             </div>
-            <div class="result">
-              <p class="k">Ending value (with 0.5% fee)</p>
-              <p class="v" id="outWithFee">—</p>
+            <div class="result-card">
+              <h3>No-fee path</h3>
+              <div class="metric">
+                <span class="label">Ending value (no fee)</span>
+                <span class="value" id="outNoFee">—</span>
+              </div>
             </div>
-            <div class="result">
-              <p class="k">Dollar difference</p>
-              <p class="v" id="outDiff">—</p>
-            </div>
-            <div class="result">
-              <p class="k">Percent reduction</p>
-              <p class="v" id="outPct">—</p>
+            <div class="result-card">
+              <h3>With-fee path</h3>
+              <div class="metric">
+                <span class="label">Ending value (with fee)</span>
+                <span class="value" id="outWithFee">—</span>
+              </div>
+              <div class="metric">
+                <span class="label">Percent reduction</span>
+                <span class="value" id="outPct">—</span>
+              </div>
             </div>
           </div>
         </section>
