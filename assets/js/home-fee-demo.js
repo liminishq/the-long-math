@@ -8,6 +8,13 @@
   var locale = cfg.locale || "en-CA";
   var slider = document.getElementById("feeSlider");
   var feeLabel = document.getElementById("feeSelectedLabel");
+  var leftBaseEl = document.getElementById("feeLeftBaseValue");
+  var leftWithEl = document.getElementById("feeLeftWithValue");
+  var leftCostEl = document.getElementById("feeLeftCostValue");
+  var leftValues = document.querySelectorAll(".home-proof-left .home-proof-demo .home-proof-value");
+  if (!leftBaseEl && leftValues.length >= 1) leftBaseEl = leftValues[0];
+  if (!leftWithEl && leftValues.length >= 2) leftWithEl = leftValues[1];
+  if (!leftCostEl && leftValues.length >= 3) leftCostEl = leftValues[2];
   var baseEl = document.getElementById("feeBaseValue");
   var withEl = document.getElementById("feeWithValue");
   var costEl = document.getElementById("feeCostValue");
@@ -62,6 +69,12 @@
     return arr;
   }
 
+  function syncLeftValuesFromRight() {
+    if (leftBaseEl) leftBaseEl.textContent = baseEl.textContent;
+    if (leftWithEl) leftWithEl.textContent = withEl.textContent;
+    if (leftCostEl) leftCostEl.textContent = costEl.textContent;
+  }
+
   function update() {
     var feePct = parseFloat(slider.value || "1.0");
     var fee = feePct / 100;
@@ -69,11 +82,13 @@
     var selectedTpl = cfg.selectedFeeLabel || "Selected fee: {pct}";
     feeLabel.textContent = selectedTpl.replace("{pct}", formatPercent(feePct));
 
+    baseEl.textContent = formatMoney(baseFV);
     var fvFee = compoundFV(r - fee);
     withEl.textContent = formatMoney(fvFee);
 
     var cost = baseFV - fvFee;
     costEl.textContent = formatMoney(cost);
+    syncLeftValuesFromRight();
 
     var sumTpl =
       cfg.summaryLive ||
