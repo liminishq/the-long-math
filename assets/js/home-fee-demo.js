@@ -11,6 +11,10 @@
   var leftBaseEl = document.getElementById("feeLeftBaseValue");
   var leftWithEl = document.getElementById("feeLeftWithValue");
   var leftCostEl = document.getElementById("feeLeftCostValue");
+  var leftValues = document.querySelectorAll(".home-proof-left .home-proof-demo .home-proof-value");
+  if (!leftBaseEl && leftValues.length >= 1) leftBaseEl = leftValues[0];
+  if (!leftWithEl && leftValues.length >= 2) leftWithEl = leftValues[1];
+  if (!leftCostEl && leftValues.length >= 3) leftCostEl = leftValues[2];
   var baseEl = document.getElementById("feeBaseValue");
   var withEl = document.getElementById("feeWithValue");
   var costEl = document.getElementById("feeCostValue");
