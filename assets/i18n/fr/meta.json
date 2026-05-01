@@ -18,6 +18,7 @@
       "demoAria": "Exemple chiffré comparant les résultats avec et sans frais de conseil annuels",
       "noFee": "Sans frais de conseil",
       "withFee": "Frais de conseil de 1 %",
+      "withFeeDynamicLabel": "Frais de conseil : {pct}",
       "difference": "Écart",
       "caption": "Un faible pourcentage annuel devient un montant très important lorsqu’il se capitalise sur des décennies.",
       "cta": "Voir le calcul complet →",

@@ -8,10 +8,13 @@
   var locale = cfg.locale || "en-CA";
   var slider = document.getElementById("feeSlider");
   var feeLabel = document.getElementById("feeSelectedLabel");
+  var leftWithLabelEl = document.getElementById("feeLeftWithLabel");
   var leftBaseEl = document.getElementById("feeLeftBaseValue");
   var leftWithEl = document.getElementById("feeLeftWithValue");
   var leftCostEl = document.getElementById("feeLeftCostValue");
+  var leftLabelEls = document.querySelectorAll(".home-proof-left .home-proof-row .home-proof-label");
   var leftValues = document.querySelectorAll(".home-proof-left .home-proof-demo .home-proof-value");
+  if (!leftWithLabelEl && leftLabelEls.length >= 2) leftWithLabelEl = leftLabelEls[1];
   if (!leftBaseEl && leftValues.length >= 1) leftBaseEl = leftValues[0];
   if (!leftWithEl && leftValues.length >= 2) leftWithEl = leftValues[1];
   if (!leftCostEl && leftValues.length >= 3) leftCostEl = leftValues[2];
@@ -81,6 +84,8 @@
 
     var selectedTpl = cfg.selectedFeeLabel || "Selected fee: {pct}";
     feeLabel.textContent = selectedTpl.replace("{pct}", formatPercent(feePct));
+    var leftWithTpl = cfg.leftWithFeeLabel || "Advisory fee: {pct}";
+    if (leftWithLabelEl) leftWithLabelEl.textContent = leftWithTpl.replace("{pct}", formatPercent(feePct));
 
     baseEl.textContent = formatMoney(baseFV);
     var fvFee = compoundFV(r - fee);

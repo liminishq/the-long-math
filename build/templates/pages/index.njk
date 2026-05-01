@@ -93,7 +93,7 @@
               <span class="home-proof-value" id="feeLeftBaseValue">$3,806,122</span>
             </div>
             <div class="home-proof-row">
-              <span class="home-proof-label">{{ t('meta.home.proof.withFee') }}</span>
+              <span class="home-proof-label" id="feeLeftWithLabel">{{ t('meta.home.proof.withFee') }}</span>
               <span class="home-proof-value" id="feeLeftWithValue">$2,871,745</span>
             </div>
             <div class="home-proof-row highlight">
@@ -301,6 +301,7 @@
 window.__HOME_FEE_I18N__ = {
   locale: {% if lang == 'fr' %}"fr-CA"{% else %}"en-CA"{% endif %},
   selectedFeeLabel: {{ t('meta.home.proof.selectedFeeLabel') | jsonstr }},
+  leftWithFeeLabel: {{ t('meta.home.proof.withFeeDynamicLabel') | jsonstr }},
   summaryLive: {{ t('meta.home.proof.summaryLive') | jsonstr }}
 };
 </script>

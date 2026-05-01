@@ -18,6 +18,7 @@
       "demoAria": "Worked example comparing outcomes with and without annual advisory fee",
       "noFee": "No advisory fee",
       "withFee": "1% advisory fee",
+      "withFeeDynamicLabel": "Advisory fee: {pct}",
       "difference": "Difference",
       "caption": "A small annual percentage becomes a very large number when compounded over decades.",
       "cta": "See the full calculation →",
