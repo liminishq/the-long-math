@@ -69,6 +69,12 @@
     return arr;
   }
 
+  function syncLeftValuesFromRight() {
+    if (leftBaseEl) leftBaseEl.textContent = baseEl.textContent;
+    if (leftWithEl) leftWithEl.textContent = withEl.textContent;
+    if (leftCostEl) leftCostEl.textContent = costEl.textContent;
+  }
+
   function update() {
     var feePct = parseFloat(slider.value || "1.0");
     var fee = feePct / 100;
@@ -76,15 +82,13 @@
     var selectedTpl = cfg.selectedFeeLabel || "Selected fee: {pct}";
     feeLabel.textContent = selectedTpl.replace("{pct}", formatPercent(feePct));
 
+    baseEl.textContent = formatMoney(baseFV);
     var fvFee = compoundFV(r - fee);
     withEl.textContent = formatMoney(fvFee);
-    if (leftWithEl) leftWithEl.textContent = formatMoney(fvFee);
 
     var cost = baseFV - fvFee;
     costEl.textContent = formatMoney(cost);
-    if (leftCostEl) leftCostEl.textContent = formatMoney(cost);
-
-    if (leftBaseEl) leftBaseEl.textContent = formatMoney(baseFV);
+    syncLeftValuesFromRight();
 
     var sumTpl =
       cfg.summaryLive ||
