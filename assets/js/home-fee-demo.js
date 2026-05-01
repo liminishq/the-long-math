@@ -8,6 +8,9 @@
   var locale = cfg.locale || "en-CA";
   var slider = document.getElementById("feeSlider");
   var feeLabel = document.getElementById("feeSelectedLabel");
+  var leftBaseEl = document.getElementById("feeLeftBaseValue");
+  var leftWithEl = document.getElementById("feeLeftWithValue");
+  var leftCostEl = document.getElementById("feeLeftCostValue");
   var baseEl = document.getElementById("feeBaseValue");
   var withEl = document.getElementById("feeWithValue");
   var costEl = document.getElementById("feeCostValue");
@@ -71,9 +74,13 @@
 
     var fvFee = compoundFV(r - fee);
     withEl.textContent = formatMoney(fvFee);
+    if (leftWithEl) leftWithEl.textContent = formatMoney(fvFee);
 
     var cost = baseFV - fvFee;
     costEl.textContent = formatMoney(cost);
+    if (leftCostEl) leftCostEl.textContent = formatMoney(cost);
+
+    if (leftBaseEl) leftBaseEl.textContent = formatMoney(baseFV);
 
     var sumTpl =
       cfg.summaryLive ||
