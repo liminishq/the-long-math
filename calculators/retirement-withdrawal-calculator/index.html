@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Retirement Withdrawal Calculator | How Long Will Your Money Last?</title>
-  <meta name="description" content="Estimate how long your retirement portfolio may last based on your balance, expected return, withdrawal amount, withdrawal frequency, and optional inflation adjustment." />
+  <title>Retirement Withdrawal Calculator | How Long Will Savings Last?</title>
+  <meta name="description" content="Use this retirement withdrawal calculator to estimate how long your retirement savings may last under fixed withdrawals, a fixed return, and optional inflation adjustment." />
   <link rel="canonical" href="https://thelongmath.com/calculators/retirement-withdrawal-calculator/" />
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Retirement Withdrawal Calculator | The Long Math" />
-  <meta property="og:description" content="Estimate how long your portfolio may last based on your balance, expected return, withdrawal amount, withdrawal frequency, and optional inflation adjustment." />
+  <meta property="og:title" content="Retirement Withdrawal Calculator | How Long Will Savings Last?" />
+  <meta property="og:description" content="Use this retirement withdrawal calculator to estimate how long your retirement savings may last under fixed withdrawals, a fixed return, and optional inflation adjustment." />
   <meta property="og:url" content="https://thelongmath.com/calculators/retirement-withdrawal-calculator/" />
 
   <script type="application/ld+json">
@@ -20,7 +20,7 @@
     "applicationCategory": "FinanceApplication",
     "operatingSystem": "Web",
     "url": "https://thelongmath.com/calculators/retirement-withdrawal-calculator/",
-    "description": "Estimate how long a portfolio may last under fixed withdrawals, a constant expected return, and a selectable withdrawal frequency, with optional inflation-adjusted (today's dollar) display values."
+    "description": "Estimate how long retirement savings may last under fixed withdrawals, a fixed return, and optional inflation adjustment."
   }
   </script>
   <script type="application/ld+json">
@@ -76,8 +76,8 @@
 
     <header class="rw-hero">
       <h1>Retirement Withdrawal Calculator</h1>
-      <p class="lead">Estimate how long your portfolio may last based on your balance, expected return, withdrawal amount, and retirement timeline.</p>
-      <p class="rw-intro">Enter your portfolio value, expected return, and planned withdrawals. The calculator shows how long the money lasts, how much may be left, and what that ending balance could be worth after inflation.</p>
+      <p class="lead">How long will your retirement savings last?</p>
+      <p class="rw-intro">Estimate how long a starting retirement portfolio may last under fixed withdrawals, a fixed return, and optional inflation adjustment.</p>
     </header>
 
     <div class="card rw-calc">
@@ -85,7 +85,7 @@
         <h2 class="section-title">Calculate Your Retirement Withdrawals</h2>
         <a href="/calculators/retirement-withdrawal-calculator/inspect-the-arithmetic/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">Inspect the arithmetic</a>
       </div>
-      <p class="rw-subhead">A simplified portfolio drawdown model. Fixed assumptions. Inspectable year-by-year outputs.</p>
+      <p class="rw-subhead">Fixed withdrawals. Fixed return. Year-by-year drawdown results.</p>
 
       <div id="errorBanner" class="rw-error hidden" role="alert"></div>
 
@@ -93,12 +93,11 @@
         <div class="rw-input-column">
           <article class="panel">
             <h3>Portfolio Assumptions</h3>
-            <p class="help muted">Start with your portfolio value at retirement and expected annual return during retirement.</p>
 
             <div class="field">
-              <label for="portfolio">Starting portfolio value at retirement</label>
+              <label for="portfolio">Starting retirement portfolio</label>
               <input id="portfolio" type="number" inputmode="decimal" min="0" step="1000" value="500000" />
-              <p class="help muted">Need a retirement-start estimate first? Use the <a href="/calculators/investment-simple/">Simple Investment Calculator</a>.</p>
+              <p class="help muted">Need to project this first? Use the <a href="/calculators/investment-simple/">Simple Investment Calculator</a>.</p>
             </div>
 
             <div class="field">
@@ -107,14 +106,12 @@
                 <input id="annualReturn" type="number" inputmode="decimal" step="0.1" value="5" />
                 <span class="unit">%</span>
               </div>
-              <p class="help muted">This is a constant nominal return, before inflation.</p>
             </div>
 
           </article>
 
           <article class="panel">
             <h3>Withdrawal Assumptions</h3>
-            <p class="help muted">Enter a fixed withdrawal amount or choose a withdrawal rate. Withdrawals are treated as fixed nominal dollars unless stated otherwise.</p>
 
             <div class="field">
               <div>Withdrawal type</div>
@@ -125,7 +122,7 @@
             </div>
 
             <div id="dollarModeFields" class="field">
-              <label for="withdrawalAmount">Withdrawal amount (per period)</label>
+              <label for="withdrawalAmount">Withdrawal amount</label>
               <input id="withdrawalAmount" type="number" inputmode="decimal" min="0" step="10" value="2000" />
             </div>
 
@@ -135,7 +132,6 @@
                 <input id="withdrawalRate" type="number" inputmode="decimal" min="0" step="0.1" value="4" />
                 <span class="unit">%</span>
               </div>
-              <p class="help muted">Applied to the portfolio value at the start of withdrawals. Frequency still controls how the annual amount is split across periods.</p>
             </div>
 
             <div class="field">
@@ -147,7 +143,6 @@
                 <option value="4">Quarterly</option>
                 <option value="1">Annually</option>
               </select>
-              <p class="help muted">The annual withdrawal (whether entered as dollars or as a percent) is split evenly across the periods in a year based on this selection.</p>
             </div>
 
           <div class="field">
@@ -157,7 +152,7 @@
           </article>
 
           <article class="panel">
-            <h3>Inflation Adjustment (display only)</h3>
+            <h3>Inflation Adjustment</h3>
             <div class="field checkbox">
               <input id="realToggle" type="checkbox" checked />
               <label for="realToggle">Show inflation-adjusted values</label>
@@ -168,7 +163,7 @@
                 <input id="inflationRate" type="number" inputmode="decimal" step="0.1" value="2.5" />
                 <span class="unit">%</span>
               </div>
-              <p class="help muted">Turn this on to show the portfolio balance in today’s dollars. This does not increase withdrawals each year; it only adjusts the displayed value for inflation.</p>
+              <p class="help muted">Shows balances in today's dollars. Does not increase withdrawals.</p>
             </div>
           </article>
         </div>
@@ -176,10 +171,16 @@
         <article class="panel rw-output-column">
           <h3>Results</h3>
           <div class="rw-outputs" aria-live="polite">
+            <!-- Row 1: starting balance | time until depleted -->
             <div class="rw-out-card rw-out-important">
-              <p class="rw-out-label" id="lbl_portfolio">Starting portfolio at retirement</p>
+              <p class="rw-out-label" id="lbl_portfolio">Starting portfolio</p>
               <p class="rw-out-value" id="out_portfolio">$—</p>
             </div>
+            <div class="rw-out-card rw-out-important">
+              <p class="rw-out-label">Estimated time until depleted</p>
+              <p class="rw-out-value" id="out_depletion">—</p>
+            </div>
+            <!-- Row 2: annual withdrawal | starting withdrawal rate -->
             <div class="rw-out-card">
               <p class="rw-out-label">Annual withdrawal</p>
               <p class="rw-out-value" id="out_annualW">$—</p>
@@ -188,16 +189,13 @@
               <p class="rw-out-label">Starting withdrawal rate</p>
               <p class="rw-out-value" id="out_startWR">—</p>
             </div>
+            <!-- Row 3: nominal ending | inflation-adjusted ending -->
             <div class="rw-out-card rw-out-important">
-              <p class="rw-out-label">Estimated time until depleted</p>
-              <p class="rw-out-value" id="out_depletion">—</p>
-            </div>
-            <div class="rw-out-card rw-out-important">
-              <p class="rw-out-label">Portfolio left at end (nominal)</p>
+              <p class="rw-out-label">Ending balance</p>
               <p class="rw-out-value" id="out_ending">$—</p>
             </div>
             <div class="rw-out-card rw-out-important" id="out_realCard">
-              <p class="rw-out-label">Inflation-adjusted ending value</p>
+              <p class="rw-out-label">Ending balance in today's dollars</p>
               <p class="rw-out-value" id="out_realEnding">$—</p>
             </div>
           </div>
@@ -206,8 +204,7 @@
 
           <section class="result-share-block" id="rw_share_block" aria-labelledby="rw-share-heading">
             <h3 id="rw-share-heading" class="result-share-title">Export &amp; share</h3>
-            <p class="result-share-copy">Download a CSV of the year-by-year table, or share a snapshot image plus a restorable link to these inputs.</p>
-            <p class="result-share-helper">Shares an image plus a link to this calculator scenario.</p>
+            <p class="result-share-copy">Download the year-by-year table, share an image, or copy a restorable result link.</p>
             <div class="result-share-actions" style="margin-top: 10px;">
               <button type="button" class="export-btn" id="export_csv_btn">Download CSV</button>
               <button type="button" id="share_result_btn">Share image</button>
@@ -257,19 +254,20 @@
     <section class="card rw-below">
       <h2>What This Calculator Shows</h2>
       <p>
-        This calculator estimates how a portfolio may decline over time when fixed withdrawals are taken from it. It applies your expected investment return, subtracts withdrawals at the selected frequency, and shows the projected balance year by year.
+        This calculator models a fixed-withdrawal retirement drawdown. It applies a constant expected return, subtracts withdrawals at the selected frequency, and shows year-by-year balances, depletion timing, and ending value.
       </p>
       <p>
-        If the inflation adjustment is turned on, the calculator also shows the portfolio’s future value in today’s dollars. This helps separate the nominal account balance from its estimated purchasing power.
-        For more on purchasing power, see <a href="/articles/investing-and-financial-literacy/inflation/">Inflation: The Math That Makes Future Money Smaller</a> and the <a href="/calculators/inflation-time-machine/">Inflation Time Machine</a>.
+        When inflation adjustment is turned on, the calculator also shows each future balance in today's dollars. Inflation changes the displayed purchasing power, not the withdrawal schedule.
       </p>
     </section>
 
     <section class="card rw-below">
       <h2>What This Calculator Does Not Include</h2>
       <p>
-        This is a simplified drawdown calculator. It does not model taxes, CPP, OAS, pensions, RRIF minimum withdrawals, account-specific rules, market volatility, or sequence-of-returns risk.
-        For that reason, the result should be read as arithmetic under fixed assumptions, not as a retirement income plan or a guaranteed safe withdrawal rate.
+        This is not a full retirement income planner. It does not model taxes, CPP, OAS, pensions, RRIF minimums, account sequencing, market volatility, or sequence-of-returns risk.
+      </p>
+      <p>
+        The result should be read as arithmetic under fixed assumptions, not as financial advice or a guaranteed safe withdrawal rate.
       </p>
       <p>
         <a class="inline-link" href="/calculators/retirement-withdrawal-calculator/inspect-the-arithmetic/">Inspect the arithmetic</a>

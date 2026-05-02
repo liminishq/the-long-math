@@ -431,7 +431,7 @@
     const sim = simulate();
     latestSim = sim.ok ? sim : null;
     if (!sim.ok) {
-      if (lblPortfolio) lblPortfolio.textContent = "Starting portfolio at retirement";
+      if (lblPortfolio) lblPortfolio.textContent = "Starting portfolio";
       if (outPortfolio) outPortfolio.textContent = "—";
       if (outAnnualW) outAnnualW.textContent = "—";
       if (outStartWR) outStartWR.textContent = "—";
@@ -448,7 +448,7 @@
       return;
     }
 
-    if (lblPortfolio) lblPortfolio.textContent = "Starting portfolio at retirement";
+    if (lblPortfolio) lblPortfolio.textContent = "Starting portfolio";
     if (outPortfolio) outPortfolio.textContent = fmtMoney(sim.portfolioAtStart);
     if (outAnnualW) outAnnualW.textContent = fmtMoney(sim.inputs.annualWithdrawal);
     if (outStartWR) outStartWR.textContent = fmtPct(sim.inputs.startingWR, 2);
