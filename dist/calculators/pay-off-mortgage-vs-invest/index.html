@@ -82,7 +82,7 @@
       "name": "What is the break-even return shown in the results?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The break-even return is the annual investment return required for investing to produce the same net worth as accelerated mortgage payoff, given the same monthly cash outflow."
+        "text": "The calculator shows a break-even gross expected return (before fees), on the same basis as the expected return input. Investing uses net return (gross minus your fee percentage). Solving for where the two extreme allocation strategies tie therefore depends on your fee input: higher fees raise the gross return needed for the investing path to catch up."
       }
     },
     {
@@ -225,15 +225,28 @@
             </p>
           </div>
 
-          <div class="field">
-            <label for="display_mode">Show results as</label>
-            <div class="toggle-wrapper">
-              <span id="display_mode_label">Nominal</span>
-              <label class="switch">
-                <input id="display_mode" type="checkbox" />
-                <span class="slider"></span>
+          <div class="field display-mode-field">
+            <div class="display-mode-heading" id="display_mode_heading">Show results as:</div>
+            <div class="display-mode-options" role="radiogroup" aria-labelledby="display_mode_heading">
+              <label class="display-mode-row" for="display_basis_nominal">
+                <input
+                  type="radio"
+                  name="display_basis"
+                  id="display_basis_nominal"
+                  value="nominal"
+                  checked
+                />
+                <span>Nominal</span>
               </label>
-              <span id="display_mode_label_alt" class="hidden">Inflation-adjusted (real)</span>
+              <label class="display-mode-row" for="display_basis_real">
+                <input
+                  type="radio"
+                  name="display_basis"
+                  id="display_basis_real"
+                  value="real"
+                />
+                <span>Inflation-adjusted (real)</span>
+              </label>
             </div>
           </div>
 
@@ -370,6 +383,12 @@
                 <span>Net worth</span>
               </div>
             </div>
+
+            <div class="break-even-card" id="break_even_block">
+              <div class="break-even-title">Break-even gross return</div>
+              <div class="break-even-figure" id="break_even_return">—</div>
+              <p class="help muted break-even-blurb" id="break_even_blurb"></p>
+            </div>
           </div>
 
         </article>
@@ -424,9 +443,8 @@
           <p class="fact-text">If 100% of extra cash allocated to investing, net worth is <strong class="fact-value" id="fact_100_invest">$—</strong> after <strong id="fact_horizon_2">—</strong> years.</p>
         </div>
           <div class="fact-row" style="margin-top: 12px;">
-            <p class="fact-text">
-              If <strong class="fact-value" id="fact_extra_cash_to_mortgage_pct">—</strong>% of extra monthly cash is allocated to mortgage payments, your mortgage will be paid off in <strong class="fact-value" id="fact_payoff_years">—</strong> years and <strong class="fact-value" id="fact_payoff_months">—</strong> months,
-              compared to <strong class="fact-value" id="fact_payoff_baseline_years">—</strong> years and <strong class="fact-value" id="fact_payoff_baseline_months">—</strong> months with all extra cash invested (<strong id="fact_payoff_delta">—</strong>).
+            <p class="fact-text" id="fact_payoff_allocation_block">
+              If <strong class="fact-value" id="fact_extra_cash_to_mortgage_pct">—</strong>% of extra monthly cash is allocated to mortgage payments, <span id="fact_payoff_allocation_detail"></span>
             </p>
           </div>
         <div class="fact-row" style="margin-top: 12px;">
@@ -513,7 +531,7 @@
         <details class="faq-accordion-item">
           <summary>What is the break-even return shown in the results?</summary>
           <div class="faq-accordion-body">
-            <p>The break-even return is the annual investment return required for investing to produce the same net worth as accelerated mortgage payoff, given the same monthly cash outflow.</p>
+            <p>The calculator shows a break-even gross expected return (before fees), on the same basis as the expected return input. Investing uses net return (gross minus your fee percentage). Solving for where the two extreme allocation strategies tie therefore depends on your fee input: higher fees raise the gross return needed for the investing path to catch up.</p>
           </div>
         </details>
 

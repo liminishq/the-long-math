@@ -55,6 +55,44 @@ function monthlyReturnFromAnnual(rAnnualNet) {
 }
 
 /* ============================================================
+   Payoff month (independent of analysis time horizon)
+   Same principal/interest/mortgage-payment rules as simulate(), but
+   runs until the balance hits zero or a safety cap.
+   Investment return does not change the mortgage balance.
+   ============================================================ */
+const MAX_PAYOFF_SEARCH_MONTHS = 1200; // 100 years
+
+function findMortgagePayoffMonth({
+  initialMortgageBalance,
+  mortgagePaymentPerPeriod,
+  extraCashPerPeriod,
+  allocationPercent,
+  annualRate
+}) {
+  if (!Number.isFinite(initialMortgageBalance) || initialMortgageBalance <= 0) {
+    return 0;
+  }
+  const periodRate = annualRate / 100 / 12;
+  const extraToMortgage = ((100 - allocationPercent) / 100) * extraCashPerPeriod;
+  let balance = initialMortgageBalance;
+
+  for (let period = 1; period <= MAX_PAYOFF_SEARCH_MONTHS; period++) {
+    const interestDue = balance * periodRate;
+    const intendedMortgagePayment = mortgagePaymentPerPeriod + extraToMortgage;
+    const maxNeededToClose = interestDue + balance;
+    const actualMortgagePayment = Math.min(intendedMortgagePayment, maxNeededToClose);
+    const actualMortgagePaymentClamped = Math.max(0, actualMortgagePayment);
+    const principalPaid = Math.max(0, actualMortgagePaymentClamped - interestDue);
+    balance = balance - principalPaid;
+    if (balance < 0) balance = 0;
+    if (balance <= 0) {
+      return Math.ceil(period);
+    }
+  }
+  return null;
+}
+
+/* ============================================================
    Simulate with allocation slider
    ============================================================ */
 function simulate({
@@ -201,6 +239,105 @@ function simulate({
     payoffMonth: payoffMonth !== null ? Math.ceil(payoffMonth) : null,
     series
   };
+}
+
+/* ============================================================
+   Net worth at horizon from a simulation result
+   (must match logic in calculateMortgageVsInvest for final row)
+   ============================================================ */
+function finalNetWorthAtHorizon(sim, finalHomeValue) {
+  const finalEquity = Math.max(0, finalHomeValue - sim.finalBalance);
+  return finalEquity + sim.finalInvestValue;
+}
+
+/* ============================================================
+   Break-even gross expected return (before fees): R such that
+   NW(all extra → mortgage) = NW(all extra → invest) at the same horizon,
+   holding fees fixed and using the same mortgage/investment rules as simulate().
+   ============================================================ */
+function findBreakEvenGrossReturnPercent({
+  initialMortgageBalance,
+  mortgagePaymentPerPeriod,
+  extraCashPerPeriod,
+  annualRate,
+  horizonMonths,
+  homePrice,
+  homeGrowthRate,
+  fees,
+  timeHorizon
+}) {
+  if (initialMortgageBalance <= 0) {
+    return { value: null, reason: "no_mortgage" };
+  }
+  if (extraCashPerPeriod <= 1e-9) {
+    return { value: null, reason: "no_extra" };
+  }
+
+  const finalHomeValue = homePrice * Math.pow(1 + homeGrowthRate / 100, timeHorizon);
+
+  const diff = (grossPct) => {
+    const netAnnual = (grossPct - fees) / 100;
+    const mr = monthlyReturnFromAnnual(netAnnual);
+    const simM = simulate({
+      initialMortgageBalance,
+      mortgagePaymentPerPeriod,
+      extraCashPerPeriod,
+      allocationPercent: 0,
+      annualRate,
+      horizonMonths,
+      monthlyReturn: mr,
+      homePrice,
+      homeGrowthRate
+    });
+    const simI = simulate({
+      initialMortgageBalance,
+      mortgagePaymentPerPeriod,
+      extraCashPerPeriod,
+      allocationPercent: 100,
+      annualRate,
+      horizonMonths,
+      monthlyReturn: mr,
+      homePrice,
+      homeGrowthRate
+    });
+    return finalNetWorthAtHorizon(simM, finalHomeValue) - finalNetWorthAtHorizon(simI, finalHomeValue);
+  };
+
+  let lo = -50;
+  let hi = 50;
+  let fLo = diff(lo);
+  let fHi = diff(hi);
+
+  let expand = 0;
+  while (fLo * fHi > 0 && expand < 60) {
+    hi += 40;
+    fHi = diff(hi);
+    lo -= 40;
+    fLo = diff(lo);
+    expand++;
+    if (hi > 900 || lo < -450) break;
+  }
+
+  if (fLo * fHi > 0) {
+    return { value: null, reason: "no_crossing" };
+  }
+
+  for (let i = 0; i < 100; i++) {
+    const mid = (lo + hi) / 2;
+    const fMid = diff(mid);
+    if (hi - lo < 0.0005) {
+      return { value: mid, reason: "ok" };
+    }
+    if (fLo * fMid <= 0) {
+      hi = mid;
+      fHi = fMid;
+    } else {
+      lo = mid;
+      fLo = fMid;
+    }
+  }
+
+  return { value: (lo + hi) / 2, reason: "ok" };
 }
 
 /* ============================================================
@@ -365,6 +502,34 @@ function calculateMortgageVsInvest(inputs) {
   // Final net worth
   const finalEquity = Math.max(0, finalHomeValue - currentResult.finalBalance);
   const finalNetWorth = finalEquity + currentResult.finalInvestValue;
+
+  // True payoff timing (not limited to the chart / net-worth time horizon)
+  const payoffMonthProjected = findMortgagePayoffMonth({
+    initialMortgageBalance,
+    mortgagePaymentPerPeriod: mortgagePaymentMonthly,
+    extraCashPerPeriod: extraCashMonthly,
+    allocationPercent,
+    annualRate
+  });
+  const payoffMonthAllInvestProjected = findMortgagePayoffMonth({
+    initialMortgageBalance,
+    mortgagePaymentPerPeriod: mortgagePaymentMonthly,
+    extraCashPerPeriod: extraCashMonthly,
+    allocationPercent: 100,
+    annualRate
+  });
+
+  const breakEven = findBreakEvenGrossReturnPercent({
+    initialMortgageBalance,
+    mortgagePaymentPerPeriod: mortgagePaymentMonthly,
+    extraCashPerPeriod: extraCashMonthly,
+    annualRate,
+    horizonMonths,
+    homePrice,
+    homeGrowthRate: homeGrowth,
+    fees,
+    timeHorizon
+  });
   
   return {
     netWorth: finalNetWorth,
@@ -374,14 +539,17 @@ function calculateMortgageVsInvest(inputs) {
     totalInterestPaid: currentResult.totalInterestPaid,
     totalInterestEarned: currentResult.totalInterestEarned,
     series: currentResult.series,
-    payoffMonth: currentResult.payoffMonth,
-    payoffMonthAllInvest: result100Invest.payoffMonth, // baseline: extra cash fully invested (0% allocated to mortgage)
+    payoffMonth: payoffMonthProjected,
+    payoffMonthAllInvest: payoffMonthAllInvestProjected,
+    analysisHorizonMonths: horizonMonths,
     fact100Mortgage: result100Mortgage.series[result100Mortgage.series.length - 1].netWorth,
     fact100Invest: result100Invest.series[result100Invest.series.length - 1].netWorth,
     fact100MortgageInterestPaid: result100Mortgage.totalInterestPaid,
     fact100InvestInterestPaid: result100Invest.totalInterestPaid,
     fact100MortgageInterestEarned: result100Mortgage.totalInterestEarned,
-    fact100InvestInterestEarned: result100Invest.totalInterestEarned
+    fact100InvestInterestEarned: result100Invest.totalInterestEarned,
+    breakEvenGrossReturnPercent: breakEven.value,
+    breakEvenReason: breakEven.reason
   };
 }
 

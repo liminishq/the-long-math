@@ -247,7 +247,7 @@
     const homeGrowthRate = homeGrowthInput === "" || !Number.isFinite(num(homeGrowthInput)) 
       ? 0 
       : clamp(num(homeGrowthInput), -10, 20);
-    const isReal = $("display_mode").checked;
+    const isReal = $("display_basis_real").checked;
     const customInflationEl = document.getElementById("custom_inflation_rate");
     const rawInflation = customInflationEl ? num(customInflationEl.value) : DEFAULT_INFLATION_PCT;
     const customInflationPct = Number.isFinite(rawInflation) && rawInflation >= 0
@@ -348,6 +348,24 @@
     $("home_value").textContent = fmtCAD(homeValue);
     $("mortgage_balance").textContent = fmtCAD(mortgageBalance);
 
+    // Break-even return (extreme allocation strategies, same net worth at horizon)
+    if (Number.isFinite(result.breakEvenGrossReturnPercent)) {
+      $("break_even_return").textContent = result.breakEvenGrossReturnPercent.toFixed(2) + "%";
+      $("break_even_blurb").textContent =
+        "Shown as a gross annual % (same basis as the expected return field above). The investing path compounds at net return (gross minus your investment fee %). This value is the gross return at which 100% of extra cash to the mortgage and 100% to investing would tie at your horizon. Changing the fee input changes that gross hurdle. Home price growth does not move this tie point: both paths share the same ending home value, so it drops out of the comparison unless home equity is negative on one path.";
+    } else {
+      $("break_even_return").textContent = "—";
+      if (result.breakEvenReason === "no_mortgage") {
+        $("break_even_blurb").textContent = "Not applicable when there is no mortgage balance.";
+      } else if (result.breakEvenReason === "no_extra") {
+        $("break_even_blurb").textContent =
+          "Add extra cash (above the regular mortgage payment) to see a break-even return between the two extreme allocation strategies.";
+      } else {
+        $("break_even_blurb").textContent =
+          "No break-even was found over a wide range of gross returns; with these inputs, one extreme strategy may always produce higher net worth at your horizon.";
+      }
+    }
+
     // Update key facts
     const fact100Mortgage = adjustForInflation(result.fact100Mortgage, inp.isReal);
     const fact100Invest = adjustForInflation(result.fact100Invest, inp.isReal);
@@ -365,31 +383,90 @@
     const mortgageExtraPct = Math.round(100 - inp.allocationPercent);
     $("fact_extra_cash_to_mortgage_pct").textContent = String(mortgageExtraPct);
 
-    const splitPayoffMonths = (payoffMonth) => {
+    const horizonYears = inp.timeHorizon;
+    const horizonLabel =
+      horizonYears % 1 === 0
+        ? horizonYears + " year" + (horizonYears !== 1 ? "s" : "")
+        : horizonYears.toFixed(1) + " years";
+
+    const parsePayoff = (payoffMonth) => {
       if (payoffMonth == null || !Number.isFinite(payoffMonth)) return null;
       const years = Math.floor(payoffMonth / 12);
       const months = payoffMonth % 12;
-      return { years, months };
+      return { years, months, totalMonths: years * 12 + months };
     };
 
-    const payoffParts = splitPayoffMonths(result.payoffMonth);
-    const baselineParts = splitPayoffMonths(result.payoffMonthAllInvest);
+    const analysisHorizonMonths =
+      result.analysisHorizonMonths != null && Number.isFinite(result.analysisHorizonMonths)
+        ? result.analysisHorizonMonths
+        : Math.round(inp.timeHorizon * 12);
 
-    $("fact_payoff_years").textContent = payoffParts ? String(payoffParts.years) : "—";
-    $("fact_payoff_months").textContent = payoffParts ? String(payoffParts.months) : "—";
-    $("fact_payoff_baseline_years").textContent = baselineParts ? String(baselineParts.years) : "—";
-    $("fact_payoff_baseline_months").textContent = baselineParts ? String(baselineParts.months) : "—";
+    const cur = parsePayoff(result.payoffMonth);
+    const base = parsePayoff(result.payoffMonthAllInvest);
 
-    let deltaText = "—";
-    if (payoffParts && baselineParts) {
-      const currentMonths = payoffParts.years * 12 + payoffParts.months;
-      const baselineMonths = baselineParts.years * 12 + baselineParts.months;
-      const delta = baselineMonths - currentMonths; // positive => sooner
-      if (delta === 0) deltaText = "the same";
-      else if (delta > 0) deltaText = String(delta) + " months sooner";
-      else deltaText = String(Math.abs(delta)) + " months later";
+    const paidOffInPhrase = (p) =>
+      "paid off in " +
+      p.years +
+      " year" +
+      (p.years !== 1 ? "s" : "") +
+      " and " +
+      p.months +
+      " month" +
+      (p.months !== 1 ? "s" : "");
+
+    let detail = "";
+    if (result.payoffMonth === 0) {
+      detail += "there is no mortgage balance to pay down under these inputs. ";
+    } else if (cur && cur.totalMonths > 0) {
+      detail += "your mortgage will be " + paidOffInPhrase(cur) + ". ";
+      if (cur.totalMonths > analysisHorizonMonths) {
+        detail +=
+          "That payoff date is after your selected analysis horizon (" +
+          horizonLabel +
+          ") used for the chart and headline net worth above. ";
+      }
+    } else {
+      detail +=
+        "the mortgage would not be fully paid off within 100 years at these payment levels (for example, payments may not cover interest). ";
     }
-    $("fact_payoff_delta").textContent = deltaText;
+
+    if (result.payoffMonthAllInvest === 0) {
+      detail += "With all extra cash invested, there is no mortgage balance to pay down under these inputs. ";
+    } else if (base && base.totalMonths > 0) {
+      detail +=
+        "With all extra cash invested, payoff would be in " +
+        base.years +
+        " year" +
+        (base.years !== 1 ? "s" : "") +
+        " and " +
+        base.months +
+        " month" +
+        (base.months !== 1 ? "s" : "") +
+        ". ";
+      if (base.totalMonths > analysisHorizonMonths) {
+        detail +=
+          "That payoff date is also after your selected analysis horizon (" + horizonLabel + "). ";
+      }
+    } else {
+      detail +=
+        "With all extra cash invested, payoff would not be reached within 100 years at these payment levels. ";
+    }
+
+    if (cur && cur.totalMonths > 0 && base && base.totalMonths > 0) {
+      const delta = base.totalMonths - cur.totalMonths;
+      if (delta === 0) detail += "That is the same payoff timing as the all-invest baseline.";
+      else if (delta > 0)
+        detail += "That is " + delta + " month" + (delta !== 1 ? "s" : "") + " sooner than the all-invest baseline.";
+      else
+        detail +=
+          "That is " +
+          Math.abs(delta) +
+          " month" +
+          (Math.abs(delta) !== 1 ? "s" : "") +
+          " later than the all-invest baseline.";
+    }
+
+    $("fact_payoff_allocation_detail").textContent = detail.trim();
 
     // Update chart
     const adjustedSeries = result.series.map(p => ({
@@ -402,17 +479,32 @@
     const isSliderChange = changeSource === 'slider';
     chart.setData(adjustedSeries, inp.timeHorizon, inp.isReal, !isSliderChange);
 
-    // Summary sentence: payoff time + net worth at horizon
-    const horizonYears = inp.timeHorizon;
-    const horizonLabel = horizonYears % 1 === 0 ? horizonYears + " year" + (horizonYears !== 1 ? "s" : "") : horizonYears.toFixed(1) + " years";
+    // Summary sentence: payoff time + net worth at horizon (reuses horizonLabel from Key facts block above)
     const netWorthDisplay = fmtCAD(netWorth);
+    const analysisMonths =
+      result.analysisHorizonMonths != null && Number.isFinite(result.analysisHorizonMonths)
+        ? result.analysisHorizonMonths
+        : Math.round(inp.timeHorizon * 12);
+
     let payoffText;
-    if (result.payoffMonth != null) {
+    if (result.payoffMonth === 0) {
+      payoffText = "there is no mortgage balance to amortize,";
+    } else if (result.payoffMonth != null && result.payoffMonth > 0) {
       const years = Math.floor(result.payoffMonth / 12);
       const months = result.payoffMonth % 12;
-      payoffText = "mortgage will be paid off in " + years + " year" + (years !== 1 ? "s" : "") + (months > 0 ? " and " + months + " month" + (months !== 1 ? "s" : "") : "") + ",";
+      payoffText =
+        "mortgage will be paid off in " +
+        years +
+        " year" +
+        (years !== 1 ? "s" : "") +
+        (months > 0 ? " and " + months + " month" + (months !== 1 ? "s" : "") : "");
+      if (result.payoffMonth > analysisMonths) {
+        payoffText += ", which is after your selected " + horizonLabel + " analysis window ends";
+      }
+      payoffText += ",";
     } else {
-      payoffText = "mortgage will not be paid off within your " + horizonLabel + " time horizon,";
+      payoffText =
+        "the mortgage would not be fully paid off within 100 years at these payment levels,";
     }
     $("summary_sentence_text").textContent = "With these inputs, " + payoffText + " and net worth will be " + netWorthDisplay + " at the end of your " + horizonLabel + " time horizon.";
   }
@@ -443,9 +535,7 @@
   }
 
   function syncDisplayMode() {
-    const isReal = $("display_mode").checked;
-    $("display_mode_label").classList.toggle("hidden", isReal);
-    $("display_mode_label_alt").classList.toggle("hidden", !isReal);
+    const isReal = $("display_basis_real").checked;
     $("real_explainer").classList.toggle("hidden", !isReal);
   }
 
@@ -541,9 +631,11 @@
     debouncedRender();
   });
 
-  $("display_mode").addEventListener("change", () => {
-    syncDisplayMode();
-    debouncedRender();
+  ["display_basis_nominal", "display_basis_real"].forEach((id) => {
+    $(id).addEventListener("change", () => {
+      syncDisplayMode();
+      debouncedRender();
+    });
   });
 
   const customInflationEl = document.getElementById("custom_inflation_rate");
