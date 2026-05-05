@@ -23,7 +23,7 @@
   </script>
   {% block headExtra %}{% endblock %}
 </head>
-<body{% if bodyClass %} class="{{ bodyClass }}"{% endif %}>
+<body{% if bodyClass %} class="{{ bodyClass }}"{% endif %}{% if dataFeeCalcLayout %} data-fee-calc-layout="1"{% endif %}>
   {# Header/footer come from /assets/partials/header(-fr).html and footer(-fr).html via site.js #}
   <div id="site-header"></div>
   <div class="wrap">

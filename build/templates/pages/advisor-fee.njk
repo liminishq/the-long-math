@@ -12,8 +12,8 @@
     <p><strong>{{ t('calculators.advisorFee.lede6') }}</strong></p>
   </div>
 </header>
-<div class="calc-grid">
-  <section class="card">
+<div class="calc-grid calc-grid--fee-cost-balanced">
+  <section class="card panel panel--inputs">
     <h2 class="section-title">{{ t('calculators.advisorFee.inputs') }}</h2>
     <div class="btns">
       <button id="preset-starting" type="button">{{ t('calculators.advisorFee.presetStarting') }}</button>
@@ -21,53 +21,56 @@
       <button id="preset-retire" type="button">{{ t('calculators.advisorFee.presetRetire') }}</button>
     </div>
     <p class="hint">{{ t('calculators.advisorFee.presetHint') }}</p>
-    <div class="row">
-      <label for="starting_balance">{{ t('calculators.advisorFee.startingBalance') }}</label>
-      <input id="starting_balance" type="number" />
-    </div>
-    <div class="row">
-      <label for="monthly_contribution">{{ t('calculators.advisorFee.monthlyContribution') }}</label>
-      <input id="monthly_contribution" type="number" />
-    </div>
-    <div class="row">
-      <label for="horizon_years">{{ t('calculators.advisorFee.timeHorizon') }}</label>
-      <input id="horizon_years" type="number" />
-    </div>
-    <div class="row">
-      <label for="annual_return">{{ t('calculators.advisorFee.annualReturn') }}</label>
-      <input id="annual_return" type="text" placeholder="{{ t('calculators.advisorFee.annualReturnPlaceholder') }}" />
-    </div>
-    <div class="slider-block">
-      <div class="slider-top">
-        <div class="lbl">{{ t('calculators.advisorFee.annualReturnSlider') }}</div>
-        <div class="val" id="annual_return_label">–</div>
+    <div class="fee-cost-input-fields">
+      <div class="fee-cost-field">
+        <label for="starting_balance">{{ t('calculators.advisorFee.startingBalance') }}</label>
+        <input id="starting_balance" type="number" value="1000000" />
       </div>
-      <input id="annual_return_slider" type="range" />
-    </div>
-    <div class="toggle">
-      <input id="use_default_fee" type="checkbox" checked />
-      <label for="use_default_fee">{{ t('calculators.advisorFee.useDefaultFee') }}</label>
-    </div>
-    <p class="helper">{{ t('calculators.advisorFee.defaultFeeHelper') }}</p>
-    <div class="row">
-      <label for="custom_advisor_fee">{{ t('calculators.advisorFee.advisorFeePct') }}</label>
-      <input id="custom_advisor_fee" type="text" placeholder="{{ t('calculators.advisorFee.advisorFeePlaceholder') }}" />
-    </div>
-    <div class="toggle">
-      <input id="include_mer" type="checkbox" checked />
-      <label for="include_mer">{{ t('calculators.advisorFee.includeMer') }}</label>
-    </div>
-    <p class="helper">{{ t('calculators.advisorFee.merHelper') }}</p>
-    <div class="row">
-      <label for="mer_pct">{{ t('calculators.advisorFee.merPct') }}</label>
-      <input id="mer_pct" type="text" placeholder="{{ t('calculators.advisorFee.merPlaceholder') }}" />
+      <div class="fee-cost-field">
+        <label for="monthly_contribution">{{ t('calculators.advisorFee.monthlyContribution') }}</label>
+        <input id="monthly_contribution" type="number" value="5000" />
+      </div>
+      <div class="fee-cost-field">
+        <label for="horizon_years">{{ t('calculators.advisorFee.timeHorizon') }}</label>
+        <input id="horizon_years" type="number" value="15" />
+      </div>
+      <div class="fee-cost-field">
+        <label for="annual_return">{{ t('calculators.advisorFee.annualReturn') }}</label>
+        <input id="annual_return" type="text" value="7" placeholder="{{ t('calculators.advisorFee.annualReturnPlaceholder') }}" />
+      </div>
+      <div class="slider-block">
+        <div class="slider-top">
+          <div class="lbl">{{ t('calculators.advisorFee.annualReturnSlider') }}</div>
+          <div class="val" id="annual_return_label">–</div>
+        </div>
+        <input id="annual_return_slider" type="range" />
+      </div>
+      <div class="toggle">
+        <input id="use_default_fee" type="checkbox" checked />
+        <label for="use_default_fee">{{ t('calculators.advisorFee.useDefaultFee') }}</label>
+      </div>
+      <p class="helper">{{ t('calculators.advisorFee.defaultFeeHelper') }}</p>
+      <div class="fee-cost-field">
+        <label for="custom_advisor_fee">{{ t('calculators.advisorFee.advisorFeePct') }}</label>
+        <input id="custom_advisor_fee" type="text" placeholder="{{ t('calculators.advisorFee.advisorFeePlaceholder') }}" />
+      </div>
+      <div class="toggle">
+        <input id="include_mer" type="checkbox" checked />
+        <label for="include_mer">{{ t('calculators.advisorFee.includeMer') }}</label>
+      </div>
+      <p class="helper">{{ t('calculators.advisorFee.merHelper') }}</p>
+      <div class="fee-cost-field">
+        <label for="mer_pct">{{ t('calculators.advisorFee.merPct') }}</label>
+        <input id="mer_pct" type="text" placeholder="{{ t('calculators.advisorFee.merPlaceholder') }}" />
+      </div>
     </div>
   </section>
-  <section class="card">
+  <section class="card panel panel--results">
     <div class="results-panel-header">
       <h2 class="section-title">{{ t('calculators.advisorFee.results') }}</h2>
       <a href="{{ pathPrefix }}/calculators/advisor-fee/methodology/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">{{ t('calculators.advisorFee.inspectArithmetic') }}</a>
     </div>
+    <p id="advisor_calc_engine_error" class="shared-scenario-banner" hidden role="alert" style="border-color:rgba(220,90,90,.45);background:rgba(220,90,90,.1);color:var(--text);"></p>
     <div class="results">
       <div class="result prominent">
         <p class="k">{{ t('calculators.advisorFee.totalCost') }}</p>
@@ -95,7 +98,6 @@
         <p class="v" id="out_lost">$–</p>
       </div>
     </div>
-    <p class="meta" id="out_meta">{{ t('calculators.advisorFee.metaLine') }}</p>
   </section>
 </div>
 <div class="report-issue-wrap">

@@ -27,7 +27,7 @@
   </script>
   
 </head>
-<body>
+<body data-fee-calc-layout="1">
   
   <div id="site-header"></div>
   <div class="wrap">
@@ -44,8 +44,8 @@
     <p><strong>No opinions. No hidden assumptions. Just arithmetic.</strong></p>
   </div>
 </header>
-<div class="calc-grid">
-  <section class="card">
+<div class="calc-grid calc-grid--fee-cost-balanced">
+  <section class="card panel panel--inputs">
     <h2 class="section-title">Inputs</h2>
     <div class="btns">
       <button id="preset-starting" type="button">Starting out</button>
@@ -53,53 +53,56 @@
       <button id="preset-retire" type="button">Near retirement</button>
     </div>
     <p class="hint">Presets reflect common situations. Adjust any assumption below.</p>
-    <div class="row">
-      <label for="starting_balance">Starting balance ($)</label>
-      <input id="starting_balance" type="number" />
-    </div>
-    <div class="row">
-      <label for="monthly_contribution">Monthly contribution ($/mo)</label>
-      <input id="monthly_contribution" type="number" />
-    </div>
-    <div class="row">
-      <label for="horizon_years">Time horizon (years)</label>
-      <input id="horizon_years" type="number" />
-    </div>
-    <div class="row">
-      <label for="annual_return">Expected annual return (%)</label>
-      <input id="annual_return" type="text" placeholder="e.g. 7 or 4.5" />
-    </div>
-    <div class="slider-block">
-      <div class="slider-top">
-        <div class="lbl">Expected annual return slider</div>
-        <div class="val" id="annual_return_label">–</div>
+    <div class="fee-cost-input-fields">
+      <div class="fee-cost-field">
+        <label for="starting_balance">Starting balance ($)</label>
+        <input id="starting_balance" type="number" value="1000000" />
       </div>
-      <input id="annual_return_slider" type="range" />
-    </div>
-    <div class="toggle">
-      <input id="use_default_fee" type="checkbox" checked />
-      <label for="use_default_fee">Use default advisor fee schedule</label>
-    </div>
-    <p class="helper">If unchecked, a flat annual advisor fee entered below is applied instead.</p>
-    <div class="row">
-      <label for="custom_advisor_fee">Advisor fee (%/yr)</label>
-      <input id="custom_advisor_fee" type="text" placeholder="e.g. 1.0" />
-    </div>
-    <div class="toggle">
-      <input id="include_mer" type="checkbox" checked />
-      <label for="include_mer">Include fund / ETF MER</label>
-    </div>
-    <p class="helper">Typical mutual funds ~2%+. Broad index ETFs often ≤0.30%.</p>
-    <div class="row">
-      <label for="mer_pct">MER (%/yr)</label>
-      <input id="mer_pct" type="text" placeholder="e.g. 2.0" />
+      <div class="fee-cost-field">
+        <label for="monthly_contribution">Monthly contribution ($/mo)</label>
+        <input id="monthly_contribution" type="number" value="5000" />
+      </div>
+      <div class="fee-cost-field">
+        <label for="horizon_years">Time horizon (years)</label>
+        <input id="horizon_years" type="number" value="15" />
+      </div>
+      <div class="fee-cost-field">
+        <label for="annual_return">Expected annual return (%)</label>
+        <input id="annual_return" type="text" value="7" placeholder="e.g. 7 or 4.5" />
+      </div>
+      <div class="slider-block">
+        <div class="slider-top">
+          <div class="lbl">Expected annual return slider</div>
+          <div class="val" id="annual_return_label">–</div>
+        </div>
+        <input id="annual_return_slider" type="range" />
+      </div>
+      <div class="toggle">
+        <input id="use_default_fee" type="checkbox" checked />
+        <label for="use_default_fee">Use default advisor fee schedule</label>
+      </div>
+      <p class="helper">If unchecked, a flat annual advisor fee entered below is applied instead.</p>
+      <div class="fee-cost-field">
+        <label for="custom_advisor_fee">Advisor fee (%/yr)</label>
+        <input id="custom_advisor_fee" type="text" placeholder="e.g. 1.0" />
+      </div>
+      <div class="toggle">
+        <input id="include_mer" type="checkbox" checked />
+        <label for="include_mer">Include fund / ETF MER</label>
+      </div>
+      <p class="helper">Typical mutual funds ~2%+. Broad index ETFs often ≤0.30%.</p>
+      <div class="fee-cost-field">
+        <label for="mer_pct">MER (%/yr)</label>
+        <input id="mer_pct" type="text" placeholder="e.g. 2.0" />
+      </div>
     </div>
   </section>
-  <section class="card">
+  <section class="card panel panel--results">
     <div class="results-panel-header">
       <h2 class="section-title">Calculated Results</h2>
       <a href="/calculators/advisor-fee/methodology/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">Inspect the Arithmetic</a>
     </div>
+    <p id="advisor_calc_engine_error" class="shared-scenario-banner" hidden role="alert" style="border-color:rgba(220,90,90,.45);background:rgba(220,90,90,.1);color:var(--text);"></p>
     <div class="results">
       <div class="result prominent">
         <p class="k">Total calculated cost</p>
@@ -127,7 +130,6 @@
         <p class="v" id="out_lost">$–</p>
       </div>
     </div>
-    <p class="meta" id="out_meta">Calculated using the assumptions shown above.</p>
   </section>
 </div>
 <div class="report-issue-wrap">

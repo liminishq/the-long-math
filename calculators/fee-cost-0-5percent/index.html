@@ -29,6 +29,7 @@
   }
   </script>
   <script defer src="/assets/js/fee-math.js"></script>
+  <script defer src="/assets/js/calculator-share.js?v=20260429"></script>
   <script defer src="/assets/js/fee-ui.js"></script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
@@ -40,7 +41,7 @@
   </script>
 </head>
 
-<body data-tool="fee-cost">
+<body data-tool="fee-cost" data-fee-calc-layout="1">
   <div id="site-header"></div>
   
   <div class="wrap">
@@ -60,39 +61,45 @@
     </header>
 
     <div class="card">
-      <div class="calc-grid">
-        <section class="panel">
+      <div class="calc-grid calc-grid--fee-cost-balanced">
+        <section class="panel panel--inputs">
           <h2 class="section-title">Inputs</h2>
-          <div class="row">
-            <div>
+          <p class="fee-cost-input-intro">Adjust these assumptions — results update as you type.</p>
+          <div class="fee-cost-input-fields">
+            <div class="fee-cost-field">
               <label for="P">Starting balance (CAD)</label>
-              <input id="P" value="500000" />
+              <input id="P" type="text" inputmode="decimal" value="500000" />
             </div>
-            <div>
+            <div class="fee-cost-field">
               <label for="years">Horizon (years)</label>
-              <input id="years" value="30" />
+              <input id="years" type="text" inputmode="numeric" value="30" />
             </div>
-            <div>
+            <div class="fee-cost-field">
               <label for="rGrossPct">Gross return (annual %)</label>
-              <input id="rGrossPct" value="6" />
+              <input id="rGrossPct" type="text" inputmode="decimal" value="6" />
             </div>
-            <div>
+            <div class="fee-cost-field">
               <label for="feePct">Annual fee (%)</label>
-              <input id="feePct" value="0.5" />
+              <input id="feePct" type="text" inputmode="decimal" value="0.5" />
             </div>
-            <div>
+            <div class="fee-cost-field">
               <label for="contrib">Annual contribution (CAD)</label>
-              <input id="contrib" value="0" />
+              <input id="contrib" type="text" inputmode="decimal" value="0" />
             </div>
           </div>
         </section>
 
-        <section class="panel">
+        <section class="panel panel--results">
           <div class="results-panel-header">
             <h2 class="section-title">Results</h2>
             <a href="/calculators/fee-cost-0-5percent/methodology/" class="inspect-arithmetic-btn">Inspect the Arithmetic</a>
           </div>
+          <p id="shared_scenario_banner" class="shared-scenario-banner" hidden>Shared calculator scenario loaded. Review the assumptions below and run your own numbers.</p>
           <div class="results">
+            <div class="result prominent">
+              <p class="k">Dollar difference (fee drag)</p>
+              <p class="v" id="outDiff">—</p>
+            </div>
             <div class="result">
               <p class="k">Ending value (no fee)</p>
               <p class="v" id="outNoFee">—</p>
@@ -102,14 +109,22 @@
               <p class="v" id="outWithFee">—</p>
             </div>
             <div class="result">
-              <p class="k">Dollar difference</p>
-              <p class="v" id="outDiff">—</p>
-            </div>
-            <div class="result">
-              <p class="k">Percent reduction</p>
+              <p class="k">Percent reduction vs no fee</p>
               <p class="v" id="outPct">—</p>
             </div>
           </div>
+
+          <section class="result-share-block" aria-labelledby="fee05-share-heading">
+            <h3 id="fee05-share-heading" class="result-share-title">Share this result</h3>
+            <p class="result-share-copy">Snapshot your estimate as a shareable image.</p>
+            <p class="result-share-helper">Shares an image plus a link to this calculator scenario.</p>
+            <div class="result-share-actions">
+              <button type="button" id="share_result_btn">Share image</button>
+              <button type="button" id="download_result_btn">Download PNG</button>
+              <button type="button" id="copy_result_link_btn">Copy result link</button>
+            </div>
+            <p class="result-share-status" id="result_share_status" aria-live="polite"></p>
+          </section>
         </section>
       </div>
 

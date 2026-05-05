@@ -233,9 +233,20 @@
 
     // Calculate via engine (must exist globally)
     if (typeof window.calculateLongMath !== "function") {
-      $("out_meta").textContent = (window.TLM && window.TLM.i18n && window.TLM.i18n.t) ? window.TLM.i18n.t("calculators.advisorFee.errorNoEngine") : "Error: calculateLongMath(...) not found.";
+      const errEl = document.getElementById("advisor_calc_engine_error");
+      const msg =
+        window.TLM && window.TLM.i18n && window.TLM.i18n.t
+          ? window.TLM.i18n.t("calculators.advisorFee.errorNoEngine")
+          : "Error: calculateLongMath(...) not found.";
+      if (errEl) {
+        errEl.textContent = msg;
+        errEl.hidden = false;
+      }
       return;
     }
+
+    const errBanner = document.getElementById("advisor_calc_engine_error");
+    if (errBanner) errBanner.hidden = true;
 
     const result = window.calculateLongMath(inp);
 
@@ -248,7 +259,6 @@
 
     $("out_breakeven").textContent = fmtPct(result.break_even_return);
 
-    $("out_meta").textContent = (window.TLM && window.TLM.i18n && window.TLM.i18n.t) ? window.TLM.i18n.t("calculators.advisorFee.metaLine") : "Calculated using the assumptions shown above.";
     latestSharePayload = buildSharePayload(result, inp);
   }
 
@@ -432,19 +442,17 @@
   // -----------------------------
   wire();
 
-  // Seed initial defaults cleanly (important when page loads)
-  if (!Number.isFinite(num($("annual_return").value))) $("annual_return").value = String(DEFAULTS.annual_return_pct);
-  if (!Number.isFinite(num($("custom_advisor_fee").value))) $("custom_advisor_fee").value = String(DEFAULTS.advisor_fee_pct);
+  var loadedFromSharedUrl = applySharedScenarioFromQuery();
 
-  $("include_mer").checked = true;
-  if (!Number.isFinite(num($("mer_pct").value))) $("mer_pct").value = String(DEFAULTS.mer_pct);
-
-  $("use_default_fee").checked = true;
-
-  applySharedScenarioFromQuery();
-
-  syncSliderFromAnnualReturn();
-  setAdvisorOverrideEnabledUI();
-  setMEREnabledUI();
-  render();
+  if (!loadedFromSharedUrl) {
+    applyPreset("mid");
+  } else {
+    if (!Number.isFinite(num($("annual_return").value))) $("annual_return").value = String(DEFAULTS.annual_return_pct);
+    if (!Number.isFinite(num($("custom_advisor_fee").value))) $("custom_advisor_fee").value = String(DEFAULTS.advisor_fee_pct);
+    if (!Number.isFinite(num($("mer_pct").value))) $("mer_pct").value = String(DEFAULTS.mer_pct);
+    syncSliderFromAnnualReturn();
+    setAdvisorOverrideEnabledUI();
+    setMEREnabledUI();
+    render();
+  }
 })();

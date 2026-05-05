@@ -18,7 +18,7 @@
   </script>
 </head>
 
-<body>
+<body data-fee-calc-layout="1">
   <div id="site-header"></div>
   
   <div class="wrap">
@@ -45,28 +45,30 @@
          MAIN GRID (2 columns)
          ========================= -->
     <div class="card">
-      <div class="calc-grid">
+      <div class="calc-grid calc-grid--fee-cost-balanced">
 
       <!-- INPUTS -->
-      <section class="panel">
+      <section class="panel panel--inputs">
         <h2 class="section-title">Inputs</h2>
+        <p class="fee-cost-input-intro">Choose a fee model and fill in the fields — results update as you change inputs.</p>
 
-        <div class="row">
+        <div class="fee-cost-input-fields">
+        <div class="fee-cost-field">
           <label for="starting_balance">Starting balance ($)</label>
           <input id="starting_balance" type="number" />
         </div>
 
-        <div class="row">
+        <div class="fee-cost-field">
           <label for="monthly_contribution">Monthly contribution ($/mo)</label>
           <input id="monthly_contribution" type="number" />
         </div>
 
-        <div class="row">
+        <div class="fee-cost-field">
           <label for="horizon_years">Time horizon (years)</label>
           <input id="horizon_years" type="number" />
         </div>
 
-        <div class="row">
+        <div class="fee-cost-field">
           <label for="annual_return">Expected annual return (%)</label>
           <input id="annual_return" type="text" placeholder="e.g. 7 or 4.5" />
         </div>
@@ -80,9 +82,9 @@
         </div>
 
         <!-- Fee model selector -->
-        <div class="row" style="margin-top: 16px;">
-          <label style="grid-column: 1 / -1; margin-bottom: 8px;">Fee model</label>
-          <div style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px;">
+        <div class="fee-cost-field" style="padding-top:4px;">
+          <span class="section-title" style="display:block;margin-bottom:8px;">Fee model</span>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
             <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
               <input type="radio" name="fee_model" id="model_flat" value="flat" checked />
               Flat annual fee
@@ -104,7 +106,7 @@
 
         <!-- Flat fee fields -->
         <div id="fields_flat" class="fee-model-fields">
-          <div class="row">
+          <div class="fee-cost-field">
             <label for="flat_fee">Flat fee per year ($)</label>
             <input id="flat_fee" type="number" />
           </div>
@@ -115,7 +117,7 @@
           </div>
 
           <div id="fields_fee_increase" class="fee-increase-fields" style="display: none;">
-            <div class="row">
+            <div class="fee-cost-field">
               <label for="fee_increase_pct">Annual fee increase (%)</label>
               <input id="fee_increase_pct" type="text" placeholder="e.g. 2.0" />
             </div>
@@ -124,12 +126,12 @@
 
         <!-- Hourly fee fields -->
         <div id="fields_hourly" class="fee-model-fields" style="display: none;">
-          <div class="row">
+          <div class="fee-cost-field">
             <label for="hourly_rate">Hourly rate ($/hr)</label>
             <input id="hourly_rate" type="number" />
           </div>
 
-          <div class="row">
+          <div class="fee-cost-field">
             <label for="hours_per_year">Hours per year</label>
             <input id="hours_per_year" type="number" />
           </div>
@@ -140,7 +142,7 @@
           </div>
 
           <div id="fields_fee_increase_hourly" class="fee-increase-fields" style="display: none;">
-            <div class="row">
+            <div class="fee-cost-field">
               <label for="fee_increase_pct_hourly">Annual fee increase (%)</label>
               <input id="fee_increase_pct_hourly" type="text" placeholder="e.g. 2.0" />
             </div>
@@ -149,20 +151,25 @@
 
         <!-- AUM fee fields -->
         <div id="fields_aum" class="fee-model-fields" style="display: none;">
-          <div class="row">
+          <div class="fee-cost-field">
             <label for="aum_fee_pct">AUM fee (%/yr)</label>
             <input id="aum_fee_pct" type="text" placeholder="e.g. 1.0" />
           </div>
         </div>
 
+        </div>
+
       </section>
 
       <!-- RESULTS -->
-      <section class="panel">
+      <section class="panel panel--results">
       <div class="results-panel-header">
         <h2 class="section-title">Calculated Results</h2>
         <a href="/calculators/flat-fee-or-hourly/methodology/" class="inspect-arithmetic-btn">Inspect the Arithmetic</a>
       </div>
+
+        <p id="shared_scenario_banner" class="shared-scenario-banner" hidden>Shared calculator scenario loaded. Review the assumptions below and run your own numbers.</p>
+        <p id="flat_fee_calc_notice" class="shared-scenario-banner" hidden role="alert" style="border-color:rgba(220,90,90,.45);background:rgba(220,90,90,.1);color:var(--text);"></p>
 
         <div class="results">
 
@@ -171,6 +178,18 @@
             <p class="v" id="out_total_cost">$–</p>
             <p class="subl">Fees paid + lost compounding</p>
           </div>
+
+          <section class="result-share-block" aria-labelledby="ffh-share-heading">
+            <h3 id="ffh-share-heading" class="result-share-title">Share this result</h3>
+            <p class="result-share-copy">Snapshot your estimate as a shareable image.</p>
+            <p class="result-share-helper">Shares an image plus a link to this calculator scenario.</p>
+            <div class="result-share-actions">
+              <button type="button" id="share_result_btn">Share image</button>
+              <button type="button" id="download_result_btn">Download PNG</button>
+              <button type="button" id="copy_result_link_btn">Copy result link</button>
+            </div>
+            <p class="result-share-status" id="result_share_status" aria-live="polite"></p>
+          </section>
 
           <div class="result">
             <p class="k">AUM-fee equivalent</p>
@@ -200,9 +219,6 @@
 
         </div>
 
-        <p class="meta" id="out_meta">
-          Calculated using monthly compounding and the assumptions shown above.
-        </p>
       </section>
       </div>
     </div>
@@ -294,6 +310,7 @@
 
   <!-- Logic -->
   <script defer src="./engine.js"></script>
+  <script defer src="/assets/js/calculator-share.js?v=20260429"></script>
   <script defer src="./ui.js"></script>
 
   <!-- Theme toggle -->

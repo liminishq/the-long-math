@@ -26,7 +26,7 @@ function loadFeeMath() {
 }
 
 const M = loadFeeMath();
-const { fvAnnual, endingValueWithFee, requiredAlphaToOffsetFeeSimple, extraAnnualContributionToOffsetFee } = M;
+const { fvAnnual, fvPeriodicContributions, endingValueWithFee, requiredAlphaToOffsetFeeSimple, extraAnnualContributionToOffsetFee } = M;
 
 function approx(a, b, eps = 1e-9) {
   assert.ok(Number.isFinite(a) && Number.isFinite(b), `expected finite, got ${a}, ${b}`);
@@ -58,6 +58,41 @@ test("endingValueWithFee: matches fvAnnual at gross − fee", () => {
   const a = endingValueWithFee({ ...args, gross, fee });
   const b = fvAnnual({ P: args.P, r: gross - fee, years: args.years, contrib: args.contrib });
   approx(a, b);
+});
+
+test("fvPeriodicContributions: matches fvAnnual when periodsPerYear is 1", () => {
+  const r = 0.06;
+  const years = 10;
+  const contrib = 500;
+  const a = fvAnnual({ P: 1000, r, years, contrib });
+  const b = fvPeriodicContributions({
+    P: 1000,
+    rAnnual: r,
+    years,
+    contribPerPeriod: contrib,
+    periodsPerYear: 1
+  });
+  approx(a, b);
+});
+
+test("endingValueWithFee: monthly contributions match period-compounded FV", () => {
+  const gross = 0.06;
+  const fee = 0;
+  const years = 1;
+  const contrib = 100;
+  const v = endingValueWithFee({
+    P: 0,
+    gross,
+    fee,
+    years,
+    contrib,
+    contribFreq: "monthly"
+  });
+  const i = Math.pow(1 + gross, 1 / 12) - 1;
+  const n = 12;
+  const g = Math.pow(1 + i, n);
+  const expect = contrib * ((g - 1) / i);
+  approx(v, expect);
 });
 
 test("golden: endingValueWithFee round figures (6% gross, 1% fee, 30y, no contrib)", () => {

@@ -118,17 +118,31 @@
     const inp = readInputs();
 
     // Calculate via engine (must exist globally)
+    const noticeEl = document.getElementById("flat_fee_calc_notice");
+    function showNotice(text) {
+      if (!noticeEl) return;
+      noticeEl.textContent = text;
+      noticeEl.hidden = false;
+    }
+    function hideNotice() {
+      if (!noticeEl) return;
+      noticeEl.hidden = true;
+      noticeEl.textContent = "";
+    }
+
     if (typeof window.calculateFlatFeeOrHourlyCost !== "function") {
-      $("out_meta").textContent = "Error: calculateFlatFeeOrHourlyCost(...) not found.";
+      showNotice("Error: calculateFlatFeeOrHourlyCost(...) not found.");
       return;
     }
 
     const result = window.calculateFlatFeeOrHourlyCost(inp);
 
     if (result.error) {
-      $("out_meta").textContent = "Error: " + result.error;
+      showNotice("Error: " + result.error);
       return;
     }
+
+    hideNotice();
 
     $("out_with").textContent = fmtCAD(result.endingWith);
     $("out_without").textContent = fmtCAD(result.endingWithout);
@@ -149,7 +163,6 @@
       }
     }
 
-    $("out_meta").textContent = "Calculated using monthly compounding and the assumptions shown above.";
   }
 
   // -----------------------------
@@ -182,11 +195,11 @@
 
     // Show relevant fields
     if (feeModel === "flat") {
-      $("fields_flat").style.display = "block";
+      $("fields_flat").style.display = "";
     } else if (feeModel === "hourly") {
-      $("fields_hourly").style.display = "block";
+      $("fields_hourly").style.display = "";
     } else if (feeModel === "aum") {
-      $("fields_aum").style.display = "block";
+      $("fields_aum").style.display = "";
     }
   }
 
@@ -197,15 +210,68 @@
       : $("fee_inflation_on_hourly").checked;
 
     if (feeModel === "flat") {
-      $("fields_fee_increase").style.display = isOn ? "block" : "none";
+      $("fields_fee_increase").style.display = isOn ? "" : "none";
     } else if (feeModel === "hourly") {
-      $("fields_fee_increase_hourly").style.display = isOn ? "block" : "none";
+      $("fields_fee_increase_hourly").style.display = isOn ? "" : "none";
     }
   }
 
   // -----------------------------
   // Initialize defaults
   // -----------------------------
+  function calculatorSlugFromPath() {
+    const segs = (window.location.pathname || "").replace(/\/$/, "").split("/").filter(Boolean);
+    return segs[segs.length - 1] || "calculator";
+  }
+
+  function showSharedScenarioBannerIfPresent() {
+    const b = document.getElementById("shared_scenario_banner");
+    if (b) b.hidden = false;
+  }
+
+  function applyFlatFeeScenarioFromQuery() {
+    const ps = new URLSearchParams(window.location.search || "");
+    if (!ps.toString()) return false;
+    let applied = false;
+    const fm = ps.get("feeModel");
+    if (fm === "flat" || fm === "hourly" || fm === "aum") {
+      $("model_flat").checked = fm === "flat";
+      $("model_hourly").checked = fm === "hourly";
+      $("model_aum").checked = fm === "aum";
+      applied = true;
+    }
+    function setNum(id, key, lo, hi) {
+      if (!ps.has(key)) return;
+      const n = num(ps.get(key));
+      if (!Number.isFinite(n)) return;
+      $(id).value = String(Math.min(hi, Math.max(lo, n)));
+      applied = true;
+    }
+    setNum("starting_balance", "starting_balance", 0, 10000000);
+    setNum("monthly_contribution", "monthly_contribution", 0, 50000);
+    setNum("horizon_years", "horizon_years", 1, 50);
+    setNum("annual_return", "annual_return", AR.min, AR.max);
+    setNum("flat_fee", "flat_fee", 0, 100000);
+    setNum("hourly_rate", "hourly_rate", 0, 10000);
+    setNum("hours_per_year", "hours_per_year", 0, 1000);
+    if (ps.has("aum_fee_pct")) {
+      const raw = ps.get("aum_fee_pct");
+      $("aum_fee_pct").value = String(raw);
+      applied = true;
+    }
+    if (ps.has("fee_inflation")) {
+      const on = ps.get("fee_inflation") === "1";
+      $("fee_inflation_on").checked = on;
+      $("fee_inflation_on_hourly").checked = on;
+      applied = true;
+    }
+    setNum("fee_increase_pct", "fee_increase_pct", 0, 20);
+    if (ps.has("fee_increase_pct")) {
+      $("fee_increase_pct_hourly").value = ps.get("fee_increase_pct");
+    }
+    return applied;
+  }
+
   function initDefaults() {
     $("starting_balance").value = String(DEFAULTS.starting_balance);
     $("monthly_contribution").value = String(DEFAULTS.monthly_contribution);
@@ -239,6 +305,17 @@
   function wire() {
     // Slider config
     initDefaults();
+
+    const restored = applyFlatFeeScenarioFromQuery();
+    setFeeModelUI();
+    setFeeInflationUI();
+    if (restored) {
+      syncSliderFromAnnualReturn();
+      showSharedScenarioBannerIfPresent();
+      if (window.TLM && window.TLM.shareCard && window.TLM.shareCard.track) {
+        window.TLM.shareCard.track("calculator_shared_scenario_loaded", { calculator_name: "flat-fee-or-hourly" });
+      }
+    }
 
     // Annual return sync
     $("annual_return").addEventListener("input", () => {
@@ -303,6 +380,44 @@
 
     // Initial render
     render();
+
+    if (window.TLM && window.TLM.shareCard && window.TLM.shareCard.wireCalculatorShare && document.getElementById("share_result_btn")) {
+      window.TLM.shareCard.wireCalculatorShare(calculatorSlugFromPath(), function () {
+        const inp = readInputs();
+        if (typeof window.calculateFlatFeeOrHourlyCost !== "function") return null;
+        const result = window.calculateFlatFeeOrHourlyCost(inp);
+        if (result.error || !Number.isFinite(result.totalCost)) return null;
+        const years = Math.round(inp.horizonYears);
+        const scenario = {
+          feeModel: inp.feeModel,
+          starting_balance: Math.round(inp.startingBalance),
+          monthly_contribution: Math.round(inp.monthlyContribution),
+          horizon_years: years,
+          annual_return: Number((inp.annualReturn * 100).toFixed(4)),
+          flat_fee: Math.round(inp.flatFee),
+          hourly_rate: Math.round(inp.hourlyRate),
+          hours_per_year: Math.round(inp.hoursPerYear),
+          aum_fee_pct: Number((inp.aumFeePct * 100).toFixed(4)),
+          fee_inflation: inp.feeInflationOn ? 1 : 0,
+          fee_increase_pct: Number(inp.feeIncreasePct.toFixed(4)),
+        };
+        return {
+          scenario: scenario,
+          card: {
+            headline: "Projected cost of fees and lost compounding",
+            mainValue: fmtCAD(result.totalCost),
+            subline: "Over a " + years + "-year investing horizon",
+            contextLine: "Based on user inputs",
+            shareText:
+              "Estimated total fee cost over " +
+              years +
+              " years: " +
+              fmtCAD(result.totalCost) +
+              ". Run your own numbers:",
+          },
+        };
+      });
+    }
   }
 
   // -----------------------------

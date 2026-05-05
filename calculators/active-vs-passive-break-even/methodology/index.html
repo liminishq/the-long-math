@@ -27,7 +27,7 @@
   <div class="wrap">
     <div class="methodology-content">
       <h1>Inspect the Arithmetic — Active vs Passive Break-Even</h1>
-      <p class="methodology-meta">Version 1.0<br>Last updated: March 2026</p>
+      <p class="methodology-meta">Version 1.1<br>Last updated: May 2026</p>
 
       <p>
         Transparent arithmetic is the operating system of this calculator.
@@ -53,7 +53,8 @@
       <p>Let:</p>
       <ul>
         <li>P = starting balance (initial principal, CAD)</li>
-        <li>c = annual contribution (CAD), applied at the end of each year</li>
+        <li>c = contribution amount in CAD per period (weekly, monthly, or annual, depending on user selection)</li>
+        <li>m = contribution periods per year (52 for weekly, 12 for monthly, 1 for annual)</li>
         <li>t = investment horizon in years</li>
         <li>r<sub>passive</sub> = passive portfolio return before fees (decimal)</li>
         <li>r<sub>active</sub> = assumed active portfolio return before fees (decimal)</li>
@@ -64,18 +65,27 @@
         <li>r<sub>passive,net</sub> = r<sub>passive</sub> − f<sub>passive</sub></li>
         <li>r<sub>active,net</sub> = r<sub>active</sub> − f<sub>active</sub></li>
         <li>r<sub>active,net,break</sub> = r<sub>active,break</sub> − f<sub>active</sub></li>
-        <li>FV(P, r, t, c) = future value with annual compounding and end-of-year contributions</li>
+        <li>FV<sub>annual</sub>(P, r, t, c) = future value with annual compounding and one end-of-year contribution of c when m = 1</li>
+        <li>FV<sub>periodic</sub>(P, r, t, c, m) = future value when the net annual rate r compounds m times per year and contribution c is added at the end of each of the m·t periods (same convention as the simple investment calculator)</li>
       </ul>
 
       <h2>Core Equations</h2>
 
-      <h3 id="fv-annual">1. Future Value with Annual Compounding</h3>
+      <h3 id="fv-annual">1. Future Value with Contributions</h3>
       <p>
-        As with the other fee tools, ending values are computed via:
+        When contributions are <strong>annual</strong> (m = 1), ending values use one compound period per year and a single end-of-year contribution:
       </p>
       <div class="formula-block">
-        FV(P, r, t, c) = P(1 + r)<sup>t</sup> + c · \frac{(1 + r)<sup>t</sup> − 1}{r}, &nbsp; if r ≠ 0<br>
-        FV(P, 0, t, c) = P + c · t, &nbsp; if r = 0
+        FV<sub>annual</sub>(P, r, t, c) = P(1 + r)<sup>t</sup> + c · \frac{(1 + r)<sup>t</sup> − 1}{r}, &nbsp; if r ≠ 0<br>
+        FV<sub>annual</sub>(P, 0, t, c) = P + c · t, &nbsp; if r = 0
+      </div>
+      <p>
+        When the user selects <strong>weekly</strong> (m = 52) or <strong>monthly</strong> (m = 12) contributions, the implementation uses the same effective per-period rate as the simple investment calculator:
+        i = (1 + r)<sup>1/m</sup> − 1, with N = m·t periods and contribution c at the end of each period:
+      </p>
+      <div class="formula-block">
+        FV<sub>periodic</sub> = P(1 + i)<sup>N</sup> + c · \frac{(1 + i)<sup>N</sup> − 1}{i}, &nbsp; if i ≠ 0<br>
+        FV<sub>periodic</sub> = P + c · N, &nbsp; if i = 0
       </div>
 
       <h3 id="breakeven-alpha">2. Break-Even Alpha from Fee Difference</h3>
@@ -93,7 +103,7 @@
         α<sub>break</sub> = f<sub>active</sub> − f<sub>passive</sub>
       </div>
       <p>
-        The calculator displays α<sub>break</sub> as “Break-even alpha (fee diff)” and r<sub>active,break</sub> as “Break-even active gross return”.
+        The calculator displays α<sub>break</sub> as “Break-even extra return / yr (fee gap)” and r<sub>active,break</sub> as “Break-even active return (gross)”.
       </p>
 
       <h3 id="net-returns">3. Net Returns Used for Ending Values</h3>
@@ -109,10 +119,13 @@
         Using the net returns and contributions, the calculator computes three ending values:
       </p>
       <div class="formula-block">
-        FV<sub>passive</sub> = FV(P, r<sub>passive,net</sub>, t, c)<br>
-        FV<sub>active,assumed</sub> = FV(P, r<sub>active,net</sub>, t, c)<br>
-        FV<sub>active,break</sub> = FV(P, r<sub>active,net,break</sub>, t, c)
+        FV<sub>passive</sub> = FV(P, r<sub>passive,net</sub>, t, c, m)<br>
+        FV<sub>active,assumed</sub> = FV(P, r<sub>active,net</sub>, t, c, m)<br>
+        FV<sub>active,break</sub> = FV(P, r<sub>active,net,break</sub>, t, c, m)
       </div>
+      <p>
+        Here FV denotes FV<sub>annual</sub> when m = 1 and FV<sub>periodic</sub> when m = 12 or 52, using the corresponding net return r in the formula for that path.
+      </p>
       <p>
         The difference between active and passive under the assumed active return is:
       </p>
@@ -124,7 +137,7 @@
       <ul>
         <li>
           All future values are computed via <code>TLM_FeeMath.endingValueWithFee()</code> in <code>/assets/js/fee-math.js</code>, using the
-          specified gross return and fee pair for each path.
+          specified gross return and fee pair for each path. Optional <code>contribFreq</code> of <code>"monthly"</code> or <code>"weekly"</code> selects periodic compounding; otherwise contributions are treated as annual end-of-year cash flows.
         </li>
         <li>
           The page-specific logic in <code>initActiveVsPassivePage()</code> inside <code>/assets/js/fee-ui.js</code> computes

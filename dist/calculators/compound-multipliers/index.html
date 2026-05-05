@@ -15,6 +15,7 @@
 
   <!-- Tool-specific -->
   <link rel="stylesheet" href="/calculators/compound-multipliers/styles.css" />
+  <script defer src="/assets/js/calculator-share.js?v=20260429"></script>
   <script defer src="/calculators/compound-multipliers/script.js"></script>
 
   <script type="application/ld+json">
@@ -97,6 +98,20 @@
           <tbody id="multBody"></tbody>
         </table>
       </div>
+
+      <p id="shared_scenario_banner" class="shared-scenario-banner" hidden>Shared calculator scenario loaded. Review the assumptions below and run your own numbers.</p>
+
+      <section class="result-share-block" aria-labelledby="cm-share-heading">
+        <h3 id="cm-share-heading" class="result-share-title">Share this result</h3>
+        <p class="result-share-copy">Snapshot the multiplier for your selected table cell as a shareable image.</p>
+        <p class="result-share-helper">Shares an image plus a link to this calculator with the same rate and years. Tap a cell in the table first to choose which multiplier to share.</p>
+        <div class="result-share-actions">
+          <button type="button" id="share_result_btn">Share image</button>
+          <button type="button" id="download_result_btn">Download PNG</button>
+          <button type="button" id="copy_result_link_btn">Copy result link</button>
+        </div>
+        <p class="result-share-status" id="result_share_status" aria-live="polite"></p>
+      </section>
 
       <details class="methodology">
         <summary>Inspectable arithmetic (formula + assumptions)</summary>

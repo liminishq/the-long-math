@@ -370,6 +370,100 @@
     });
   }
 
+  function setShareStatusEl(statusId, message, isError) {
+    var el = document.getElementById(statusId || "result_share_status");
+    if (!el) return;
+    el.textContent = message || "";
+    el.style.color = isError ? "#e7b4b4" : "";
+  }
+
+  /**
+   * Generic wiring for Share image / Download PNG / Copy result link on calculator pages.
+   * getBundle: () => { scenario: object for query URL, card: { headline, mainValue, subline, contextLine, shareText, title } }
+   */
+  function wireCalculatorShare(slug, getBundle, opts) {
+    opts = opts || {};
+    var statusId = opts.statusElementId || "result_share_status";
+
+    if (!slug || typeof getBundle !== "function") return;
+    if (!document.getElementById(opts.shareBtnId || "share_result_btn")) return;
+
+    function buildPayload() {
+      var b = getBundle();
+      if (!b || !b.scenario || !b.card) return null;
+      var url = buildResultUrl(window.location.href, b.scenario);
+      var c = b.card;
+      return {
+        calculatorName: slug,
+        title: c.title || "The Long Math calculator result",
+        headline: c.headline,
+        mainValue: c.mainValue,
+        subline: c.subline,
+        contextLine: c.contextLine,
+        contextLines: c.contextLines,
+        footer: "Run your own numbers at TheLongMath.com",
+        shareText: c.shareText,
+        url: url,
+      };
+    }
+
+    var shareBtn = document.getElementById(opts.shareBtnId || "share_result_btn");
+    var downloadBtn = document.getElementById(opts.downloadBtnId || "download_result_btn");
+    var copyBtn = document.getElementById(opts.copyBtnId || "copy_result_link_btn");
+
+    if (shareBtn) {
+      shareBtn.addEventListener("click", async function () {
+        var p = buildPayload();
+        if (!p) return;
+        setShareStatusEl(statusId, "Preparing image...");
+        track("calculator_result_share_clicked", { calculator_name: slug });
+        try {
+          var result = await shareResultCard(p);
+          if (result && result.mode === "download-and-copy-fallback") {
+            if (result.copied) {
+              setShareStatusEl(statusId, "Shared via fallback: PNG opened/downloaded and scenario link copied.");
+            } else {
+              setShareStatusEl(statusId, "PNG opened/downloaded. Copy result link manually if needed.");
+            }
+          } else if (result && result.mode === "native-share-link") {
+            setShareStatusEl(statusId, "Share dialog opened with result summary and scenario link.");
+          } else {
+            setShareStatusEl(statusId, "Share dialog opened with image, summary, and scenario link.");
+          }
+        } catch (_err) {
+          setShareStatusEl(statusId, "Share cancelled or unavailable. Try Download PNG instead.", true);
+        }
+      });
+    }
+
+    if (downloadBtn) {
+      downloadBtn.addEventListener("click", async function () {
+        var p = buildPayload();
+        if (!p) return;
+        setShareStatusEl(statusId, "Generating PNG...");
+        try {
+          await downloadResultCard(p);
+          setShareStatusEl(statusId, "PNG downloaded.");
+        } catch (_e) {
+          setShareStatusEl(statusId, "Could not generate PNG. Please try again.", true);
+        }
+      });
+    }
+
+    if (copyBtn) {
+      copyBtn.addEventListener("click", async function () {
+        var p = buildPayload();
+        if (!p) return;
+        try {
+          await copyResultLink(p);
+          setShareStatusEl(statusId, "Result link copied.");
+        } catch (_e) {
+          setShareStatusEl(statusId, "Could not copy link on this browser.", true);
+        }
+      });
+    }
+  }
+
   window.TLM = window.TLM || {};
   window.TLM.shareCard = {
     createShareCardCanvas: createShareCardCanvas,
@@ -379,5 +473,6 @@
     buildResultUrl: buildResultUrl,
     track: track,
     isFiniteNumber: isFiniteNumber,
+    wireCalculatorShare: wireCalculatorShare,
   };
 })();

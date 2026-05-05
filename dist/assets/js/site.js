@@ -403,6 +403,34 @@
     });
   }
 
+  function isFrenchLocale() {
+    var lang = (document.documentElement && document.documentElement.getAttribute("lang")) || "";
+    return /^fr/i.test(lang);
+  }
+
+  function initNewsletterDoubleOptInNote() {
+    var sections = document.querySelectorAll(".newsletter-signup");
+    if (!sections || !sections.length) return;
+
+    var fr = isFrenchLocale();
+    var htmlEn =
+      "You are almost done. To reduce spam and bot signups, this list uses <strong>double opt-in</strong>: please check your <strong>inbox and junk mail folder</strong> for our email, then click <strong>Confirm Subscription</strong> to finish.";
+    var htmlFr =
+      "Vous y &ecirc;tes presque. Pour limiter le pourriel et les inscriptions automatis&eacute;es, cette liste utilise la <strong>double confirmation</strong> : ouvrez le courriel que nous envoyons (bo&icirc;te de r&eacute;ception <strong>et</strong> courrier ind&eacute;sirable), puis cliquez sur <strong>Confirmer l'abonnement</strong>.";
+
+    sections.forEach(function (sec) {
+      if (sec.querySelector(".newsletter-double-opt-in-note")) return;
+      var wrap = sec.querySelector(".newsletter-embed-wrap");
+      if (!wrap || !sec.querySelector(".beehiiv-embed")) return;
+
+      var p = document.createElement("p");
+      p.className = "newsletter-double-opt-in-note";
+      p.setAttribute("data-tlm-double-opt-in-note", "1");
+      p.innerHTML = fr ? htmlFr : htmlEn;
+      wrap.parentNode.insertBefore(p, wrap);
+    });
+  }
+
   function injectBeehiivEmbedScript() {
     if (!document.querySelector(".beehiiv-embed")) return;
     if (document.querySelector('script[src*="subscribe-forms.beehiiv.com/embed.js"]')) return;
@@ -432,6 +460,7 @@
     initLastUpdated();
     initFaqQuestionAccordions();
     injectBeehiivEmbedScript();
+    initNewsletterDoubleOptInNote();
     loadCalculatorExportScript();
   });
 })();

@@ -85,14 +85,6 @@
       font-weight: normal;
     }
 
-    /* Smaller result values (reduce imbalance with inputs) */
-    .results .result .v{
-      font-size: 18px;
-    }
-
-    .results .result.prominent .v{
-      font-size: 26px;
-    }
   </style>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
@@ -104,7 +96,7 @@
   </script>
 </head>
 
-<body>
+<body data-fee-calc-layout="1">
   <div id="site-header"></div>
   
   <div class="wrap">
@@ -145,35 +137,34 @@
       </section>
 
       <!-- CALCULATOR GRID (2 columns: inputs left, results right) -->
-      <div class="calc-grid">
+      <div class="calc-grid calc-grid--fee-cost-balanced">
       <!-- INPUTS (left column) -->
-      <section class="panel">
+      <section class="panel panel--inputs">
         <h2 class="section-title">Inputs</h2>
+        <p class="fee-cost-input-intro">Set inputs below — dollar outcomes and the summary callout update as you type.</p>
 
-        <div class="field">
-          <label for="starting_balance">Starting balance (CAD)</label>
-          <input id="starting_balance" type="number" inputmode="decimal" />
-        </div>
-
-        <div class="field">
-          <label for="horizon_years">Time horizon (years)</label>
-          <input id="horizon_years" type="number" inputmode="numeric" />
-        </div>
-
-        <div class="field">
-          <label for="annual_return">Gross return baseline (annual %)</label>
-          <input id="annual_return" type="text" placeholder="e.g. 7 or 4.5" />
-        </div>
-
-        <div class="field">
-          <label for="fee_pct">Annual fee (%)</label>
-          <input id="fee_pct" type="text" placeholder="e.g. 1.0" />
-        </div>
-
-        <div class="field">
-          <label for="annual_contribution">Annual contribution (CAD)</label>
-          <input id="annual_contribution" type="number" inputmode="decimal" />
-          <div class="helper">Added once per year (simple timing model).</div>
+        <div class="fee-cost-input-fields">
+          <div class="fee-cost-field">
+            <label for="starting_balance">Starting balance (CAD)</label>
+            <input id="starting_balance" type="text" inputmode="decimal" />
+          </div>
+          <div class="fee-cost-field">
+            <label for="horizon_years">Time horizon (years)</label>
+            <input id="horizon_years" type="text" inputmode="numeric" />
+          </div>
+          <div class="fee-cost-field">
+            <label for="annual_return">Gross return baseline (annual %)</label>
+            <input id="annual_return" type="text" placeholder="e.g. 7 or 4.5" />
+          </div>
+          <div class="fee-cost-field">
+            <label for="fee_pct">Annual fee (%)</label>
+            <input id="fee_pct" type="text" placeholder="e.g. 1.0" />
+          </div>
+          <div class="fee-cost-field">
+            <label for="annual_contribution">Annual contribution (CAD)</label>
+            <input id="annual_contribution" type="text" inputmode="decimal" />
+            <div class="helper" style="margin:0;font-size:12px;color:var(--muted);">Added once per year (simple timing model).</div>
+          </div>
         </div>
 
         <p class="helper" style="margin-top: 10px;">
@@ -183,7 +174,7 @@
       </section>
 
       <!-- RESULTS (right column) -->
-      <section class="panel">
+      <section class="panel panel--results">
         <div class="results-panel-header">
           <h2 class="section-title">Results</h2>
           <a href="/calculators/required-return-to-offset-fee/methodology/" class="inspect-arithmetic-btn">Inspect the Arithmetic</a>

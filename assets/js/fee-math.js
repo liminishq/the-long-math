@@ -23,11 +23,49 @@
     return P * g + contrib * ((g - 1) / r);
   }
 
+  // Future value: constant contribution at end of each sub-year period (same convention as investment-simple).
+  // rAnnual = net or gross annual rate (decimal); periodsPerYear ∈ {1, 12, 52}.
+  function fvPeriodicContributions({ P, rAnnual, years, contribPerPeriod, periodsPerYear }) {
+    if (
+      !isFiniteNumber(P) ||
+      !isFiniteNumber(rAnnual) ||
+      !isFiniteNumber(years) ||
+      !isFiniteNumber(contribPerPeriod) ||
+      !isFiniteNumber(periodsPerYear)
+    ) {
+      return NaN;
+    }
+    if (years < 0 || periodsPerYear <= 0) return NaN;
+
+    const t = Math.round(years);
+    if (t === 0) return P;
+
+    const n = Math.round(periodsPerYear * t);
+    const i = Math.pow(1 + rAnnual, 1 / periodsPerYear) - 1;
+
+    if (Math.abs(i) < 1e-15) return P + contribPerPeriod * n;
+
+    const growth = Math.pow(1 + i, n);
+    return P * growth + contribPerPeriod * ((growth - 1) / i);
+  }
+
   // Ending value under gross return and fee using the simple model:
   // net = gross - fee
-  function endingValueWithFee({ P, gross, fee, years, contrib = 0 }) {
+  // contrib = dollars per period when contribFreq is weekly|monthly; annual total when annual or omitted.
+  function endingValueWithFee({ P, gross, fee, years, contrib = 0, contribFreq }) {
     const net = gross - fee;
-    return fvAnnual({ P, r: net, years, contrib });
+    const freq = contribFreq == null || contribFreq === "" ? "annual" : String(contribFreq);
+    if (freq !== "weekly" && freq !== "monthly") {
+      return fvAnnual({ P, r: net, years, contrib });
+    }
+    const periodsPerYear = freq === "weekly" ? 52 : 12;
+    return fvPeriodicContributions({
+      P,
+      rAnnual: net,
+      years,
+      contribPerPeriod: contrib,
+      periodsPerYear
+    });
   }
 
   // Under this model, to offset a fee of "fee", required excess return is exactly "fee".
@@ -76,6 +114,7 @@
 
   window.TLM_FeeMath = {
     fvAnnual,
+    fvPeriodicContributions,
     endingValueWithFee,
     requiredAlphaToOffsetFeeSimple,
     extraAnnualContributionToOffsetFee

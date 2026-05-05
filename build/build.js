@@ -324,6 +324,7 @@ function build() {
         pageId: page.id,
         bodyClass:
           page.id === "index" ? "home" : page.id === "essays-hub" ? "page-essays" : "",
+        dataFeeCalcLayout: page.id === "advisor-fee",
         calculatorsHub,
         essaysHub,
         aboutPage,

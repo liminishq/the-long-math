@@ -27,7 +27,7 @@
   </script>
   
 </head>
-<body>
+<body data-fee-calc-layout="1">
   
   <div id="site-header"></div>
   <div class="wrap">
@@ -44,8 +44,8 @@
     <p><strong>Pas d&#39;opinions. Pas d&#39;hypothèses cachées. Juste l&#39;arithmétique.</strong></p>
   </div>
 </header>
-<div class="calc-grid">
-  <section class="card">
+<div class="calc-grid calc-grid--fee-cost-balanced">
+  <section class="card panel panel--inputs">
     <h2 class="section-title">Entrées</h2>
     <div class="btns">
       <button id="preset-starting" type="button">Début de carrière</button>
@@ -53,53 +53,56 @@
       <button id="preset-retire" type="button">Proche de la retraite</button>
     </div>
     <p class="hint">Les préréglages reflètent des situations courantes. Ajustez les hypothèses ci-dessous au besoin.</p>
-    <div class="row">
-      <label for="starting_balance">Solde initial ($)</label>
-      <input id="starting_balance" type="number" />
-    </div>
-    <div class="row">
-      <label for="monthly_contribution">Cotisation mensuelle ($/mois)</label>
-      <input id="monthly_contribution" type="number" />
-    </div>
-    <div class="row">
-      <label for="horizon_years">Horizon (années)</label>
-      <input id="horizon_years" type="number" />
-    </div>
-    <div class="row">
-      <label for="annual_return">Rendement annuel attendu (%)</label>
-      <input id="annual_return" type="text" placeholder="p. ex. 7 ou 4,5" />
-    </div>
-    <div class="slider-block">
-      <div class="slider-top">
-        <div class="lbl">Curseur du rendement annuel attendu</div>
-        <div class="val" id="annual_return_label">–</div>
+    <div class="fee-cost-input-fields">
+      <div class="fee-cost-field">
+        <label for="starting_balance">Solde initial ($)</label>
+        <input id="starting_balance" type="number" value="1000000" />
       </div>
-      <input id="annual_return_slider" type="range" />
-    </div>
-    <div class="toggle">
-      <input id="use_default_fee" type="checkbox" checked />
-      <label for="use_default_fee">Utiliser l&#39;échelle de frais conseiller par défaut</label>
-    </div>
-    <p class="helper">Si décoché, un pourcentage annuel forfaitaire saisi ci-dessous est appliqué.</p>
-    <div class="row">
-      <label for="custom_advisor_fee">Frais conseiller (%/an)</label>
-      <input id="custom_advisor_fee" type="text" placeholder="p. ex. 1,0" />
-    </div>
-    <div class="toggle">
-      <input id="include_mer" type="checkbox" checked />
-      <label for="include_mer">Inclure les frais de gestion (FGR) des fonds / FNB</label>
-    </div>
-    <p class="helper">Fonds communs typiques ~2 % et plus. FNB indiciels souvent ≤ 0,30 %.</p>
-    <div class="row">
-      <label for="mer_pct">FGR (%/an)</label>
-      <input id="mer_pct" type="text" placeholder="p. ex. 2,0" />
+      <div class="fee-cost-field">
+        <label for="monthly_contribution">Cotisation mensuelle ($/mois)</label>
+        <input id="monthly_contribution" type="number" value="5000" />
+      </div>
+      <div class="fee-cost-field">
+        <label for="horizon_years">Horizon (années)</label>
+        <input id="horizon_years" type="number" value="15" />
+      </div>
+      <div class="fee-cost-field">
+        <label for="annual_return">Rendement annuel attendu (%)</label>
+        <input id="annual_return" type="text" value="7" placeholder="p. ex. 7 ou 4,5" />
+      </div>
+      <div class="slider-block">
+        <div class="slider-top">
+          <div class="lbl">Curseur du rendement annuel attendu</div>
+          <div class="val" id="annual_return_label">–</div>
+        </div>
+        <input id="annual_return_slider" type="range" />
+      </div>
+      <div class="toggle">
+        <input id="use_default_fee" type="checkbox" checked />
+        <label for="use_default_fee">Utiliser l&#39;échelle de frais conseiller par défaut</label>
+      </div>
+      <p class="helper">Si décoché, un pourcentage annuel forfaitaire saisi ci-dessous est appliqué.</p>
+      <div class="fee-cost-field">
+        <label for="custom_advisor_fee">Frais conseiller (%/an)</label>
+        <input id="custom_advisor_fee" type="text" placeholder="p. ex. 1,0" />
+      </div>
+      <div class="toggle">
+        <input id="include_mer" type="checkbox" checked />
+        <label for="include_mer">Inclure les frais de gestion (FGR) des fonds / FNB</label>
+      </div>
+      <p class="helper">Fonds communs typiques ~2 % et plus. FNB indiciels souvent ≤ 0,30 %.</p>
+      <div class="fee-cost-field">
+        <label for="mer_pct">FGR (%/an)</label>
+        <input id="mer_pct" type="text" placeholder="p. ex. 2,0" />
+      </div>
     </div>
   </section>
-  <section class="card">
+  <section class="card panel panel--results">
     <div class="results-panel-header">
       <h2 class="section-title">Résultats calculés</h2>
       <a href="/fr/calculators/advisor-fee/methodology/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">Voir le détail des calculs</a>
     </div>
+    <p id="advisor_calc_engine_error" class="shared-scenario-banner" hidden role="alert" style="border-color:rgba(220,90,90,.45);background:rgba(220,90,90,.1);color:var(--text);"></p>
     <div class="results">
       <div class="result prominent">
         <p class="k">Coût total calculé</p>
@@ -127,7 +130,6 @@
         <p class="v" id="out_lost">$–</p>
       </div>
     </div>
-    <p class="meta" id="out_meta">Calculé selon les hypothèses indiquées ci-dessus.</p>
   </section>
 </div>
 <div class="report-issue-wrap">

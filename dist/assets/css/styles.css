@@ -506,6 +506,169 @@ input[type="text"]{
   font-size:14px;
 }
 
+/* Fee cost calculators — same 2-col calc-grid as site (inputs | results) + field cards */
+body[data-fee-calc-layout="1"] .calc-grid.calc-grid--fee-cost-balanced{
+  gap:14px;
+  align-items:start;
+}
+
+body[data-fee-calc-layout="1"] .panel--inputs,
+body[data-fee-calc-layout="1"] .panel--results{
+  padding:14px;
+}
+
+body[data-fee-calc-layout="1"] .panel--inputs .section-title{
+  margin-bottom:8px;
+}
+
+body[data-fee-calc-layout="1"] .results-panel-header{
+  margin-bottom:6px;
+  gap:8px;
+}
+
+body[data-fee-calc-layout="1"] .fee-cost-input-intro{
+  margin:-2px 0 10px;
+  font-size:13px;
+  line-height:1.45;
+  color:var(--muted);
+}
+
+body[data-fee-calc-layout="1"] .fee-cost-input-fields{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+}
+
+body[data-fee-calc-layout="1"] .fee-cost-input-fields > .slider-block,
+body[data-fee-calc-layout="1"] .fee-cost-input-fields > .toggle,
+body[data-fee-calc-layout="1"] .fee-cost-input-fields > .helper,
+body[data-fee-calc-layout="1"] .fee-cost-input-fields > .hint{
+  grid-column:1 / -1;
+}
+
+/* Let nested fee-model groups participate in the same input grid (flat-fee / hourly, etc.) */
+body[data-fee-calc-layout="1"] .fee-cost-input-fields .fee-model-fields{
+  display:contents;
+}
+body[data-fee-calc-layout="1"] .fee-cost-input-fields .fee-increase-fields{
+  display:contents;
+}
+
+body[data-fee-calc-layout="1"] .fee-cost-field{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  margin:0;
+  padding:8px 10px;
+  border:1px solid var(--border);
+  border-radius:11px;
+  background:var(--surface);
+}
+
+body[data-fee-calc-layout="1"] .fee-cost-field label{
+  font-size:11px;
+  font-weight:600;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:0.28px;
+  line-height:1.2;
+}
+
+body[data-fee-calc-layout="1"] .fee-cost-field input[type="number"],
+body[data-fee-calc-layout="1"] .fee-cost-field input[type="text"]{
+  width:100%;
+  margin:0;
+  padding:8px 10px;
+  border-radius:10px;
+  font-size:15px;
+  font-weight:600;
+  line-height:1.15;
+  font-variant-numeric:tabular-nums;
+}
+
+body[data-fee-calc-layout="1"] .panel--results .results{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+}
+
+body[data-fee-calc-layout="1"] .panel--results .result{
+  padding:12px 12px;
+  border-radius:12px;
+}
+
+body[data-fee-calc-layout="1"] .panel--results .result p{
+  margin:0;
+}
+
+body[data-fee-calc-layout="1"] .panel--results .result .k{
+  margin-bottom:4px;
+}
+
+body[data-fee-calc-layout="1"] .panel--results .result .v{
+  font-size:clamp(1.05rem, 2.4vw, 1.25rem);
+  font-weight:700;
+  line-height:1.15;
+}
+
+/* Primary takeaway: match site .result.prominent (fee-cost .v rule above is weaker — keep hero size) */
+body[data-fee-calc-layout="1"] .panel--results .result.prominent .v{
+  font-size:clamp(1.2rem, 3.2vw, 1.65rem);
+  font-weight:900;
+}
+
+/* Active vs passive hero: big number, smaller comparison line */
+body[data-fee-calc-layout="1"] .panel--results .result.prominent .result-gap{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:4px;
+  line-height:1.15;
+}
+body[data-fee-calc-layout="1"] .panel--results .result.prominent .result-gap-amount{
+  font-size:clamp(1.2rem, 3.2vw, 1.65rem);
+  font-weight:900;
+}
+body[data-fee-calc-layout="1"] .panel--results .result.prominent .result-gap-words{
+  font-size:clamp(0.88rem, 2vw, 1.05rem);
+  font-weight:600;
+  color:var(--muted);
+  letter-spacing:0.01em;
+}
+
+body[data-fee-calc-layout="1"] .panel--results .result-share-block{
+  margin-top:10px;
+  padding:10px 11px;
+}
+
+body[data-fee-calc-layout="1"] .panel--results .result-share-block .result-share-title{
+  font-size:14px;
+  margin-bottom:2px;
+}
+
+body[data-fee-calc-layout="1"] .panel--results .result-share-block .result-share-copy{
+  margin-bottom:6px;
+  font-size:12px;
+}
+
+body[data-fee-calc-layout="1"] .panel--results .result-share-block .result-share-helper{
+  margin-bottom:6px;
+  font-size:10px;
+}
+
+body[data-fee-calc-layout="1"] .panel--results .result-share-block .result-share-actions{
+  gap:6px;
+}
+
+body[data-fee-calc-layout="1"] .panel--results .result-share-block .result-share-actions button{
+  padding:6px 9px;
+  font-size:11px;
+}
+
+body[data-fee-calc-layout="1"] .panel--results .result-share-block .result-share-status{
+  margin-top:6px;
+}
+
 .toggle{
   display:flex;
   gap:10px;
@@ -684,43 +847,6 @@ input[type="range"]{ width:100%; }
 .result-share-block.is-ready-to-share #share_result_btn:hover{
   border-color:#4da3ff;
   background:#4da3ff;
-}
-
-.calculator-updates-cta{
-  margin-top:14px;
-  padding:14px;
-  border:1px solid var(--border);
-  border-radius:14px;
-  background:linear-gradient(180deg,rgba(217,180,106,.14),rgba(217,180,106,.06));
-}
-
-.calculator-updates-cta h3{
-  margin:0 0 6px;
-  font-size:15px;
-}
-
-.calculator-updates-cta p{
-  margin:0 0 10px;
-  font-size:13px;
-  color:var(--muted);
-  line-height:1.5;
-}
-
-.calculator-updates-btn{
-  display:inline-block;
-  border:1px solid var(--accent);
-  background:var(--accentSoft);
-  color:var(--text);
-  text-decoration:none;
-  padding:8px 12px;
-  border-radius:10px;
-  font-size:12px;
-  font-weight:700;
-}
-
-.calculator-updates-btn:hover{
-  border-color:var(--accent2);
-  text-decoration:none;
 }
 
 /* =========================

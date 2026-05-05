@@ -37,6 +37,12 @@
   font-size: 0.95rem;
 }
 
+.compound-cell-highlight {
+  outline: 2px solid var(--accent, #d9b46a);
+  outline-offset: -2px;
+  background: rgba(217, 180, 106, 0.12);
+}
+
 /* Table UX: wide grid, horizontal scroll, sticky header and first column */
 .table-wrap {
   overflow: auto;
