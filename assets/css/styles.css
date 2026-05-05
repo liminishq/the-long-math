@@ -686,43 +686,6 @@ input[type="range"]{ width:100%; }
   background:#4da3ff;
 }
 
-.calculator-updates-cta{
-  margin-top:14px;
-  padding:14px;
-  border:1px solid var(--border);
-  border-radius:14px;
-  background:linear-gradient(180deg,rgba(217,180,106,.14),rgba(217,180,106,.06));
-}
-
-.calculator-updates-cta h3{
-  margin:0 0 6px;
-  font-size:15px;
-}
-
-.calculator-updates-cta p{
-  margin:0 0 10px;
-  font-size:13px;
-  color:var(--muted);
-  line-height:1.5;
-}
-
-.calculator-updates-btn{
-  display:inline-block;
-  border:1px solid var(--accent);
-  background:var(--accentSoft);
-  color:var(--text);
-  text-decoration:none;
-  padding:8px 12px;
-  border-radius:10px;
-  font-size:12px;
-  font-weight:700;
-}
-
-.calculator-updates-btn:hover{
-  border-color:var(--accent2);
-  text-decoration:none;
-}
-
 /* =========================
    METHODS
    ========================= */

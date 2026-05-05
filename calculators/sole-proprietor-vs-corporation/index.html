@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sole Proprietor vs Corporation Calculator Canada | The Long Math</title>
+  <meta name="description" content="Compare earning income personally versus through a corporation. See how much after-tax capital is available to invest after RRSP deductions, personal spending, and retained corporate earnings." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/sole-proprietor-vs-corporation/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Sole Proprietor vs Corporation Calculator Canada | The Long Math" />
+  <meta property="og:description" content="Compare earning income personally versus through a corporation. See how much after-tax capital is available to invest after RRSP deductions, personal spending, and retained corporate earnings." />
+  <meta property="og:url" content="https://thelongmath.com/calculators/sole-proprietor-vs-corporation/" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Sole Proprietor vs Corporation Calculator",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "url": "https://thelongmath.com/calculators/sole-proprietor-vs-corporation/",
+    "description": "Compare first-year invested capital as a Canadian sole proprietor using RRSP deductions versus retaining earnings in a CCPC after funding the same after-tax lifestyle spending.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CAD" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is a corporation always better at high income?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. It depends on how much income you need personally, how much can be retained, corporate costs, future withdrawal taxes, and investment horizon." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is RRSP better than incorporating?",
+        "acceptedAnswer": { "@type": "Answer", "text": "They solve different problems. RRSPs defer personal tax on contributions. Corporations can defer personal tax while retaining earnings inside a corporate structure." }
+      },
+      {
+        "@type": "Question",
+        "name": "Why does RRSP sometimes beat a corporation?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Because an RRSP contribution may be deducted at a high personal marginal tax rate and the refund can be reinvested, creating a larger starting investment base." }
+      },
+      {
+        "@type": "Question",
+        "name": "Why does a corporation sometimes beat RRSP?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Because RRSP room is capped. At high income with large surplus earnings, a corporation may retain more capital after the small business tax than the individual could invest after personal tax." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does this include final withdrawal tax?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The default view focuses on first-year invested capital. Optional projection assumptions may estimate future values, but final withdrawal tax depends on future income, tax rates, and timing." }
+      }
+    ]
+  }
+  </script>
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  <link rel="stylesheet" href="/calculators/sole-proprietor-vs-corporation/spvc-calculator.css" />
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+<body>
+  <div id="site-header"></div>
+  <div class="wrap spvc-wrap">
+
+    <header class="spvc-hero">
+      <h1>Sole Proprietor vs Corporation Calculator</h1>
+      <p class="lead spvc-lede">Should you earn business income personally or through a corporation? This calculator compares the after-tax capital available to invest under each structure, using your income, spending need, RRSP room, province, and corporate tax assumptions.</p>
+      <p class="spvc-lede">The main question is not simply “which structure pays less tax today?” The better question is: after you fund your lifestyle, how much capital is left to compound?</p>
+      <p class="spvc-lede">For a sole proprietor, RRSP contributions can reduce income at personal marginal tax rates and create a refund that can be reinvested. For a corporation, active business income may be taxed at a lower initial corporate rate, allowing more after-tax capital to remain inside the corporation if you do not need to spend it personally.</p>
+      <p class="spvc-lede">This calculator compares those two starting investment bases.</p>
+    </header>
+
+    <section class="card spvc-below">
+      <h2>What this calculator shows</h2>
+      <ul>
+        <li>How much gets invested through the personal / RRSP path</li>
+        <li>How much can be retained and invested through the corporation</li>
+        <li>Which structure leaves more capital compounding this year</li>
+        <li>How sensitive the result is to RRSP room, income, spending need, and corporate tax assumptions</li>
+      </ul>
+      <h2>What this calculator does not do</h2>
+      <ul>
+        <li>It does not replace professional tax or legal advice</li>
+        <li>It does not model every integration detail perfectly in simple mode</li>
+        <li>It does not automatically decide whether incorporation is worth the legal / accounting complexity</li>
+        <li>It does not account for liability, payroll, GST/HST, professional corporation rules, or compliance costs unless fields are added later</li>
+      </ul>
+    </section>
+
+    <div class="card spvc-calc">
+      <div class="results-panel-header spvc-results-panel-header">
+        <h2 class="section-title">Inputs &amp; results</h2>
+        <a href="/calculators/sole-proprietor-vs-corporation/inspect-the-arithmetic/" class="inspect-arithmetic-btn">Inspect the arithmetic</a>
+      </div>
+      <p class="spvc-subhead">Not legal, tax, accounting, or investment advice — arithmetic using explicit assumptions. Dollar amounts are rounded to the nearest dollar; percentages to one decimal place.</p>
+
+      <div id="spvc_error" class="spvc-error hidden" role="alert"></div>
+
+      <div class="spvc-main-grid">
+        <div class="spvc-input-column">
+          <article class="panel">
+            <h3>General</h3>
+            <div class="field">
+              <label for="province">Province / territory</label>
+              <select id="province" aria-label="Province or territory"></select>
+            </div>
+            <div class="field">
+              <label for="taxYear">Tax year</label>
+              <select id="taxYear" aria-label="Tax year">
+                <option value="2025" selected>2025</option>
+              </select>
+              <p class="help muted">Bracket and corporate tables use the latest published data file for this year (future years may map to the latest available tables).</p>
+            </div>
+            <div class="field">
+              <label for="businessIncome">Annual business income (gross)</label>
+              <input id="businessIncome" type="number" inputmode="decimal" min="0" step="1000" value="460000" aria-describedby="h_income" />
+              <p id="h_income" class="help muted">Business or professional income before taxes — compare the same gross under both structures. With Ontario 2025 tables and the default RRSP slice, gross income needs to be roughly in the mid‑$450k range or higher to leave about $240k spendable after tax and RRSP.</p>
+            </div>
+            <div class="field">
+              <label for="spendingNeed">Annual after-tax spending need</label>
+              <input id="spendingNeed" type="number" inputmode="decimal" min="0" step="1000" value="240000" />
+              <p class="help muted">Target lifestyle spending after personal income tax — both paths solve around this same after-tax need.</p>
+            </div>
+            <div class="field">
+              <label for="annualReturn">Expected annual investment return (nominal)</label>
+              <div class="inline">
+                <input id="annualReturn" type="number" inputmode="decimal" step="0.1" value="5" aria-describedby="h_ret" />
+                <span class="unit">%</span>
+              </div>
+              <p id="h_ret" class="help muted">Used only when projection is enabled. Pre-withdrawal-tax compound growth.</p>
+            </div>
+            <div id="projectionFieldsRow" class="field" style="display: none;">
+              <label for="projectionYears">Projection years</label>
+              <input id="projectionYears" type="number" inputmode="numeric" min="0" step="1" value="20" />
+            </div>
+            <div class="field checkbox">
+              <input id="showProjection" type="checkbox" />
+              <label for="showProjection">Show long-term projection</label>
+              <p class="help muted">Off by default — first-year invested capital is the focus.</p>
+            </div>
+          </article>
+
+          <article class="panel">
+            <h3>Sole proprietor / personal path</h3>
+            <div class="field">
+              <label for="rrspRoom">Available RRSP room</label>
+              <input id="rrspRoom" type="number" inputmode="decimal" min="0" step="100" value="32490" />
+              <p class="help muted">Default uses the 2025 CRA dollar maximum from shared tax data where available. Edit to match your notice of assessment.</p>
+            </div>
+            <div class="field checkbox">
+              <input id="autoRrsp" type="checkbox" checked />
+              <label for="autoRrsp">Auto RRSP contribution (min of room, income, annual dollar limit)</label>
+            </div>
+            <div class="field">
+              <label for="rrspContribution">RRSP contribution (manual)</label>
+              <input id="rrspContribution" type="number" inputmode="decimal" min="0" step="100" value="32490" disabled aria-disabled="true" />
+            </div>
+            <div class="field checkbox">
+              <input id="reinvestRefund" type="checkbox" checked />
+              <label for="reinvestRefund">Reinvest RRSP refund in a non-registered account</label>
+            </div>
+            <div class="field checkbox">
+              <input id="investSurplus" type="checkbox" checked />
+              <label for="investSurplus">Invest remaining after-tax personal surplus after spending need</label>
+            </div>
+          </article>
+
+          <article class="panel">
+            <h3>Corporation path</h3>
+            <p class="help muted">Corporate tax defaults to federal + provincial small-business rates from the site’s CCPC tables; income above the small-business limit blends toward general corporate rates automatically.</p>
+            <div class="field">
+              <label for="corpRateOverride">Corporate effective tax rate override (%)</label>
+              <input id="corpRateOverride" type="text" inputmode="decimal" placeholder="" value="" aria-describedby="corpRateHint" />
+              <p id="corpRateHint" class="help muted"></p>
+            </div>
+            <div class="field">
+              <label for="withdrawalMode">Personal withdrawal type</label>
+              <select id="withdrawalMode" aria-label="Withdrawal type">
+                <option value="dividend" selected>Ineligible dividends (simple)</option>
+                <option value="salary">Salary only</option>
+                <option value="blend">Blend (salary + dividends)</option>
+              </select>
+              <p class="help muted">Simple mode uses non-eligible dividend integration via the same engine as the <a href="/calculators/canada-income-tax/">Canadian income tax calculator</a>.</p>
+            </div>
+            <div id="blendFractionRow" class="field" style="display: none;">
+              <label for="salaryBlendFraction">Salary share of withdrawal mix (%)</label>
+              <input id="salaryBlendFraction" type="number" inputmode="decimal" min="0" max="100" step="5" value="50" />
+              <p class="help muted">Blend mode splits a total withdrawal <em>W</em> into salary = <em>k</em>×<em>W</em> and non-eligible dividends = (1−<em>k</em>)×<em>W</em>, then searches the smallest feasible <em>W</em> that meets your after-tax spending need.</p>
+            </div>
+            <div class="field checkbox">
+              <input id="retainEarnings" type="checkbox" checked />
+              <label for="retainEarnings">Retain all earnings not required for personal spending</label>
+            </div>
+            <div class="spvc-advanced">
+              <details>
+                <summary>Advanced (projection)</summary>
+                <div class="field">
+                  <label for="corpPassiveDrag">Passive corporate investment tax drag (%)</label>
+                  <div class="inline">
+                    <input id="corpPassiveDrag" type="number" inputmode="decimal" min="0" max="100" step="0.5" value="0" />
+                    <span class="unit">%</span>
+                  </div>
+                  <p class="help muted">Default 0% for the first-year capital comparison. When projection is on, reduces the corporation’s effective return by this percentage (simple drag model).</p>
+                </div>
+              </details>
+            </div>
+          </article>
+        </div>
+
+        <article class="panel spvc-output-column">
+          <h3>Results</h3>
+
+          <div id="spvc_warn_personal" class="spvc-warn hidden" role="status"></div>
+          <div id="spvc_warn_corp" class="spvc-warn hidden" role="status"></div>
+
+          <div class="spvc-hero-result" aria-live="polite">
+            <h3>Primary comparison</h3>
+            <p id="out_hero_title" class="spvc-hero-winner">—</p>
+            <p id="out_hero_diff" class="spvc-hero-diff">—</p>
+            <p id="out_hero_pct" class="spvc-hero-pct"></p>
+          </div>
+
+          <p id="result_summary_text" class="rw-summary" style="margin-top: 0.75rem;"></p>
+          <button type="button" id="copy_summary_btn" class="copy-btn spvc-copy-summary-btn">Copy summary</button>
+          <p class="help muted" style="margin-top: 0.35rem;">
+            <a href="/calculators/sole-proprietor-vs-corporation/inspect-the-arithmetic/">Inspect the arithmetic</a> for formulas and limitations.
+          </p>
+
+          <div class="spvc-out-grid" style="margin-top: 1rem;">
+            <div class="spvc-out-card spvc-highlight">
+              <p class="spvc-out-label">Sole prop + RRSP invested capital</p>
+              <p id="out_personal_inv" class="spvc-out-value">—</p>
+            </div>
+            <div class="spvc-out-card spvc-highlight">
+              <p class="spvc-out-label">Corporation retained invested capital</p>
+              <p id="out_corp_inv" class="spvc-out-value">—</p>
+            </div>
+            <div class="spvc-out-card">
+              <p class="spvc-out-label">Difference (corp − personal)</p>
+              <p id="out_diff" class="spvc-out-value">—</p>
+            </div>
+            <div class="spvc-out-card">
+              <p class="spvc-out-label">Effective invested capital per $1 gross</p>
+              <p class="spvc-out-label" style="font-size: 0.72rem;">Personal / Corp</p>
+              <p class="spvc-out-value" style="font-size: 1rem;"><span id="out_eff_p">—</span> / <span id="out_eff_c">—</span></p>
+            </div>
+          </div>
+
+          <div id="spvc_projection_block" class="spvc-projection-block hidden">
+            <h4>Projection (optional)</h4>
+            <p class="help muted">Future value = invested capital × (1 + return)<sup>n</sup>. Does not fully model eventual withdrawal tax unless you add such assumptions elsewhere.</p>
+            <div class="spvc-out-grid">
+              <div class="spvc-out-card">
+                <p class="spvc-out-label">Projected personal / RRSP path</p>
+                <p id="out_fv_p" class="spvc-out-value">—</p>
+              </div>
+              <div class="spvc-out-card">
+                <p class="spvc-out-label">Projected corporate retained balance</p>
+                <p id="out_fv_c" class="spvc-out-value">—</p>
+              </div>
+              <div class="spvc-out-card">
+                <p class="spvc-out-label">Difference</p>
+                <p id="out_fv_d" class="spvc-out-value">—</p>
+              </div>
+            </div>
+            <div class="spvc-warn" role="note">
+              Warning: this projection does not fully model eventual withdrawal tax from RRSPs or corporate distributions unless you extend the assumptions.
+            </div>
+          </div>
+
+          <div class="spvc-breakdown">
+            <h4>Personal path breakdown</h4>
+            <div class="table-scroll">
+              <table>
+                <tbody>
+                  <tr><th scope="row">Gross business income</th><td id="bd_gross_p">—</td></tr>
+                  <tr><th scope="row">RRSP contribution</th><td id="bd_rrsp">—</td></tr>
+                  <tr><th scope="row">Estimated RRSP refund (tax without RRSP − tax with RRSP)</th><td id="bd_refund">—</td></tr>
+                  <tr><th scope="row">Estimated personal income tax (with RRSP)</th><td id="bd_ptax">—</td></tr>
+                  <tr><th scope="row">After-tax spending need</th><td id="bd_spend">—</td></tr>
+                  <tr><th scope="row">After-tax cash after RRSP contribution</th><td id="bd_wallet_after_rrsp">—</td></tr>
+                  <tr><th scope="row">RRSP invested</th><td id="bd_rrsp_inv">—</td></tr>
+                  <tr><th scope="row">Refund reinvested</th><td id="bd_refund_inv">—</td></tr>
+                  <tr><th scope="row">Non-registered surplus invested</th><td id="bd_nonreg">—</td></tr>
+                  <tr><th scope="row"><strong>Total invested this year</strong></th><td id="bd_personal_total"><strong>—</strong></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h4>Corporate path breakdown</h4>
+            <div class="table-scroll">
+              <table>
+                <tbody>
+                  <tr><th scope="row">Gross corporate active income</th><td id="bd_gross_c">—</td></tr>
+                  <tr><th scope="row">Corporate tax</th><td id="bd_ctax">—</td></tr>
+                  <tr><th scope="row">After-tax corporate income (pre-distribution)</th><td id="bd_after_c">—</td></tr>
+                  <tr><th scope="row">Personal withdrawal required (salary + dividends)</th><td id="bd_withdraw">—</td></tr>
+                  <tr><th scope="row">Personal tax on withdrawal</th><td id="bd_ptax_w">—</td></tr>
+                  <tr><th scope="row">Retained corporate earnings (investable)</th><td id="bd_retained">—</td></tr>
+                  <tr><th scope="row"><strong>Total corporate capital invested this year</strong></th><td id="bd_corp_total"><strong>—</strong></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <section class="result-share-block" id="spvc_share_block" aria-labelledby="spvc-share-heading">
+            <h3 id="spvc-share-heading" class="result-share-title">Export &amp; share</h3>
+            <p class="result-share-copy">Share a snapshot image plus a restorable link to these inputs, or copy the summary text above.</p>
+            <div class="result-share-actions">
+              <button type="button" id="share_result_btn">Share image</button>
+              <button type="button" id="download_result_btn">Download PNG</button>
+              <button type="button" id="copy_result_link_btn">Copy result link</button>
+            </div>
+            <p class="result-share-status" id="result_share_status" aria-live="polite"></p>
+          </section>
+        </article>
+      </div>
+    </div>
+
+    <section class="card spvc-below">
+      <h2>Related tools &amp; reading</h2>
+      <ul class="spvc-links">
+        <li><a href="/calculators/rrsp-contribution-room-tax-refund/">RRSP Contribution Room &amp; Tax Refund Calculator</a></li>
+        <li><a href="/calculators/investment-simple/">Simple Investment Calculator</a></li>
+        <li><a href="/calculators/canada-income-tax/">Canada Personal Income Tax Calculator</a></li>
+        <li><a href="/calculators/ccpc-tax/">CCPC Tax Calculator</a></li>
+        <li><a href="/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/">RRSP vs TFSA vs FHSA in Canada</a></li>
+        <li><a href="/articles/investing-and-financial-literacy/compound-interest/">Compound Interest: The Ultimate Wealth Builder</a></li>
+        <li><a href="/articles/investing-and-financial-literacy/inflation/">Inflation: The Math That Makes Future Money Smaller</a></li>
+      </ul>
+    </section>
+
+    <section class="faq-section rw-faq">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-accordion">
+        <details class="faq-accordion-item">
+          <summary>Is a corporation always better at high income?</summary>
+          <div class="faq-accordion-body">
+            <p>No. It depends on how much income you need personally, how much can be retained, corporate costs, future withdrawal taxes, and investment horizon.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>Is RRSP better than incorporating?</summary>
+          <div class="faq-accordion-body">
+            <p>They solve different problems. RRSPs defer personal tax to retirement. Corporations can defer personal tax while retaining earnings inside a corporate structure.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>Why does RRSP sometimes beat a corporation?</summary>
+          <div class="faq-accordion-body">
+            <p>Because an RRSP contribution may be deducted at a high personal marginal tax rate and the refund can be reinvested, creating a larger starting investment base.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>Why does a corporation sometimes beat RRSP?</summary>
+          <div class="faq-accordion-body">
+            <p>Because RRSP room is capped. At high income with large surplus earnings, a corporation may retain more capital after the small business tax than the individual could invest after personal tax.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>Does this include final withdrawal tax?</summary>
+          <div class="faq-accordion-body">
+            <p>The default view focuses on first-year invested capital. Optional projection assumptions may estimate future values, but final withdrawal tax depends on future income, tax rates, and timing.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="newsletter-signup card" aria-labelledby="newsletter-spvc-heading">
+      <h2 id="newsletter-spvc-heading" class="newsletter-signup-heading">Want new calculators like this when they go live?</h2>
+      <p class="newsletter-signup-copy">Get one concise monthly email when The Long Math publishes new calculators, articles, and essays.</p>
+      <div class="newsletter-embed-wrap">
+        <iframe
+          src="https://subscribe-forms.beehiiv.com/bfdc64a5-2697-4bb0-bec5-5a557c9f274b"
+          class="beehiiv-embed"
+          data-test-id="beehiiv-embed"
+          frameborder="0"
+          scrolling="no"
+          style="width: 330px; height: 53px; margin: 0; border-radius: 0; background-color: transparent; box-shadow: 0 0 #0000; max-width: 100%;"
+          title="Newsletter signup"
+        ></iframe>
+      </div>
+    </section>
+
+    <div class="report-issue-wrap">
+      <a href="/contact/" class="report-issue-link">Report an Issue</a>
+    </div>
+
+    <div class="disclaimer">
+      <p><strong>Disclaimer:</strong> This calculator is for educational and informational purposes only. It uses simplified assumptions and does not provide financial, tax, legal, or investment advice.</p>
+      <p><strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice.</p>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+
+  <script defer src="/assets/js/calculator-share.js?v=20260429"></script>
+  <script type="module" src="/calculators/sole-proprietor-vs-corporation/spvc-ui.js?v=20260429"></script>
+</body>
+</html>

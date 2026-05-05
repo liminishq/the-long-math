@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspect the Arithmetic: Sole Proprietor vs Corporation Calculator | The Long Math</title>
+  <meta name="description" content="How the Sole Proprietor vs Corporation Calculator compares personal RRSP investing with retained corporate earnings after the same after-tax lifestyle spending." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/sole-proprietor-vs-corporation/inspect-the-arithmetic/" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Sole Proprietor vs Corporation Calculator (Methodology)",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "url": "https://thelongmath.com/calculators/sole-proprietor-vs-corporation/inspect-the-arithmetic/",
+    "description": "Methodology for comparing first-year invested capital as a sole proprietor using RRSP deductions versus retaining earnings in a CCPC."
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Does this page replace professional advice?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. It documents the arithmetic only. Tax and corporate law have many rules not modeled here." }
+      },
+      {
+        "@type": "Question",
+        "name": "Where do personal tax rates come from?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The live calculator uses the same federal and provincial bracket files as the Canada Personal Income Tax Calculator on this site." }
+      }
+    ]
+  }
+  </script>
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <p style="margin: 0 0 0.5rem;">
+      <a class="inline-link" href="/calculators/sole-proprietor-vs-corporation/">Back to Sole Proprietor vs Corporation Calculator</a>
+    </p>
+
+    <div class="methodology-content">
+      <h1>Inspect the Arithmetic: Sole Proprietor vs Corporation Calculator</h1>
+      <p class="methodology-meta">Version 1.0<br />Last updated: April 2026</p>
+
+      <p>
+        This page explains how the <a class="inline-link" href="/calculators/sole-proprietor-vs-corporation/">Sole Proprietor vs Corporation Calculator</a>
+        compares personal / RRSP investing with retained corporate investing. The goal is to show how much after-tax capital is available to invest after personal spending needs are met.
+      </p>
+
+      <h2>Purpose</h2>
+      <p>
+        Both paths use the same gross business income and the same target <em>after-tax</em> lifestyle spending. The calculator asks how much remains available as <strong>first-year invested capital</strong>
+        under each structure—not which structure has the lowest headline tax in isolation.
+      </p>
+
+      <h2>Inputs</h2>
+      <div class="table-scroll">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Input</th>
+              <th>Meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Gross business income</td>
+              <td>Active business or professional income before tax. The same gross is compared in both columns.</td>
+            </tr>
+            <tr>
+              <td>Province / territory &amp; tax year</td>
+              <td>Drives personal tax integration and provincial corporate rate components. Data files match the site’s income tax and CCPC calculators.</td>
+            </tr>
+            <tr>
+              <td>After-tax spending need</td>
+              <td>Annual lifestyle spending after personal income taxes. Both structures are solved around this constraint.</td>
+            </tr>
+            <tr>
+              <td>RRSP room &amp; contribution</td>
+              <td>Maximum deductible contribution is capped by room, income, and the annual dollar limit in the federal tax file. Auto mode uses the minimum of those.</td>
+            </tr>
+            <tr>
+              <td>Refund reinvestment</td>
+              <td>When on, the estimated RRSP refund is counted as non-registered capital. It is not also included in “surplus” cash (the ledger avoids double counting).</td>
+            </tr>
+            <tr>
+              <td>Corporate tax rate</td>
+              <td>Defaults to statutory federal + provincial <em>small-business</em> combined rates from JSON; income above the small-business limit blends to <em>general</em> federal + provincial rates. Optional flat override replaces the split model.</td>
+            </tr>
+            <tr>
+              <td>Withdrawal type</td>
+              <td>Simple mode pays non-eligible dividends from after-tax corporate cash and solves the minimal gross dividend such that net take-home meets spending. Salary and blend modes use the same personal tax engine.</td>
+            </tr>
+            <tr>
+              <td>Expected return &amp; projection years</td>
+              <td>Optional compound projection: <code>futureValue = investedCapital × (1 + annualReturn)<sup>years</sup></code>. Corporate side may apply an optional passive drag percentage to the return.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Personal / sole proprietor path</h2>
+      <ol>
+        <li><strong>Taxable income after RRSP:</strong> <code>taxableIncome = grossIncome − rrspContribution</code> (plus dividend gross-ups only if applicable — here business income is modeled as self-employment).</li>
+        <li><strong>Personal tax with RRSP:</strong> federal + provincial net tax from the shared engine.</li>
+        <li><strong>Personal tax without RRSP:</strong> same inputs with <code>rrspDeduction = 0</code>.</li>
+        <li><strong>RRSP refund (incremental):</strong> <code>rrspRefund = taxWithoutRRSP − taxWithRRSP</code> on income tax (not CPP/EI timing).</li>
+        <li><strong>Wallet after RRSP cash contribution:</strong> <code>takeHomeAfterPayroll − rrspContribution</code>, where take-home uses taxes computed <em>with</em> the RRSP deduction.</li>
+        <li><strong>Non-registered surplus invested:</strong> max(0, wallet after RRSP − spending need), optional toggle.</li>
+        <li><strong>Total invested capital:</strong>
+          <br /><code>personalInvestedCapital = rrspContribution + reinvestedRefund + nonRegisteredSurplusInvested</code>
+        </li>
+      </ol>
+
+      <h2>Corporate path</h2>
+      <ol>
+        <li><strong>Corporate tax on active income:</strong> blended small-business pool then general pool, unless a flat effective override is supplied.</li>
+        <li><strong>After-tax corporate income (pre-distribution):</strong> <code>grossCorporateIncome − corporateTax</code> for dividend-from-retained-earnings mode; salary mode deducts salary before taxing corporate income.</li>
+        <li><strong>Required withdrawal:</strong> smallest salary and/or non-eligible dividends such that estimated personal net cash ≥ spending need (binary search), respecting that dividends cannot exceed corporate cash after salary and corporate tax (blend mode uses a bounded grid search).</li>
+        <li><strong>Retained corporate capital:</strong>
+          <br /><code>corporateRetainedCapital = afterTaxCorporateCash − corporateCashPaidOutForWithdrawals</code>
+        </li>
+      </ol>
+
+      <h2>Comparison</h2>
+      <p><code>difference = corporateRetainedCapital − personalInvestedCapital</code></p>
+      <p>
+        Percentage advantage vs the <em>losing</em> structure:
+        <br /><code>percentageAdvantage = |difference| / losingStructureCapital</code>
+        when the loser’s capital base is positive.
+      </p>
+
+      <h2>Projection</h2>
+      <p>
+        <code>futureValue = investedCapital × (1 + annualReturn)<sup>years</sup></code>
+        on each side independently. Corporate projection may reduce the return by an optional passive tax drag field.
+      </p>
+      <p>
+        This projection is <strong>pre–final-withdrawal-tax</strong> unless you layer in your own assumptions about RRSP withdrawals and taxable distributions later.
+      </p>
+
+      <h2>Limitations</h2>
+      <ul>
+        <li>Tax rates and thresholds change; data files are versioned by year.</li>
+        <li>Dividend integration is implemented via the site’s dividend gross-up / credit tables—reasonable for education, not a substitute for professional integration planning.</li>
+        <li>Passive investment income inside corporations has Part I / Part IV rules not modeled except via the optional drag field.</li>
+        <li>RRSP withdrawals are taxable later; corporate distributions are taxable later.</li>
+        <li>CPP on self-employment and other payroll nuances may differ from your notice of assessment.</li>
+        <li>Accounting, legal, and compliance costs are excluded unless you treat them implicitly by adjusting inputs.</li>
+      </ul>
+
+      <h2>Related links</h2>
+      <ul>
+        <li><a href="/calculators/canada-income-tax/">Canada Personal Income Tax Calculator</a></li>
+        <li><a href="/calculators/ccpc-tax/">CCPC Tax Calculator</a></li>
+        <li><a href="/calculators/rrsp-contribution-room-tax-refund/">RRSP Contribution Room &amp; Tax Refund Calculator</a></li>
+        <li><a href="/calculators/investment-simple/">Simple Investment Calculator</a></li>
+      </ul>
+    </div>
+
+    <div class="report-issue-wrap">
+      <a href="/contact/" class="report-issue-link">Report an Issue</a>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+</body>
+</html>

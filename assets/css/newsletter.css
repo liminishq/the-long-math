@@ -29,6 +29,24 @@
   line-height: 1.45;
 }
 
+.newsletter-double-opt-in-note {
+  margin: 0 0 0.75rem;
+  max-width: 42rem;
+  padding: 0.65rem 0.8rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+}
+
+.newsletter-double-opt-in-note strong {
+  font-weight: 600;
+  color: var(--text);
+}
+
 .newsletter-embed-wrap {
   margin-top: 0.5rem;
   line-height: 0;

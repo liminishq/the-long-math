@@ -1,0 +1,248 @@
+/* Sole proprietor vs corporation calculator — aligned with site calculator patterns */
+
+.spvc-wrap header.spvc-hero {
+  margin-bottom: 1.25rem;
+}
+
+.spvc-wrap .spvc-lede {
+  font-size: 1.05rem;
+  line-height: 1.55;
+  margin: 0.75rem 0;
+}
+
+.spvc-calc {
+  margin-top: 0.5rem;
+}
+
+/* Input column: gold/amber field titles vs muted helper copy below inputs */
+.spvc-input-column .panel > h3 {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.spvc-input-column .panel .field label {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.spvc-input-column .panel .field .help.muted {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.spvc-input-column .spvc-advanced summary {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.spvc-main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .spvc-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.spvc-results-panel-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.spvc-results-panel-header .section-title {
+  margin: 0;
+}
+
+.inspect-arithmetic-btn {
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.spvc-error {
+  background: rgba(229, 115, 115, 0.12);
+  border: 1px solid rgba(229, 115, 115, 0.45);
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.spvc-error.hidden {
+  display: none;
+}
+
+.spvc-warn {
+  background: rgba(217, 180, 106, 0.15);
+  border: 1px solid rgba(217, 180, 106, 0.45);
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  margin: 0.75rem 0;
+  font-size: 0.92rem;
+}
+
+.spvc-hero-result {
+  background: linear-gradient(145deg, rgba(77, 163, 255, 0.14), rgba(217, 180, 106, 0.1));
+  border: 1px solid rgba(238, 242, 247, 0.12);
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.spvc-hero-result h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--muted, #a8b0c0);
+}
+
+.spvc-hero-winner {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  line-height: 1.3;
+}
+
+.spvc-hero-diff {
+  font-size: 1.05rem;
+  margin: 0.25rem 0;
+}
+
+.spvc-hero-pct {
+  font-size: 1rem;
+  margin: 0.35rem 0 0;
+  color: var(--muted, #a8b0c0);
+}
+
+.spvc-out-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+@media (max-width: 520px) {
+  .spvc-out-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.spvc-out-card {
+  border: 1px solid rgba(238, 242, 247, 0.1);
+  border-radius: 10px;
+  padding: 0.75rem 0.85rem;
+  background: rgba(20, 28, 43, 0.35);
+}
+
+.spvc-out-card.spvc-highlight {
+  border-color: rgba(217, 180, 106, 0.45);
+  background: rgba(217, 180, 106, 0.08);
+}
+
+.spvc-out-label {
+  font-size: 0.78rem;
+  color: var(--muted, #a8b0c0);
+  margin: 0 0 0.2rem;
+}
+
+.spvc-out-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.spvc-breakdown {
+  margin-top: 1rem;
+}
+
+.spvc-breakdown h4 {
+  margin: 0.75rem 0 0.35rem;
+  font-size: 0.95rem;
+}
+
+.spvc-breakdown table {
+  width: 100%;
+  font-size: 0.88rem;
+  border-collapse: collapse;
+}
+
+.spvc-breakdown th,
+.spvc-breakdown td {
+  text-align: left;
+  padding: 0.35rem 0.5rem 0.35rem 0;
+  border-bottom: 1px solid rgba(238, 242, 247, 0.08);
+}
+
+.spvc-breakdown td:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.spvc-subhead {
+  color: var(--muted, #a8b0c0);
+  font-size: 0.9rem;
+  margin: 0 0 1rem;
+}
+
+.spvc-panel .field.checkbox label {
+  display: inline;
+  font-weight: 400;
+}
+
+.spvc-advanced details {
+  margin-top: 0.75rem;
+}
+
+.spvc-advanced summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.35rem 0;
+}
+
+.spvc-copy-summary-btn {
+  margin-top: 0.5rem;
+}
+
+.spvc-projection-block {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(238, 242, 247, 0.1);
+}
+
+.spvc-projection-block .spvc-warn {
+  margin-top: 0.75rem;
+}
+
+/* Share block reuse */
+.spvc-calc .result-share-block {
+  margin-top: 1.25rem;
+}
+
+.spvc-calc .result-share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.65rem;
+}
+
+.spvc-calc .result-share-actions button {
+  font-size: 0.88rem;
+}
+
+.spvc-below {
+  margin-top: 1.5rem;
+}
+
+.spvc-below ul.spvc-links {
+  padding-left: 1.2rem;
+}
+
+.spvc-below ul.spvc-links li {
+  margin: 0.35rem 0;
+}
