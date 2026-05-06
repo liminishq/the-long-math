@@ -128,6 +128,11 @@
           "desc": "Estime le coût total des études, retranche le financement non emprunté pour un ou plusieurs programmes et affiche la dette projetée à la diplomation. Comparaison facultative entre deux scénarios."
         },
         {
+          "path": "/calculators/retirement-withdrawal-calculator/",
+          "title": "Calculateur de retrait à la retraite",
+          "desc": "Modélise les retraits de retraite année par année avec des hypothèses explicites sur le rendement, l'inflation, les retraits et le risque d'épuisement du portefeuille."
+        },
+        {
           "path": "/calculators/pay-off-mortgage-vs-invest/",
           "title": "Rembourser l’hypothèque ou investir",
           "desc": "Compare un remboursement hypothécaire accéléré à l’investissement du même flux monétaire mensuel selon une règle stricte de neutralité de trésorerie."

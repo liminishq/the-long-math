@@ -128,6 +128,11 @@
           "desc": "Estimate total education costs, subtract non-debt funding across one or more programs, and see projected debt at graduation. Optional two-scenario comparison."
         },
         {
+          "path": "/calculators/retirement-withdrawal-calculator/",
+          "title": "Retirement Withdrawal Calculator",
+          "desc": "Model retirement drawdown year by year with explicit assumptions for returns, inflation, withdrawals, and portfolio depletion risk."
+        },
+        {
           "path": "/calculators/pay-off-mortgage-vs-invest/",
           "title": "Pay Off Mortgage vs Invest",
           "desc": "Compare paying down a mortgage faster versus investing the same monthly cash under a strict cash-flow-neutral rule."
