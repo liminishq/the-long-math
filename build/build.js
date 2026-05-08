@@ -3,6 +3,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 const nunjucks = require("nunjucks");
 const { loadLang, getMergedDict, t } = require("./lib/load-i18n.js");
 const {
@@ -184,6 +185,92 @@ function buildLdJsonBlocks(article, canonical, pathPrefix) {
   const faqLd = buildFaqPageSchema(article.faq);
   if (faqLd) blocks.push(JSON.stringify(faqLd));
   return blocks;
+}
+
+function walkFiles(dir, out = []) {
+  if (!fs.existsSync(dir)) return out;
+  for (const name of fs.readdirSync(dir)) {
+    const full = path.join(dir, name);
+    const st = fs.statSync(full);
+    if (st.isDirectory()) {
+      walkFiles(full, out);
+    } else {
+      out.push(full);
+    }
+  }
+  return out;
+}
+
+function toPosixPath(p) {
+  return p.split(path.sep).join("/");
+}
+
+function shortHash(content) {
+  return crypto.createHash("sha256").update(content).digest("hex").slice(0, 10);
+}
+
+/**
+ * Fingerprint JS/CSS assets in dist and rewrite all dist HTML references to hashed URLs.
+ * This guarantees each deploy has unique asset URLs and busts stale browser/CDN caches.
+ */
+function fingerprintAssetsAndRewriteHtml() {
+  const assetRoots = [path.join(DIST, "assets", "js"), path.join(DIST, "assets", "css")];
+  const map = new Map();
+
+  for (const root of assetRoots) {
+    const ext = root.endsWith(path.sep + "js") ? ".js" : ".css";
+    for (const file of walkFiles(root)) {
+      if (!file.endsWith(ext)) continue;
+      const base = path.basename(file);
+      // Skip already fingerprinted names like foo.1a2b3c4d5e.js
+      if (/\.[0-9a-f]{10}\.(js|css)$/.test(base)) continue;
+
+      const content = fs.readFileSync(file);
+      const hash = shortHash(content);
+      const parsed = path.parse(file);
+      const hashedName = `${parsed.name}.${hash}${parsed.ext}`;
+      const hashedFile = path.join(parsed.dir, hashedName);
+      fs.writeFileSync(hashedFile, content);
+
+      const origWebPath = "/" + toPosixPath(path.relative(DIST, file));
+      const hashedWebPath = "/" + toPosixPath(path.relative(DIST, hashedFile));
+      map.set(origWebPath, hashedWebPath);
+    }
+  }
+
+  const htmlFiles = walkFiles(DIST).filter((f) => f.endsWith(".html"));
+  for (const htmlPath of htmlFiles) {
+    let html = fs.readFileSync(htmlPath, "utf8");
+    for (const [orig, hashed] of map.entries()) {
+      const escaped = orig.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      // Replace both plain refs and refs with old query-strings: /x.js?v=...
+      const re = new RegExp(`${escaped}(?:\\?[^"'\\s>]*)?`, "g");
+      html = html.replace(re, hashed);
+    }
+    fs.writeFileSync(htmlPath, html, "utf8");
+  }
+
+  const manifest = {};
+  for (const [k, v] of map.entries()) manifest[k] = v;
+  ensureDir(path.join(DIST, "assets", "data"));
+  fs.writeFileSync(path.join(DIST, "assets", "data", "asset-manifest.json"), JSON.stringify(manifest, null, 2), "utf8");
+}
+
+function emitCacheHeaders() {
+  // Works on static hosts that support Netlify/Cloudflare Pages style _headers.
+  // HTML revalidates; fingerprinted assets can be cached long-term.
+  const headers = [
+    "/*",
+    "  Cache-Control: public, max-age=0, must-revalidate",
+    "",
+    "/assets/js/*",
+    "  Cache-Control: public, max-age=31536000, immutable",
+    "",
+    "/assets/css/*",
+    "  Cache-Control: public, max-age=31536000, immutable",
+    "",
+  ].join("\n");
+  fs.writeFileSync(path.join(DIST, "_headers"), headers, "utf8");
 }
 
 /**
@@ -433,6 +520,8 @@ function build() {
   }
 
   emitFrenchStaticMirrors();
+  fingerprintAssetsAndRewriteHtml();
+  emitCacheHeaders();
 
   syncEnglishArticlesHtmlToSource();
   syncFrenchArticlesHtmlToSource();

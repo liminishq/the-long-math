@@ -409,25 +409,122 @@
   }
 
   function initNewsletterDoubleOptInNote() {
-    var sections = document.querySelectorAll(".newsletter-signup");
-    if (!sections || !sections.length) return;
+    var iframes = document.querySelectorAll("iframe.beehiiv-embed");
+    if (!iframes || !iframes.length) return;
 
     var fr = isFrenchLocale();
     var htmlEn =
       "You are almost done. To reduce spam and bot signups, this list uses <strong>double opt-in</strong>: please check your <strong>inbox and junk mail folder</strong> for our email, then click <strong>Confirm Subscription</strong> to finish.";
     var htmlFr =
       "Vous y &ecirc;tes presque. Pour limiter le pourriel et les inscriptions automatis&eacute;es, cette liste utilise la <strong>double confirmation</strong> : ouvrez le courriel que nous envoyons (bo&icirc;te de r&eacute;ception <strong>et</strong> courrier ind&eacute;sirable), puis cliquez sur <strong>Confirmer l'abonnement</strong>.";
+    var titleEn = "Almost done — check your email";
+    var titleFr = "Presque termine — verifiez votre courriel";
+    var closeLabel = fr ? "Fermer" : "Close";
 
-    sections.forEach(function (sec) {
-      if (sec.querySelector(".newsletter-double-opt-in-note")) return;
-      var wrap = sec.querySelector(".newsletter-embed-wrap");
-      if (!wrap || !sec.querySelector(".beehiiv-embed")) return;
+    var popup = null;
+    var shownOnce = false;
+    var lastFocusedEl = null;
 
-      var p = document.createElement("p");
-      p.className = "newsletter-double-opt-in-note";
-      p.setAttribute("data-tlm-double-opt-in-note", "1");
-      p.innerHTML = fr ? htmlFr : htmlEn;
-      wrap.parentNode.insertBefore(p, wrap);
+    function buildPopup() {
+      if (popup) return popup;
+      popup = document.createElement("div");
+      popup.className = "newsletter-double-opt-in-popup";
+      popup.setAttribute("role", "dialog");
+      popup.setAttribute("aria-modal", "true");
+      popup.setAttribute("aria-labelledby", "tlm-doi-title");
+      popup.setAttribute("hidden", "");
+
+      var card = document.createElement("div");
+      card.className = "newsletter-double-opt-in-popup-card";
+
+      var closeBtn = document.createElement("button");
+      closeBtn.type = "button";
+      closeBtn.className = "newsletter-double-opt-in-popup-close";
+      closeBtn.setAttribute("aria-label", closeLabel);
+      closeBtn.innerHTML = "&times;";
+      closeBtn.addEventListener("click", hidePopup);
+
+      var heading = document.createElement("h2");
+      heading.id = "tlm-doi-title";
+      heading.className = "newsletter-double-opt-in-popup-title";
+      heading.textContent = fr ? titleFr : titleEn;
+
+      var note = document.createElement("p");
+      note.className = "newsletter-double-opt-in-note";
+      note.setAttribute("data-tlm-double-opt-in-note", "1");
+      note.innerHTML = fr ? htmlFr : htmlEn;
+
+      card.appendChild(closeBtn);
+      card.appendChild(heading);
+      card.appendChild(note);
+      popup.appendChild(card);
+
+      popup.addEventListener("click", function (e) {
+        if (e.target === popup) hidePopup();
+      });
+
+      document.body.appendChild(popup);
+      return popup;
+    }
+
+    function showPopup() {
+      if (shownOnce) return;
+      shownOnce = true;
+      var p = buildPopup();
+      try { lastFocusedEl = document.activeElement; } catch (e) { lastFocusedEl = null; }
+      p.removeAttribute("hidden");
+      document.documentElement.classList.add("tlm-doi-open");
+      var btn = p.querySelector(".newsletter-double-opt-in-popup-close");
+      if (btn) { try { btn.focus(); } catch (e) {} }
+    }
+
+    function hidePopup() {
+      if (!popup) return;
+      popup.setAttribute("hidden", "");
+      document.documentElement.classList.remove("tlm-doi-open");
+      if (lastFocusedEl && typeof lastFocusedEl.focus === "function") {
+        try { lastFocusedEl.focus(); } catch (e) {}
+      }
+    }
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && popup && !popup.hasAttribute("hidden")) hidePopup();
+    });
+
+    var pageLoadAt = Date.now();
+    var iframeInteracted = false;
+    var beehiivMessageCount = 0;
+
+    function isBeehiivOrigin(origin) {
+      if (!origin) return false;
+      return origin.indexOf("beehiiv.com") !== -1;
+    }
+
+    function isBeehiivIframeFocused() {
+      var ae = document.activeElement;
+      return !!(ae && ae.tagName === "IFRAME" && ae.classList && ae.classList.contains("beehiiv-embed"));
+    }
+
+    window.addEventListener("blur", function () {
+      setTimeout(function () {
+        if (isBeehiivIframeFocused()) iframeInteracted = true;
+      }, 0);
+    });
+
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "hidden" && isBeehiivIframeFocused()) {
+        iframeInteracted = true;
+      }
+    });
+
+    window.addEventListener("message", function (e) {
+      if (!e || !isBeehiivOrigin(e.origin)) return;
+      beehiivMessageCount++;
+      var elapsed = Date.now() - pageLoadAt;
+      if (!iframeInteracted) return;
+      if (elapsed < 1200) return;
+      if (beehiivMessageCount < 2) return;
+      showPopup();
     });
   }
 
