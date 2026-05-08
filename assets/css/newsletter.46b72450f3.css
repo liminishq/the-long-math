@@ -1,0 +1,155 @@
+/* Newsletter signup blocks (beehiiv embed + copy) — dark/light via site tokens */
+
+.newsletter-signup {
+  margin-top: 2rem;
+  padding: 1.25rem 1.25rem 1.35rem;
+  text-align: left;
+}
+
+.newsletter-signup-heading {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  line-height: 1.35;
+  color: var(--text);
+}
+
+.newsletter-signup-copy {
+  max-width: 42rem;
+  margin: 0 0 0.5rem;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.newsletter-signup-meta {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.newsletter-double-opt-in-note {
+  margin: 0;
+  max-width: 42rem;
+  padding: 0.75rem 0.9rem;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+}
+
+.newsletter-double-opt-in-note strong {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.newsletter-embed-wrap {
+  margin-top: 0.5rem;
+  line-height: 0;
+}
+
+.newsletter-embed-wrap iframe.beehiiv-embed {
+  display: block;
+  max-width: 100%;
+}
+
+@media (max-width: 400px) {
+  .newsletter-embed-wrap iframe.beehiiv-embed {
+    width: 100% !important;
+    min-width: 0;
+  }
+}
+
+/* Double opt-in confirmation popup (shown after the user submits the form) */
+
+.newsletter-double-opt-in-popup[hidden] {
+  display: none !important;
+}
+
+.newsletter-double-opt-in-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: tlm-doi-fade 160ms ease-out;
+}
+
+.newsletter-double-opt-in-popup-card {
+  position: relative;
+  width: min(28rem, 100%);
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  padding: 1.25rem 1.25rem 1.35rem;
+  border-radius: 14px;
+  background: var(--card-bg, var(--surface, #fff));
+  border: 1px solid var(--border);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+  animation: tlm-doi-pop 180ms ease-out;
+}
+
+.newsletter-double-opt-in-popup-title {
+  margin: 0 2.5rem 0.5rem 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text);
+}
+
+.newsletter-double-opt-in-popup-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.newsletter-double-opt-in-popup-close:hover,
+.newsletter-double-opt-in-popup-close:focus-visible {
+  color: var(--text);
+  border-color: var(--border);
+  background: var(--surface);
+  outline: none;
+}
+
+html.tlm-doi-open,
+html.tlm-doi-open body {
+  overflow: hidden;
+}
+
+@keyframes tlm-doi-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes tlm-doi-pop {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .newsletter-double-opt-in-popup,
+  .newsletter-double-opt-in-popup-card {
+    animation: none;
+  }
+}

@@ -550,6 +550,130 @@
     document.head.appendChild(s);
   }
 
+  function isCalculatorDetailPage(path) {
+    if (path.indexOf("/calculators/") === -1) return false;
+    if (/^(\/fr)?\/calculators\/?$/.test(path)) return false;
+    if (/\/calculators\/[^/]+\/(methodology|data|inspect-the-arithmetic)(\/|$)/.test(path)) return false;
+    return true;
+  }
+
+  function getCalculatorSlugFromPath(path) {
+    var m = path.match(/\/calculators\/([^/]+)\//);
+    return (m && m[1]) ? m[1] : "calculator";
+  }
+
+  function firstNonEmptyText(selectors) {
+    for (var i = 0; i < selectors.length; i += 1) {
+      var el = document.querySelector(selectors[i]);
+      var txt = (el && el.textContent ? el.textContent : "").trim();
+      if (txt) return txt;
+    }
+    return "";
+  }
+
+  function collectCalculatorScenario() {
+    var scenario = {};
+    var fields = document.querySelectorAll("input[id], select[id], textarea[id]");
+    fields.forEach(function (el) {
+      var id = (el.id || "").trim();
+      if (!id) return;
+      var tag = (el.tagName || "").toLowerCase();
+      var type = (el.type || "").toLowerCase();
+      if (type === "password" || type === "file") return;
+      var val;
+      if (type === "checkbox" || type === "radio") {
+        val = el.checked ? "1" : "0";
+      } else if (tag === "select") {
+        val = el.value;
+      } else {
+        val = (el.value || "").trim();
+      }
+      if (!val && val !== "0") return;
+      // Keep URLs practical; skip very long payloads.
+      if (String(val).length > 64) return;
+      scenario[id] = String(val);
+    });
+    return scenario;
+  }
+
+  function ensureGenericShareBlock() {
+    if (document.getElementById("share_result_btn")) return true;
+    var targetPanel =
+      document.querySelector(".panel--results") ||
+      document.querySelector(".results") ||
+      document.querySelector(".card") ||
+      document.querySelector("main") ||
+      document.querySelector(".wrap");
+    if (!targetPanel) return false;
+
+    var section = document.createElement("section");
+    section.className = "result-share-block";
+    section.setAttribute("aria-labelledby", "generic-share-heading");
+    section.innerHTML =
+      '<h3 id="generic-share-heading" class="result-share-title">Share this result</h3>' +
+      '<p class="result-share-copy">Snapshot your estimate as a shareable image.</p>' +
+      '<p class="result-share-helper">Shares an image plus a link to this calculator scenario.</p>' +
+      '<div class="result-share-actions">' +
+      '<button type="button" id="share_result_btn">Share image</button>' +
+      '<button type="button" id="download_result_btn">Download PNG</button>' +
+      '<button type="button" id="copy_result_link_btn">Copy result link</button>' +
+      "</div>" +
+      '<p class="result-share-status" id="result_share_status" aria-live="polite"></p>';
+
+    targetPanel.appendChild(section);
+    return true;
+  }
+
+  function wireGenericCalculatorShare() {
+    if (!window.TLM || !window.TLM.shareCard || !window.TLM.shareCard.wireCalculatorShare) return;
+    if (!ensureGenericShareBlock()) return;
+    // Existing calculators with custom share wiring should keep their bespoke payloads.
+    if (document.body && document.body.dataset && document.body.dataset.tlmGenericShareWired === "1") return;
+
+    var path = (window.location && window.location.pathname) || "";
+    var slug = getCalculatorSlugFromPath(path);
+    window.TLM.shareCard.wireCalculatorShare(slug, function () {
+      var title = firstNonEmptyText(["h1", ".section-title"]);
+      var main = firstNonEmptyText([
+        ".result.prominent .v",
+        ".result .v",
+        "[id^='out']",
+        ".kpi-value",
+      ]);
+      var scenario = collectCalculatorScenario();
+      return {
+        scenario: scenario,
+        card: {
+          headline: title ? title + " result snapshot" : "Calculator result snapshot",
+          mainValue: main || "Estimate",
+          subline: "Based on current calculator inputs",
+          contextLine: "The Long Math",
+          shareText: (title || "Calculator") + " snapshot from The Long Math. Run your own numbers:",
+          title: "The Long Math calculator result",
+        },
+      };
+    });
+    if (document.body && document.body.dataset) document.body.dataset.tlmGenericShareWired = "1";
+  }
+
+  function loadCalculatorShareScriptAndWireFallback() {
+    var path = (window.location && window.location.pathname) || "";
+    if (!isCalculatorDetailPage(path)) return;
+    if (document.getElementById("share_result_btn")) return;
+
+    if (window.TLM && window.TLM.shareCard && window.TLM.shareCard.wireCalculatorShare) {
+      wireGenericCalculatorShare();
+      return;
+    }
+    if (document.getElementById("tlm-calculator-share-js")) return;
+    var s = document.createElement("script");
+    s.id = "tlm-calculator-share-js";
+    s.src = "/assets/js/calculator-share.js";
+    s.async = true;
+    s.onload = wireGenericCalculatorShare;
+    document.head.appendChild(s);
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initThemeToggle();
     initMenu();
@@ -559,5 +683,6 @@
     injectBeehiivEmbedScript();
     initNewsletterDoubleOptInNote();
     loadCalculatorExportScript();
+    loadCalculatorShareScriptAndWireFallback();
   });
 })();

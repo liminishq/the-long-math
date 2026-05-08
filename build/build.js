@@ -274,6 +274,40 @@ function emitCacheHeaders() {
 }
 
 /**
+ * Some environments serve pages from repo-root mirrors (index.html, /calculators/...),
+ * not directly from dist/. Those pages still need the fingerprinted asset files present
+ * at /assets/js and /assets/css. Mirror hashed assets and manifest back to source.
+ */
+function syncFingerprintedAssetsToSource() {
+  const kinds = ["js", "css"];
+  for (const kind of kinds) {
+    const srcDir = path.join(DIST, "assets", kind);
+    const dstDir = path.join(ROOT, "assets", kind);
+    if (!fs.existsSync(srcDir)) continue;
+    ensureDir(dstDir);
+    for (const file of walkFiles(srcDir)) {
+      const base = path.basename(file);
+      if (!/\.[0-9a-f]{10}\.(js|css)$/.test(base)) continue;
+      const out = path.join(dstDir, base);
+      fs.copyFileSync(file, out);
+    }
+  }
+
+  const manifestSrc = path.join(DIST, "assets", "data", "asset-manifest.json");
+  const manifestDstDir = path.join(ROOT, "assets", "data");
+  if (fs.existsSync(manifestSrc)) {
+    ensureDir(manifestDstDir);
+    fs.copyFileSync(manifestSrc, path.join(manifestDstDir, "asset-manifest.json"));
+  }
+
+  // Also mirror cache headers at repo root for hosts that read _headers from root.
+  const headersSrc = path.join(DIST, "_headers");
+  if (fs.existsSync(headersSrc)) {
+    fs.copyFileSync(headersSrc, path.join(ROOT, "_headers"));
+  }
+}
+
+/**
  * Newsletter signup block before FAQ section, or before related-articles,
  * or before closing </article> if neither marker exists.
  */
@@ -522,6 +556,7 @@ function build() {
   emitFrenchStaticMirrors();
   fingerprintAssetsAndRewriteHtml();
   emitCacheHeaders();
+  syncFingerprintedAssetsToSource();
 
   syncEnglishArticlesHtmlToSource();
   syncFrenchArticlesHtmlToSource();
