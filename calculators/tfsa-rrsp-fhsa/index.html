@@ -108,6 +108,20 @@
       color: var(--muted);
       margin-top: 4px;
     }
+    .inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: nowrap;
+    }
+    .inline input {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+    .inline .unit {
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
     .note-block {
       margin-top: 10px;
       padding: 10px 12px;
@@ -217,31 +231,103 @@
 
           <hr class="sep" />
 
+          <h2 class="section-title">Tax rate source</h2>
+
           <div class="field">
-            <label for="tNow">Current marginal tax rate (t_now)</label>
+            <label for="taxProvince">Province/Territory of residence</label>
+            <select id="taxProvince">
+              <option value="ON" selected>Ontario</option>
+              <option value="AB">Alberta</option>
+              <option value="BC">British Columbia</option>
+              <option value="MB">Manitoba</option>
+              <option value="NB">New Brunswick</option>
+              <option value="NL">Newfoundland and Labrador</option>
+              <option value="NS">Nova Scotia</option>
+              <option value="NT">Northwest Territories</option>
+              <option value="NU">Nunavut</option>
+              <option value="PE">Prince Edward Island</option>
+              <option value="QC">Quebec</option>
+              <option value="SK">Saskatchewan</option>
+              <option value="YT">Yukon</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="currentTaxableIncome">Current taxable income (for t_now estimate)</label>
             <div class="inline">
-              <input id="tNow" type="number" inputmode="decimal" step="0.5" value="40" />
-              <span class="unit">%</span>
+              <input id="currentTaxableIncome" type="number" inputmode="decimal" min="0" step="1000" value="120000" />
+              <span class="unit">$</span>
             </div>
           </div>
 
           <div class="field">
-            <label for="tRet">Retirement marginal tax rate (t_ret)</label>
+            <label for="retirementTaxableIncome">Expected retirement taxable income (for t_ret estimate)</label>
             <div class="inline">
-              <input id="tRet" type="number" inputmode="decimal" step="0.5" value="30" />
-              <span class="unit">%</span>
+              <input id="retirementTaxableIncome" type="number" inputmode="decimal" min="0" step="1000" value="70000" />
+              <span class="unit">$</span>
+            </div>
+          </div>
+
+          <p id="derivedRateSummary" class="help-inline">
+            Derived marginal rates load automatically from province and income inputs.
+          </p>
+
+          <div class="field checkbox">
+            <input id="manualRateOverride" type="checkbox" />
+            <label for="manualRateOverride">Manual rate override (advanced)</label>
+          </div>
+
+          <div id="manualRateFields" class="hidden">
+            <div class="field">
+              <label for="tNow">Current marginal tax rate (t_now)</label>
+              <div class="inline">
+                <input id="tNow" type="number" inputmode="decimal" step="0.5" value="40" />
+                <span class="unit">%</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="tRet">Retirement marginal tax rate (t_ret)</label>
+              <div class="inline">
+                <input id="tRet" type="number" inputmode="decimal" step="0.5" value="30" />
+                <span class="unit">%</span>
+              </div>
             </div>
           </div>
 
           <p class="help-inline">
-            Use our <a href="/calculators/canada-income-tax/" class="inline-link">Canada Personal Income Tax Calculator</a> to help estimate these rates.
+            Rate estimates are based on employment income and the selected province. Use manual override if you want to set custom rates directly.
+          </p>
+
+          <hr class="sep" />
+
+          <h2 class="section-title">Available room constraints</h2>
+
+          <div class="field">
+            <label for="tfsaRemainingRoom">TFSA remaining contribution room (today)</label>
+            <div class="inline">
+              <input id="tfsaRemainingRoom" type="number" inputmode="decimal" min="0" step="500" value="95000" />
+              <span class="unit">$</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="rrspRemainingRoom">RRSP remaining deduction room (today)</label>
+            <div class="inline">
+              <input id="rrspRemainingRoom" type="number" inputmode="decimal" min="0" step="500" value="30000" />
+              <span class="unit">$</span>
+            </div>
+          </div>
+
+          <p class="help-inline">
+            These caps are enforced in strategy allocations. Contributions beyond available room are redirected when possible; if all modeled room is exhausted, the remainder is not allocated.
           </p>
 
           <hr class="sep" />
 
           <div class="field checkbox">
             <input id="refundReinvest" type="checkbox" />
-            <label for="refundReinvest">Reinvest RRSP/FHSA refunds (assume TFSA-like)</label>
+            <label for="refundReinvest">Reinvest RRSP/FHSA refunds (TFSA first up to remaining room, then non-registered)</label>
           </div>
           <p id="refundModeLabel" class="help-inline">
             Spend refund immediately (default). Toggle to see a reinvested-refund scenario.
@@ -277,7 +363,7 @@
           </div>
 
           <div class="note-block">
-            <strong>Scope note:</strong> This version does not model OAS clawback, benefits, or taxable non-registered accounts. It compares registered account outcomes only, under your explicit rates.
+            <strong>Scope note:</strong> This version does not model OAS clawback or benefits. If refund reinvestment is enabled, refunds are directed to TFSA first (subject to remaining TFSA room) and then to a non-registered bucket.
           </div>
 
         </section>
@@ -294,11 +380,11 @@
 
           <div class="result-tiles">
             <div class="result-tile">
-              <p class="k">All contributions to TFSA</p>
+              <p class="k">TFSA-first (overflow RRSP, then non-registered)</p>
               <p class="v" id="tfsaValue">$—</p>
             </div>
             <div class="result-tile">
-              <p class="k">All contributions to RRSP</p>
+              <p class="k">RRSP-first (overflow TFSA, then non-registered)</p>
               <p class="v" id="rrspValue">$—</p>
               <p class="help-inline">RRSP withdrawals taxed at t_ret; RRSP/FHSA refunds handled using the toggle above.</p>
             </div>
@@ -323,6 +409,7 @@
             FHSA eligibility and annual room determine how much can be allocated to FHSA before spilling to TFSA or RRSP.
           </p>
           <p id="allocationNote" class="help-inline"></p>
+          <p id="allocationPriority" class="help-inline"></p>
 
           <p id="refundHint" class="help-inline" style="margin-top: 8px;"></p>
 
@@ -332,10 +419,11 @@
             <h3>Assumptions shown</h3>
             <ul>
               <li><span class="muted">Refund default:</span> RRSP/FHSA refund is modeled as spent unless you toggle reinvestment.</li>
+              <li><span class="muted">Room constraints:</span> TFSA and RRSP contributions are capped by the remaining room values you enter.</li>
               <li><span class="muted">Returns:</span> same net return and fee structure for all accounts; no asset-location modeling.</li>
               <li><span class="muted">Tax rates:</span> t_now and t_ret are constant over the horizon.</li>
               <li><span class="muted">FHSA:</span> only annual room is modeled in this version; lifetime FHSA caps and contribution carry-forward are not modeled.</li>
-              <li><span class="muted">Non-registered:</span> taxable accounts are not modeled; this is a registered-account comparison only.</li>
+              <li><span class="muted">Non-registered:</span> only refund overflow can be routed to a non-registered bucket; non-registered tax drag is not modeled in this version.</li>
             </ul>
           </div>
 
