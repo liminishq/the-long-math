@@ -1,6 +1,12 @@
 // TFSA vs RRSP vs FHSA Calculator – UI glue (no math logic)
 
-import { runAccountStrategySimulation } from "./engine.js";
+import {
+  runAccountStrategySimulation,
+  computeRrspNewAnnualRoom,
+  RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP
+} from "./engine.js";
+import { loadTaxData } from "../canada-income-tax/js/tax.data.js";
+import { computePersonalTax } from "../canada-income-tax/js/tax.engine.js";
 
 function $(id) {
   const el = document.getElementById(id);
@@ -30,9 +36,36 @@ function fmtPct(n) {
   return n.toFixed(1) + "%";
 }
 
+function futureValueCaption(horizonYears, useRealDollars) {
+  const y = Math.round(horizonYears);
+  const yrWord = y === 1 ? "year" : "years";
+  const realBit = useRealDollars ? "; real (inflation-adjusted) dollars" : "";
+  return `After-tax future value (${y}-${yrWord} horizon${realBit})`;
+}
+
 function clamp(n, lo, hi) {
   if (!Number.isFinite(n)) return lo;
   return Math.min(hi, Math.max(lo, n));
+}
+
+let taxDataReady = false;
+
+function deriveMarginalRateFromIncome(province, employmentIncome) {
+  const result = computePersonalTax({
+    year: 2025,
+    province,
+    employmentIncome,
+    selfEmploymentIncome: 0,
+    otherIncome: 0,
+    eligibleDividends: 0,
+    nonEligibleDividends: 0,
+    capitalGains: 0,
+    rrspDeduction: 0,
+    fhsaDeduction: 0,
+    estimatedDeductions: 0,
+    taxPaid: 0
+  });
+  return (result?.totals?.marginalRate ?? 0) * 100;
 }
 
 function readInputs() {
@@ -50,15 +83,38 @@ function readInputs() {
   let inflation = numFromInput("inflationRate");
   if (!Number.isFinite(inflation) || inflation < 0) inflation = 0;
 
-  const t_now = clamp(numFromInput("tNow"), 0, 100);
-  const t_ret = clamp(numFromInput("tRet"), 0, 100);
+  const manualRateOverride = $("manualRateOverride").checked;
+  const taxProvince = $("taxProvince").value || "ON";
+  let currentTaxableIncome = numFromInput("currentTaxableIncome");
+  if (!Number.isFinite(currentTaxableIncome) || currentTaxableIncome < 0) currentTaxableIncome = 0;
+  let retirementTaxableIncome = numFromInput("retirementTaxableIncome");
+  if (!Number.isFinite(retirementTaxableIncome) || retirementTaxableIncome < 0) retirementTaxableIncome = 0;
+
+  let t_now;
+  let t_ret;
+  if (manualRateOverride) {
+    t_now = clamp(numFromInput("tNow"), 0, 100);
+    t_ret = clamp(numFromInput("tRet"), 0, 100);
+  } else {
+    t_now = clamp(deriveMarginalRateFromIncome(taxProvince, currentTaxableIncome), 0, 100);
+    t_ret = clamp(deriveMarginalRateFromIncome(taxProvince, retirementTaxableIncome), 0, 100);
+  }
 
   const refundMode = $("refundReinvest").checked ? "reinvest" : "spend";
 
+  let tfsaRemainingRoom = numFromInput("tfsaRemainingRoom");
+  if (!Number.isFinite(tfsaRemainingRoom) || tfsaRemainingRoom < 0) tfsaRemainingRoom = 0;
+
+  let rrspRemainingRoom = numFromInput("rrspRemainingRoom");
+  if (!Number.isFinite(rrspRemainingRoom) || rrspRemainingRoom < 0) rrspRemainingRoom = 0;
+
   const fhsaEligible = $("fhsaEligible").checked;
-  const fhsaHomeQualified = $("fhsaHomeQualified").checked;
+  const fhsaHomeQualified = fhsaEligible;
   let fhsaAnnualRoom = numFromInput("fhsaAnnualRoom");
   if (!Number.isFinite(fhsaAnnualRoom) || fhsaAnnualRoom < 0) fhsaAnnualRoom = 8000;
+
+  let tfsaNewAnnualRoom = numFromInput("tfsaNewAnnualRoom");
+  if (!Number.isFinite(tfsaNewAnnualRoom) || tfsaNewAnnualRoom < 0) tfsaNewAnnualRoom = 7000;
 
   return {
     contributionMode,
@@ -68,13 +124,21 @@ function readInputs() {
     annualFees,
     inflation,
     useRealDollars,
+    manualRateOverride,
+    taxProvince,
+    currentTaxableIncome,
+    retirementTaxableIncome,
     t_now,
     t_ret,
     refundMode,
     refundDest: "tfsa",
+    tfsaRemainingRoom,
+    rrspRemainingRoom,
     fhsaEligible,
     fhsaHomeQualified,
-    fhsaAnnualRoom
+    fhsaAnnualRoom,
+    fhsaLifetimeCap: 40000,
+    tfsaNewAnnualRoom
   };
 }
 
@@ -87,11 +151,22 @@ function render() {
     return;
   }
 
-  // Persist last inputs for Inspectable Arithmetic page
+  const rrspJanuaryBump = computeRrspNewAnnualRoom(
+    inputs.currentTaxableIncome,
+    RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP
+  );
+  $("roomAccrualHint").textContent =
+    `Starting in simulation year 2, each January adds ${fmtMoney(inputs.tfsaNewAnnualRoom)} to TFSA room and ${fmtMoney(rrspJanuaryBump)} to RRSP room (18% of current taxable income, capped at ${fmtMoney(RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP)}), in addition to any carry-forward you have not used.`;
+
   try {
     window.localStorage.setItem("tlm_tfsa_rrsp_fhsa_lastInputs", JSON.stringify(inputs));
   } catch (e) {
     // ignore storage errors
+  }
+
+  if (!taxDataReady) {
+    $("derivedRateSummary").textContent = "Loading marginal rates for this scenario…";
+    return;
   }
 
   let result;
@@ -102,20 +177,20 @@ function render() {
     return;
   }
 
-  const { strategies, ranking, allocationSummary } = result;
+  const { strategies, ranking, allocationSummary, optimalStrategyKey } = result;
 
-  const best = ranking[0] || null;
-
-  // Winner label
-  if (best) {
-    $("winnerName").textContent = prettyStrategyName(best.key);
-    $("winnerValue").textContent = fmtMoney(best.finalAfterTax);
+  // Top strategy card is based on the scenario-constrained optimal allocation.
+  if (strategies.OPTIMAL) {
+    $("winnerName").textContent = prettyStrategyName(optimalStrategyKey || "OPTIMAL");
+    $("winnerValueLabel").textContent = futureValueCaption(inputs.horizonYears, inputs.useRealDollars);
+    $("winnerValue").textContent = fmtMoney(strategies.OPTIMAL.finalAfterTax);
   } else {
     $("winnerName").textContent = "—";
+    $("winnerValueLabel").textContent = "After-tax future value";
     $("winnerValue").textContent = "$—";
   }
 
-  // Individual tiles
+  // Individual tiles (fixed strategies only; headline hero shows the winning rule)
   setTile("tfsaValue", strategies.ALL_TFSA?.finalAfterTax);
   setTile("rrspValue", strategies.ALL_RRSP?.finalAfterTax);
   if (strategies.ALL_FHSA && inputs.fhsaEligible) {
@@ -123,13 +198,7 @@ function render() {
     setTile("fhsaValue", strategies.ALL_FHSA.finalAfterTax);
   } else {
     $("fhsaTile").classList.add("hidden");
-  }
-
-  if (strategies.OPTIMAL && inputs.fhsaEligible) {
-    $("optimalTile").classList.remove("hidden");
-    setTile("optimalValue", strategies.OPTIMAL.finalAfterTax);
-  } else {
-    $("optimalTile").classList.add("hidden");
+    setTile("fhsaValue", NaN);
   }
 
   // Ranking list
@@ -142,16 +211,42 @@ function render() {
   });
 
   // Optimal split sentence
-  if (allocationSummary && inputs.fhsaEligible) {
+  if (allocationSummary) {
     const dest = allocationSummary.remainderDestination || "TFSA";
-    $("optimalSplit").textContent =
-      `This year: ${fmtMoney(allocationSummary.fhsaUsedAnnual)} to FHSA (up to the modeled annual room), ` +
-      `and approximately ${fmtMoney(allocationSummary.remainderAnnual)} to ${dest}.`;
+    if (inputs.fhsaEligible) {
+      $("optimalSplit").textContent =
+        `This year: ${fmtMoney(allocationSummary.fhsaUsedAnnual)} to FHSA (within annual room and the $40,000 lifetime contribution cap), ` +
+        `and approximately ${fmtMoney(allocationSummary.remainderAnnual)} to ${dest}.`;
+    } else {
+      $("optimalSplit").textContent =
+        "FHSA not available. Optimal comparison is between TFSA and RRSP only.";
+    }
     $("allocationNote").textContent = allocationSummary.noteText || "";
-  } else if (!inputs.fhsaEligible) {
-    $("optimalSplit").textContent =
-      "FHSA not available. Optimal comparison is between TFSA and RRSP only.";
-    $("allocationNote").textContent = "";
+    const capStatus = allocationSummary.capStatus || {};
+    const capNotes = [];
+    if (capStatus.rrspCapReached) {
+      capNotes.push(`RRSP cap reached at ${fmtMoney(capStatus.rrspCap)}`);
+    }
+    if (capStatus.tfsaCapReached) {
+      capNotes.push(`TFSA cap reached at ${fmtMoney(capStatus.tfsaCap)}`);
+    }
+    if (capNotes.length > 0) {
+      $("allocationNote").textContent += ` ${capNotes.join("; ")}. Overflow is redirected by strategy rules.`;
+    }
+
+    const y1 = allocationSummary.year1Allocation || {};
+    $("priorityTfsa").textContent = fmtMoney(y1.tfsa || 0);
+    $("priorityRrsp").textContent = fmtMoney(y1.rrsp || 0);
+    $("priorityFhsa").textContent = fmtMoney(y1.fhsa || 0);
+    $("priorityNonReg").textContent = fmtMoney(y1.nonRegistered || 0);
+
+    const initial = allocationSummary.annualContribution || 0;
+    const estimatedRefund = ((y1.rrsp || 0) + (y1.fhsa || 0)) * (inputs.t_now / 100);
+    const reinvested = inputs.refundMode === "reinvest";
+    $("year1Initial").textContent = fmtMoney(initial);
+    $("year1Refund").textContent = fmtMoney(estimatedRefund);
+    $("year1RefundMode").textContent = reinvested ? "Yes" : "No";
+    $("year1TotalInvested").textContent = fmtMoney(initial + (reinvested ? estimatedRefund : 0));
   }
 
   // Refund hint
@@ -172,7 +267,7 @@ function render() {
       if (Number.isFinite(hypothetical) && Number.isFinite(strategies.ALL_RRSP?.finalAfterTax)) {
         const diff = hypothetical - strategies.ALL_RRSP.finalAfterTax;
         $("refundHint").textContent =
-          `If RRSP refunds were reinvested instead of spent, the RRSP strategy here would end about ${fmtMoney(diff)} higher.`;
+          `If RRSP refunds were reinvested to TFSA first (up to room), then non-registered, the RRSP strategy here would end about ${fmtMoney(diff)} higher.`;
       } else {
         $("refundHint").textContent =
           "If RRSP refunds were reinvested instead of spent, RRSP outcomes would be higher than shown.";
@@ -184,7 +279,14 @@ function render() {
     }
   } else {
     $("refundHint").textContent =
-      "Refunds are assumed reinvested (TFSA-like). To model a more conservative case, toggle refunds to 'spent'.";
+      "Refunds are assumed reinvested to TFSA first (up to room), then non-registered. To model a more conservative case, toggle refunds to 'spent'.";
+  }
+  if (inputs.manualRateOverride) {
+    $("derivedRateSummary").textContent =
+      `Marginal rates for this scenario: manual override — ${fmtPct(inputs.t_now)} (current); ${fmtPct(inputs.t_ret)} (retirement).`;
+  } else {
+    $("derivedRateSummary").textContent =
+      `Marginal rates for this scenario: (${inputs.taxProvince}) ${fmtPct(inputs.t_now)} from ${fmtMoney(inputs.currentTaxableIncome)} income; ${fmtPct(inputs.t_ret)} from ${fmtMoney(inputs.retirementTaxableIncome)} income.`;
   }
 }
 
@@ -196,13 +298,17 @@ function setTile(id, value) {
 function prettyStrategyName(key) {
   switch (key) {
     case "ALL_TFSA":
-      return "All contributions to TFSA";
+      return "TFSA-first (overflow RRSP, then non-registered)";
     case "ALL_RRSP":
-      return "All contributions to RRSP";
+      return "RRSP-first (overflow TFSA, then non-registered)";
     case "ALL_FHSA":
-      return "FHSA first (overflow TFSA)";
+      return "FHSA-first (overflow TFSA, then RRSP, then non-registered)";
+    case "FHSA_FIRST_THEN_TFSA":
+      return "FHSA first, then TFSA, then RRSP, then non-registered";
+    case "FHSA_FIRST_THEN_RRSP":
+      return "FHSA first, then RRSP, then TFSA, then non-registered";
     case "OPTIMAL":
-      return "Optimal (FHSA first, then TFSA/RRSP)";
+      return "Best strategy for your inputs";
     default:
       return key;
   }
@@ -220,7 +326,38 @@ function syncFhsaVisibility() {
 
 function syncRefundLabels() {
   const reinvest = $("refundReinvest").checked;
-  $("refundModeLabel").textContent = reinvest ? "Reinvest refund (TFSA-like)" : "Spend refund immediately";
+  $("refundModeLabel").textContent = reinvest
+    ? "Reinvest refunds to TFSA up to remaining room; any excess goes to non-registered."
+    : "Spend refund immediately";
+}
+
+function syncRateModeVisibility() {
+  const manual = $("manualRateOverride").checked;
+  const wrap = $("manualRateFields");
+  wrap.classList.toggle("hidden", !manual);
+  // Force visibility state in case theme/css rules override `.hidden`.
+  wrap.style.display = manual ? "" : "none";
+}
+
+function wireNumericSteppers() {
+  document.querySelectorAll(".input-with-unit.numeric-combo").forEach((wrap) => {
+    const input = wrap.querySelector('input[type="number"]');
+    if (!input || input.dataset.tlmStepperWired === "1") return;
+    input.dataset.tlmStepperWired = "1";
+    const fire = () => {
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    };
+    wrap.querySelector(".step-up")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      input.stepUp();
+      fire();
+    });
+    wrap.querySelector(".step-down")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      input.stepDown();
+      fire();
+    });
+  });
 }
 
 function wireEvents() {
@@ -230,9 +367,14 @@ function wireEvents() {
     "annualReturn",
     "annualFees",
     "inflationRate",
+    "currentTaxableIncome",
+    "retirementTaxableIncome",
     "tNow",
     "tRet",
-    "fhsaAnnualRoom"
+    "tfsaRemainingRoom",
+    "rrspRemainingRoom",
+    "fhsaAnnualRoom",
+    "tfsaNewAnnualRoom"
   ].forEach((id) => {
     $(id).addEventListener("input", () => {
       render();
@@ -240,6 +382,10 @@ function wireEvents() {
   });
 
   $("contributionMode").addEventListener("change", () => {
+    render();
+  });
+
+  $("taxProvince").addEventListener("change", () => {
     render();
   });
 
@@ -253,38 +399,112 @@ function wireEvents() {
     render();
   });
 
+  $("manualRateOverride").addEventListener("change", () => {
+    syncRateModeVisibility();
+    render();
+  });
+
   $("fhsaEligible").addEventListener("change", () => {
     syncFhsaVisibility();
     render();
   });
 
-  $("fhsaHomeQualified").addEventListener("change", () => {
-    render();
+}
+
+function wireTfsaShare() {
+  if (!window.TLM?.shareCard?.wireCalculatorShare || !document.getElementById("share_result_btn")) return;
+  window.TLM.shareCard.wireCalculatorShare("tfsa-rrsp-fhsa", () => {
+    let inputs;
+    try {
+      inputs = readInputs();
+    } catch (_e) {
+      return null;
+    }
+    let result;
+    try {
+      result = runAccountStrategySimulation(inputs);
+    } catch (_e) {
+      return null;
+    }
+    const opt = result.strategies?.OPTIMAL;
+    if (!opt) return null;
+    const winnerKey = result.optimalStrategyKey || "OPTIMAL";
+    const winnerLabel = prettyStrategyName(winnerKey);
+    const y = Math.round(inputs.horizonYears);
+    const scenario = {
+      contribution_mode: inputs.contributionMode,
+      contribution_amount: String(inputs.contributionAmount),
+      horizon_years: String(y),
+      annual_return: String(inputs.annualReturn),
+      annual_fees: String(inputs.annualFees),
+      inflation: String(inputs.inflation),
+      use_real: inputs.useRealDollars ? "1" : "0",
+      tax_province: inputs.taxProvince,
+      current_taxable_income: String(Math.round(inputs.currentTaxableIncome)),
+      retirement_taxable_income: String(Math.round(inputs.retirementTaxableIncome)),
+      manual_rate_override: inputs.manualRateOverride ? "1" : "0",
+      t_now: String(inputs.t_now),
+      t_ret: String(inputs.t_ret),
+      refund_mode: inputs.refundMode,
+      tfsa_remaining_room: String(Math.round(inputs.tfsaRemainingRoom)),
+      rrsp_remaining_room: String(Math.round(inputs.rrspRemainingRoom)),
+      fhsa_eligible: inputs.fhsaEligible ? "1" : "0",
+      fhsa_annual_room: String(Math.round(inputs.fhsaAnnualRoom)),
+      fhsa_lifetime_cap: String(inputs.fhsaLifetimeCap ?? 40000),
+      tfsa_new_annual_room: String(Math.round(inputs.tfsaNewAnnualRoom))
+    };
+    const modeLabel =
+      inputs.contributionMode === "monthly"
+        ? "Monthly contributions"
+        : inputs.contributionMode === "annual"
+          ? "Annual contributions"
+          : "Lump sum";
+    return {
+      scenario,
+      card: {
+        title: "TFSA vs RRSP vs FHSA calculator result",
+        headline: "After-tax future value (Canada)",
+        mainValue: fmtMoney(opt.finalAfterTax),
+        subline: winnerLabel,
+        contextLines: [`${modeLabel} · ${y}-year horizon`],
+        shareText: `Estimate: ${fmtMoney(opt.finalAfterTax)} (${winnerLabel}). Run your own numbers:`
+      }
+    };
   });
 }
 
 export function initTfsaRrspFhsaUI() {
+  $("manualRateOverride").checked = false;
+  syncRateModeVisibility();
   syncRealToggle();
   syncFhsaVisibility();
   syncRefundLabels();
+  wireNumericSteppers();
   wireEvents();
   render();
+  wireTfsaShare();
 }
 
 // Auto-init when loaded as module from the page
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
-    try {
-      initTfsaRrspFhsaUI();
-    } catch (err) {
-      console.error("Failed to init TFSA/RRSP/FHSA UI", err);
-    }
+    loadTaxData(2025, { basePath: "/calculators/canada-income-tax/data" })
+      .then(() => {
+        taxDataReady = true;
+        initTfsaRrspFhsaUI();
+      })
+      .catch((err) => {
+        console.error("Failed to load tax data for TFSA/RRSP/FHSA calculator", err);
+      });
   });
 } else {
-  try {
-    initTfsaRrspFhsaUI();
-  } catch (err) {
-    console.error("Failed to init TFSA/RRSP/FHSA UI", err);
-  }
+  loadTaxData(2025, { basePath: "/calculators/canada-income-tax/data" })
+    .then(() => {
+      taxDataReady = true;
+      initTfsaRrspFhsaUI();
+    })
+    .catch((err) => {
+      console.error("Failed to load tax data for TFSA/RRSP/FHSA calculator", err);
+    });
 }
 

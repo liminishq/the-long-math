@@ -33,6 +33,9 @@
       gap: 12px;
       margin-bottom: 12px;
     }
+    .result-tiles--alts {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
     .result-tile {
       padding: 10px 12px;
       border-radius: 10px;
@@ -52,25 +55,6 @@
     .result-tile.primary {
       border-color: var(--accent);
       background: var(--accentSoft);
-    }
-    .winner-block {
-      margin-bottom: 16px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--accent);
-      background: var(--accentSoft);
-    }
-    .winner-block h2 {
-      margin: 0 0 4px;
-      font-size: 14px;
-    }
-    .winner-block .winner-name {
-      font-weight: 700;
-      font-size: 14px;
-    }
-    .winner-block .winner-value {
-      font-weight: 800;
-      font-size: 20px;
     }
     .ranking-list {
       list-style: none;
@@ -250,29 +234,109 @@
       max-width: 170px;
       justify-self: end;
     }
-    .results-sheet {
-      margin: 12px 0;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
+    /* Primary result — accent treatment aligned with other calculators */
+    .results-hero {
+      margin: 0 0 14px;
+      padding: 14px 16px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--accent);
+      background: var(--accentSoft);
     }
-    .results-sheet .row {
+    .results-hero-eyebrow {
+      margin: 0 0 6px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+    .results-hero-strategy {
+      margin: 0 0 14px;
+      font-size: 15px;
+      font-weight: 650;
+      line-height: 1.35;
+      color: var(--text);
+    }
+    .results-hero-value-label {
+      margin: 0 0 4px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .results-hero-value {
+      margin: 0;
+      font-size: clamp(26px, 4vw, 32px);
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--accent);
+    }
+    .results-secondary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 720px) {
+      .results-secondary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .result-subcard {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .result-subcard-title {
+      margin: 0 0 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .kv-compact {
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 10px;
-      padding: 8px 10px;
-      border-top: 1px solid var(--border);
+      gap: 4px 10px;
+      font-size: 12px;
+      align-items: baseline;
+    }
+    .kv-compact .kv-k {
+      color: var(--muted);
+    }
+    .kv-compact .kv-v {
+      font-weight: 700;
+      text-align: right;
+    }
+    .priority-compact {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 10px;
       font-size: 12px;
     }
-    .results-sheet .row:first-child {
-      border-top: 0;
+    .priority-compact .pri {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
     }
-    .results-sheet .head {
-      font-weight: 700;
-      background: var(--surface2);
+    .priority-compact .pri-k {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 600;
     }
-    .results-sheet .value {
+    .priority-compact .pri-v {
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .results-section-heading {
+      margin: 14px 0 8px;
+      font-size: 13px;
       font-weight: 700;
+      color: var(--text);
     }
     .calc-related ul {
       list-style: none;
@@ -586,38 +650,55 @@
         <section class="panel">
           <h2 class="section-title">Results</h2>
 
-          <div class="results-sheet">
-            <div class="row head">
-              <div>Top strategy</div>
-              <div id="winnerName">—</div>
+          <div class="results-hero">
+            <p class="results-hero-eyebrow">Top strategy</p>
+            <p class="results-hero-strategy" id="winnerName">—</p>
+            <p class="results-hero-value-label" id="winnerValueLabel">After-tax future value</p>
+            <p class="results-hero-value" id="winnerValue">$—</p>
+          </div>
+
+          <div class="results-secondary-grid">
+            <div class="result-subcard">
+              <h3 class="result-subcard-title">Year 1 snapshot</h3>
+              <div class="kv-compact">
+                <span class="kv-k">Initial investment</span>
+                <span class="kv-v" id="year1Initial">$—</span>
+                <span class="kv-k">Est. RRSP/FHSA refund</span>
+                <span class="kv-v" id="year1Refund">$—</span>
+                <span class="kv-k">Refunds reinvested?</span>
+                <span class="kv-v" id="year1RefundMode">—</span>
+                <span class="kv-k">Total invested (incl. reinvested)</span>
+                <span class="kv-v" id="year1TotalInvested">$—</span>
+              </div>
             </div>
-            <div class="row">
-              <div>Future value (after tax, horizon)</div>
-              <div class="value" id="winnerValue">$—</div>
+            <div class="result-subcard">
+              <h3 class="result-subcard-title">Contributions by account (year 1)</h3>
+              <div class="priority-compact">
+                <div class="pri">
+                  <span class="pri-k">TFSA</span>
+                  <span class="pri-v" id="priorityTfsa">$—</span>
+                </div>
+                <div class="pri">
+                  <span class="pri-k">RRSP</span>
+                  <span class="pri-v" id="priorityRrsp">$—</span>
+                </div>
+                <div class="pri">
+                  <span class="pri-k">FHSA</span>
+                  <span class="pri-v" id="priorityFhsa">$—</span>
+                </div>
+                <div class="pri">
+                  <span class="pri-k">Non-reg.</span>
+                  <span class="pri-v" id="priorityNonReg">$—</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="results-sheet">
-            <div class="row head"><div>Year 1</div><div></div></div>
-            <div class="row"><div>Initial investment amount</div><div id="year1Initial">$—</div></div>
-            <div class="row"><div>Estimated RRSP/FHSA tax refund generated</div><div id="year1Refund">$—</div></div>
-            <div class="row"><div>Tax refunds reinvested?</div><div id="year1RefundMode">—</div></div>
-            <div class="row"><div>Total invested (initial + reinvested refunds)</div><div id="year1TotalInvested">$—</div></div>
-          </div>
-
-          <div class="results-sheet">
-            <div class="row head"><div>Account priority for contributions (year 1)</div><div></div></div>
-            <div class="row"><div>TFSA</div><div id="priorityTfsa">$—</div></div>
-            <div class="row"><div>RRSP</div><div id="priorityRrsp">$—</div></div>
-            <div class="row"><div>FHSA</div><div id="priorityFhsa">$—</div></div>
-            <div class="row"><div>Non-registered</div><div id="priorityNonReg">$—</div></div>
-          </div>
-
-          <div class="result-tiles">
-            <div class="result-tile primary" id="optimalTile">
-              <p class="k">Best strategy for your inputs</p>
-              <p class="v" id="optimalValue">$—</p>
-            </div>
+          <h3 class="results-section-heading">Compare fixed strategies</h3>
+          <p class="help-inline" style="margin: 0 0 10px;">
+            After-tax future value if you always followed that routing rule for incoming cash (same inputs and horizon as the headline result).
+          </p>
+          <div class="result-tiles result-tiles--alts">
             <div class="result-tile">
               <p class="k">TFSA-first (overflow RRSP, then non-registered)</p>
               <p class="v" id="tfsaValue">$—</p>
@@ -625,7 +706,7 @@
             <div class="result-tile">
               <p class="k">RRSP-first (overflow TFSA, then non-registered)</p>
               <p class="v" id="rrspValue">$—</p>
-              <p class="help-inline">RRSP withdrawals taxed at t_ret; RRSP/FHSA refunds handled using the toggle above.</p>
+              <p class="help-inline">RRSP withdrawals taxed at t_ret; RRSP/FHSA refunds follow the toggle above.</p>
             </div>
             <div class="result-tile hidden" id="fhsaTile">
               <p class="k">FHSA-first (overflow TFSA, then RRSP, then non-registered)</p>
@@ -633,18 +714,17 @@
             </div>
           </div>
 
-          <h3 style="margin: 12px 0 6px; font-size: 13px;">Ranking (after-tax future value)</h3>
+          <h3 class="results-section-heading">Ranking (after-tax future value)</h3>
           <ul id="rankingList" class="ranking-list">
           </ul>
 
           <hr class="sep" />
 
-          <h3 style="margin: 12px 0 6px; font-size: 13px;">Account value after horizon</h3>
+          <h3 class="results-section-heading">Account value after horizon</h3>
           <p id="optimalSplit" class="help-inline">
             FHSA eligibility, annual room, and the lifetime contribution cap determine how much can go to FHSA before spilling to TFSA or RRSP.
           </p>
           <p id="allocationNote" class="help-inline"></p>
-          <p id="allocationPriority" class="help-inline"></p>
 
           <p id="refundHint" class="help-inline" style="margin-top: 8px;"></p>
 

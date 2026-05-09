@@ -598,6 +598,8 @@
 
   function ensureGenericShareBlock() {
     if (document.getElementById("share_result_btn")) return true;
+    // Calculators that ship their own .result-share-block (custom button ids) must not get a second card.
+    if (document.querySelector(".result-share-block")) return false;
     var targetPanel =
       document.querySelector(".panel--results") ||
       document.querySelector(".results") ||
@@ -660,6 +662,7 @@
     var path = (window.location && window.location.pathname) || "";
     if (!isCalculatorDetailPage(path)) return;
     if (document.getElementById("share_result_btn")) return;
+    if (document.querySelector(".result-share-block")) return;
 
     if (window.TLM && window.TLM.shareCard && window.TLM.shareCard.wireCalculatorShare) {
       wireGenericCalculatorShare();

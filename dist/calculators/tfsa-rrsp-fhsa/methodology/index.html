@@ -9,7 +9,7 @@
 
   <script src="/assets/js/theme-init.40fc21015f.js"></script>
   <link rel="stylesheet" href="/assets/css/styles.ec87251a1b.css" />
-  <script defer src="/assets/js/site.991a193765.js"></script>
+  <script defer src="/assets/js/site.92f151cf7c.js"></script>
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
@@ -43,7 +43,7 @@
       <p>
         This calculator compares the after-tax future value of contributing a fixed cash amount to different Canadian registered accounts:
         TFSA, RRSP, and FHSA. It models recurring or lump-sum contributions, simple net investment growth, and explicit tax treatment on
-        contribution and withdrawal under user-supplied marginal tax rates.
+        contribution and withdrawal under marginal tax rates you set or that are estimated from your inputs.
       </p>
 
       <h2>Definitions</h2>
@@ -83,6 +83,11 @@
       <div class="formula-block">
         r<sub>m,real</sub> = (1 + r<sub>real</sub>)<sup>1/12</sup> − 1
       </div>
+      <p>
+        This is the same pipeline summarized on the calculator’s real-dollars mode: first the <em>annual</em> real return in decimal form,
+        \((1+r_{\text{net}})/(1+i_d)-1\) — equivalently \((1+r_{\text{net}})/(1+i/100)-1\) when \(i\) is your inflation input as a percent —
+        then that annual rate is converted to a monthly rate with the 12th-root step above.
+      </p>
       <p class="formula-meta">
         The engine uses a single monthly rate for all accounts. There is no asset-location modeling (no different returns per account).
       </p>
@@ -116,8 +121,9 @@
       <h3 id="evolution">4. Monthly evolution (per strategy)</h3>
       <p>For each month t = 0,…,N−1, the engine:</p>
       <ol>
+        <li>If t ∈ {12, 24, …} (first month of simulation years 2, 3, …), increases remaining TFSA and RRSP room per the TFSA/RRSP multi-year rules above, before allocating that month’s contribution.</li>
         <li>Computes the intended gross contribution G<sub>t</sub> for that month based on mode (monthly, annual/12, or lump at t = 0).</li>
-        <li>Allocates G<sub>t</sub> between TFSA, RRSP, and FHSA according to the strategy and FHSA annual room constraints (see next section).</li>
+        <li>Allocates G<sub>t</sub> between TFSA, RRSP, and FHSA according to the strategy and room constraints (TFSA/RRSP remaining room, plus FHSA rules in the next section).</li>
         <li>Applies refunds on RRSP/FHSA deposits into the refund bucket when “reinvest refund” is selected.</li>
         <li>Applies growth to all balances using the monthly rate.</li>
       </ol>
@@ -129,26 +135,52 @@
         B<sub>refund,t+1</sub> = B<sub>refund,t</sub>(1 + r<sub>m</sub>)
       </div>
 
+      <h2 id="tfsa-rrsp-room-heading">TFSA and RRSP contribution room (multi-year)</h2>
+      <p>
+        The calculator takes <strong>opening</strong> TFSA contribution room and RRSP <em>deduction</em> room (totals available “today,” including unused carry-forward from prior years). Each deposit reduces the corresponding remaining room. No top-up is applied in month 0: your opening inputs are treated as the starting caps for simulation year 1.
+      </p>
+      <p>
+        At the beginning of simulation years 2, 3, … (i.e. at months 12, 24, …, before that month’s contribution is allocated), the model adds:
+      </p>
+      <ul>
+        <li><strong>TFSA:</strong> A<sub>TFSA</sub> dollars of new room, from the “new TFSA room each January” input (default aligned with the current statutory annual limit).</li>
+        <li><strong>RRSP:</strong> min(0.18 × I, M) dollars of new deduction room, where I is “current taxable income” from the tax section (used as an earned-income proxy) and M is a fixed indexed dollar cap in the engine (update periodically from canada.ca to match the RRSP 18% rule ceiling).</li>
+      </ul>
+      <p>
+        Unused room carries forward inside the simulation: whatever remains after contributions in a year is still available next year, <em>plus</em> the January top-ups above. Eventually, if contributions are large enough for long enough, carry-forward can be fully used and only the recurring annual top-ups remain—then further savings spill to non-registered once both registered rooms for that month are exhausted. This is a simplified calendar (one January refresh per simulation year, monthly contributions); it does not model CRA posting lags, pension adjustments, or employer plans.
+      </p>
+
       <h2>FHSA Room and Allocation Rules</h2>
 
-      <h3 id="fhsa-room">5. FHSA annual room</h3>
+      <h3 id="fhsa-room">5. FHSA annual room and lifetime contribution cap</h3>
       <p>Let:</p>
       <ul>
-        <li>R<sub>0</sub> = FHSA annual room in year 1 (user input; default 8,000)</li>
+        <li>R<sub>0</sub> = FHSA annual contribution room in year 1 (user input; default matches the current $8,000 annual limit)</li>
         <li>R = FHSA annual room in subsequent years (same as input by default)</li>
+        <li>L = lifetime FHSA <em>contribution</em> cap (default 40,000 in contribution dollars, aligned with current rules)</li>
+        <li>C<sub>FHSA,tot,t</sub> = cumulative FHSA contributions deposited from month 0 through the end of month t (principal only)</li>
       </ul>
       <p>For each simulation year y = 1,…,⌈T⌉, FHSA room at the start of the year is:</p>
       <div class="formula-block">
         room<sub>1</sub> = R<sub>0</sub><br>
         room<sub>y</sub> = R  &nbsp; for y ≥ 2
       </div>
-      <p>At each month in year y, any amount assigned to FHSA reduces room<sub>y</sub>. If a monthly allocation would exceed room<sub>y</sub>, the engine:</p>
+      <p>
+        At each month, any amount assigned to FHSA reduces room<sub>y</sub> for that calendar year. Independently, cumulative contributions cannot exceed the lifetime cap:
+      </p>
+      <div class="formula-block">
+        C<sub>FHSA,tot,t</sub> ≤ L
+      </div>
+      <p>
+        The dollar amount that may be deposited to the FHSA in a month is therefore capped by <strong>both</strong> the remaining annual room<sub>y</sub> and the remaining lifetime headroom (L − C<sub>FHSA,tot</sub> before that month’s deposit). Investment growth inside the FHSA increases the account balance but does <strong>not</strong> increase C<sub>FHSA,tot</sub> and does not count toward L.
+      </p>
+      <p>When a strategy allocates to FHSA first, the engine:</p>
       <ol>
-        <li>Contributes up to room<sub>y</sub> to FHSA.</li>
-        <li>Spills the remainder of that month’s contribution to TFSA or RRSP, depending on the strategy.</li>
+        <li>Contributes up to the minimum of remaining annual room, remaining lifetime room, and that month’s gross allocation.</li>
+        <li>Spills any remainder of that month’s contribution to TFSA or RRSP, depending on the strategy.</li>
       </ol>
       <p class="formula-meta">
-        FHSA lifetime caps and carry-forward rules are not modeled in this version. Only the annual room you specify is enforced.
+        Unused FHSA contribution carry-forward (year to year) is not modeled; only the annual room series above and the lifetime cap L are enforced. Verify current limits at canada.ca.
       </p>
 
       <h3 id="strategies">6. Strategies</h3>
@@ -215,7 +247,7 @@
       <p>The calculator reports a human-readable “optimal split” sentence based on the simulated strategy that maximizes V<sub>total</sub>:</p>
       <ul>
         <li><strong>annualContribution:</strong> annualized contribution amount under the selected mode (12 × monthly for monthly mode, C for annual, C for lump treated as a one-year contribution).</li>
-        <li><strong>fhsaUsedAnnual:</strong> estimated FHSA dollar amount used in year 1 (capped at the modeled annual FHSA room).</li>
+        <li><strong>fhsaUsedAnnual:</strong> estimated FHSA contributions deposited in year 1 (capped by modeled annual room and lifetime cap).</li>
         <li><strong>remainderAnnual:</strong> annualContribution − fhsaUsedAnnual.</li>
         <li><strong>remainderDestination:</strong> “TFSA” or “RRSP”, depending on which account receives the modeled remainder in the optimal FHSA-first strategy.</li>
       </ul>
@@ -252,10 +284,11 @@
       <h2>Assumptions and Limitations</h2>
       <ol>
         <li>All simulations use monthly time steps with deterministic compounding and fixed contribution schedules.</li>
+        <li>TFSA and RRSP room use opening user-entered balances plus January top-ups from simulation year 2 onward (new TFSA dollars and 18%-of-income RRSP room capped by a modeled dollar limit); unused room carries forward until used.</li>
         <li>Investment returns, fees, and (optionally) inflation are modeled as constant over the full horizon.</li>
         <li>RRSP and FHSA refunds are either treated as immediately spent (default) or reinvested in a TFSA-like bucket; actual tax timing and withholding are more complex in practice.</li>
-        <li>Tax rates t<sub>now</sub> and t<sub>ret</sub> are user-supplied and held constant; the calculator does not derive marginal rates from taxable income.</li>
-        <li>FHSA modeling uses only the annual room you specify; lifetime FHSA contribution caps, carry-forward mechanics, and detailed withdrawal conditions are not modeled.</li>
+        <li>Tax rates t<sub>now</sub> and t<sub>ret</sub> are either estimated from modeled employment income and province using the same tax engine as the Canada Personal Income Tax Calculator, or set directly via manual override; they are held constant over the horizon.</li>
+        <li>FHSA modeling enforces the annual room you specify (default $8,000) and a $40,000 lifetime contribution cap per person; growth inside the FHSA does not count toward that cap. Contribution carry-forward and detailed withdrawal conditions beyond the home-qualified toggle are not modeled.</li>
         <li>Non-registered (taxable) accounts are not included in this version; it is an account-to-account comparison between registered options.</li>
         <li>All results are rounded for display; internal calculations use full floating-point precision.</li>
       </ol>

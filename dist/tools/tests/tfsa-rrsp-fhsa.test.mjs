@@ -7,7 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..", "..");
 const engineUrl = pathToFileURL(join(root, "calculators", "tfsa-rrsp-fhsa", "engine.js")).href;
 
-const { runAccountStrategySimulation } = await import(engineUrl);
+const { runAccountStrategySimulation, computeRrspNewAnnualRoom } = await import(engineUrl);
 
 function getStrategy(result, key) {
   const s = result.strategies[key];
@@ -31,7 +31,9 @@ test("lump sum, zero growth, refund spent – TFSA vs RRSP arithmetic", () => {
     t_now: 30,
     t_ret: tRet,
     refundMode: "spend",
-    fhsaEligible: false
+    fhsaEligible: false,
+    tfsaRemainingRoom: 1e9,
+    rrspRemainingRoom: 1e9
   });
 
   const tfsa = getStrategy(result, "ALL_TFSA");
@@ -134,6 +136,66 @@ test("FHSA room binding and spillover", () => {
   assert.ok(
     optimalSummary.remainderAnnual > 0,
     "Remainder annual contribution should be positive when annual contribution exceeds FHSA room"
+  );
+});
+
+// 5) Lifetime FHSA contribution cap: cumulative deposits stop at L even with high income and large annual room
+test("FHSA lifetime contribution cap binds cumulative deposits", () => {
+  const result = runAccountStrategySimulation({
+    contributionMode: "monthly",
+    contributionAmount: 5000,
+    horizonYears: 10,
+    annualReturn: 0,
+    annualFees: 0,
+    useRealDollars: false,
+    t_now: 0,
+    t_ret: 0,
+    refundMode: "spend",
+    fhsaEligible: true,
+    fhsaHomeQualified: true,
+    fhsaAnnualRoom: 8000,
+    fhsaLifetimeCap: 40000
+  });
+
+  const fhsaAll = getStrategy(result, "ALL_FHSA");
+  assert.ok(
+    Math.abs(fhsaAll.breakdown.fhsa - 40000) < 1,
+    "With zero growth, FHSA balance should equal lifetime contributions capped at 40,000"
+  );
+  assert.ok(
+    Math.abs(fhsaAll.meta.fhsaLifetimeContributed - 40000) < 1,
+    "Meta should report 40,000 in cumulative FHSA contributions"
+  );
+});
+
+test("RRSP new annual room is min(18% of income, dollar cap)", () => {
+  assert.ok(Math.abs(computeRrspNewAnnualRoom(250000, 33810) - 33810) < 1e-6);
+  assert.ok(Math.abs(computeRrspNewAnnualRoom(100000, 33810) - 18000) < 1e-6);
+});
+
+test("January top-ups add to remaining TFSA and RRSP room (no contributions)", () => {
+  const result = runAccountStrategySimulation({
+    contributionMode: "monthly",
+    contributionAmount: 0,
+    horizonYears: 2,
+    annualReturn: 0,
+    annualFees: 0,
+    t_now: 0,
+    t_ret: 0,
+    refundMode: "spend",
+    fhsaEligible: false,
+    tfsaRemainingRoom: 10000,
+    rrspRemainingRoom: 5000,
+    tfsaNewAnnualRoom: 7000,
+    currentTaxableIncome: 200000,
+    rrspAnnualNewRoomCap: 33810
+  });
+
+  const strat = getStrategy(result, "ALL_TFSA");
+  assert.ok(Math.abs(strat.meta.remainingTfsaRoom - 17000) < 0.01, "TFSA room should be 10k + 7k");
+  assert.ok(
+    Math.abs(strat.meta.remainingRrspRoom - 38810) < 0.01,
+    "RRSP room should be 5k + min(36k, 33.81k)"
   );
 });
 

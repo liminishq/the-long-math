@@ -36,6 +36,13 @@ function fmtPct(n) {
   return n.toFixed(1) + "%";
 }
 
+function futureValueCaption(horizonYears, useRealDollars) {
+  const y = Math.round(horizonYears);
+  const yrWord = y === 1 ? "year" : "years";
+  const realBit = useRealDollars ? "; real (inflation-adjusted) dollars" : "";
+  return `After-tax future value (${y}-${yrWord} horizon${realBit})`;
+}
+
 function clamp(n, lo, hi) {
   if (!Number.isFinite(n)) return lo;
   return Math.min(hi, Math.max(lo, n));
@@ -175,13 +182,15 @@ function render() {
   // Top strategy card is based on the scenario-constrained optimal allocation.
   if (strategies.OPTIMAL) {
     $("winnerName").textContent = prettyStrategyName(optimalStrategyKey || "OPTIMAL");
+    $("winnerValueLabel").textContent = futureValueCaption(inputs.horizonYears, inputs.useRealDollars);
     $("winnerValue").textContent = fmtMoney(strategies.OPTIMAL.finalAfterTax);
   } else {
     $("winnerName").textContent = "—";
+    $("winnerValueLabel").textContent = "After-tax future value";
     $("winnerValue").textContent = "$—";
   }
 
-  // Individual tiles
+  // Individual tiles (fixed strategies only; headline hero shows the winning rule)
   setTile("tfsaValue", strategies.ALL_TFSA?.finalAfterTax);
   setTile("rrspValue", strategies.ALL_RRSP?.finalAfterTax);
   if (strategies.ALL_FHSA && inputs.fhsaEligible) {
@@ -190,14 +199,6 @@ function render() {
   } else {
     $("fhsaTile").classList.add("hidden");
     setTile("fhsaValue", NaN);
-  }
-
-  if (strategies.OPTIMAL) {
-    $("optimalTile").classList.remove("hidden");
-    setTile("optimalValue", strategies.OPTIMAL.finalAfterTax);
-  } else {
-    $("optimalTile").classList.add("hidden");
-    setTile("optimalValue", NaN);
   }
 
   // Ranking list
@@ -246,21 +247,6 @@ function render() {
     $("year1Refund").textContent = fmtMoney(estimatedRefund);
     $("year1RefundMode").textContent = reinvested ? "Yes" : "No";
     $("year1TotalInvested").textContent = fmtMoney(initial + (reinvested ? estimatedRefund : 0));
-
-    const priorities = [
-      { key: "FHSA", value: y1.fhsa || 0 },
-      { key: "TFSA", value: y1.tfsa || 0 },
-      { key: "RRSP", value: y1.rrsp || 0 },
-      { key: "Non-registered", value: y1.nonRegistered || 0 }
-    ].filter((x) => x.value > 0).sort((a, b) => b.value - a.value);
-
-    if (priorities.length > 0) {
-      $("allocationPriority").textContent =
-        "Priority allocation (year 1): " +
-        priorities.map((p) => `${p.key} ${fmtMoney(p.value)}`).join(" → ");
-    } else {
-      $("allocationPriority").textContent = "";
-    }
   }
 
   // Refund hint
@@ -317,6 +303,10 @@ function prettyStrategyName(key) {
       return "RRSP-first (overflow TFSA, then non-registered)";
     case "ALL_FHSA":
       return "FHSA-first (overflow TFSA, then RRSP, then non-registered)";
+    case "FHSA_FIRST_THEN_TFSA":
+      return "FHSA first, then TFSA, then RRSP, then non-registered";
+    case "FHSA_FIRST_THEN_RRSP":
+      return "FHSA first, then RRSP, then TFSA, then non-registered";
     case "OPTIMAL":
       return "Best strategy for your inputs";
     default:
