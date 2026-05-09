@@ -15,7 +15,7 @@
   <style>
     .account-grid {
       display: grid;
-      grid-template-columns: 1.1fr 1fr;
+      grid-template-columns: 9fr 11fr;
       gap: 16px;
       margin-top: 18px;
     }
@@ -122,6 +122,91 @@
       white-space: nowrap;
       flex: 0 0 auto;
     }
+    /*
+      All numeric inputs: one shell + custom steppers so $, plain years, and % fields
+      look identical (native spinners hidden — they differ too much by browser).
+    */
+    .input-with-unit {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .input-with-unit.numeric-combo {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      width: 100%;
+      border: 1px solid var(--inputBorder);
+      border-radius: 10px;
+      background: var(--surface);
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    .input-with-unit.numeric-combo:focus-within {
+      outline: 2px solid var(--accent);
+      outline-offset: 0;
+    }
+    .input-with-unit.numeric-combo .unit-prefix,
+    .input-with-unit.numeric-combo .unit-suffix {
+      align-self: center;
+      flex: 0 0 auto;
+      color: var(--muted);
+      pointer-events: none;
+      line-height: 1;
+      font-size: 0.95em;
+    }
+    .input-with-unit.numeric-combo .unit-prefix {
+      padding: 0 2px 0 10px;
+    }
+    .input-with-unit.numeric-combo .unit-suffix {
+      padding: 0 2px 0 0;
+    }
+    .input-with-unit.numeric-combo input[type="number"] {
+      flex: 1 1 auto;
+      min-width: 0;
+      width: auto;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      padding: 10px 8px;
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+    .input-with-unit.numeric-combo input::-webkit-outer-spin-button,
+    .input-with-unit.numeric-combo input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .input-with-unit.numeric-combo .num-stepper {
+      display: flex;
+      flex-direction: column;
+      flex: 0 0 auto;
+      border-left: 1px solid var(--inputBorder);
+      min-width: 28px;
+    }
+    .input-with-unit.numeric-combo .step-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1 1 50%;
+      margin: 0;
+      padding: 0 4px;
+      border: none;
+      border-radius: 0;
+      background: var(--surface2);
+      color: var(--muted);
+      font-size: 9px;
+      line-height: 1;
+      cursor: pointer;
+      min-height: 22px;
+      user-select: none;
+    }
+    .input-with-unit.numeric-combo .step-up {
+      border-bottom: 1px solid var(--inputBorder);
+    }
+    .input-with-unit.numeric-combo .step-btn:hover {
+      background: var(--accentSoft);
+      color: var(--text);
+    }
     .note-block {
       margin-top: 10px;
       padding: 10px 12px;
@@ -130,6 +215,78 @@
       background: var(--surface2);
       font-size: 12px;
       color: var(--muted);
+    }
+    .inputs-compact .field:not(.checkbox) {
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) minmax(120px, 170px);
+      column-gap: 10px;
+      row-gap: 4px;
+      align-items: center;
+    }
+    .inputs-compact .field:not(.checkbox) > label {
+      margin: 0;
+      font-size: 13px;
+    }
+    .inputs-compact .field:not(.checkbox) > input,
+    .inputs-compact .field:not(.checkbox) > select,
+    .inputs-compact .field:not(.checkbox) > .inline,
+    .inputs-compact .field:not(.checkbox) > .input-with-unit {
+      grid-column: 2;
+      width: 100%;
+    }
+    .inputs-compact .field:not(.checkbox) > .help-inline,
+    .inputs-compact .field:not(.checkbox) > .help {
+      grid-column: 1 / -1;
+      margin-top: 2px;
+    }
+    .inputs-compact .inline {
+      justify-content: flex-end;
+    }
+    .inputs-compact .inline input {
+      width: 110px;
+      flex: 0 0 110px;
+    }
+    .inputs-compact .input-with-unit {
+      max-width: 170px;
+      justify-self: end;
+    }
+    .results-sheet {
+      margin: 12px 0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .results-sheet .row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      padding: 8px 10px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+    }
+    .results-sheet .row:first-child {
+      border-top: 0;
+    }
+    .results-sheet .head {
+      font-weight: 700;
+      background: var(--surface2);
+    }
+    .results-sheet .value {
+      font-weight: 700;
+    }
+    .calc-related ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 12px;
+    }
+    .calc-related li {
+      margin: 0;
+      padding: 0;
+    }
+    .calc-related a {
+      font-weight: 600;
     }
   </style>
 
@@ -167,7 +324,7 @@
 
       <div class="account-grid">
         <!-- Inputs -->
-        <section class="panel">
+        <section class="panel inputs-compact">
           <h2 class="section-title">Inputs</h2>
 
           <div class="field">
@@ -181,30 +338,51 @@
 
           <div class="field">
             <label for="contributionAmount">Contribution amount</label>
-            <input id="contributionAmount" type="number" inputmode="decimal" min="0" step="50" value="1000" />
+            <div class="input-with-unit numeric-combo">
+              <span class="unit-prefix" aria-hidden="true">$</span>
+              <input id="contributionAmount" type="number" inputmode="decimal" min="0" step="50" value="1000" />
+              <div class="num-stepper" role="group" aria-label="Adjust amount">
+                <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+              </div>
+            </div>
             <p class="help-inline">
-              This is the cash you have available to allocate to these accounts under your current marginal tax rate.
+              This is the after-tax cash you have available to invest across all account types.
             </p>
           </div>
 
           <div class="field">
             <label for="horizonYears">Time horizon (years)</label>
-            <input id="horizonYears" type="number" inputmode="decimal" min="1" step="1" value="25" />
+            <div class="input-with-unit numeric-combo">
+              <input id="horizonYears" type="number" inputmode="decimal" min="1" step="1" value="25" />
+              <div class="num-stepper" role="group" aria-label="Adjust years">
+                <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+              </div>
+            </div>
           </div>
 
           <div class="field">
             <label for="annualReturn">Expected annual return (before fees)</label>
-            <div class="inline">
+            <div class="input-with-unit numeric-combo">
               <input id="annualReturn" type="number" inputmode="decimal" step="0.1" value="7" />
-              <span class="unit">%</span>
+              <span class="unit-suffix" aria-hidden="true">%</span>
+              <div class="num-stepper" role="group" aria-label="Adjust percent">
+                <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+              </div>
             </div>
           </div>
 
           <div class="field">
             <label for="annualFees">Annual fees (MER, advice, etc.)</label>
-            <div class="inline">
+            <div class="input-with-unit numeric-combo">
               <input id="annualFees" type="number" inputmode="decimal" step="0.05" value="0.5" />
-              <span class="unit">%</span>
+              <span class="unit-suffix" aria-hidden="true">%</span>
+              <div class="num-stepper" role="group" aria-label="Adjust percent">
+                <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+              </div>
             </div>
             <p class="help-inline">
               Same net return is applied to all accounts. No asset-location modeling in this version.
@@ -220,13 +398,14 @@
 
           <div id="inflationWrap" class="field hidden">
             <label for="inflationRate">Inflation rate</label>
-            <div class="inline">
-              <input id="inflationRate" type="number" inputmode="decimal" step="0.1" value="2.0" />
-              <span class="unit">%</span>
+            <div class="input-with-unit numeric-combo">
+              <input id="inflationRate" type="number" inputmode="decimal" step="0.1" value="3.0" />
+              <span class="unit-suffix" aria-hidden="true">%</span>
+              <div class="num-stepper" role="group" aria-label="Adjust percent">
+                <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+              </div>
             </div>
-            <p class="help muted">
-              Real monthly growth is computed as \((1+r_{\text{net}})/(1+i) - 1\) on an annual basis, then converted to a monthly rate.
-            </p>
           </div>
 
           <hr class="sep" />
@@ -254,22 +433,30 @@
 
           <div class="field">
             <label for="currentTaxableIncome">Current taxable income (for t_now estimate)</label>
-            <div class="inline">
+            <div class="input-with-unit numeric-combo">
+              <span class="unit-prefix" aria-hidden="true">$</span>
               <input id="currentTaxableIncome" type="number" inputmode="decimal" min="0" step="1000" value="120000" />
-              <span class="unit">$</span>
+              <div class="num-stepper" role="group" aria-label="Adjust amount">
+                <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+              </div>
             </div>
           </div>
 
           <div class="field">
-            <label for="retirementTaxableIncome">Expected retirement taxable income (for t_ret estimate)</label>
-            <div class="inline">
+            <label for="retirementTaxableIncome">Expected retirement taxable income</label>
+            <div class="input-with-unit numeric-combo">
+              <span class="unit-prefix" aria-hidden="true">$</span>
               <input id="retirementTaxableIncome" type="number" inputmode="decimal" min="0" step="1000" value="70000" />
-              <span class="unit">$</span>
+              <div class="num-stepper" role="group" aria-label="Adjust amount">
+                <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+              </div>
             </div>
           </div>
 
           <p id="derivedRateSummary" class="help-inline">
-            Derived marginal rates load automatically from province and income inputs.
+            Marginal rates for this scenario load after tax tables are ready.
           </p>
 
           <div class="field checkbox">
@@ -280,48 +467,77 @@
           <div id="manualRateFields" class="hidden">
             <div class="field">
               <label for="tNow">Current marginal tax rate (t_now)</label>
-              <div class="inline">
+              <div class="input-with-unit numeric-combo">
                 <input id="tNow" type="number" inputmode="decimal" step="0.5" value="40" />
-                <span class="unit">%</span>
+                <span class="unit-suffix" aria-hidden="true">%</span>
+                <div class="num-stepper" role="group" aria-label="Adjust percent">
+                  <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                  <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+                </div>
               </div>
             </div>
 
             <div class="field">
               <label for="tRet">Retirement marginal tax rate (t_ret)</label>
-              <div class="inline">
+              <div class="input-with-unit numeric-combo">
                 <input id="tRet" type="number" inputmode="decimal" step="0.5" value="30" />
-                <span class="unit">%</span>
+                <span class="unit-suffix" aria-hidden="true">%</span>
+                <div class="num-stepper" role="group" aria-label="Adjust percent">
+                  <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                  <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+                </div>
               </div>
             </div>
+            <p class="help-inline">
+              Rate estimates are based on employment income and the selected province. Use manual override if you want to set custom rates directly.
+            </p>
           </div>
-
-          <p class="help-inline">
-            Rate estimates are based on employment income and the selected province. Use manual override if you want to set custom rates directly.
-          </p>
 
           <hr class="sep" />
 
           <h2 class="section-title">Available room constraints</h2>
 
+          <p class="help-inline" style="margin-bottom: 8px;">
+            Enter the <strong>total</strong> TFSA and RRSP room you have available now (including carry-forward). The model uses that space first, then each January from simulation year 2 onward adds new TFSA room (below) and new RRSP room from the 18% rule using your current taxable income (capped).
+          </p>
+
           <div class="field">
             <label for="tfsaRemainingRoom">TFSA remaining contribution room (today)</label>
-            <div class="inline">
-              <input id="tfsaRemainingRoom" type="number" inputmode="decimal" min="0" step="500" value="95000" />
-              <span class="unit">$</span>
+            <div class="input-with-unit numeric-combo">
+              <span class="unit-prefix" aria-hidden="true">$</span>
+              <input id="tfsaRemainingRoom" type="number" inputmode="decimal" min="0" step="500" value="7000" />
+              <div class="num-stepper" role="group" aria-label="Adjust amount">
+                <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+              </div>
             </div>
           </div>
 
           <div class="field">
             <label for="rrspRemainingRoom">RRSP remaining deduction room (today)</label>
-            <div class="inline">
-              <input id="rrspRemainingRoom" type="number" inputmode="decimal" min="0" step="500" value="30000" />
-              <span class="unit">$</span>
+            <div class="input-with-unit numeric-combo">
+              <span class="unit-prefix" aria-hidden="true">$</span>
+              <input id="rrspRemainingRoom" type="number" inputmode="decimal" min="0" step="500" value="33810" />
+              <div class="num-stepper" role="group" aria-label="Adjust amount">
+                <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+              </div>
             </div>
           </div>
 
-          <p class="help-inline">
-            These caps are enforced in strategy allocations. Contributions beyond available room are redirected when possible; if all modeled room is exhausted, the remainder is not allocated.
-          </p>
+          <div class="field">
+            <label for="tfsaNewAnnualRoom">New TFSA room each January (from simulation year 2)</label>
+            <div class="input-with-unit numeric-combo">
+              <span class="unit-prefix" aria-hidden="true">$</span>
+              <input id="tfsaNewAnnualRoom" type="number" inputmode="decimal" min="0" step="500" value="7000" />
+              <div class="num-stepper" role="group" aria-label="Adjust amount">
+                <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+              </div>
+            </div>
+          </div>
+
+          <p id="roomAccrualHint" class="help-inline"></p>
 
           <hr class="sep" />
 
@@ -343,27 +559,25 @@
           </div>
 
           <div id="fhsaFields" class="hidden">
-            <div class="field checkbox">
-              <input id="fhsaHomeQualified" type="checkbox" />
-              <label for="fhsaHomeQualified">Plan to buy a first home using FHSA (tax-free withdrawal)</label>
-            </div>
-
             <div class="field">
-              <label for="fhsaAnnualRoom">FHSA annual room (per year)</label>
-              <div class="inline">
+              <label for="fhsaAnnualRoom">FHSA annual contribution room</label>
+              <div class="input-with-unit numeric-combo">
+                <span class="unit-prefix" aria-hidden="true">$</span>
                 <input id="fhsaAnnualRoom" type="number" inputmode="decimal" min="0" step="1000" value="8000" />
-                <span class="unit">$</span>
+                <div class="num-stepper" role="group" aria-label="Adjust amount">
+                  <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                  <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+                </div>
               </div>
             </div>
 
             <p class="help-inline">
-              FHSA home withdrawal must generally occur within 15 years of opening the account. This tool assumes you are within that window if you check “plan to buy”.
-              Lifetime FHSA caps are not modeled in this version; we only apply the annual room you specify here.
+              This model assumes FHSA savings are used for a qualifying first-home withdrawal (tax-free exit). Under current rules the FHSA allows up to <strong>$8,000</strong> per year in contributions (you can adjust the annual room input if limits change), and up to <strong>$40,000</strong> per person in lifetime contributions. Investment growth inside the FHSA does not count toward that lifetime limit.
             </p>
           </div>
 
           <div class="note-block">
-            <strong>Scope note:</strong> This version does not model OAS clawback or benefits. If refund reinvestment is enabled, refunds are directed to TFSA first (subject to remaining TFSA room) and then to a non-registered bucket.
+            <strong>Scope note:</strong> This version does not model OAS clawback or benefits. TFSA/RRSP room uses your opening balances plus legislated January top-ups (not day-by-day CRA transaction timing). FHSA follows the annual and lifetime rules described above. If refund reinvestment is enabled, refunds are directed to TFSA first (subject to remaining TFSA room) and then to a non-registered bucket.
           </div>
 
         </section>
@@ -372,13 +586,38 @@
         <section class="panel">
           <h2 class="section-title">Results</h2>
 
-          <div class="winner-block">
-            <h2>Top strategy (after tax)</h2>
-            <div class="winner-name" id="winnerName">—</div>
-            <div class="winner-value" id="winnerValue">$—</div>
+          <div class="results-sheet">
+            <div class="row head">
+              <div>Top strategy</div>
+              <div id="winnerName">—</div>
+            </div>
+            <div class="row">
+              <div>Future value (after tax, horizon)</div>
+              <div class="value" id="winnerValue">$—</div>
+            </div>
+          </div>
+
+          <div class="results-sheet">
+            <div class="row head"><div>Year 1</div><div></div></div>
+            <div class="row"><div>Initial investment amount</div><div id="year1Initial">$—</div></div>
+            <div class="row"><div>Estimated RRSP/FHSA tax refund generated</div><div id="year1Refund">$—</div></div>
+            <div class="row"><div>Tax refunds reinvested?</div><div id="year1RefundMode">—</div></div>
+            <div class="row"><div>Total invested (initial + reinvested refunds)</div><div id="year1TotalInvested">$—</div></div>
+          </div>
+
+          <div class="results-sheet">
+            <div class="row head"><div>Account priority for contributions (year 1)</div><div></div></div>
+            <div class="row"><div>TFSA</div><div id="priorityTfsa">$—</div></div>
+            <div class="row"><div>RRSP</div><div id="priorityRrsp">$—</div></div>
+            <div class="row"><div>FHSA</div><div id="priorityFhsa">$—</div></div>
+            <div class="row"><div>Non-registered</div><div id="priorityNonReg">$—</div></div>
           </div>
 
           <div class="result-tiles">
+            <div class="result-tile primary" id="optimalTile">
+              <p class="k">Best strategy for your inputs</p>
+              <p class="v" id="optimalValue">$—</p>
+            </div>
             <div class="result-tile">
               <p class="k">TFSA-first (overflow RRSP, then non-registered)</p>
               <p class="v" id="tfsaValue">$—</p>
@@ -389,12 +628,8 @@
               <p class="help-inline">RRSP withdrawals taxed at t_ret; RRSP/FHSA refunds handled using the toggle above.</p>
             </div>
             <div class="result-tile hidden" id="fhsaTile">
-              <p class="k">FHSA first (overflow TFSA)</p>
+              <p class="k">FHSA-first (overflow TFSA, then RRSP, then non-registered)</p>
               <p class="v" id="fhsaValue">$—</p>
-            </div>
-            <div class="result-tile primary hidden" id="optimalTile">
-              <p class="k">Optimal (FHSA first, then TFSA/RRSP)</p>
-              <p class="v" id="optimalValue">$—</p>
             </div>
           </div>
 
@@ -404,9 +639,9 @@
 
           <hr class="sep" />
 
-          <h3 style="margin: 12px 0 6px; font-size: 13px;">Optimal split (if FHSA available)</h3>
+          <h3 style="margin: 12px 0 6px; font-size: 13px;">Account value after horizon</h3>
           <p id="optimalSplit" class="help-inline">
-            FHSA eligibility and annual room determine how much can be allocated to FHSA before spilling to TFSA or RRSP.
+            FHSA eligibility, annual room, and the lifetime contribution cap determine how much can go to FHSA before spilling to TFSA or RRSP.
           </p>
           <p id="allocationNote" class="help-inline"></p>
           <p id="allocationPriority" class="help-inline"></p>
@@ -415,17 +650,17 @@
 
           <hr class="sep" />
 
-          <div class="assumptions">
-            <h3>Assumptions shown</h3>
-            <ul>
-              <li><span class="muted">Refund default:</span> RRSP/FHSA refund is modeled as spent unless you toggle reinvestment.</li>
-              <li><span class="muted">Room constraints:</span> TFSA and RRSP contributions are capped by the remaining room values you enter.</li>
-              <li><span class="muted">Returns:</span> same net return and fee structure for all accounts; no asset-location modeling.</li>
-              <li><span class="muted">Tax rates:</span> t_now and t_ret are constant over the horizon.</li>
-              <li><span class="muted">FHSA:</span> only annual room is modeled in this version; lifetime FHSA caps and contribution carry-forward are not modeled.</li>
-              <li><span class="muted">Non-registered:</span> only refund overflow can be routed to a non-registered bucket; non-registered tax drag is not modeled in this version.</li>
-            </ul>
-          </div>
+          <section class="result-share-block" aria-labelledby="share-result-heading">
+            <h3 id="share-result-heading" class="result-share-title">Share this result</h3>
+            <p class="result-share-copy">Snapshot your estimate as a shareable image.</p>
+            <p class="result-share-helper">Shares an image plus a link to this calculator scenario.</p>
+            <div class="result-share-actions">
+              <button type="button" id="share_result_btn">Share image</button>
+              <button type="button" id="download_result_btn">Download PNG</button>
+              <button type="button" id="copy_result_link_btn">Copy result link</button>
+            </div>
+            <p class="result-share-status" id="result_share_status" aria-live="polite"></p>
+          </section>
 
           <p class="help-inline">
             For TFSA room calculations, use the <a href="/calculators/tfsa-room/" class="inline-link">TFSA Contribution Room Calculator</a>.<br />
@@ -438,6 +673,31 @@
           </p>
         </section>
       </div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Assumptions shown</h2>
+      <div class="assumptions">
+        <ul>
+          <li><span class="muted">Refund default:</span> RRSP/FHSA refund is modeled as spent unless you toggle reinvestment.</li>
+          <li><span class="muted">Room constraints:</span> Opening TFSA/RRSP room is user-entered (carry-forward allowed). From simulation year 2, each January adds your specified new TFSA amount and RRSP room equal to min(18% of current taxable income, indexed dollar cap). Unused room carries forward until used; overflow goes to non-registered.</li>
+          <li><span class="muted">Returns:</span> same net return and fee structure for all accounts; no asset-location modeling.</li>
+          <li><span class="muted">Tax rates:</span> t_now and t_ret are constant over the horizon.</li>
+          <li><span class="muted">FHSA:</span> annual room (user input; default $8,000) and a $40,000 lifetime contribution cap are enforced; growth does not count toward the lifetime cap. Contribution carry-forward is not modeled.</li>
+          <li><span class="muted">Non-registered:</span> only refund overflow can be routed to a non-registered bucket; non-registered tax drag is not modeled in this version.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card calc-related">
+      <h2 class="section-title">Related articles &amp; calculators</h2>
+      <ul>
+        <li><a href="/what-is-a-tfsa/" class="inline-link">What Is a TFSA? (Canada)</a> — how the account works and contribution room</li>
+        <li><a href="/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/" class="inline-link">RRSP vs TFSA vs FHSA: Which Account Is Best?</a> — article-level comparison</li>
+        <li><a href="/calculators/tfsa-room/" class="inline-link">TFSA Contribution Room Calculator</a> — year-by-year room estimates</li>
+        <li><a href="/tfsa-withdrawal-rules-over-contribution-penalties/" class="inline-link">TFSA withdrawal rules &amp; over-contribution penalties</a></li>
+        <li><a href="/calculators/canada-income-tax/" class="inline-link">Canada Personal Income Tax Calculator</a> — marginal rates and income tax math</li>
+      </ul>
     </div>
 
     <section class="newsletter-signup card" aria-labelledby="newsletter-calc-heading">
@@ -464,6 +724,7 @@
 
   <div id="footerMount"></div>
 
+  <script defer src="/assets/js/calculator-share.js?v=20260426"></script>
   <script type="module" src="/calculators/tfsa-rrsp-fhsa/ui.js"></script>
 </body>
 </html>
