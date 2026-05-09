@@ -173,6 +173,29 @@ test("RRSP new annual room is min(18% of income, dollar cap)", () => {
   assert.ok(Math.abs(computeRrspNewAnnualRoom(100000, 33810) - 18000) < 1e-6);
 });
 
+test("when FHSA eligible, engine runs six distinct account-priority strategies", () => {
+  const result = runAccountStrategySimulation({
+    contributionMode: "monthly",
+    contributionAmount: 100,
+    horizonYears: 2,
+    annualReturn: 0,
+    annualFees: 0,
+    t_now: 0,
+    t_ret: 0,
+    refundMode: "spend",
+    fhsaEligible: true,
+    fhsaHomeQualified: true,
+    fhsaAnnualRoom: 8000,
+    tfsaRemainingRoom: 10000,
+    rrspRemainingRoom: 10000
+  });
+  assert.equal(result.priorityRanking.length, 6);
+  const keys = new Set(result.priorityRanking.map((r) => r.key));
+  assert.ok(keys.has("TFSA_FHSA_RRSP"));
+  assert.ok(keys.has("RRSP_FHSA_TFSA"));
+  assert.ok(keys.has("ALL_FHSA"));
+});
+
 test("January top-ups add to remaining TFSA and RRSP room (no contributions)", () => {
   const result = runAccountStrategySimulation({
     contributionMode: "monthly",

@@ -184,19 +184,28 @@
       </p>
 
       <h3 id="strategies">6. Strategies</h3>
-      <p>The engine simulates several deterministic strategies:</p>
+      <p>
+        Each strategy is a <strong>fixed priority order</strong> for filling TFSA, RRSP, and (when eligible) FHSA from each month’s gross contribution.
+        Account room and the FHSA lifetime cap are enforced at each step; any amount that cannot be placed in those three buckets goes to non-registered (last).
+      </p>
+      <p>If FHSA is <strong>not</strong> eligible, the engine runs two strategies only:</p>
       <ul>
-        <li><strong>ALL_TFSA:</strong> All contributions go to TFSA.</li>
-        <li><strong>ALL_RRSP:</strong> All contributions go to RRSP.</li>
-        <li><strong>ALL_FHSA (if FHSA eligible):</strong> Contributions go to FHSA until room<sub>y</sub> is exhausted each year; remainder goes to TFSA.</li>
-        <li><strong>FHSA_FIRST_THEN_TFSA (if FHSA eligible):</strong> FHSA first up to room<sub>y</sub>, then TFSA with any remainder.</li>
-        <li><strong>FHSA_FIRST_THEN_RRSP (if FHSA eligible):</strong> FHSA first up to room<sub>y</sub>, then RRSP with any remainder.</li>
+        <li><strong>ALL_TFSA:</strong> TFSA → RRSP → non-registered</li>
+        <li><strong>ALL_RRSP:</strong> RRSP → TFSA → non-registered</li>
       </ul>
-      <p>The <strong>OPTIMAL</strong> strategy is defined as:</p>
+      <p>If FHSA <strong>is</strong> eligible, the engine runs all six permutations of the three registered accounts (non-registered always last):</p>
       <ul>
-        <li>If FHSA is not eligible: the better of ALL_TFSA and ALL_RRSP (by final after-tax value).</li>
-        <li>If FHSA is eligible: the better of FHSA_FIRST_THEN_TFSA and FHSA_FIRST_THEN_RRSP (by final after-tax value), with ALL_TFSA, ALL_RRSP, and ALL_FHSA still reported for comparison.</li>
+        <li><strong>ALL_TFSA:</strong> TFSA → RRSP → FHSA → non-registered</li>
+        <li><strong>TFSA_FHSA_RRSP:</strong> TFSA → FHSA → RRSP → non-registered</li>
+        <li><strong>ALL_RRSP:</strong> RRSP → TFSA → FHSA → non-registered</li>
+        <li><strong>RRSP_FHSA_TFSA:</strong> RRSP → FHSA → TFSA → non-registered</li>
+        <li><strong>ALL_FHSA:</strong> FHSA → TFSA → RRSP → non-registered</li>
+        <li><strong>FHSA_FIRST_THEN_RRSP:</strong> FHSA → RRSP → TFSA → non-registered</li>
       </ul>
+      <p>
+        The headline <strong>optimal</strong> result is whichever of the simulated strategies (two or six, depending on FHSA eligibility) maximizes total after-tax value at the horizon.
+        The UI ranks every simulated strategy from highest to lowest after-tax total.
+      </p>
 
       <h2>Withdrawals and After-Tax Values</h2>
 
@@ -249,7 +258,7 @@
         <li><strong>annualContribution:</strong> annualized contribution amount under the selected mode (12 × monthly for monthly mode, C for annual, C for lump treated as a one-year contribution).</li>
         <li><strong>fhsaUsedAnnual:</strong> estimated FHSA contributions deposited in year 1 (capped by modeled annual room and lifetime cap).</li>
         <li><strong>remainderAnnual:</strong> annualContribution − fhsaUsedAnnual.</li>
-        <li><strong>remainderDestination:</strong> “TFSA” or “RRSP”, depending on which account receives the modeled remainder in the optimal FHSA-first strategy.</li>
+        <li><strong>remainderDestination:</strong> “TFSA” or “RRSP”, a short label for explanatory copy tied to the winning priority order (not a full routing map).</li>
       </ul>
 
       <h2>Worked Example (Using Your Last Inputs)</h2>

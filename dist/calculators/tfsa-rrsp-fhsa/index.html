@@ -33,8 +33,49 @@
       gap: 12px;
       margin-bottom: 12px;
     }
-    .result-tiles--alts {
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    .priority-table-wrap {
+      overflow-x: auto;
+      margin: 0 0 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .priority-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .priority-table th,
+    .priority-table td {
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .priority-table th {
+      font-weight: 700;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      background: var(--surface2);
+    }
+    .priority-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .priority-table td.num {
+      text-align: right;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    .priority-table td.order {
+      line-height: 1.35;
+    }
+    .priority-table tr.is-optimal-row td {
+      background: var(--accentSoft);
+    }
+    .priority-table tr.is-optimal-row td:first-child {
+      box-shadow: inset 3px 0 0 0 var(--accent);
     }
     .result-tile {
       padding: 10px 12px;
@@ -55,16 +96,6 @@
     .result-tile.primary {
       border-color: var(--accent);
       background: var(--accentSoft);
-    }
-    .ranking-list {
-      list-style: none;
-      padding-left: 16px;
-      margin: 0;
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .ranking-list li {
-      margin-bottom: 4px;
     }
     .inspect-bar {
       display: flex;
@@ -694,29 +725,27 @@
             </div>
           </div>
 
-          <h3 class="results-section-heading">Compare fixed strategies</h3>
-          <p class="help-inline" style="margin: 0 0 10px;">
-            After-tax future value if you always followed that routing rule for incoming cash (same inputs and horizon as the headline result).
+          <h3 class="results-section-heading">All account-priority orders</h3>
+          <p id="priorityCompareIntro" class="help-inline" style="margin: 0 0 10px;">
+            After-tax portfolio total at your horizon for each fixed fill order (same cash, room, and assumptions as above).
+            With FHSA off, only TFSA-first and RRSP-first apply; with FHSA on, all six orderings of TFSA, RRSP, and FHSA are shown—non-registered is always last for overflow.
           </p>
-          <div class="result-tiles result-tiles--alts">
-            <div class="result-tile">
-              <p class="k">TFSA-first (overflow RRSP, then non-registered)</p>
-              <p class="v" id="tfsaValue">$—</p>
-            </div>
-            <div class="result-tile">
-              <p class="k">RRSP-first (overflow TFSA, then non-registered)</p>
-              <p class="v" id="rrspValue">$—</p>
-              <p class="help-inline">RRSP withdrawals taxed at t_ret; RRSP/FHSA refunds follow the toggle above.</p>
-            </div>
-            <div class="result-tile hidden" id="fhsaTile">
-              <p class="k">FHSA-first (overflow TFSA, then RRSP, then non-registered)</p>
-              <p class="v" id="fhsaValue">$—</p>
-            </div>
+          <div class="priority-table-wrap">
+            <table class="priority-table" aria-describedby="priorityCompareIntro">
+              <thead>
+                <tr>
+                  <th scope="col">Rank</th>
+                  <th scope="col">Fill order</th>
+                  <th scope="col">After-tax total</th>
+                  <th scope="col">vs best</th>
+                </tr>
+              </thead>
+              <tbody id="priorityRankingBody"></tbody>
+            </table>
           </div>
-
-          <h3 class="results-section-heading">Ranking (after-tax future value)</h3>
-          <ul id="rankingList" class="ranking-list">
-          </ul>
+          <p class="help-inline" style="margin: 0 0 14px;">
+            RRSP balances are taxed at t_ret on withdrawal; FHSA uses your home-qualified assumption; RRSP/FHSA refunds follow the reinvest toggle.
+          </p>
 
           <hr class="sep" />
 

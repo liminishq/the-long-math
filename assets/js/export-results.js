@@ -409,17 +409,25 @@
       addPair(rows, seen, t("common.export.primaryResultLabel"), normText(primary.textContent));
     }
 
-    var wTitle = scope.querySelector(".winner-block h2");
     var wn = scope.querySelector("#winnerName");
     var wv = scope.querySelector("#winnerValue");
+    var wvl = scope.querySelector("#winnerValueLabel");
     if (wn && wv && isVisible(wn) && isVisible(wv)) {
-      var title = wTitle ? normText(wTitle.textContent) : "Top strategy";
-      addPair(rows, seen, title, normText(wn.textContent) + " — " + normText(wv.textContent));
+      addPair(rows, seen, "Top strategy", normText(wn.textContent));
+      var cap = wvl && isVisible(wvl) ? normText(wvl.textContent) : "After-tax future value";
+      addPair(rows, seen, cap, normText(wv.textContent));
     }
 
-    scope.querySelectorAll("#rankingList li").forEach(function (li, i) {
-      if (!isVisible(li)) return;
-      var line = normText(li.textContent);
+    scope.querySelectorAll("#priorityRankingBody tr").forEach(function (tr, i) {
+      if (!isVisible(tr)) return;
+      var cells = tr.querySelectorAll("td");
+      if (cells.length < 3) return;
+      var line =
+        normText(cells[0].textContent) +
+        ". " +
+        normText(cells[1].textContent) +
+        " — " +
+        normText(cells[2].textContent);
       if (line && !isPlaceholder(line)) addPair(rows, seen, t("common.export.rankingRow") + " " + (i + 1), line);
     });
 

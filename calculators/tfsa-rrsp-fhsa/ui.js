@@ -3,7 +3,8 @@
 import {
   runAccountStrategySimulation,
   computeRrspNewAnnualRoom,
-  RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP
+  RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP,
+  describeStrategyAccountOrder
 } from "./engine.js";
 import { loadTaxData } from "../canada-income-tax/js/tax.data.js";
 import { computePersonalTax } from "../canada-income-tax/js/tax.engine.js";
@@ -41,6 +42,12 @@ function futureValueCaption(horizonYears, useRealDollars) {
   const yrWord = y === 1 ? "year" : "years";
   const realBit = useRealDollars ? "; real (inflation-adjusted) dollars" : "";
   return `After-tax future value (${y}-${yrWord} horizon${realBit})`;
+}
+
+function fmtDeltaVsBest(diff) {
+  if (!Number.isFinite(diff) || Math.abs(diff) < 0.005) return "—";
+  const sign = diff < 0 ? "−" : "+";
+  return sign + fmtMoney(Math.abs(diff));
 }
 
 function clamp(n, lo, hi) {
@@ -177,11 +184,14 @@ function render() {
     return;
   }
 
-  const { strategies, ranking, allocationSummary, optimalStrategyKey } = result;
+  const { strategies, priorityRanking, allocationSummary, optimalStrategyKey } = result;
 
   // Top strategy card is based on the scenario-constrained optimal allocation.
   if (strategies.OPTIMAL) {
-    $("winnerName").textContent = prettyStrategyName(optimalStrategyKey || "OPTIMAL");
+    $("winnerName").textContent = describeStrategyAccountOrder(
+      optimalStrategyKey || "ALL_TFSA",
+      inputs.fhsaEligible
+    );
     $("winnerValueLabel").textContent = futureValueCaption(inputs.horizonYears, inputs.useRealDollars);
     $("winnerValue").textContent = fmtMoney(strategies.OPTIMAL.finalAfterTax);
   } else {
@@ -190,24 +200,27 @@ function render() {
     $("winnerValue").textContent = "$—";
   }
 
-  // Individual tiles (fixed strategies only; headline hero shows the winning rule)
-  setTile("tfsaValue", strategies.ALL_TFSA?.finalAfterTax);
-  setTile("rrspValue", strategies.ALL_RRSP?.finalAfterTax);
-  if (strategies.ALL_FHSA && inputs.fhsaEligible) {
-    $("fhsaTile").classList.remove("hidden");
-    setTile("fhsaValue", strategies.ALL_FHSA.finalAfterTax);
-  } else {
-    $("fhsaTile").classList.add("hidden");
-    setTile("fhsaValue", NaN);
-  }
-
-  // Ranking list
-  const rankingList = $("rankingList");
-  rankingList.innerHTML = "";
-  ranking.forEach((r) => {
-    const li = document.createElement("li");
-    li.textContent = `${prettyStrategyName(r.key)} – ${fmtMoney(r.finalAfterTax)}`;
-    rankingList.appendChild(li);
+  const tbody = $("priorityRankingBody");
+  tbody.innerHTML = "";
+  const bestVal =
+    priorityRanking && priorityRanking.length > 0 ? priorityRanking[0].finalAfterTax : NaN;
+  (priorityRanking || []).forEach((row) => {
+    const tr = document.createElement("tr");
+    if (row.key === optimalStrategyKey) {
+      tr.classList.add("is-optimal-row");
+    }
+    const vs =
+      Number.isFinite(bestVal) && Number.isFinite(row.finalAfterTax)
+        ? row.finalAfterTax - bestVal
+        : NaN;
+    const vsText = fmtDeltaVsBest(vs);
+    tr.innerHTML = `
+      <td class="num">${row.rank}</td>
+      <td class="order">${describeStrategyAccountOrder(row.key, inputs.fhsaEligible)}</td>
+      <td class="num">${fmtMoney(row.finalAfterTax)}</td>
+      <td class="num vs">${vsText}</td>
+    `;
+    tbody.appendChild(tr);
   });
 
   // Optimal split sentence
@@ -287,30 +300,6 @@ function render() {
   } else {
     $("derivedRateSummary").textContent =
       `Marginal rates for this scenario: (${inputs.taxProvince}) ${fmtPct(inputs.t_now)} from ${fmtMoney(inputs.currentTaxableIncome)} income; ${fmtPct(inputs.t_ret)} from ${fmtMoney(inputs.retirementTaxableIncome)} income.`;
-  }
-}
-
-function setTile(id, value) {
-  const el = $(id);
-  el.textContent = fmtMoney(value);
-}
-
-function prettyStrategyName(key) {
-  switch (key) {
-    case "ALL_TFSA":
-      return "TFSA-first (overflow RRSP, then non-registered)";
-    case "ALL_RRSP":
-      return "RRSP-first (overflow TFSA, then non-registered)";
-    case "ALL_FHSA":
-      return "FHSA-first (overflow TFSA, then RRSP, then non-registered)";
-    case "FHSA_FIRST_THEN_TFSA":
-      return "FHSA first, then TFSA, then RRSP, then non-registered";
-    case "FHSA_FIRST_THEN_RRSP":
-      return "FHSA first, then RRSP, then TFSA, then non-registered";
-    case "OPTIMAL":
-      return "Best strategy for your inputs";
-    default:
-      return key;
   }
 }
 
@@ -428,8 +417,8 @@ function wireTfsaShare() {
     }
     const opt = result.strategies?.OPTIMAL;
     if (!opt) return null;
-    const winnerKey = result.optimalStrategyKey || "OPTIMAL";
-    const winnerLabel = prettyStrategyName(winnerKey);
+    const winnerKey = result.optimalStrategyKey || "ALL_TFSA";
+    const winnerLabel = describeStrategyAccountOrder(winnerKey, inputs.fhsaEligible);
     const y = Math.round(inputs.horizonYears);
     const scenario = {
       contribution_mode: inputs.contributionMode,

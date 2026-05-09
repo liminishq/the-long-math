@@ -35,6 +35,56 @@ export function computeRrspNewAnnualRoom(earnedIncome, dollarCap = RRSP_ANNUAL_N
   return Math.min(eighteen, cap);
 }
 
+/**
+ * When FHSA is eligible, these are the six distinct permutations of
+ * TFSA / RRSP / FHSA fill order (non-registered is always last for overflow).
+ * Keys are stable for URLs and tests.
+ */
+export const FHSA_PRIORITY_STRATEGY_KEYS = [
+  "ALL_TFSA",
+  "TFSA_FHSA_RRSP",
+  "ALL_RRSP",
+  "RRSP_FHSA_TFSA",
+  "ALL_FHSA",
+  "FHSA_FIRST_THEN_RRSP"
+];
+
+/** @type {Record<string, ("TFSA"|"RRSP"|"FHSA")[]>} */
+const FHSA_ELIGIBLE_PRIORITY_ORDERS = {
+  ALL_TFSA: ["TFSA", "RRSP", "FHSA"],
+  TFSA_FHSA_RRSP: ["TFSA", "FHSA", "RRSP"],
+  ALL_RRSP: ["RRSP", "TFSA", "FHSA"],
+  RRSP_FHSA_TFSA: ["RRSP", "FHSA", "TFSA"],
+  ALL_FHSA: ["FHSA", "TFSA", "RRSP"],
+  FHSA_FIRST_THEN_RRSP: ["FHSA", "RRSP", "TFSA"]
+};
+
+function remainderDestinationForOptimalKey(key) {
+  switch (key) {
+    case "ALL_RRSP":
+    case "RRSP_FHSA_TFSA":
+    case "FHSA_FIRST_THEN_RRSP":
+    case "TFSA_FHSA_RRSP":
+      return "RRSP";
+    default:
+      return "TFSA";
+  }
+}
+
+/**
+ * Human-readable contribution priority for display (non-registered is always modeled last).
+ */
+export function describeStrategyAccountOrder(strategyKey, fhsaEligible) {
+  if (!fhsaEligible) {
+    return strategyKey === "ALL_RRSP"
+      ? "RRSP → TFSA → non-registered"
+      : "TFSA → RRSP → non-registered";
+  }
+  const ord = FHSA_ELIGIBLE_PRIORITY_ORDERS[strategyKey];
+  if (!ord) return String(strategyKey);
+  return `${ord.join(" → ")} → non-registered`;
+}
+
 export function computeMonthlyRate({ annualReturnPct, annualFeePct, inflationPct = 0, useRealDollars = false }) {
   const r = Number(annualReturnPct) || 0;
   const f = Number(annualFeePct) || 0;
@@ -57,11 +107,7 @@ export function computeMonthlyRate({ annualReturnPct, annualFeePct, inflationPct
  *
  * contributionMode: "monthly" | "annual" | "lump"
  * strategyKey: one of:
- *   - "ALL_TFSA"
- *   - "ALL_RRSP"
- *   - "ALL_FHSA"
- *   - "FHSA_FIRST_THEN_TFSA"
- *   - "FHSA_FIRST_THEN_RRSP"
+ *   - "ALL_TFSA" | "ALL_RRSP" (no FHSA); or when fhsaEligible, any key in FHSA_PRIORITY_STRATEGY_KEYS
  */
 function runStrategy(baseInputs, strategyKey) {
   const {
@@ -206,105 +252,56 @@ function runStrategy(baseInputs, strategyKey) {
     }
   }
 
+  function fhsaDepositUpTo(remaining, monthIndex) {
+    if (remaining <= 0) return 0;
+    const yearIndex = Math.min(fhsaRoomByYear.length - 1, Math.floor(monthIndex / 12));
+    let room = fhsaRoomByYear[yearIndex] ?? 0;
+    const lifetimeLeft =
+      lifeCap > 0 ? Math.max(0, lifeCap - fhsaLifetimeContributed) : Number.POSITIVE_INFINITY;
+    const effectiveRoom = Math.min(room, lifetimeLeft);
+    const use = Math.min(remaining, effectiveRoom);
+    if (use > 0) {
+      fhsaRoomByYear[yearIndex] = room - use;
+      depositFhsa(use, monthIndex);
+    }
+    return use;
+  }
+
   function allocateContribution(monthIndex, grossContribution) {
     if (grossContribution <= 0) return;
-
-    const yearIndex = Math.min(fhsaRoomByYear.length - 1, Math.floor(monthIndex / 12));
-
-    let g_tfsa = 0;
-    let g_rrsp = 0;
-    let g_fhsa = 0;
 
     const g = grossContribution;
 
     if (!fhsaEligible) {
-      // No FHSA paths: use primary account first, then secondary.
       let remaining = g;
       if (strategyKey === "ALL_RRSP") {
-        const rrspUsed = depositRrsp(remaining, monthIndex);
-        remaining -= rrspUsed;
-        const tfsaUsed = depositTfsa(remaining, monthIndex, "direct");
-        remaining -= tfsaUsed;
+        remaining -= depositRrsp(remaining, monthIndex);
+        remaining -= depositTfsa(remaining, monthIndex, "direct");
       } else {
-        const tfsaUsed = depositTfsa(remaining, monthIndex, "direct");
-        remaining -= tfsaUsed;
-        const rrspUsed = depositRrsp(remaining, monthIndex);
-        remaining -= rrspUsed;
+        remaining -= depositTfsa(remaining, monthIndex, "direct");
+        remaining -= depositRrsp(remaining, monthIndex);
       }
       if (remaining > 0) depositNonReg(remaining, monthIndex, "direct");
       return;
-    } else {
-      // FHSA strategies
-      if (strategyKey === "ALL_TFSA") {
-        let remaining = g;
-        const tfsaUsed = depositTfsa(remaining, monthIndex, "direct");
-        remaining -= tfsaUsed;
-        if (remaining > 0) {
-          const rrspUsed = depositRrsp(remaining, monthIndex);
-          remaining -= rrspUsed;
-        }
-        if (remaining > 0) depositNonReg(remaining, monthIndex, "direct");
-        return;
-      } else if (strategyKey === "ALL_RRSP") {
-        let remaining = g;
-        const rrspUsed = depositRrsp(remaining, monthIndex);
-        remaining -= rrspUsed;
-        if (remaining > 0) {
-          const tfsaUsed = depositTfsa(remaining, monthIndex, "direct");
-          remaining -= tfsaUsed;
-        }
-        if (remaining > 0) depositNonReg(remaining, monthIndex, "direct");
-        return;
-      } else {
-        // Strategies that use FHSA first when eligible
-        let remaining = g;
-        let room = fhsaRoomByYear[yearIndex] ?? 0;
-        const lifetimeLeft =
-          lifeCap > 0 ? Math.max(0, lifeCap - fhsaLifetimeContributed) : Number.POSITIVE_INFINITY;
-        const effectiveRoom = Math.min(room, lifetimeLeft);
-
-        if (
-          effectiveRoom > 0 &&
-          (strategyKey === "ALL_FHSA" || strategyKey === "FHSA_FIRST_THEN_TFSA" || strategyKey === "FHSA_FIRST_THEN_RRSP")
-        ) {
-          const useForFhsa = Math.min(remaining, effectiveRoom);
-          g_fhsa += useForFhsa;
-          remaining -= useForFhsa;
-          fhsaRoomByYear[yearIndex] = room - useForFhsa;
-        }
-
-        if (g_fhsa > 0) {
-          depositFhsa(g_fhsa, monthIndex);
-        }
-
-        if (remaining > 0) {
-          if (strategyKey === "FHSA_FIRST_THEN_RRSP") {
-            const rrspUsed = depositRrsp(remaining, monthIndex);
-            remaining -= rrspUsed;
-            if (remaining > 0) {
-              const tfsaUsed = depositTfsa(remaining, monthIndex, "direct");
-              remaining -= tfsaUsed;
-            }
-          } else {
-            // ALL_FHSA spills to TFSA first, then RRSP if TFSA room is exhausted.
-            const tfsaUsed = depositTfsa(remaining, monthIndex, "direct");
-            remaining -= tfsaUsed;
-            if (remaining > 0) {
-              const rrspUsed = depositRrsp(remaining, monthIndex);
-              remaining -= rrspUsed;
-            }
-          }
-        }
-
-        if (remaining > 0) depositNonReg(remaining, monthIndex, "direct");
-        return;
-      }
     }
 
-    // Apply deposits and refunds
-    if (g_tfsa > 0) depositTfsa(g_tfsa, monthIndex, "direct");
-    if (g_rrsp > 0) depositRrsp(g_rrsp, monthIndex);
-    if (g_fhsa > 0) depositFhsa(g_fhsa, monthIndex);
+    const order = FHSA_ELIGIBLE_PRIORITY_ORDERS[strategyKey];
+    if (!order) {
+      throw new Error(`Unknown FHSA strategy key: ${strategyKey}`);
+    }
+
+    let remaining = g;
+    for (let i = 0; i < order.length && remaining > 0; i++) {
+      const acct = order[i];
+      if (acct === "TFSA") {
+        remaining -= depositTfsa(remaining, monthIndex, "direct");
+      } else if (acct === "RRSP") {
+        remaining -= depositRrsp(remaining, monthIndex);
+      } else if (acct === "FHSA") {
+        remaining -= fhsaDepositUpTo(remaining, monthIndex);
+      }
+    }
+    if (remaining > 0) depositNonReg(remaining, monthIndex, "direct");
   }
 
   for (let m = 0; m < months; m++) {
@@ -477,63 +474,55 @@ export function runAccountStrategySimulation(rawInputs) {
   // Strategies to simulate
   const strategies = {};
 
-  strategies.ALL_TFSA = runStrategy(baseInputs, "ALL_TFSA");
-  strategies.ALL_RRSP = runStrategy(baseInputs, "ALL_RRSP");
-
-  let optimalKey = strategies.ALL_TFSA.finalAfterTax >= strategies.ALL_RRSP.finalAfterTax ? "ALL_TFSA" : "ALL_RRSP";
-
+  let candidateKeys;
   if (baseInputs.fhsaEligible) {
-    strategies.ALL_FHSA = runStrategy(baseInputs, "ALL_FHSA");
-
-    const fhsaThenTfsa = runStrategy(baseInputs, "FHSA_FIRST_THEN_TFSA");
-    const fhsaThenRrsp = runStrategy(baseInputs, "FHSA_FIRST_THEN_RRSP");
-
-    const keyTfsa = "FHSA_FIRST_THEN_TFSA";
-    const keyRrsp = "FHSA_FIRST_THEN_RRSP";
-    strategies[keyTfsa] = fhsaThenTfsa;
-    strategies[keyRrsp] = fhsaThenRrsp;
-
-    // True optimal must be the max across all available strategies, not FHSA-forced.
-    const candidateKeys = ["ALL_TFSA", "ALL_RRSP", "ALL_FHSA", keyTfsa, keyRrsp];
-    optimalKey = candidateKeys.reduce((bestKey, k) => {
-      if (!strategies[bestKey]) return k;
-      if (!strategies[k]) return bestKey;
-      return strategies[k].finalAfterTax > strategies[bestKey].finalAfterTax ? k : bestKey;
-    }, "ALL_TFSA");
+    candidateKeys = [...FHSA_PRIORITY_STRATEGY_KEYS];
+    for (const k of candidateKeys) {
+      strategies[k] = runStrategy(baseInputs, k);
+    }
+  } else {
+    strategies.ALL_TFSA = runStrategy(baseInputs, "ALL_TFSA");
+    strategies.ALL_RRSP = runStrategy(baseInputs, "ALL_RRSP");
+    candidateKeys = ["ALL_TFSA", "ALL_RRSP"];
   }
+
+  let optimalKey = candidateKeys.reduce((bestKey, k) => {
+    if (!strategies[bestKey]) return k;
+    if (!strategies[k]) return bestKey;
+    return strategies[k].finalAfterTax > strategies[bestKey].finalAfterTax ? k : bestKey;
+  }, candidateKeys[0]);
+
+  const remainderDest = remainderDestinationForOptimalKey(optimalKey);
 
   strategies.OPTIMAL = {
     ...strategies[optimalKey],
-    allocationSummary: buildAllocationSummary(
-      baseInputs,
-      strategies[optimalKey],
-      optimalKey === "ALL_RRSP" || optimalKey === "FHSA_FIRST_THEN_RRSP" ? "RRSP" : "TFSA"
-    )
+    allocationSummary: buildAllocationSummary(baseInputs, strategies[optimalKey], remainderDest)
   };
 
-  // Ranking (visible strategies only)
-  const ranking = Object.entries(strategies)
-    .filter(([key]) => key === "ALL_TFSA" || key === "ALL_RRSP" || key === "ALL_FHSA" || key === "OPTIMAL")
-    .map(([key, value]) => ({
+  /** Sorted highest after-tax value first; excludes OPTIMAL pseudo-strategy. */
+  const priorityRanking = candidateKeys
+    .map((key) => ({
       key,
-      finalAfterTax: value.finalAfterTax
+      finalAfterTax: strategies[key].finalAfterTax
     }))
-    .sort((a, b) => b.finalAfterTax - a.finalAfterTax);
+    .sort((a, b) => b.finalAfterTax - a.finalAfterTax)
+    .map((row, i) => ({ ...row, rank: i + 1 }));
 
-  const bestValue = ranking.length > 0 ? ranking[0].finalAfterTax : 0;
+  const bestValue = priorityRanking.length > 0 ? priorityRanking[0].finalAfterTax : 0;
 
   const deltas = {};
-  ranking.forEach((r) => {
+  priorityRanking.forEach((r) => {
     deltas[r.key] = {
       vsBest: r.finalAfterTax - bestValue
     };
   });
 
-  const topLevelAllocationSummary = strategies.OPTIMAL.allocationSummary || buildAllocationSummary(
-    baseInputs,
-    strategies[optimalKey],
-    optimalKey === "ALL_RRSP" || optimalKey === "FHSA_FIRST_THEN_RRSP" ? "RRSP" : "TFSA"
-  );
+  // Legacy shape: keep `ranking` as priority list without OPTIMAL for any older callers.
+  const ranking = priorityRanking.map(({ key, finalAfterTax }) => ({ key, finalAfterTax }));
+
+  const topLevelAllocationSummary =
+    strategies.OPTIMAL.allocationSummary ||
+    buildAllocationSummary(baseInputs, strategies[optimalKey], remainderDest);
 
   return {
     inputsEcho: {
@@ -548,6 +537,7 @@ export function runAccountStrategySimulation(rawInputs) {
     },
     strategies,
     ranking,
+    priorityRanking,
     deltas,
     optimalStrategyKey: optimalKey,
     allocationSummary: topLevelAllocationSummary
