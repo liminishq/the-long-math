@@ -306,6 +306,14 @@
       gap: 12px;
       margin-bottom: 16px;
     }
+    .results-secondary-grid .result-subcard--span-full {
+      grid-column: 1 / -1;
+    }
+    .priority-compact .pri-sub {
+      font-weight: 500;
+      font-size: 10px;
+      color: var(--muted);
+    }
     @media (max-width: 720px) {
       .results-secondary-grid {
         grid-template-columns: 1fr;
@@ -689,6 +697,28 @@
           </div>
 
           <div class="results-secondary-grid">
+            <div class="result-subcard result-subcard--span-full">
+              <h3 class="result-subcard-title">Balances at end of horizon (after-tax)</h3>
+              <div class="priority-compact horizon-balances" aria-label="Account balances after tax at horizon">
+                <div class="pri">
+                  <span class="pri-k">TFSA</span>
+                  <span class="pri-v" id="horizonTfsa">$—</span>
+                </div>
+                <div class="pri">
+                  <span class="pri-k">RRSP <span class="pri-sub">(after t<sub>ret</sub>)</span></span>
+                  <span class="pri-v" id="horizonRrsp">$—</span>
+                </div>
+                <div class="pri hidden" id="horizonFhsaWrap">
+                  <span class="pri-k">FHSA <span class="pri-sub" id="horizonFhsaTaxHint"></span></span>
+                  <span class="pri-v" id="horizonFhsa">$—</span>
+                </div>
+                <div class="pri">
+                  <span class="pri-k">Non-reg. <span class="pri-sub">(no tax drag)</span></span>
+                  <span class="pri-v" id="horizonNonReg">$—</span>
+                </div>
+              </div>
+              <p id="horizonBalancesNote" class="help-inline" style="margin-top: 8px; margin-bottom: 0;"></p>
+            </div>
             <div class="result-subcard">
               <h3 class="result-subcard-title">Year 1 snapshot</h3>
               <div class="kv-compact">
@@ -749,7 +779,7 @@
 
           <hr class="sep" />
 
-          <h3 class="results-section-heading">Account value after horizon</h3>
+          <h3 class="results-section-heading">Notes on modeled allocation</h3>
           <p id="optimalSplit" class="help-inline">
             FHSA eligibility, annual room, and the lifetime contribution cap determine how much can go to FHSA before spilling to TFSA or RRSP.
           </p>

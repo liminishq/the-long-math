@@ -50,6 +50,33 @@ function fmtDeltaVsBest(diff) {
   return sign + fmtMoney(Math.abs(diff));
 }
 
+/** After-tax economic values at horizon (matches engine withdrawal assumptions). */
+function horizonAfterTaxByAccount(breakdown, inputs) {
+  if (!breakdown) return null;
+  const tr = clamp(inputs.t_ret, 0, 100) / 100;
+  const tfsa = breakdown.tfsa ?? 0;
+  const rrspAfter = (breakdown.rrspPretax ?? 0) * (1 - tr);
+  const fhsaPre = breakdown.fhsa ?? 0;
+  let fhsaAfter = 0;
+  if (inputs.fhsaEligible) {
+    fhsaAfter = inputs.fhsaHomeQualified ? fhsaPre : fhsaPre * (1 - tr);
+  }
+  const nonReg = breakdown.nonRegistered ?? 0;
+  return { tfsa, rrspAfter, fhsaAfter, nonReg };
+}
+
+function resetHorizonBalancesUi() {
+  const ids = ["horizonTfsa", "horizonRrsp", "horizonFhsa", "horizonNonReg"];
+  for (const id of ids) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = "$—";
+  }
+  const wrap = document.getElementById("horizonFhsaWrap");
+  if (wrap) wrap.classList.add("hidden");
+  const note = document.getElementById("horizonBalancesNote");
+  if (note) note.textContent = "";
+}
+
 function clamp(n, lo, hi) {
   if (!Number.isFinite(n)) return lo;
   return Math.min(hi, Math.max(lo, n));
@@ -173,6 +200,7 @@ function render() {
 
   if (!taxDataReady) {
     $("derivedRateSummary").textContent = "Loading marginal rates for this scenario…";
+    resetHorizonBalancesUi();
     return;
   }
 
@@ -181,6 +209,7 @@ function render() {
     result = runAccountStrategySimulation(inputs);
   } catch (err) {
     console.error("Simulation error", err);
+    resetHorizonBalancesUi();
     return;
   }
 
@@ -194,10 +223,30 @@ function render() {
     );
     $("winnerValueLabel").textContent = futureValueCaption(inputs.horizonYears, inputs.useRealDollars);
     $("winnerValue").textContent = fmtMoney(strategies.OPTIMAL.finalAfterTax);
+
+    const hz = horizonAfterTaxByAccount(strategies.OPTIMAL.breakdown, inputs);
+    if (hz) {
+      $("horizonTfsa").textContent = fmtMoney(hz.tfsa);
+      $("horizonRrsp").textContent = fmtMoney(hz.rrspAfter);
+      $("horizonNonReg").textContent = fmtMoney(hz.nonReg);
+      if (inputs.fhsaEligible) {
+        $("horizonFhsaWrap").classList.remove("hidden");
+        $("horizonFhsa").textContent = fmtMoney(hz.fhsaAfter);
+        const hint = $("horizonFhsaTaxHint");
+        hint.textContent = inputs.fhsaHomeQualified ? "(tax-free)" : "(after t_ret)";
+      } else {
+        $("horizonFhsaWrap").classList.add("hidden");
+      }
+      $("horizonBalancesNote").textContent =
+        "Shown amounts are spendable after-tax at withdrawal under this model (same components as the headline total).";
+    } else {
+      resetHorizonBalancesUi();
+    }
   } else {
     $("winnerName").textContent = "—";
     $("winnerValueLabel").textContent = "After-tax future value";
     $("winnerValue").textContent = "$—";
+    resetHorizonBalancesUi();
   }
 
   const tbody = $("priorityRankingBody");
