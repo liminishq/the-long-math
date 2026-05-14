@@ -13,6 +13,8 @@ npm run build
 
 Deploy the **`dist/`** directory (e.g. Cloudflare Pages: set build output to `dist`).
 
+**Fingerprinted bundles in `dist`:** HTML under `dist/` references hashed names such as `/assets/css/styles.<hash>.css`. If Pages (or any host) publishes a **prebuilt** `dist/` from git without running `npm run build` on deploy, those hashed files must exist in the repo under `dist/assets/css/` and `dist/assets/js/` (use `git add -f` because `dist/` is mostly gitignored). Otherwise `/assets/css/...` can 404 or fall back to HTML, and pages load with no styling. After `npm run build`, add any **new** hashed pairs that `dist/**/*.html` references.
+
 ### Local preview
 
 - **Recommended:** `npm run build`, then serve **`dist/`** (e.g. `cd dist` and `python -m http.server 8000`). English and French article URLs both work there.
