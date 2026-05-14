@@ -66,7 +66,7 @@
         <li>R<sub>RRSP</sub> = RRSP deduction claimed this year</li>
         <li>R<sub>FHSA</sub> = FHSA contribution deduction claimed this year</li>
         <li>D<sub>est</sub> = other estimated deductions (user-entered)</li>
-        <li>T<sub>paid</sub> = federal + provincial/territorial income tax already paid for the year (withholding or instalments); excludes CPP and EI</li>
+        <li>T<sub>paid</sub> = federal + provincial/territorial <strong>income tax</strong> already paid, plus <strong>employee CPP</strong> and <strong>employee EI</strong> already paid for the year (same categories as Burden<sub>total</sub>; from slips, pay stub YTDs, or instalments)</li>
         <li>CPP = Canada Pension Plan contributions (employee)</li>
         <li>EI = Employment Insurance premiums (employee)</li>
         <li>YMPE = Year’s Maximum Pensionable Earnings (base CPP)</li>
@@ -95,7 +95,7 @@
         <li>Tax<sub>prov</sub> = net provincial/territorial income tax</li>
         <li>Tax<sub>total</sub> = total income tax (federal + provincial)</li>
         <li>Burden<sub>total</sub> = Tax<sub>total</sub> + CPP + EI (total tax burden)</li>
-        <li>R<sub>IT</sub> = income tax balance (refund if positive, owing if negative)</li>
+        <li>R = remittance balance vs total burden: refund if positive, owing if negative; R = T<sub>paid</sub> − Burden<sub>total</sub></li>
         <li>Income<sub>gross</sub> = total cash income before tax</li>
         <li>ATI = after-tax income (take-home pay after income tax + CPP + EI)</li>
       </ul>
@@ -217,7 +217,7 @@
       </div>
 
       <h3 id="total-tax">5. Total Tax, Burden, and Take-Home Pay</h3>
-      <p>Total income tax (before withholdings):</p>
+      <p>Total income tax (federal plus provincial or territorial), before remittance reconciliation:</p>
       <div class="formula-block">
         Tax<sub>total</sub> = Tax<sub>fed</sub> + Tax<sub>prov</sub>
       </div>
@@ -233,12 +233,12 @@
       <div class="formula-block">
         ATI = Income<sub>gross</sub> − Tax<sub>total</sub> − CPP − EI
       </div>
-      <p>Income tax balance (matches the second prominent result card; signed value; CPP and EI are not part of this reconciliation):</p>
+      <p>Remittance balance vs total burden (matches the result card; signed value):</p>
       <div class="formula-block">
-        R<sub>IT</sub> = T<sub>paid</sub> − Tax<sub>total</sub>
+        R = T<sub>paid</sub> − Burden<sub>total</sub>
       </div>
       <p class="formula-meta">
-        R<sub>IT</sub> &gt; 0 is shown as an income tax refund; R<sub>IT</sub> &lt; 0 is shown as income tax owing (absolute value in the UI). T<sub>paid</sub> is the “Income tax already paid (federal + provincial or territorial only)” input. CPP and EI appear only in Burden<sub>total</sub> and take-home pay, not in R<sub>IT</sub>.
+        R &gt; 0 is shown as <strong>Tax refund</strong>; R &lt; 0 is shown as <strong>Balance owing</strong> (absolute value in the UI). T<sub>paid</sub> is the user’s total of income tax (federal + provincial or territorial) plus employee CPP plus employee EI already remitted—the same scope as Burden<sub>total</sub>.
       </p>
 
       <h3 id="rates">6. Average and Marginal Tax Rates</h3>

@@ -659,7 +659,7 @@ function runFullCalculation(input, dataCtx, runOpts = {}) {
  *   - capitalGains: capital gains
  *   - rrspDeduction: RRSP deduction
  *   - fhsaDeduction: FHSA deduction
- *   - taxPaid: federal + provincial/territorial income tax already paid for the year (e.g. pay-stub or instalment totals). Do not include CPP or EI; those are reconciled only inside Total tax burden.
+ *   - taxPaid: federal + provincial/territorial income tax already paid for the year (from slips or instalments). Do not include CPP or EI; those count only in total tax burden.
  * @param {Object} data - Pre-loaded tax data (optional, will load if not provided)
  * @returns {Object} Complete tax calculation result
  */
@@ -709,7 +709,7 @@ export function computePersonalTax(input, opts = {}) {
   const marginalRates = computeMarginalRatesByType(normalizedInput, dataCtx);
   const marginalRate = marginalRates.combined;
 
-  // Income tax instalment balance only (excludes CPP/EI). Total tax burden remains Tax_total + CPP + EI.
+  // Income tax balance only (excludes CPP/EI). See totalBurden for full statutory cash cost.
   const refundOrOwing = taxPaid - totalIncomeTax;
 
   if (opts?.validationMode) {

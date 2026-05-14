@@ -115,9 +115,9 @@
         </div>
 
         <div class="field">
-          <label for="taxPaid">Income tax already paid (federal + provincial or territorial only)</label>
+          <label for="taxPaid">Already remitted: federal + provincial or territorial income tax + employee CPP + employee EI</label>
           <input type="text" id="taxPaid" placeholder="0" value="" inputmode="decimal">
-          <div class="helper" style="margin-top: 6px;">Enter federal and provincial or territorial <strong>income tax</strong> you have already paid for this year—for example from pay stubs, T4 Box 22–style withholding, or instalments. <strong>Do not include CPP or EI</strong>; those are estimated separately and count only toward <strong>Total tax burden</strong>. Do not enter RRSP/FHSA amounts here (those are deductions above, not tax paid).</div>
+          <div class="helper" style="margin-top: 6px;">Enter one total that matches what you have already paid or had withheld toward the same items the calculator estimates: <strong>federal income tax</strong>, <strong>provincial or territorial income tax</strong>, <strong>employee CPP</strong> (including CPP2 if applicable), and <strong>employee EI</strong>—for example from YTD boxes on pay stubs, slip totals, or instalments. The <strong>Total tax balance</strong> line compares this to estimated federal + prov/terr tax plus employee CPP and EI. <strong>RRSP and FHSA</strong> are deductions only (fields above); do not add contribution amounts here.</div>
         </div>
 
         <div style="margin-top: 20px; padding: 14px; border: 1px solid rgba(217,180,106,.35); border-radius: 12px; background: linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,.04));">
@@ -164,9 +164,9 @@
           </div>
 
           <div class="result" id="refundOrOwingResult">
-            <p class="k" id="refundOrOwingLabel">Income tax balance</p>
+            <p class="k" id="refundOrOwingLabel">Total tax balance</p>
             <p class="v" id="refundOrOwing">$–</p>
-            <p class="subl">Federal + provincial/territorial income tax minus income tax already paid (input above). Excludes CPP and EI; see Total tax burden for all statutory deductions.</p>
+            <p class="subl" id="refundOrOwingSubline">(Federal + provincial or territorial income tax + employee CPP + employee EI, estimated) minus (the same four categories already remitted—the field above).</p>
           </div>
 
           <div class="result">
@@ -192,7 +192,7 @@
           <div class="result prominent">
             <p class="k">Total Take-Home Pay</p>
             <p class="v" id="takeHomeAfterPayroll">$–</p>
-            <p class="subl">Taxable income minus income tax, CPP, and EI</p>
+            <p class="subl">Total income minus federal and provincial income tax, CPP, and EI</p>
           </div>
 
           <div class="result">

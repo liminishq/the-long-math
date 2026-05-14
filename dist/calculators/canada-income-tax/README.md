@@ -60,7 +60,7 @@ longmath-tax-canada-2025/
 - **Capital Gains**: Capital gains (50% inclusion rate)
 - **RRSP Deduction**: RRSP contribution deduction
 - **FHSA Deduction**: First Home Savings Account deduction
-- **Income Tax Already Paid**: Tax withheld at source
+- **Already remitted (income tax + CPP + EI)**: One total: federal plus provincial or territorial **income tax**, plus **employee CPP** and **employee EI**, already paid or withheld for the year (same categories as total burden—slip boxes, pay stub YTDs, or instalments). Not RRSP/FHSA (those are deductions).
 
 ### Outputs
 
@@ -75,7 +75,7 @@ longmath-tax-canada-2025/
 - **Take-Home After Payroll**: Income - income tax - CPP - EI
 - **Average Tax Rate**: Total income tax / total income
 - **Marginal Tax Rate**: Combined federal + provincial marginal rate
-- **Refund / Balance Owing**: Tax paid - total income tax (positive = refund, negative = owing)
+- **Total tax balance** (and, when applicable, **Tax refund** / **Balance owing**): `refundOrOwing = taxPaid − totalBurden`, where `totalBurden` is federal + provincial or territorial income tax plus employee CPP plus employee EI as estimated. `taxPaid` is the sum you entered for the same four categories already remitted. Positive means refund; negative means owing (the UI shows the absolute value when owing).
 
 ### Show the Math
 
@@ -109,6 +109,11 @@ Pure calculation logic with no DOM dependencies. Exports `computePersonalTax(inp
   taxPaid: 0
 }
 ```
+
+**Remittance reconciliation (engine):**
+
+- `taxPaid`: Total already remitted toward **federal + provincial/territorial income tax + employee CPP + employee EI** (same scope as `totalBurden`).
+- `refundOrOwing` (in `totals`): `taxPaid - totalBurden`.
 
 **Result object:**
 ```javascript

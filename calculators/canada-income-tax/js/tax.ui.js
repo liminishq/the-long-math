@@ -198,12 +198,6 @@ function getInputs() {
     taxPaid: document.getElementById('taxPaid').value
   };
 
-  // Development-only debug guard: log raw strings before parsing to confirm no truncation.
-  // Safe to remove or wrap in an environment flag later.
-  console.debug('Raw input values before parsing:', {
-    eligibleDividends: raw.eligibleDividends
-  });
-
   const MAX_INPUT = 1e9;
 
   const parsed = {
@@ -354,24 +348,24 @@ function renderResults(result) {
   document.getElementById('avgRate').textContent = (avgRate !== undefined && avgRate !== null) ? formatPercent(avgRate) : '–%';
   document.getElementById('marginalRate').textContent = (marginalRate !== undefined && marginalRate !== null) ? formatPercent(marginalRate) : '–%';
   
-  // Refund/Owing display with proper styling and label
   const refundOwingEl = document.getElementById('refundOrOwing');
   const refundOwingLabel = document.getElementById('refundOrOwingLabel');
   const refundOwingResult = document.getElementById('refundOrOwingResult');
-  
+
+  // Refund / balance vs total burden (income tax + CPP + EI)
   if (refundOwing !== undefined && refundOwing !== null) {
     // Display: positive = refund, negative = balance owing (show absolute value for owing)
     if (refundOwing >= 0) {
-      refundOwingLabel.textContent = 'Income tax refund';
+      refundOwingLabel.textContent = 'Tax refund';
       refundOwingEl.textContent = formatCurrency(refundOwing);
       refundOwingResult.className = 'result refund';
     } else {
-      refundOwingLabel.textContent = 'Income tax owing';
+      refundOwingLabel.textContent = 'Balance owing';
       refundOwingEl.textContent = formatCurrency(Math.abs(refundOwing));
       refundOwingResult.className = 'result owing';
     }
   } else {
-    refundOwingLabel.textContent = 'Income tax balance';
+    refundOwingLabel.textContent = 'Total tax balance';
     refundOwingEl.textContent = '$–';
     refundOwingResult.className = 'result';
   }
@@ -592,7 +586,7 @@ function clearResults() {
   document.getElementById('avgRate').textContent = '–%';
   document.getElementById('marginalRate').textContent = '–%';
   document.getElementById('refundOrOwing').textContent = '$–';
-  document.getElementById('refundOrOwingLabel').textContent = 'Income tax balance';
+  document.getElementById('refundOrOwingLabel').textContent = 'Total tax balance';
   const refundOwingResult = document.getElementById('refundOrOwingResult');
   if (refundOwingResult) {
     refundOwingResult.className = 'result';
@@ -655,7 +649,7 @@ function exportCsv() {
     'Take-Home Pay,' + (latestTotals.takeHomeAfterPayroll || 0),
     'Average Tax Rate,' + ((latestTotals.avgRate || 0) * 100).toFixed(3) + '%',
     'Marginal Tax Rate,' + ((latestTotals.marginalRate || 0) * 100).toFixed(3) + '%',
-    'Income tax balance (federal + prov/terr − paid; excl CPP/EI),' + (latestTotals.refundOrOwing || 0)
+    'Total tax balance (already remitted − estimated federal + prov/terr income tax + CPP + EI),' + (latestTotals.refundOrOwing || 0)
   ];
   const blob = new Blob([rows.join('\n') + '\n'], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);

@@ -120,23 +120,23 @@ export async function runTests() {
   assert(test5.totals.taxableIncome === expectedTaxable, 'Taxable income should include 50% of capital gains');
   console.log('');
 
-  // Test 6: Refund/owing sign convention
+  // Test 6: Refund/owing vs total burden (income tax + CPP + EI)
   console.log('Test 6: Refund/owing sign convention');
   const test6a = computePersonalTax({
     province: 'ON',
     employmentIncome: 50000,
-    taxPaid: 20000 // Overpaid
+    taxPaid: 20000 // Overpaid vs total burden
   });
-  assert(test6a.totals.refundOrOwing > 0, 'Income tax refund should be positive when income tax already paid exceeds estimated federal + provincial income tax');
+  assert(test6a.totals.refundOrOwing > 0, 'Tax refund should be positive when amounts already remitted exceed estimated total burden (income tax + CPP + EI)');
   
   const test6b = computePersonalTax({
     province: 'ON',
     employmentIncome: 50000,
-    taxPaid: 0 // No income tax paid yet
+    taxPaid: 0 // Nothing remitted yet toward income tax + CPP + EI
   });
-  assert(test6b.totals.refundOrOwing < 0, 'Income tax owing should be negative when no federal + provincial income tax has been entered as paid');
-  assertApprox(test6b.totals.refundOrOwing, -test6b.totals.totalIncomeTax, 0.02,
-    'With zero income tax paid, refundOrOwing should equal negative total income tax (federal + provincial only; excludes CPP and EI)');
+  assert(test6b.totals.refundOrOwing < 0, 'Balance owing should be negative when nothing has been entered as already remitted');
+  assertApprox(test6b.totals.refundOrOwing, -test6b.totals.totalBurden, 0.02,
+    'With zero remitted (taxPaid), refundOrOwing should equal negative totalBurden (income tax + CPP + EI)');
   console.log('');
 
   // Test 7: CPP calculation
@@ -216,3 +216,21 @@ export async function runTests() {
     failed: testsFailed
   };
 }
+
+(async () => {
+  if (typeof process === 'undefined' || !process.versions?.node || !process.argv[1]) return;
+  const path = await import('node:path');
+  const { fileURLToPath, pathToFileURL } = await import('node:url');
+  const __filename = fileURLToPath(import.meta.url);
+  if (path.resolve(process.argv[1]) !== path.resolve(__filename)) return;
+  const dataDir = path.join(path.dirname(__filename), '..', 'data');
+  const basePath = pathToFileURL(dataDir).href.replace(/\/$/, '');
+  try {
+    await loadTaxData(2025, { basePath });
+    const summary = await runTests();
+    process.exitCode = summary.failed > 0 ? 1 : 0;
+  } catch (err) {
+    console.error(err);
+    process.exitCode = 1;
+  }
+})();
