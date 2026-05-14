@@ -362,16 +362,16 @@ function renderResults(result) {
   if (refundOwing !== undefined && refundOwing !== null) {
     // Display: positive = refund, negative = balance owing (show absolute value for owing)
     if (refundOwing >= 0) {
-      refundOwingLabel.textContent = 'Refund';
+      refundOwingLabel.textContent = 'Income tax refund';
       refundOwingEl.textContent = formatCurrency(refundOwing);
       refundOwingResult.className = 'result refund';
     } else {
-      refundOwingLabel.textContent = 'Balance Owing';
+      refundOwingLabel.textContent = 'Income tax owing';
       refundOwingEl.textContent = formatCurrency(Math.abs(refundOwing));
       refundOwingResult.className = 'result owing';
     }
   } else {
-    refundOwingLabel.textContent = 'Balance Owing / Refund';
+    refundOwingLabel.textContent = 'Income tax balance';
     refundOwingEl.textContent = '$–';
     refundOwingResult.className = 'result';
   }
@@ -592,7 +592,7 @@ function clearResults() {
   document.getElementById('avgRate').textContent = '–%';
   document.getElementById('marginalRate').textContent = '–%';
   document.getElementById('refundOrOwing').textContent = '$–';
-  document.getElementById('refundOrOwingLabel').textContent = 'Balance Owing / Refund';
+  document.getElementById('refundOrOwingLabel').textContent = 'Income tax balance';
   const refundOwingResult = document.getElementById('refundOrOwingResult');
   if (refundOwingResult) {
     refundOwingResult.className = 'result';
@@ -655,7 +655,7 @@ function exportCsv() {
     'Take-Home Pay,' + (latestTotals.takeHomeAfterPayroll || 0),
     'Average Tax Rate,' + ((latestTotals.avgRate || 0) * 100).toFixed(3) + '%',
     'Marginal Tax Rate,' + ((latestTotals.marginalRate || 0) * 100).toFixed(3) + '%',
-    'Refund or Owing,' + (latestTotals.refundOrOwing || 0)
+    'Income tax balance (federal + prov/terr − paid; excl CPP/EI),' + (latestTotals.refundOrOwing || 0)
   ];
   const blob = new Blob([rows.join('\n') + '\n'], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);

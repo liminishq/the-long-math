@@ -115,9 +115,9 @@
         </div>
 
         <div class="field">
-          <label for="taxPaid">Already withheld / prepaid (vs Total Tax Burden)</label>
+          <label for="taxPaid">Income tax already paid (federal + provincial or territorial only)</label>
           <input type="text" id="taxPaid" placeholder="0" value="" inputmode="decimal">
-          <div class="helper" style="margin-top: 6px;">Enter the total you have already remitted toward the figures above — typically federal and provincial income tax withheld (for example T4 Box 22), plus employee CPP and EI if you want this balance to reconcile with Total Tax Burden (income tax + CPP + EI). If you enter income tax withholding only, the balance compares that amount to the full burden, so CPP and EI from the estimate are not treated as prepaid unless you include them.</div>
+          <div class="helper" style="margin-top: 6px;">Enter federal and provincial or territorial <strong>income tax</strong> you have already paid for this year—for example from pay stubs, T4 Box 22–style withholding, or instalments. <strong>Do not include CPP or EI</strong>; those are estimated separately and count only toward <strong>Total tax burden</strong>. Do not enter RRSP/FHSA amounts here (those are deductions above, not tax paid).</div>
         </div>
 
         <div style="margin-top: 20px; padding: 14px; border: 1px solid rgba(217,180,106,.35); border-radius: 12px; background: linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,.04));">
@@ -164,9 +164,9 @@
           </div>
 
           <div class="result" id="refundOrOwingResult">
-            <p class="k" id="refundOrOwingLabel">Balance Owing / Refund</p>
+            <p class="k" id="refundOrOwingLabel">Income tax balance</p>
             <p class="v" id="refundOrOwing">$–</p>
-            <p class="subl">Total Tax Burden minus “Already withheld / prepaid” (see inputs)</p>
+            <p class="subl">Federal + provincial/territorial income tax minus income tax already paid (input above). Excludes CPP and EI; see Total tax burden for all statutory deductions.</p>
           </div>
 
           <div class="result">

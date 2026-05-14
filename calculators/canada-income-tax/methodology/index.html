@@ -66,7 +66,7 @@
         <li>R<sub>RRSP</sub> = RRSP deduction claimed this year</li>
         <li>R<sub>FHSA</sub> = FHSA contribution deduction claimed this year</li>
         <li>D<sub>est</sub> = other estimated deductions (user-entered)</li>
-        <li>T<sub>paid</sub> = income tax already paid / withheld</li>
+        <li>T<sub>paid</sub> = federal + provincial/territorial income tax already paid for the year (withholding or instalments); excludes CPP and EI</li>
         <li>CPP = Canada Pension Plan contributions (employee)</li>
         <li>EI = Employment Insurance premiums (employee)</li>
         <li>YMPE = Year’s Maximum Pensionable Earnings (base CPP)</li>
@@ -95,6 +95,7 @@
         <li>Tax<sub>prov</sub> = net provincial/territorial income tax</li>
         <li>Tax<sub>total</sub> = total income tax (federal + provincial)</li>
         <li>Burden<sub>total</sub> = Tax<sub>total</sub> + CPP + EI (total tax burden)</li>
+        <li>R<sub>IT</sub> = income tax balance (refund if positive, owing if negative)</li>
         <li>Income<sub>gross</sub> = total cash income before tax</li>
         <li>ATI = after-tax income (take-home pay after income tax + CPP + EI)</li>
       </ul>
@@ -232,12 +233,12 @@
       <div class="formula-block">
         ATI = Income<sub>gross</sub> − Tax<sub>total</sub> − CPP − EI
       </div>
-      <p>Refund or balance owing (matches the calculator results panel; signed value):</p>
+      <p>Income tax balance (matches the second prominent result card; signed value; CPP and EI are not part of this reconciliation):</p>
       <div class="formula-block">
-        R = T<sub>paid</sub> − Burden<sub>total</sub> = T<sub>paid</sub> − (Tax<sub>total</sub> + CPP + EI)
+        R<sub>IT</sub> = T<sub>paid</sub> − Tax<sub>total</sub>
       </div>
       <p class="formula-meta">
-        R &gt; 0 is shown as a refund; R &lt; 0 is shown as balance owing (absolute value). T<sub>paid</sub> is the “Already withheld / prepaid” input. Include CPP and EI remitted if you want R to reconcile with Total Tax Burden; income-tax withholding alone reconciles only to Tax<sub>total</sub>.
+        R<sub>IT</sub> &gt; 0 is shown as an income tax refund; R<sub>IT</sub> &lt; 0 is shown as income tax owing (absolute value in the UI). T<sub>paid</sub> is the “Income tax already paid (federal + provincial or territorial only)” input. CPP and EI appear only in Burden<sub>total</sub> and take-home pay, not in R<sub>IT</sub>.
       </p>
 
       <h3 id="rates">6. Average and Marginal Tax Rates</h3>
