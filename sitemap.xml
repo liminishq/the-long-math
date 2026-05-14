@@ -169,6 +169,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.thelongmath.com/articles/investing-and-financial-literacy/what-is-an-resp/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.thelongmath.com/articles/investing-and-financial-literacy/norberts-gambit/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -565,6 +570,11 @@
   </url>
   <url>
     <loc>https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/what-is-an-rrsp/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/what-is-an-resp/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

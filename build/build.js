@@ -72,6 +72,7 @@ const ARTICLE_SLUGS = [
   "what-is-a-stock",
   "what-is-a-tfsa",
   "what-is-an-fhsa",
+  "what-is-an-resp",
   "what-is-an-rrsp",
   "what-is-investing",
   "what-is-the-stock-market",
