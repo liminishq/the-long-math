@@ -3,7 +3,7 @@
   "private": true,
   "description": "Static site with build-time i18n generation",
   "scripts": {
-    "build": "node build/build.js",
+    "build": "node build/build.js && node tools/verify-article-hub-and-dist-assets.cjs",
     "test": "node --test tests/canada-personal-income-tax.golden.test.mjs calculators/ccpc-tax/tests/ccpc-bridge.test.mjs tests/ccpc-corporate-income-tax.golden.test.mjs tests/mortgage.golden.test.mjs tests/advisor-fee.golden.test.mjs tests/fee-math.golden.test.mjs"
   },
   "devDependencies": {

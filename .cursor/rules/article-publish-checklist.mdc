@@ -1,0 +1,16 @@
+---
+description: New investing-hub articles — hub links and dist assets must pass verify
+globs: build/build.js,assets/i18n/**/articles/investing-and-financial-literacy-index.json,assets/i18n/**/articles/*.json
+alwaysApply: false
+---
+
+# New article under Investing and Financial Literacy
+
+When adding a slug to `ARTICLE_SLUGS` in `build/build.js`:
+
+1. Add EN and FR article JSON under `assets/i18n/{en,fr}/articles/{slug}.json`.
+2. Add a visible hub card in **`hubMainHtml`** in **both** `assets/i18n/en/articles/investing-and-financial-literacy-index.json` and `assets/i18n/fr/articles/investing-and-financial-literacy-index.json` — link must include `/articles/investing-and-financial-literacy/{slug}/`.
+3. Run **`npm run build`**. It runs `tools/verify-article-hub-and-dist-assets.cjs` and **fails** if any slug is missing from either hub or if `dist/**/*.html` references a missing file under `dist/assets/`.
+4. If the build emits new hashed files under `dist/assets/css/` or `dist/assets/js/` that are not yet tracked, commit them with **`git add -f …`** (most of `dist/` is gitignored).
+
+Do not push a green local build that was never run: the verify step is what catches missing hub rows and missing fingerprinted bundles for Cloudflare Pages.
