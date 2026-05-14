@@ -659,7 +659,7 @@ function runFullCalculation(input, dataCtx, runOpts = {}) {
  *   - capitalGains: capital gains
  *   - rrspDeduction: RRSP deduction
  *   - fhsaDeduction: FHSA deduction
- *   - taxPaid: tax already paid
+ *   - taxPaid: amounts already withheld/prepaid toward this estimate (for consistency with Total Tax Burden, include federal+provincial income tax withheld plus employee CPP and EI if applicable)
  * @param {Object} data - Pre-loaded tax data (optional, will load if not provided)
  * @returns {Object} Complete tax calculation result
  */
@@ -709,7 +709,8 @@ export function computePersonalTax(input, opts = {}) {
   const marginalRates = computeMarginalRatesByType(normalizedInput, dataCtx);
   const marginalRate = marginalRates.combined;
 
-  const refundOrOwing = taxPaid - totalIncomeTax;
+  // Align with displayed Total Tax Burden (income tax + CPP + EI).
+  const refundOrOwing = taxPaid - totalBurden;
 
   if (opts?.validationMode) {
     const isOnDividendTestCase =

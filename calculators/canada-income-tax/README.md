@@ -75,7 +75,7 @@ longmath-tax-canada-2025/
 - **Take-Home After Payroll**: Income - income tax - CPP - EI
 - **Average Tax Rate**: Total income tax / total income
 - **Marginal Tax Rate**: Combined federal + provincial marginal rate
-- **Refund / Balance Owing**: Tax paid - total income tax (positive = refund, negative = owing)
+- **Refund / Balance Owing**: Amounts already withheld/prepaid minus **Total Tax Burden** (positive = refund, negative = owing). The input should include CPP/EI remitted if you want this line to match the burden total; income-tax-only withholding compares to federal + provincial only.
 
 ### Show the Math
 

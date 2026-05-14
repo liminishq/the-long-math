@@ -127,14 +127,16 @@ export async function runTests() {
     employmentIncome: 50000,
     taxPaid: 20000 // Overpaid
   });
-  assert(test6a.totals.refundOrOwing > 0, 'Refund should be positive when tax paid exceeds tax owed');
+  assert(test6a.totals.refundOrOwing > 0, 'Refund should be positive when prepaid exceeds total tax burden');
   
   const test6b = computePersonalTax({
     province: 'ON',
     employmentIncome: 50000,
     taxPaid: 0 // Underpaid
   });
-  assert(test6b.totals.refundOrOwing < 0, 'Balance owing should be negative when tax paid is less than tax owed');
+  assert(test6b.totals.refundOrOwing < 0, 'Balance owing should be negative when prepaid is less than total tax burden');
+  assertApprox(test6b.totals.refundOrOwing, -test6b.totals.totalBurden, 0.02,
+    'With zero prepaid, refundOrOwing should equal negative total burden (income tax + CPP + EI)');
   console.log('');
 
   // Test 7: CPP calculation
