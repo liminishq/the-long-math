@@ -270,17 +270,19 @@
         <!-- COLUMN 2: Extra Cash, Investing, Time Horizon, Slider -->
         <article class="panel">
           <h2 class="section-title">Extra vs. invest (choose one)</h2>
-          <div class="field">
-            <div class="display-mode-heading" id="extra_cash_mode_heading">Compare using:</div>
-            <div class="display-mode-options" role="radiogroup" aria-labelledby="extra_cash_mode_heading">
-              <label class="display-mode-row" for="extra_mode_monthly">
-                <input type="radio" name="extra_cash_mode" id="extra_mode_monthly" value="monthly" checked />
-                <span>Monthly extra cash</span>
-              </label>
-              <label class="display-mode-row" for="extra_mode_lump">
-                <input type="radio" name="extra_cash_mode" id="extra_mode_lump" value="lump" />
-                <span>Lump sum at start (month 1)</span>
-              </label>
+          <div class="field extra-cash-mode-field">
+            <div class="extra-cash-mode-row">
+              <div class="extra-cash-mode-heading" id="extra_cash_mode_heading">Compare using:</div>
+              <div class="extra-cash-mode-options" role="radiogroup" aria-labelledby="extra_cash_mode_heading">
+                <label class="extra-cash-mode-option" for="extra_mode_monthly">
+                  <input type="radio" name="extra_cash_mode" id="extra_mode_monthly" value="monthly" checked />
+                  <span>Monthly extra cash</span>
+                </label>
+                <label class="extra-cash-mode-option" for="extra_mode_lump">
+                  <input type="radio" name="extra_cash_mode" id="extra_mode_lump" value="lump" />
+                  <span>Lump sum at start (month 1)</span>
+                </label>
+              </div>
             </div>
             <p class="help muted">Pick one: recurring monthly extra <em>or</em> a single lump at the beginning — not both.</p>
           </div>

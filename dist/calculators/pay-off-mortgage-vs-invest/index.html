@@ -9,8 +9,8 @@
 
   <!-- Site-wide theme + styles -->
   <script src="/assets/js/theme-init.40fc21015f.js"></script>
-  <link rel="stylesheet" href="/assets/css/styles.ec87251a1b.css" />
-  <script defer src="/assets/js/site.92f151cf7c.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.c9290d974d.css" />
+  <script defer src="/assets/js/site.a2a4a003f9.js"></script>
   
   <!-- Calculator-specific styles -->
   <link rel="stylesheet" href="/calculators/pay-off-mortgage-vs-invest/styles.css" />
@@ -112,12 +112,12 @@
     <header>
       <h1>Pay Off Mortgage vs. Invest (Cash-Flow Neutral) Calculator</h1>
       <p class="lead">
-        Compare the net worth effects of using the same monthly cash to pay down your mortgage faster vs. investing
+        Compare net worth when extra money goes to your mortgage versus investments — either as recurring monthly extra cash or as a lump sum split once at the start.
       </p>
 
       <div class="intro-text">
         <p>This calculator compares two strategies under a strict cash-flow-neutral rule.</p>
-        <p>Both paths spend the same amount of money every month; only the allocation differs.</p>
+        <p>In <strong>monthly extra cash</strong> mode, both paths spend the same amount every month; only the allocation of that extra differs. In <strong>lump sum at start</strong> mode, a one-time amount is split at the beginning; thereafter only the regular mortgage payment repeats until payoff (then the full prior monthly budget is invested, matching the payoff rule in monthly mode).</p>
         <p>The results show arithmetic under your assumptions.</p>
       </div>
     </header>
@@ -269,24 +269,57 @@
 
         <!-- COLUMN 2: Extra Cash, Investing, Time Horizon, Slider -->
         <article class="panel">
-          <h2 class="section-title">Monthly budget</h2>
-          <div class="field">
-            <label for="monthly_budget">Monthly budget ($)</label>
-            <input id="monthly_budget" type="number" inputmode="decimal" min="0" step="10" value="" />
-            <p class="help muted">
-              Your total monthly budget. This equals your mortgage payment plus extra cash available.
-            </p>
+          <h2 class="section-title">Extra vs. invest (choose one)</h2>
+          <div class="field extra-cash-mode-field">
+            <div class="extra-cash-mode-row">
+              <div class="extra-cash-mode-heading" id="extra_cash_mode_heading">Compare using:</div>
+              <div class="extra-cash-mode-options" role="radiogroup" aria-labelledby="extra_cash_mode_heading">
+                <label class="extra-cash-mode-option" for="extra_mode_monthly">
+                  <input type="radio" name="extra_cash_mode" id="extra_mode_monthly" value="monthly" checked />
+                  <span>Monthly extra cash</span>
+                </label>
+                <label class="extra-cash-mode-option" for="extra_mode_lump">
+                  <input type="radio" name="extra_cash_mode" id="extra_mode_lump" value="lump" />
+                  <span>Lump sum at start (month 1)</span>
+                </label>
+              </div>
+            </div>
+            <p class="help muted">Pick one: recurring monthly extra <em>or</em> a single lump at the beginning — not both.</p>
           </div>
 
           <hr class="sep" />
 
-          <h2 class="section-title">Extra cash available</h2>
-          <div class="field">
-            <label for="extra_cash">Extra cash available per month ($)</label>
-            <input id="extra_cash" type="number" inputmode="decimal" min="0" step="10" value="500" />
-            <p class="help muted">
-              This amount is allocated between mortgage paydown and investing based on the slider setting.
-            </p>
+          <div id="monthly_extra_wrap">
+            <h2 class="section-title">Monthly budget</h2>
+            <div class="field">
+              <label for="monthly_budget">Monthly budget ($)</label>
+              <input id="monthly_budget" type="number" inputmode="decimal" min="0" step="10" value="" />
+              <p class="help muted">
+                Your total monthly budget. This equals your mortgage payment plus extra cash available.
+              </p>
+            </div>
+
+            <hr class="sep" />
+
+            <h2 class="section-title">Extra cash available</h2>
+            <div class="field">
+              <label for="extra_cash">Extra cash available per month ($)</label>
+              <input id="extra_cash" type="number" inputmode="decimal" min="0" step="10" value="500" />
+              <p class="help muted">
+                This amount is allocated between mortgage paydown and investing based on the slider setting.
+              </p>
+            </div>
+          </div>
+
+          <div id="lump_sum_wrap" class="hidden">
+            <h2 class="section-title">Lump sum</h2>
+            <div class="field">
+              <label for="lump_sum">Lump sum at start ($)</label>
+              <input id="lump_sum" type="number" inputmode="decimal" min="0" step="1000" value="60000" />
+              <p class="help muted">
+                Applied at the very beginning of the analysis (start of month 1), before the first scheduled mortgage payment. The slider splits this amount between extra mortgage principal and the portfolio.
+              </p>
+            </div>
           </div>
 
           <hr class="sep" />
@@ -320,7 +353,7 @@
           <hr class="sep" />
 
           <div class="field">
-            <label for="allocation_slider">Allocation: Extra cash to mortgage vs. investing</label>
+            <label for="allocation_slider" id="allocation_slider_label">Allocation: extra cash to mortgage vs. investing</label>
             <div class="slider-container">
               <div class="slider-labels">
                 <span>100% Mortgage</span>
@@ -329,7 +362,7 @@
               </div>
               <input id="allocation_slider" type="range" min="0" max="100" step="1" value="50" />
             </div>
-            <p class="help muted">
+            <p class="help muted" id="allocation_slider_help">
               The slider controls how your extra cash is allocated. Your regular mortgage payment always goes to the mortgage until it's paid off.
             </p>
           </div>
@@ -424,14 +457,14 @@
       <h2>Key facts</h2>
       <div class="key-facts">
         <div class="fact-row">
-          <p class="fact-text">If 100% of extra cash allocated to paying off mortgage faster, net worth is <strong class="fact-value" id="fact_100_mortgage">$—</strong> after <strong id="fact_horizon_1">—</strong> years.</p>
+          <p class="fact-text"><span id="kf_if_all_extra_mortgage">If 100% of extra cash allocated to paying off mortgage faster</span>, net worth is <strong class="fact-value" id="fact_100_mortgage">$—</strong> after <strong id="fact_horizon_1">—</strong> years.</p>
         </div>
         <div class="fact-row" style="margin-top: 12px;">
-          <p class="fact-text">If 100% of extra cash allocated to investing, net worth is <strong class="fact-value" id="fact_100_invest">$—</strong> after <strong id="fact_horizon_2">—</strong> years.</p>
+          <p class="fact-text"><span id="kf_if_all_extra_invest">If 100% of extra cash allocated to investing</span>, net worth is <strong class="fact-value" id="fact_100_invest">$—</strong> after <strong id="fact_horizon_2">—</strong> years.</p>
         </div>
           <div class="fact-row" style="margin-top: 12px;">
             <p class="fact-text" id="fact_payoff_allocation_block">
-              If <strong class="fact-value" id="fact_extra_cash_to_mortgage_pct">—</strong>% of extra monthly cash is allocated to mortgage payments, <span id="fact_payoff_allocation_detail"></span>
+              <span id="fact_payoff_allocation_prefix">If <strong class="fact-value" id="fact_extra_cash_to_mortgage_pct">—</strong>% of extra monthly cash is allocated to mortgage payments, </span><span id="fact_payoff_allocation_detail"></span>
             </p>
           </div>
         <div class="fact-row" style="margin-top: 12px;">
@@ -446,7 +479,8 @@
     <!-- Cash-flow-neutral rule section -->
     <section class="card" style="margin-top: 16px;">
       <h2>Cash-flow-neutral rule</h2>
-      <p>This calculator enforces identical monthly cash outflows in both strategies.</p>
+      <p>This calculator enforces identical monthly cash outflows in both strategies (for the recurring mortgage payment and, in monthly mode, the same total monthly budget).</p>
+      <p id="cash_flow_lump_note" class="hidden help muted" style="margin: 0 0 12px;">In lump-sum mode, the one-time amount is the only discretionary cash beyond the regular payment at the start; the slider splits that lump. Afterward, both paths keep the same scheduled payment until payoff.</p>
       <ul>
         <li>While a mortgage exists, cash is allocated between mortgage payments and investing.</li>
         <li>Once a mortgage is paid off, the full monthly budget is invested.</li>
