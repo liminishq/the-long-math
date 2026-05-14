@@ -265,19 +265,37 @@ function normalizeAndValidateDividends(data) {
  * Load all tax data files for a given year, with validation and normalization.
  * @param {number} year
  * @param {Object} [opts]
- * @param {string} [opts.basePath] - path prefix, default "data"
+ * @param {string} [opts.basePath] - path prefix, default "data" (browser fetch)
+ * @param {string} [opts.fsDataRoot] - absolute directory containing `{year}/` JSON files (Node tests; uses fs reads)
  * @returns {Promise<Object>}
  */
 export async function loadTaxData(year, opts = {}) {
   const basePath = opts.basePath || DEFAULT_BASE_PATH;
 
   try {
-    const [federal, provincesRaw, payroll, dividendsRaw] = await Promise.all([
-      fetch(`${basePath}/${year}/federal.json`).then(r => r.json()),
-      fetch(`${basePath}/${year}/provinces.json`).then(r => r.json()),
-      fetch(`${basePath}/${year}/payroll.json`).then(r => r.json()),
-      fetch(`${basePath}/${year}/dividends.json`).then(r => r.json()),
-    ]);
+    let federal;
+    let provincesRaw;
+    let payroll;
+    let dividendsRaw;
+
+    if (opts.fsDataRoot) {
+      const fs = await import("node:fs/promises");
+      const path = await import("node:path");
+      const dir = path.join(opts.fsDataRoot, String(year));
+      [federal, provincesRaw, payroll, dividendsRaw] = await Promise.all([
+        fs.readFile(path.join(dir, "federal.json"), "utf8").then(JSON.parse),
+        fs.readFile(path.join(dir, "provinces.json"), "utf8").then(JSON.parse),
+        fs.readFile(path.join(dir, "payroll.json"), "utf8").then(JSON.parse),
+        fs.readFile(path.join(dir, "dividends.json"), "utf8").then(JSON.parse),
+      ]);
+    } else {
+      [federal, provincesRaw, payroll, dividendsRaw] = await Promise.all([
+        fetch(`${basePath}/${year}/federal.json`).then((r) => r.json()),
+        fetch(`${basePath}/${year}/provinces.json`).then((r) => r.json()),
+        fetch(`${basePath}/${year}/payroll.json`).then((r) => r.json()),
+        fetch(`${basePath}/${year}/dividends.json`).then((r) => r.json()),
+      ]);
+    }
 
     validateFederal(federal);
     const provincesNormalized = normalizeAndValidateProvinces(provincesRaw);

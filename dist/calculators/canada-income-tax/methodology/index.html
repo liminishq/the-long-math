@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspectable Arithmetic – Canada Personal Income Tax Calculator | The Long Math</title>
+  <meta name="description" content="Formulae, computational structure, and assumptions for the Canada Personal Income Tax Calculator (2025)." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/canada-income-tax/methodology/" />
+
+  <script src="/assets/js/theme-init.40fc21015f.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.c9290d974d.css" />
+  <script defer src="/assets/js/site.a2a4a003f9.js"></script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <h1>Inspectable Arithmetic for the Canada Personal Income Tax Calculator</h1>
+      <p class="methodology-meta">Version 1.1<br>Last verified: May 2026</p>
+
+      <p>
+        Transparent arithmetic is the operating system of this calculator.
+      </p>
+      <p>
+        This document publishes the formulae, computational structure, and assumptions used to generate the outputs displayed on the calculator page.
+      </p>
+      <p>
+        No opinions. No hidden assumptions. Just arithmetic.
+      </p>
+
+      <h2>Purpose</h2>
+      <p>
+        This calculator estimates combined federal and provincial/territorial personal income tax for the 2025 tax year in Canada. It models regular income,
+        common investment income types, registered-account deductions, and payroll contributions, then reports total income tax, CPP/EI, average and marginal
+        tax rates, and take-home pay by province or territory.
+      </p>
+
+      <h2>Definitions</h2>
+      <p>Let:</p>
+      <ul>
+        <li>Y = tax year (currently 2025)</li>
+        <li>P = province or territory of residence for tax purposes</li>
+        <li>E = employment income</li>
+        <li>S = self-employment (business) income</li>
+        <li>O = other income (e.g., interest, rental, pension not modeled elsewhere)</li>
+        <li>D<sub>elig</sub> = eligible Canadian dividends (cash amount)</li>
+        <li>D<sub>ne</sub> = non-eligible Canadian dividends (cash amount)</li>
+        <li>g<sub>elig</sub> = gross-up rate for eligible dividends (e.g., 1.38)</li>
+        <li>g<sub>ne</sub> = gross-up rate for non-eligible dividends (e.g., 1.15)</li>
+        <li>D<sub>elig,gross</sub> = grossed-up eligible dividends</li>
+        <li>D<sub>ne,gross</sub> = grossed-up non-eligible dividends</li>
+        <li>G = capital gains (cash amount)</li>
+        <li>r<sub>cg</sub> = capital gains inclusion rate (0.50 for 2025)</li>
+        <li>G<sub>taxable</sub> = taxable capital gains</li>
+        <li>R<sub>RRSP</sub> = RRSP deduction claimed this year</li>
+        <li>R<sub>FHSA</sub> = FHSA contribution deduction claimed this year</li>
+        <li>D<sub>est</sub> = other estimated deductions (user-entered)</li>
+        <li>T<sub>paid</sub> = federal + provincial/territorial <strong>income tax</strong> already paid, plus <strong>employee CPP</strong> and <strong>employee EI</strong> already paid for the year (same categories as Burden<sub>total</sub>; from slips, pay stub YTDs, or instalments)</li>
+        <li>CPP = Canada Pension Plan contributions (employee)</li>
+        <li>EI = Employment Insurance premiums (employee)</li>
+        <li>YMPE = Year’s Maximum Pensionable Earnings (base CPP)</li>
+        <li>YAMPE = Year’s Additional Maximum Pensionable Earnings (upper bound for CPP2)</li>
+        <li>BasicExemption = CPP basic exemption amount</li>
+        <li>r<sub>CPP</sub> = base CPP contribution rate</li>
+        <li>MaxCPP1 = maximum base CPP contribution</li>
+        <li>r<sub>CPP2</sub> = additional CPP (CPP2) contribution rate</li>
+        <li>MaxCPP2 = maximum additional CPP contribution</li>
+        <li>MaxInsurableEarnings = maximum EI insurable earnings</li>
+        <li>r<sub>EI</sub> = EI contribution rate</li>
+        <li>MaxEI = maximum EI premium</li>
+        <li>TI = taxable income</li>
+        <li>BPA<sub>fed</sub> = federal Basic Personal Amount</li>
+        <li>CEA = federal Canada Employment Amount</li>
+        <li>c<sub>fed</sub> = federal non-refundable credit rate (lowest federal bracket rate)</li>
+        <li>r<sub>CPP/EI,cred</sub> = CPP/EI credit rate (lowest federal tax bracket rate; 15% for 2025)</li>
+        <li>DTC<sub>elig,fed</sub>, DTC<sub>ne,fed</sub> = federal dividend tax credits for eligible and non-eligible dividends</li>
+        <li>DTC<sub>fed</sub> = total federal dividend tax credit</li>
+        <li>BPA<sub>prov</sub> = provincial/territorial Basic Personal Amount</li>
+        <li>c<sub>prov</sub> = provincial non-refundable credit rate (configured or lowest provincial bracket rate)</li>
+        <li>DTC<sub>prov</sub> = provincial dividend tax credit</li>
+        <li>Surtax<sub>prov</sub> = provincial/territorial surtax</li>
+        <li>Premiums<sub>prov</sub> = additional provincial premiums (if any)</li>
+        <li>Tax<sub>fed</sub> = net federal income tax</li>
+        <li>Tax<sub>prov</sub> = net provincial/territorial income tax</li>
+        <li>Tax<sub>total</sub> = total income tax (federal + provincial)</li>
+        <li>Burden<sub>total</sub> = Tax<sub>total</sub> + CPP + EI (total tax burden)</li>
+        <li>R = remittance balance vs total burden: refund if positive, owing if negative; R = T<sub>paid</sub> − Burden<sub>total</sub></li>
+        <li>Income<sub>gross</sub> = total cash income before tax</li>
+        <li>ATI = after-tax income (take-home pay after income tax + CPP + EI)</li>
+      </ul>
+
+      <h2>Core Equations</h2>
+
+      <h3 id="taxable-income">1. Taxable Income</h3>
+      <p>Dividend gross-up uses CRA-style rates from the internal <code>dividends.json</code> data file. Grossed-up dividends:</p>
+      <div class="formula-block">
+        D<sub>elig,gross</sub> = D<sub>elig</sub> × g<sub>elig</sub><br>
+        D<sub>ne,gross</sub> = D<sub>ne</sub> × g<sub>ne</sub>
+      </div>
+      <p>Taxable capital gains:</p>
+      <div class="formula-block">
+        G<sub>taxable</sub> = G × r<sub>cg</sub>
+      </div>
+      <p>Taxable income TI:</p>
+      <div class="formula-block">
+        TI = max(0,
+        E + S + O + D<sub>elig,gross</sub> + D<sub>ne,gross</sub> + G<sub>taxable</sub> − R<sub>RRSP</sub> − R<sub>FHSA</sub> − D<sub>est</sub>)
+      </div>
+      <p class="formula-meta">
+        RRSP and FHSA are treated purely as deductions against income for the current year; contribution room, over-contribution penalties, and carry-forward rules are not modeled.
+      </p>
+
+      <h3 id="federal-tax">2. Federal Tax</h3>
+      <p>
+        Federal tax is computed using a standard bracket-and-credit structure derived from CRA parameters for 2025 (stored in <code>federal.json</code>).
+      </p>
+      <p>Step 1 — bracket tax on TI:</p>
+      <div class="formula-block">
+        BaseTax<sub>fed</sub> = Σ<sub>brackets</sub> (income in bracket × rate)<br>
+        (rounded to the nearest dollar per bracket)
+      </div>
+      <p>Step 2 — non-refundable credits (Schedule 1 style):</p>
+      <ul>
+        <li>Basic Personal Amount: BPA<sub>fed</sub> × c<sub>fed</sub></li>
+        <li>Canada Employment Amount (if E &gt; 0): CEA × c<sub>fed</sub></li>
+        <li>CPP/EI credit: (CPP + EI) × r<sub>CPP/EI,cred</sub></li>
+      </ul>
+      <div class="formula-block">
+        Credits<sub>fed</sub> = BPA<sub>fed</sub> × c<sub>fed</sub> + [CEA × c<sub>fed</sub> if E &gt; 0] + (CPP + EI) × r<sub>CPP/EI,cred</sub><br>
+        TaxAfterCredits<sub>fed</sub> = max(0, BaseTax<sub>fed</sub> − Credits<sub>fed</sub>)
+      </div>
+      <p>Step 3 — federal dividend tax credit (DTC):</p>
+      <p>
+        For each dividend type (eligible, non-eligible), the calculator computes a dividend tax credit using an explicit
+        schema (base and rate) from <code>dividends.json</code>. The arithmetic is:
+      </p>
+      <div class="formula-block">
+        DTC<sub>elig,fed</sub> = D<sub>elig,gross</sub> × r<sub>DTC,elig,fed</sub><br>
+        DTC<sub>ne,fed</sub> = D<sub>ne,gross</sub> × r<sub>DTC,ne,fed</sub><br>
+        DTC<sub>fed</sub> = DTC<sub>elig,fed</sub> + DTC<sub>ne,fed</sub><br>
+        TaxAfterDTC<sub>fed</sub> = max(0, TaxAfterCredits<sub>fed</sub> − DTC<sub>fed</sub>)
+      </div>
+      <p>Step 4 — minimum tax adjustments (not modeled in 2025 engine):</p>
+      <div class="formula-block">
+        Tax<sub>fed</sub> = TaxAfterDTC<sub>fed</sub>
+      </div>
+
+      <h3 id="provincial-tax">3. Provincial / Territorial Tax</h3>
+      <p>
+        Provincial / territorial tax uses the same taxable income TI but parameters from the selected province or territory in <code>provinces.json</code>.
+        Two flows exist: a generic flow for most provinces and an Ontario-specific flow that mirrors ON428 ordering and arithmetic.
+      </p>
+
+      <h4 id="provincial-generic">3.1 Generic provinces</h4>
+      <p>For provinces and territories other than Ontario:</p>
+      <ol>
+        <li>Compute base bracket tax on TI using province-specific brackets and rates.</li>
+        <li>Subtract non-refundable credits (e.g., provincial Basic Personal Amount, using the configured credit rate or the lowest bracket rate).</li>
+        <li>Apply surtaxes, if any, to tax after credits.</li>
+        <li>Apply provincial dividend tax credit.</li>
+        <li>Apply provincial reductions or premiums (if configured).</li>
+      </ol>
+      <div class="formula-block">
+        BaseTax<sub>prov</sub> = Σ(income in bracket × rate)<br>
+        Credits<sub>prov</sub> = BPA<sub>prov</sub> × c<sub>prov</sub> (and other credits, if configured)<br>
+        TaxAfterCredits<sub>prov</sub> = max(0, BaseTax<sub>prov</sub> − Credits<sub>prov</sub>)<br>
+        TaxAfterSurtax<sub>prov</sub> = TaxAfterCredits<sub>prov</sub> + Surtax<sub>prov</sub><br>
+        TaxAfterDTC<sub>prov</sub> = max(0, TaxAfterSurtax<sub>prov</sub> − DTC<sub>prov</sub>)<br>
+        Tax<sub>prov</sub> = TaxAfterDTC<sub>prov</sub> + Premiums<sub>prov</sub>
+      </div>
+
+      <h4 id="provincial-ontario">3.2 Ontario-specific flow</h4>
+      <p>Ontario follows ON428 ordering exactly:</p>
+      <ol>
+        <li>Compute base bracket tax on TI.</li>
+        <li>Subtract Ontario non-refundable credits (Basic Personal Amount, etc.).</li>
+        <li>Compute surtax on tax after credits (with two tiers).</li>
+        <li>Add surtax.</li>
+        <li>Subtract Ontario dividend tax credit.</li>
+        <li>Add Ontario Health Premium based on TI.</li>
+      </ol>
+      <div class="formula-block">
+        Tax<sub>ON</sub> = max(0, TaxAfterCredits<sub>ON</sub> + Surtax<sub>ON</sub> − DTC<sub>ON</sub>) + OHP
+      </div>
+
+      <h3 id="payroll">4. CPP and EI</h3>
+      <p>CPP is split into base CPP (CPP1) and additional CPP (CPP2) for 2025.</p>
+      <p>CPP1 (base CPP):</p>
+      <div class="formula-block">
+        Pensionable = max(0, min(E, YMPE) − BasicExemption)<br>
+        CPP1 = min(Pensionable × r<sub>CPP</sub>, MaxCPP1)
+      </div>
+      <p>CPP2 (additional CPP on earnings above YMPE):</p>
+      <div class="formula-block">
+        AdditionalEarnings = max(0, min(E, YAMPE) − YMPE)<br>
+        CPP2 = min(AdditionalEarnings × r<sub>CPP2</sub>, MaxCPP2)
+      </div>
+      <p>Total CPP:</p>
+      <div class="formula-block">
+        CPP = CPP1 + CPP2
+      </div>
+      <p>EI:</p>
+      <div class="formula-block">
+        Insurable = min(E, MaxInsurableEarnings)<br>
+        EI = min(Insurable × r<sub>EI</sub>, MaxEI)
+      </div>
+
+      <h3 id="total-tax">5. Total Tax, Burden, and Take-Home Pay</h3>
+      <p>Total income tax (federal plus provincial or territorial), before remittance reconciliation:</p>
+      <div class="formula-block">
+        Tax<sub>total</sub> = Tax<sub>fed</sub> + Tax<sub>prov</sub>
+      </div>
+      <p>Total tax burden including payroll contributions:</p>
+      <div class="formula-block">
+        Burden<sub>total</sub> = Tax<sub>total</sub> + CPP + EI
+      </div>
+      <p>Total income before tax (cash income, including full capital gains amounts before inclusion):</p>
+      <div class="formula-block">
+        Income<sub>gross</sub> = E + S + O + D<sub>elig</sub> + D<sub>ne</sub> + G
+      </div>
+      <p>Take-home pay after income tax and payroll:</p>
+      <div class="formula-block">
+        ATI = Income<sub>gross</sub> − Tax<sub>total</sub> − CPP − EI
+      </div>
+      <p>Remittance balance vs total burden (matches the result card; signed value):</p>
+      <div class="formula-block">
+        R = T<sub>paid</sub> − Burden<sub>total</sub>
+      </div>
+      <p class="formula-meta">
+        R &gt; 0 is shown as <strong>Tax refund</strong>; R &lt; 0 is shown as <strong>Balance owing</strong> (absolute value in the UI). T<sub>paid</sub> is the user’s total of income tax (federal + provincial or territorial) plus employee CPP plus employee EI already remitted—the same scope as Burden<sub>total</sub>.
+      </p>
+
+      <h3 id="rates">6. Average and Marginal Tax Rates</h3>
+      <p>Average tax rate (displayed as a percentage):</p>
+      <div class="formula-block">
+        AvgRate = Tax<sub>total</sub> ÷ Income<sub>gross</sub>
+      </div>
+      <p class="formula-meta">
+        Income<sub>gross</sub> reflects cash income (including the full capital gain amount before inclusion), not taxable income TI, so the displayed
+        average rate may differ from CRA-style average rates that use taxable income as the denominator.
+      </p>
+      <p>Marginal tax rate is computed using a $1 perturbation:</p>
+      <ol>
+        <li>Compute baseline: Tax<sub>baseline</sub> = Tax<sub>total</sub>(inputs).</li>
+        <li>Choose an active income type (employment, then dividends, other income, or capital gains) based on which fields are non-zero.</li>
+        <li>Add $1 to that income type and recompute tax.</li>
+      </ol>
+      <div class="formula-block">
+        MarginalRate = Tax<sub>total</sub>(inputs with +$1 of chosen income) − Tax<sub>baseline</sub>
+      </div>
+      <p class="formula-meta">
+        The engine uses unrounded bracket tax (no per-bracket rounding) for the marginal-rate perturbation, so the $1 change is not lost to rounding.
+        If the combined marginal rate falls outside 0–100%, the calculator falls back to the first in-bounds marginal rate for an active income type.
+      </p>
+
+      <h2>Assumptions and Limitations</h2>
+      <ol>
+        <li>Tax year is fixed at 2025; only provinces and territories supported by the underlying data files are available.</li>
+        <li>RRSP and FHSA inputs are treated strictly as deductions; contribution room, over-contribution penalties, and carry-forward rules are out of scope.</li>
+        <li>Only common non-refundable credits are modeled (federal BPA, Canada Employment Amount, CPP/EI credit, provincial BPAs, selected credits encoded in data files).</li>
+        <li>Additional credits and deductions (medical expenses, tuition, donations, prior-year loss carryforwards, etc.) are not modeled individually; they can be approximated via the “Estimated Additional Deductions” field.</li>
+        <li>Dividend gross-up and tax credit rates come from federal and provincial data tables for 2025; province-specific nuances beyond the encoded schema are not modeled.</li>
+        <li>Capital gains use a fixed 50% inclusion rate for 2025 across all provinces.</li>
+        <li>CPP and EI are modeled from the employee perspective only, using official maximums and rates for 2025; employer contributions are not included.</li>
+        <li>All amounts are in Canadian dollars; inflation, indexation beyond the configured year, and time value of money are not modeled in this calculator.</li>
+        <li>All calculations use full floating-point precision internally; rounding occurs only where required to mirror CRA per-bracket rounding and at the display layer.</li>
+      </ol>
+
+      <h2>Implementation Notes</h2>
+      <ul>
+        <li>Federal, provincial, payroll, and dividend parameters are loaded from JSON data files and can be overridden for testing.</li>
+        <li>Federal and provincial calculations follow the ordering and arithmetic of CRA Schedule 1 and provincial tax forms (e.g., ON428).</li>
+        <li>Known-answer tests validate outputs against hand-computed or AI-assisted form calculations for representative scenarios.</li>
+        <li>The “Show the Math” section on the calculator page surfaces bracket breakdowns, dividend gross-up details, and CPP/EI inputs using the same engine outputs described here.</li>
+      </ul>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between this documentation and the calculator output, the arithmetic here governs.
+      </p>
+
+      <h2>What This Calculator Does Not Include</h2>
+      <ul>
+        <li>OAS clawback, GIS, and most benefit interactions.</li>
+        <li>Alternative minimum tax (AMT) and detailed trust or partnership rules.</li>
+        <li>Quebec-specific return mechanics beyond what the selected provincial file encodes.</li>
+        <li>Full RRSP/FHSA room history, carryforwards, and over-contribution penalties (use the dedicated calculators).</li>
+        <li>Corporate integration beyond personal dividend taxation; see the CCPC calculator for corporate layers.</li>
+      </ul>
+
+      <h2>Sources and References</h2>
+      <ul class="methodology-sources">
+        <li><a href="https://www.canada.ca/en/revenue-agency.html" target="_blank" rel="noopener noreferrer">Canada Revenue Agency (CRA)</a></li>
+        <li><a href="https://www.canada.ca/en.html" target="_blank" rel="noopener noreferrer">Government of Canada</a></li>
+        <li><a href="https://www.statcan.gc.ca/" target="_blank" rel="noopener noreferrer">Statistics Canada</a></li>
+        <li><a href="https://www.bankofcanada.ca/" target="_blank" rel="noopener noreferrer">Bank of Canada</a></li>
+        <li><a href="https://www.cmhc-schl.gc.ca/" target="_blank" rel="noopener noreferrer">CMHC</a> (housing and mortgage context, where relevant)</li>
+        <li><a href="https://www.osfi-bsif.gc.ca/" target="_blank" rel="noopener noreferrer">OSFI</a> (financial institution supervision, where relevant)</li>
+        <li><a href="https://www.spglobal.com/spdji/en/spiva/article/spiva-canada/" target="_blank" rel="noopener noreferrer">SPIVA Canada</a> (long-horizon fund performance context, where relevant)</li>
+        <li><a href="http://www.econ.yale.edu/~shiller/data.htm" target="_blank" rel="noopener noreferrer">Robert Shiller — historical data</a> (market and long-horizon data context, where relevant)</li>
+      </ul>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>
+

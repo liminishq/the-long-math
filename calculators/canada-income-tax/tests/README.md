@@ -27,3 +27,13 @@ The ON eligible-dividends vector uses a tolerance band until CRA-exact methodolo
 ### Browser tests
 
 Open `tests/test.html` in a browser (after serving the site so that `loadTaxData(2025)` can fetch `data/2025/*.json`). The existing engine tests in `engine.test.js` run in that environment.
+
+### Node (CLI)
+
+From the repo root:
+
+```bash
+node calculators/canada-income-tax/tests/engine.test.js
+```
+
+Uses `loadTaxData(2025, { fsDataRoot: ... })` so JSON is read from disk (no `fetch` to `file:` URLs).
