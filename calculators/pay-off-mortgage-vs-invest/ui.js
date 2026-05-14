@@ -236,8 +236,10 @@
       mortgagePayment = clamp(num($("mortgage_payment").value), 0, 100000);
     }
     
+    const inputMode = $("extra_mode_lump").checked ? "lump" : "monthly";
     const monthlyBudget = clamp(num($("monthly_budget").value), 0, 100000);
     const extraCash = clamp(num($("extra_cash").value), 0, 100000);
+    const lumpSum = clamp(num($("lump_sum").value), 0, 100000000);
     const allocationPercent = clamp(parseInt($("allocation_slider").value, 10), 0, 100);
     const expectedReturn = clamp(num($("expected_return").value), -50, 50);
     const fees = clamp(num($("fees").value), 0, 10);
@@ -258,6 +260,8 @@
     const currentHomePrice = clamp(num($("current_home_price").value), 0, 10000000);
     
     return {
+      inputMode,
+      lumpSum,
       mortgagePayment,
       monthlyBudget,
       extraCash,
@@ -351,15 +355,23 @@
     // Break-even return (extreme allocation strategies, same net worth at horizon)
     if (Number.isFinite(result.breakEvenGrossReturnPercent)) {
       $("break_even_return").textContent = result.breakEvenGrossReturnPercent.toFixed(2) + "%";
+      const tiePhrase =
+        inp.inputMode === "lump"
+          ? "100% of the lump sum to extra mortgage principal and 100% of the lump sum to investing at the start"
+          : "100% of extra cash to the mortgage and 100% to investing";
       $("break_even_blurb").textContent =
-        "Shown as a gross annual % (same basis as the expected return field above). The investing path compounds at net return (gross minus your investment fee %). This value is the gross return at which 100% of extra cash to the mortgage and 100% to investing would tie at your horizon. Changing the fee input changes that gross hurdle. Home price growth does not move this tie point: both paths share the same ending home value, so it drops out of the comparison unless home equity is negative on one path.";
+        "Shown as a gross annual % (same basis as the expected return field above). The investing path compounds at net return (gross minus your investment fee %). This value is the gross return at which " +
+        tiePhrase +
+        " would tie at your horizon. Changing the fee input changes that gross hurdle. Home price growth does not move this tie point: both paths share the same ending home value, so it drops out of the comparison unless home equity is negative on one path.";
     } else {
       $("break_even_return").textContent = "—";
       if (result.breakEvenReason === "no_mortgage") {
         $("break_even_blurb").textContent = "Not applicable when there is no mortgage balance.";
       } else if (result.breakEvenReason === "no_extra") {
         $("break_even_blurb").textContent =
-          "Add extra cash (above the regular mortgage payment) to see a break-even return between the two extreme allocation strategies.";
+          inp.inputMode === "lump"
+            ? "Enter a lump sum greater than zero to see a break-even return between the two extreme allocation strategies."
+            : "Add extra cash (above the regular mortgage payment) to see a break-even return between the two extreme allocation strategies.";
       } else {
         $("break_even_blurb").textContent =
           "No break-even was found over a wide range of gross returns; with these inputs, one extreme strategy may always produce higher net worth at your horizon.";
@@ -381,7 +393,29 @@
 
     // Key facts: mortgage payoff timeline for current allocation vs baseline (all extra cash invested)
     const mortgageExtraPct = Math.round(100 - inp.allocationPercent);
-    $("fact_extra_cash_to_mortgage_pct").textContent = String(mortgageExtraPct);
+    if (inp.inputMode === "lump") {
+      $("fact_payoff_allocation_prefix").innerHTML =
+        "If <strong class=\"fact-value\" id=\"fact_extra_cash_to_mortgage_pct\">" +
+        mortgageExtraPct +
+        "</strong>% of your lump sum (slider toward mortgage) goes to extra principal, ";
+    } else {
+      $("fact_payoff_allocation_prefix").innerHTML =
+        "If <strong class=\"fact-value\" id=\"fact_extra_cash_to_mortgage_pct\">" +
+        mortgageExtraPct +
+        "</strong>% of extra monthly cash is allocated to mortgage payments, ";
+    }
+
+    $("kf_if_all_extra_mortgage").textContent =
+      inp.inputMode === "lump"
+        ? "If 100% of the lump sum goes to extra mortgage principal"
+        : "If 100% of extra cash allocated to paying off mortgage faster";
+    $("kf_if_all_extra_invest").textContent =
+      inp.inputMode === "lump"
+        ? "If 100% of the lump sum is invested at the start"
+        : "If 100% of extra cash allocated to investing";
+
+    const lumpNote = document.getElementById("cash_flow_lump_note");
+    if (lumpNote) lumpNote.classList.toggle("hidden", inp.inputMode !== "lump");
 
     const horizonYears = inp.timeHorizon;
     const horizonLabel =
@@ -430,11 +464,15 @@
         "the mortgage would not be fully paid off within 100 years at these payment levels (for example, payments may not cover interest). ";
     }
 
+    const baselineAllInvestLabel =
+      inp.inputMode === "lump" ? "With the entire lump sum invested at the start" : "With all extra cash invested";
+
     if (result.payoffMonthAllInvest === 0) {
-      detail += "With all extra cash invested, there is no mortgage balance to pay down under these inputs. ";
+      detail += baselineAllInvestLabel + ", there is no mortgage balance to pay down under these inputs. ";
     } else if (base && base.totalMonths > 0) {
       detail +=
-        "With all extra cash invested, payoff would be in " +
+        baselineAllInvestLabel +
+        ", payoff would be in " +
         base.years +
         " year" +
         (base.years !== 1 ? "s" : "") +
@@ -449,7 +487,8 @@
       }
     } else {
       detail +=
-        "With all extra cash invested, payoff would not be reached within 100 years at these payment levels. ";
+        baselineAllInvestLabel +
+        ", payoff would not be reached within 100 years at these payment levels. ";
     }
 
     if (cur && cur.totalMonths > 0 && base && base.totalMonths > 0) {
@@ -544,10 +583,27 @@
     $("slider_value_display").textContent = value + "%";
   }
 
+  function syncExtraCashMode() {
+    const lump = $("extra_mode_lump").checked;
+    $("monthly_extra_wrap").classList.toggle("hidden", lump);
+    $("lump_sum_wrap").classList.toggle("hidden", !lump);
+    $("monthly_budget").disabled = lump;
+    $("extra_cash").disabled = lump;
+    $("lump_sum").disabled = !lump;
+    $("allocation_slider_label").textContent = lump
+      ? "Allocation: lump sum to mortgage vs. investing"
+      : "Allocation: extra cash to mortgage vs. investing";
+    const help = $("allocation_slider_help");
+    help.textContent = lump
+      ? "The slider splits your lump sum at the very start: left sends more to extra mortgage principal, right sends more to the portfolio. Your regular mortgage payment still goes to the mortgage until it is paid off; there is no recurring extra cash in this mode."
+      : "The slider controls how your extra cash is allocated. Your regular mortgage payment always goes to the mortgage until it's paid off.";
+  }
+
   // Sync monthly budget and extra cash
   // If user updates monthly budget, update extra cash
   // If user updates extra cash, update monthly budget
   function syncMonthlyBudgetAndExtraCash(source) {
+    if ($("extra_mode_lump").checked) return;
     const useCalculator = $("use_calculator_toggle").checked;
     let mortgagePayment = 0;
     
@@ -604,7 +660,8 @@
     "calc_down_amount",
     "calc_down_pct",
     "calc_interest_rate",
-    "calc_amortization"
+    "calc_amortization",
+    "lump_sum"
   ].forEach(id => {
     $(id).addEventListener("input", () => {
       if (id === "monthly_budget") {
@@ -657,10 +714,21 @@
     render('slider'); // Pass 'slider' flag to indicate slider-only change
   });
 
+  ["extra_mode_monthly", "extra_mode_lump"].forEach((id) => {
+    $(id).addEventListener("change", () => {
+      syncExtraCashMode();
+      if ($("extra_mode_monthly").checked) {
+        syncMonthlyBudgetAndExtraCash("calculator");
+      }
+      debouncedRender();
+    });
+  });
+
   // Initial sync
   syncCalculatorToggle();
   syncDownModeToggle();
   syncDisplayMode();
+  syncExtraCashMode();
   syncSlider();
   updateCalculatedPayment();
   syncMonthlyBudgetAndExtraCash("calculator");

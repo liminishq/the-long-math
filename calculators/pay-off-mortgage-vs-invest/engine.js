@@ -3,12 +3,13 @@
    ============================================================
 
    CASH-FLOW-NEUTRAL LOGIC:
-   - Total budget per period = mortgage payment + extra cash (FIXED)
+   - Total budget per period = mortgage payment + extra cash (FIXED in monthly mode)
+   - Lump-sum mode: no recurring extra cash; a one-time amount at the start of month 1 is split
+     by the same slider (0% = all lump to mortgage principal, 100% = all lump to investing).
    - Regular mortgage payment always goes to mortgage (until paid off)
-   - Slider controls allocation of EXTRA CASH only:
-     * 0% slider = 100% extra cash → mortgage
-     * 100% slider = 100% extra cash → investing
-     * 50% slider = 50% extra cash → mortgage, 50% → investing
+   - Slider controls allocation of recurring extra cash and/or the lump:
+     * 0% slider = 100% of that cash → mortgage
+     * 100% slider = 100% → investing
    - After mortgage payoff: entire budget goes to investing
 */
 
@@ -67,7 +68,8 @@ function findMortgagePayoffMonth({
   mortgagePaymentPerPeriod,
   extraCashPerPeriod,
   allocationPercent,
-  annualRate
+  annualRate,
+  lumpSumAtStart = 0
 }) {
   if (!Number.isFinite(initialMortgageBalance) || initialMortgageBalance <= 0) {
     return 0;
@@ -77,6 +79,12 @@ function findMortgagePayoffMonth({
   let balance = initialMortgageBalance;
 
   for (let period = 1; period <= MAX_PAYOFF_SEARCH_MONTHS; period++) {
+    if (period === 1 && lumpSumAtStart > 0) {
+      const lumpMortgage = ((100 - allocationPercent) / 100) * lumpSumAtStart;
+      const lumpToPrincipal = Math.min(Math.max(0, lumpMortgage), balance);
+      balance -= lumpToPrincipal;
+      if (balance < 0) balance = 0;
+    }
     const interestDue = balance * periodRate;
     const intendedMortgagePayment = mortgagePaymentPerPeriod + extraToMortgage;
     const maxNeededToClose = interestDue + balance;
@@ -104,7 +112,8 @@ function simulate({
   horizonMonths,
   monthlyReturn,
   homePrice,
-  homeGrowthRate
+  homeGrowthRate,
+  lumpSumAtStart = 0 // optional one-time amount at start of month 1; split by same slider as recurring extra
 }) {
   // Everything is monthly now, so period rate = monthly rate
   const periodRate = annualRate / 100 / 12;
@@ -146,6 +155,17 @@ function simulate({
   for (let period = 1; period <= totalPeriods; period++) {
     // Each period is one month
     const currentMonth = period;
+
+    // Lump sum at t = 0: applied at the start of month 1 (first loop iteration), before interest and scheduled payment
+    if (period === 1 && lumpSumAtStart > 0) {
+      const lumpMortgage = ((100 - allocationPercent) / 100) * lumpSumAtStart;
+      const lumpInvest = (allocationPercent / 100) * lumpSumAtStart;
+      const lumpToPrincipal = Math.min(Math.max(0, lumpMortgage), balance);
+      balance -= lumpToPrincipal;
+      if (balance < 0) balance = 0;
+      const mortgageOverflow = lumpMortgage - lumpToPrincipal;
+      investValue += lumpInvest + mortgageOverflow;
+    }
     
     if (balance <= 0) {
       // Mortgage paid off - entire budget goes to investing
@@ -264,12 +284,13 @@ function findBreakEvenGrossReturnPercent({
   homePrice,
   homeGrowthRate,
   fees,
-  timeHorizon
+  timeHorizon,
+  lumpSumAtStart = 0
 }) {
   if (initialMortgageBalance <= 0) {
     return { value: null, reason: "no_mortgage" };
   }
-  if (extraCashPerPeriod <= 1e-9) {
+  if (extraCashPerPeriod <= 1e-9 && (!lumpSumAtStart || lumpSumAtStart <= 1e-9)) {
     return { value: null, reason: "no_extra" };
   }
 
@@ -287,7 +308,8 @@ function findBreakEvenGrossReturnPercent({
       horizonMonths,
       monthlyReturn: mr,
       homePrice,
-      homeGrowthRate
+      homeGrowthRate,
+      lumpSumAtStart
     });
     const simI = simulate({
       initialMortgageBalance,
@@ -298,7 +320,8 @@ function findBreakEvenGrossReturnPercent({
       horizonMonths,
       monthlyReturn: mr,
       homePrice,
-      homeGrowthRate
+      homeGrowthRate,
+      lumpSumAtStart
     });
     return finalNetWorthAtHorizon(simM, finalHomeValue) - finalNetWorthAtHorizon(simI, finalHomeValue);
   };
@@ -345,6 +368,8 @@ function findBreakEvenGrossReturnPercent({
    ============================================================ */
 function calculateMortgageVsInvest(inputs) {
   const {
+    inputMode = "monthly",
+    lumpSum = 0,
     mortgagePayment,
     monthlyBudget,
     extraCash,
@@ -366,16 +391,24 @@ function calculateMortgageVsInvest(inputs) {
     currentRate,
     currentHomePrice
   } = inputs;
+
+  const lumpMode = inputMode === "lump";
+  const lumpSumAtStart = lumpMode ? clamp(Number.isFinite(lumpSum) ? lumpSum : 0, 0, 1e9) : 0;
   
-  // Use monthlyBudget if provided, otherwise calculate from mortgagePayment + extraCash
-  const actualExtraCash = monthlyBudget > 0 ? Math.max(0, monthlyBudget - mortgagePayment) : extraCash;
+  // Use monthlyBudget if provided, otherwise calculate from mortgagePayment + extraCash (monthly mode only)
+  const actualExtraCash = lumpMode
+    ? 0
+    : (monthlyBudget > 0 ? Math.max(0, monthlyBudget - mortgagePayment) : extraCash);
   
   // Validate inputs
   if (!Number.isFinite(mortgagePayment) || mortgagePayment < 0) {
     return { error: "Invalid mortgage payment" };
   }
-  if (!Number.isFinite(extraCash) || extraCash < 0) {
+  if (!lumpMode && (!Number.isFinite(extraCash) || extraCash < 0)) {
     return { error: "Invalid extra cash" };
+  }
+  if (lumpMode && (!Number.isFinite(lumpSumAtStart) || lumpSumAtStart < 0)) {
+    return { error: "Invalid lump sum" };
   }
   if (!Number.isFinite(allocationPercent) || allocationPercent < 0 || allocationPercent > 100) {
     return { error: "Invalid allocation percentage" };
@@ -467,7 +500,8 @@ function calculateMortgageVsInvest(inputs) {
     horizonMonths,
     monthlyReturn,
     homePrice,
-    homeGrowthRate: homeGrowth
+    homeGrowthRate: homeGrowth,
+    lumpSumAtStart
   });
   
   // Simulate 100% mortgage (for key facts)
@@ -480,7 +514,8 @@ function calculateMortgageVsInvest(inputs) {
     horizonMonths,
     monthlyReturn,
     homePrice,
-    homeGrowthRate: homeGrowth
+    homeGrowthRate: homeGrowth,
+    lumpSumAtStart
   });
   
   // Simulate 100% invest (for key facts)
@@ -493,7 +528,8 @@ function calculateMortgageVsInvest(inputs) {
     horizonMonths,
     monthlyReturn,
     homePrice,
-    homeGrowthRate: homeGrowth
+    homeGrowthRate: homeGrowth,
+    lumpSumAtStart
   });
   
   // Final home value
@@ -509,14 +545,16 @@ function calculateMortgageVsInvest(inputs) {
     mortgagePaymentPerPeriod: mortgagePaymentMonthly,
     extraCashPerPeriod: extraCashMonthly,
     allocationPercent,
-    annualRate
+    annualRate,
+    lumpSumAtStart
   });
   const payoffMonthAllInvestProjected = findMortgagePayoffMonth({
     initialMortgageBalance,
     mortgagePaymentPerPeriod: mortgagePaymentMonthly,
     extraCashPerPeriod: extraCashMonthly,
     allocationPercent: 100,
-    annualRate
+    annualRate,
+    lumpSumAtStart
   });
 
   const breakEven = findBreakEvenGrossReturnPercent({
@@ -528,7 +566,8 @@ function calculateMortgageVsInvest(inputs) {
     homePrice,
     homeGrowthRate: homeGrowth,
     fees,
-    timeHorizon
+    timeHorizon,
+    lumpSumAtStart
   });
   
   return {
@@ -549,7 +588,8 @@ function calculateMortgageVsInvest(inputs) {
     fact100MortgageInterestEarned: result100Mortgage.totalInterestEarned,
     fact100InvestInterestEarned: result100Invest.totalInterestEarned,
     breakEvenGrossReturnPercent: breakEven.value,
-    breakEvenReason: breakEven.reason
+    breakEvenReason: breakEven.reason,
+    inputMode: lumpMode ? "lump" : "monthly"
   };
 }
 
