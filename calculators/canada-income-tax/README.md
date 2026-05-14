@@ -60,7 +60,7 @@ longmath-tax-canada-2025/
 - **Capital Gains**: Capital gains (50% inclusion rate)
 - **RRSP Deduction**: RRSP contribution deduction
 - **FHSA Deduction**: First Home Savings Account deduction
-- **Already remitted (income tax + CPP + EI)**: One total: federal plus provincial or territorial **income tax**, plus **employee CPP** and **employee EI**, already paid or withheld for the year (same categories as total burden—slip boxes, pay stub YTDs, or instalments). Not RRSP/FHSA (those are deductions).
+- **Income tax already paid (federal + provincial or territorial only)**: Sum of federal and provincial or territorial **income tax** you have already paid for the year (from slip amounts or instalments). Do not include CPP or EI.
 
 ### Outputs
 
@@ -75,7 +75,7 @@ longmath-tax-canada-2025/
 - **Take-Home After Payroll**: Income - income tax - CPP - EI
 - **Average Tax Rate**: Total income tax / total income
 - **Marginal Tax Rate**: Combined federal + provincial marginal rate
-- **Total tax balance** (and, when applicable, **Tax refund** / **Balance owing**): `refundOrOwing = taxPaid − totalBurden`, where `totalBurden` is federal + provincial or territorial income tax plus employee CPP plus employee EI as estimated. `taxPaid` is the sum you entered for the same four categories already remitted. Positive means refund; negative means owing (the UI shows the absolute value when owing).
+- **Tax balance (income tax)** (and, when applicable, **Income tax refund** / **Income tax owing**): Estimated federal plus provincial or territorial income tax minus income tax already paid (`refundOrOwing = taxPaid − totalIncomeTax`). CPP and EI are excluded from this line; see **Total Burden** for income tax plus CPP and EI (`totalBurden`).
 
 ### Show the Math
 

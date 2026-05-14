@@ -352,20 +352,20 @@ function renderResults(result) {
   const refundOwingLabel = document.getElementById('refundOrOwingLabel');
   const refundOwingResult = document.getElementById('refundOrOwingResult');
 
-  // Refund / balance vs total burden (income tax + CPP + EI)
+  // Income tax balance only (positive = refund, negative = owing; excludes CPP/EI)
   if (refundOwing !== undefined && refundOwing !== null) {
     // Display: positive = refund, negative = balance owing (show absolute value for owing)
     if (refundOwing >= 0) {
-      refundOwingLabel.textContent = 'Tax refund';
+      refundOwingLabel.textContent = 'Income tax refund';
       refundOwingEl.textContent = formatCurrency(refundOwing);
       refundOwingResult.className = 'result refund';
     } else {
-      refundOwingLabel.textContent = 'Balance owing';
+      refundOwingLabel.textContent = 'Income tax owing';
       refundOwingEl.textContent = formatCurrency(Math.abs(refundOwing));
       refundOwingResult.className = 'result owing';
     }
   } else {
-    refundOwingLabel.textContent = 'Total tax balance';
+    refundOwingLabel.textContent = 'Tax balance (income tax)';
     refundOwingEl.textContent = '$–';
     refundOwingResult.className = 'result';
   }
@@ -586,7 +586,7 @@ function clearResults() {
   document.getElementById('avgRate').textContent = '–%';
   document.getElementById('marginalRate').textContent = '–%';
   document.getElementById('refundOrOwing').textContent = '$–';
-  document.getElementById('refundOrOwingLabel').textContent = 'Total tax balance';
+  document.getElementById('refundOrOwingLabel').textContent = 'Tax balance (income tax)';
   const refundOwingResult = document.getElementById('refundOrOwingResult');
   if (refundOwingResult) {
     refundOwingResult.className = 'result';
@@ -649,7 +649,7 @@ function exportCsv() {
     'Take-Home Pay,' + (latestTotals.takeHomeAfterPayroll || 0),
     'Average Tax Rate,' + ((latestTotals.avgRate || 0) * 100).toFixed(3) + '%',
     'Marginal Tax Rate,' + ((latestTotals.marginalRate || 0) * 100).toFixed(3) + '%',
-    'Total tax balance (already remitted − estimated federal + prov/terr income tax + CPP + EI),' + (latestTotals.refundOrOwing || 0)
+    'Tax balance (income tax) [Fed + Prov-Terr income tax minus paid; excl CPP/EI],' + (latestTotals.refundOrOwing || 0)
   ];
   const blob = new Blob([rows.join('\n') + '\n'], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
