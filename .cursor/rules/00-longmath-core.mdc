@@ -1,0 +1,26 @@
+---
+description: Core Long Math standards for all work in this repository.
+alwaysApply: true
+---
+
+# The Long Math Core
+
+The Long Math is a Canadian financial literacy site built around explicit arithmetic, transparent assumptions, and inspectable reasoning.
+
+Core philosophy: No opinions. No hidden assumptions. Just arithmetic.
+
+## Do
+
+- Preserve the reader's ability to inspect the reasoning: show formulas, inputs, assumptions, and intermediate steps when they matter.
+- Treat Canadian context as the default unless the task explicitly says otherwise.
+- Use Canadian financial terminology where applicable: RRSP, TFSA, FHSA, RESP, CPP, OAS, CRA, provinces and territories, GST/HST, marginal tax rate.
+- Separate facts, arithmetic, assumptions, and interpretation.
+- Keep language clear, analytical, non-hype, non-clickbait, and non-generic.
+- Preserve the author's voice when editing existing content.
+
+## Do Not
+
+- Do not invent tax rules, contribution limits, thresholds, formulas, citations, or government policy.
+- Do not turn arithmetic into advice, certainty, or predictions.
+- Do not publish drafts automatically or imply unfinished work is final.
+- Do not add placeholder links, placeholder citations, or unsupported claims.

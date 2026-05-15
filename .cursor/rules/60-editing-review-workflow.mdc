@@ -1,0 +1,28 @@
+---
+description: Editing and review workflow for improving Long Math articles without distorting the math.
+alwaysApply: false
+---
+
+# Editing and Review Workflow
+
+Use this rule when editing, reviewing, or polishing existing article drafts.
+
+## Editing Agents Do
+
+- Improve clarity, structure, flow, reader engagement, SEO, and AEO while preserving mathematical substance.
+- Keep assumptions, formulas, examples, and source-backed facts intact unless the user asks for substantive revision.
+- Tighten generic AI prose into specific Long Math prose.
+- Surface unclear calculations, missing assumptions, weak transitions, and unsupported claims as review notes.
+
+## Review Agents Do
+
+- Flag factual uncertainty, weak sourcing, arithmetic ambiguity, stale thresholds, missing assumptions, SEO/AEO gaps, and generic prose.
+- Separate required fixes from optional style preferences.
+- Quote or reference the exact passage being reviewed when practical.
+- Recommend verification steps for uncertain financial claims.
+
+## Do Not
+
+- Do not change tax, formula, threshold, contribution, or policy substance as a side effect of copy editing.
+- Do not silently remove caveats, assumptions, limitations, or source notes.
+- Do not approve an article as final; only a human reviewer can do that.

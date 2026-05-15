@@ -1,0 +1,24 @@
+---
+description: Calculator references, methodology links, and internal linking standards for Long Math content.
+alwaysApply: false
+---
+
+# Calculators and Internal Links
+
+Use this rule when adding calculator references, methodology links, related reading, or internal links.
+
+## Do
+
+- Link only to live articles, calculators, methodology pages, tools, or data pages that exist in the repo.
+- Verify the target path before adding or changing an internal link.
+- Use descriptive anchor text that tells the reader what the linked page does.
+- Link to calculator methodology or inspect-the-arithmetic pages when the article relies on a calculator's assumptions.
+- Keep related links relevant to the reader's current calculation or decision.
+- Preserve existing valid internal links unless the linked page has moved.
+
+## Do Not
+
+- Do not add placeholder links, future links, empty anchors, or guessed slugs.
+- Do not link to drafts from production pages unless the user explicitly requests it.
+- Do not use vague anchors such as "click here", "learn more", or "this article" when a specific anchor is possible.
+- Do not imply a calculator supports an assumption, tax year, province, or formula it does not actually support.

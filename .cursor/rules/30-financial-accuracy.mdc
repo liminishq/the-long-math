@@ -1,0 +1,25 @@
+---
+description: Financial accuracy requirements for calculators, formulas, tax content, and article arithmetic.
+alwaysApply: false
+---
+
+# Financial Accuracy
+
+Use this rule whenever content contains calculations, tax rules, thresholds, contribution limits, rates, formulas, or financial policy.
+
+## Do
+
+- State assumptions explicitly: dates, jurisdictions, tax year, inflation treatment, contribution timing, rates, fees, compounding, and rounding.
+- Distinguish nominal and real values whenever inflation or purchasing power is relevant.
+- Show formulas or step-by-step arithmetic for material claims.
+- Verify Canadian tax, benefit, pension, and account rules against current official sources before changing them.
+- Mark uncertain or time-sensitive values as needing verification instead of guessing.
+- Keep mathematical substance unchanged during copy edits unless the user explicitly asks for recalculation.
+
+## Do Not
+
+- Do not invent CRA limits, tax brackets, benefit clawbacks, contribution room, inflation rates, market returns, or eligibility rules.
+- Do not mix federal and provincial assumptions without saying so.
+- Do not hide meaningful caveats in footnotes, metadata, or unexplained constants.
+- Do not round in a way that changes the conclusion without explaining the rounding.
+- Do not present examples as personalized financial advice.

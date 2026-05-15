@@ -1,0 +1,24 @@
+---
+description: SEO and answer-engine standards for Long Math article drafts, edits, and reviews.
+alwaysApply: false
+---
+
+# SEO and AEO
+
+Use this rule when planning, drafting, editing, or reviewing content for search visibility and answer engines.
+
+## Do
+
+- Match the article title, H1, meta title, meta description, introduction, and conclusion to the same search intent.
+- Answer the central question directly near the top before adding nuance.
+- Use descriptive headings that expose the calculation, assumptions, and Canadian context.
+- Include concise definitions, examples, formulas, and caveats where they help answer-engine extraction.
+- Keep schema, metadata, canonical URLs, slugs, and internal links consistent with the actual article.
+- Write for useful completion of the reader's task, not keyword stuffing.
+
+## Do Not
+
+- Do not add claims, FAQs, entities, or statistics only for SEO if they are not supported in the article.
+- Do not use bait titles or meta descriptions that overpromise what the arithmetic shows.
+- Do not create placeholder FAQ answers, placeholder schema, or invented snippets.
+- Do not optimize away caution, assumptions, source limits, or Canadian specificity.

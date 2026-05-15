@@ -1,0 +1,23 @@
+---
+description: Human-review gate for publishing Long Math articles or treating drafts as final.
+alwaysApply: false
+---
+
+# Human Review Required
+
+Use this rule before any article, calculator methodology, or financial explainer is considered final or publication-ready.
+
+## Do
+
+- Treat every agent-created or agent-edited article as requiring human review.
+- Require human review of factual claims, formulas, assumptions, citations, SEO metadata, schema, internal links, and final wording.
+- Keep draft status visible until the user explicitly approves publication.
+- Ask for confirmation before moving content from `/drafts/` into live article paths or registering it in build, sitemap, search, or hubs.
+- Flag high-risk items for the human reviewer: tax rules, thresholds, source freshness, ambiguous arithmetic, and policy interpretation.
+
+## Do Not
+
+- Do not mark an article final, published, approved, or legally/tax accurate on an agent's authority.
+- Do not auto-publish drafts, add them to public navigation, or remove review markers without explicit user instruction.
+- Do not resolve factual uncertainty by smoothing the prose.
+- Do not hide unresolved verification work in comments, metadata, or omitted caveats.

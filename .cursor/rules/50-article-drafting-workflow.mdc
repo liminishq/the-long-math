@@ -1,0 +1,24 @@
+---
+description: Drafting workflow for new Long Math articles, especially parallel article agents.
+alwaysApply: false
+---
+
+# Article Drafting Workflow
+
+Use this rule when creating a new article draft or running parallel agents for article work.
+
+## Do
+
+- Write new drafts into `/drafts/` unless the user explicitly instructs a production path.
+- Give each parallel draft its own file or subfolder with a clear slug-like working name.
+- Start from the reader question, the Canadian scope, the arithmetic to inspect, and the assumptions required.
+- Include a short source checklist for any tax, contribution, threshold, policy, rate, or data claim.
+- Mark unresolved facts as `TODO: verify` instead of filling them from memory.
+- Keep draft status explicit: draft, needs source review, needs math review, or ready for human review.
+
+## Do Not
+
+- Do not publish, register, link from live hubs, or add a draft to sitemap/search unless explicitly instructed.
+- Do not repurpose an existing live article slug for a different article concept.
+- Do not let parallel agents edit the same draft file unless the user assigns a merge step.
+- Do not treat an agent draft as final copy.
