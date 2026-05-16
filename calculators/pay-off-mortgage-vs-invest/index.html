@@ -287,6 +287,23 @@
             <p class="help muted">Pick one: recurring monthly extra <em>or</em> a single lump at the beginning — not both.</p>
           </div>
 
+          <div class="allocation-slider-card">
+            <div class="field">
+              <label for="allocation_slider" id="allocation_slider_label">Allocation: extra cash to mortgage vs. investing</label>
+              <div class="slider-container">
+                <div class="slider-labels">
+                  <span>100% Mortgage</span>
+                  <span id="slider_value_display">50%</span>
+                  <span>100% Invest</span>
+                </div>
+                <input id="allocation_slider" type="range" min="0" max="100" step="1" value="50" />
+              </div>
+              <p class="help muted" id="allocation_slider_help">
+                The slider controls how your extra cash is allocated. Your regular mortgage payment always goes to the mortgage until it's paid off.
+              </p>
+            </div>
+          </div>
+
           <hr class="sep" />
 
           <div id="monthly_extra_wrap">
@@ -352,21 +369,6 @@
 
           <hr class="sep" />
 
-          <div class="field">
-            <label for="allocation_slider" id="allocation_slider_label">Allocation: extra cash to mortgage vs. investing</label>
-            <div class="slider-container">
-              <div class="slider-labels">
-                <span>100% Mortgage</span>
-                <span id="slider_value_display">50%</span>
-                <span>100% Invest</span>
-              </div>
-              <input id="allocation_slider" type="range" min="0" max="100" step="1" value="50" />
-            </div>
-            <p class="help muted" id="allocation_slider_help">
-              The slider controls how your extra cash is allocated. Your regular mortgage payment always goes to the mortgage until it's paid off.
-            </p>
-          </div>
-
         </article>
 
         <!-- COLUMN 3: Outputs, Graph -->
@@ -423,6 +425,8 @@
               <p class="help muted break-even-blurb" id="break_even_blurb"></p>
             </div>
           </div>
+
+          <div class="calculator-share-mount" data-calculator-share-mount></div>
 
         </article>
       </div>

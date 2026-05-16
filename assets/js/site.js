@@ -601,6 +601,7 @@
     // Calculators that ship their own .result-share-block (custom button ids) must not get a second card.
     if (document.querySelector(".result-share-block")) return false;
     var targetPanel =
+      document.querySelector("[data-calculator-share-mount]") ||
       document.querySelector(".panel--results") ||
       document.querySelector(".results") ||
       document.querySelector(".card") ||

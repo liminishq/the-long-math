@@ -527,13 +527,19 @@ class MortgageChart {
 let chart = null;
 let updateTimeout = null;
 
+function numberFromInput(id, fallback) {
+  const el = document.getElementById(id);
+  const value = el ? parseFloat(el.value) : NaN;
+  return Number.isFinite(value) ? value : fallback;
+}
+
 function getInputs() {
-  const homePrice = parseFloat(document.getElementById('home_price').value) || 500000;
-  const downPaymentAmount = parseFloat(document.getElementById('down_payment_amount').value) || 100000;
-  const downPaymentPercent = parseFloat(document.getElementById('down_payment_percent').value) || 20;
+  const homePrice = numberFromInput('home_price', 500000);
+  const downPaymentAmount = numberFromInput('down_payment_amount', 100000);
+  const downPaymentPercent = numberFromInput('down_payment_percent', 20);
   const isAmountMode = document.getElementById('down_payment_mode_amount').classList.contains('active');
-  const interestRate = parseFloat(document.getElementById('interest_rate').value) || 5.5;
-  const amortizationYears = parseFloat(document.getElementById('amortization_years').value) || 25;
+  const interestRate = numberFromInput('interest_rate', 5.5);
+  const amortizationYears = numberFromInput('amortization_years', 25);
   const paymentFrequency = document.getElementById('payment_frequency').value;
   
   // Calculate down payment based on mode
@@ -981,7 +987,7 @@ function setupEventListeners() {
             document.getElementById('down_payment_percent').value = percent.toFixed(1);
           } else {
             // Keep percent, update amount
-            const percent = parseFloat(document.getElementById('down_payment_percent').value) || 20;
+            const percent = numberFromInput('down_payment_percent', 20);
             const amount = inputs.homePrice * (percent / 100);
             document.getElementById('down_payment_amount').value = Math.round(amount);
           }
@@ -1019,8 +1025,8 @@ function setupEventListeners() {
   
   // Sync down payment amount and percent with validation
   document.getElementById('down_payment_amount').addEventListener('input', () => {
-    const homePrice = parseFloat(document.getElementById('home_price').value) || 500000;
-    const downPaymentAmount = parseFloat(document.getElementById('down_payment_amount').value) || 0;
+    const homePrice = numberFromInput('home_price', 500000);
+    const downPaymentAmount = numberFromInput('down_payment_amount', 0);
     // Cap down payment at home price
     const cappedAmount = Math.min(downPaymentAmount, homePrice);
     if (downPaymentAmount !== cappedAmount) {
@@ -1031,10 +1037,11 @@ function setupEventListeners() {
   });
   
   document.getElementById('down_payment_percent').addEventListener('input', () => {
-    const homePrice = parseFloat(document.getElementById('home_price').value) || 500000;
-    const percent = Math.min(100, Math.max(0, parseFloat(document.getElementById('down_payment_percent').value) || 0));
+    const homePrice = numberFromInput('home_price', 500000);
+    const rawPercent = numberFromInput('down_payment_percent', 0);
+    const percent = Math.min(100, Math.max(0, rawPercent));
     // Cap percent at 100
-    if (parseFloat(document.getElementById('down_payment_percent').value) !== percent) {
+    if (rawPercent !== percent) {
       document.getElementById('down_payment_percent').value = percent.toFixed(1);
     }
     const amount = homePrice * (percent / 100);
