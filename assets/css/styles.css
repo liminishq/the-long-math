@@ -789,6 +789,36 @@ input[type="range"]{ width:100%; }
   padding:8px 11px;
 }
 
+.calc-canada-scope{
+  font-size:13px;
+  color:var(--muted);
+  margin:0 0 10px;
+  line-height:1.45;
+}
+
+.calc-version-meta{
+  font-size:12px;
+  color:var(--muted);
+  margin:0 0 14px;
+  line-height:1.4;
+}
+
+.methodology-sources{
+  font-size:14px;
+  line-height:1.55;
+  margin:0 0 1.25em;
+  padding-left:1.25em;
+}
+
+.methodology-sources a{
+  color:var(--accent);
+}
+
+.result-share-btn-primary{
+  font-weight:700;
+  box-shadow:0 0 0 1px rgba(77,163,255,.35);
+}
+
 .result-share-status{
   margin:10px 0 0;
   min-height:1.1em;
