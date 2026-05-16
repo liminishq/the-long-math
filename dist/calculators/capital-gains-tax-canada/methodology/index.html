@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspect the Arithmetic – Canada Capital Gains Tax Calculator | The Long Math</title>
+  <meta name="description" content="Formulae, computational structure, and assumptions for the Canada Capital Gains Tax Calculator." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/capital-gains-tax-canada/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <h1>Inspect the Arithmetic — Canada Capital Gains Tax Calculator</h1>
+      <p class="methodology-meta">Version 1.1<br>Last verified: May 2026</p>
+
+      <p>
+        Transparent arithmetic is the operating system of this calculator.
+      </p>
+      <p>
+        This document publishes the formulae, computational structure, and assumptions used to generate the outputs displayed on the calculator page.
+      </p>
+      <p>
+        No opinions. No hidden assumptions. Just arithmetic.
+      </p>
+
+      <h2>Purpose</h2>
+      <p>
+        This calculator estimates capital gains tax on the sale of a single asset for Canadian tax purposes. It uses user-supplied proceeds,
+        adjusted cost base (ACB), an inclusion rate, and a marginal tax rate to compute:
+        capital gain or loss, taxable capital gain, estimated tax owing, and after-tax proceeds.
+      </p>
+      <p>
+        It is an educational tool only. It does not replicate the full T1 return or CRA rules for loss carryovers, reserves, or special elections.
+      </p>
+      <p>
+        This simplified version does not subtract outlays and expenses of disposition (such as selling commissions or legal fees); users should reflect those manually in their inputs if they want a closer estimate.
+      </p>
+
+      <h2>Definitions</h2>
+      <p>Let:</p>
+      <ul>
+        <li>P = proceeds of disposition (CAD)</li>
+        <li>A = adjusted cost base (ACB) of the asset (CAD)</li>
+        <li>r<sub>incl</sub> = capital gains inclusion rate (0–100, percent; default 50)</li>
+        <li>t<sub>marg</sub> = combined marginal tax rate on taxable income (0–100, percent)</li>
+        <li>Gain = capital gain (can be negative for a loss)</li>
+        <li>TaxableGain = portion of Gain that is taxable</li>
+        <li>TaxOwing = estimated capital gains tax owing</li>
+        <li>AfterTaxProceeds = net proceeds after subtracting estimated tax owing</li>
+        <li>PRE = principal residence exemption flag (true/false)</li>
+      </ul>
+
+      <h2>Core Equations</h2>
+
+      <h3 id="gain">1. Capital Gain or Loss</h3>
+      <p>The starting point is the difference between what you received and your adjusted cost base:</p>
+      <div class="formula-block">
+        Gain = P − A
+      </div>
+      <p>
+        If Gain &le; 0, the calculator treats the result as a capital loss for this simplified view. No taxable gain is generated
+        and estimated tax owing is set to 0. The raw loss is still shown as the “Capital gain / loss” output.
+      </p>
+
+      <h3 id="primary-residence">2. Principal Residence Exemption (Educational Toggle)</h3>
+      <p>
+        The “Principal residence exemption (educational only)” toggle is a simple switch to illustrate how the exemption affects tax:
+      </p>
+      <ul>
+        <li>If PRE is checked, then TaxableGain = 0 and TaxOwing = 0, regardless of Gain.</li>
+        <li>The calculator still shows Gain and AfterTaxProceeds = P (no tax deducted).</li>
+      </ul>
+      <p class="formula-meta">
+        Real eligibility for the principal residence exemption depends on CRA rules and your facts; this toggle does not test or enforce those rules.
+        It just shows the arithmetic effect of exempting the entire gain.
+      </p>
+
+      <h3 id="inclusion">3. Inclusion Rate and Taxable Capital Gain</h3>
+      <p>
+        When there is a positive gain and PRE is not enabled, the calculator applies the user-supplied inclusion rate to determine the taxable amount:
+      </p>
+      <div class="formula-block">
+        If Gain &le; 0 or PRE is true:<br>
+        &nbsp;&nbsp;TaxableGain = 0<br>
+        Else:<br>
+        &nbsp;&nbsp;TaxableGain = Gain × (r<sub>incl</sub> / 100)
+      </div>
+      <p class="formula-meta">
+        For 2025, Canadian tax rules use a 50% inclusion rate for most capital gains. The input defaults to 50 but can be adjusted to explore policy
+        changes or hypothetical scenarios.
+      </p>
+
+      <h3 id="tax-owing">4. Estimated Tax Owing</h3>
+      <p>
+        The calculator does not re-run the entire income tax system. Instead, it uses the user’s combined marginal tax rate t<sub>marg</sub>
+        (federal + provincial) as a single percentage applied to the taxable gain:
+      </p>
+      <div class="formula-block">
+        If TaxableGain = 0:<br>
+        &nbsp;&nbsp;TaxOwing = 0<br>
+        Else:<br>
+        &nbsp;&nbsp;TaxOwing = TaxableGain × (t<sub>marg</sub> / 100)
+      </div>
+      <p class="formula-meta">
+        The marginal rate is user-supplied. The calculator does not compute it from brackets or credits; instead, it expects you to bring in your own
+        marginal rate from a full income tax calculation (for example, using the <a href="/calculators/canada-income-tax/" target="_blank" rel="noopener">Canada Personal Income Tax Calculator</a>).
+      </p>
+
+      <h3 id="after-tax">5. After-Tax Proceeds</h3>
+      <p>
+        After-tax proceeds are simply proceeds minus the estimated tax owing:
+      </p>
+      <div class="formula-block">
+        AfterTaxProceeds = P − TaxOwing
+      </div>
+      <p class="formula-meta">
+        When Gain &le; 0 or PRE is enabled, TaxOwing = 0 and AfterTaxProceeds = P.
+      </p>
+
+      <h2>How This Fits with Your Full Tax Picture</h2>
+      <p>
+        In Canada, capital gains are added to your other income via the inclusion rate and are then taxed at the same marginal rates that apply
+        to your employment, business, and other income. This calculator mirrors that behavior in a compressed way:
+      </p>
+      <ul>
+        <li>It converts your gain into a taxable gain using r<sub>incl</sub>.</li>
+        <li>It treats t<sub>marg</sub> as your combined marginal rate on that taxable gain.</li>
+        <li>It multiplies the two to estimate the incremental tax attributable to the gain.</li>
+      </ul>
+      <p>
+        It does <em>not</em> model the rest of your return (credits, other deductions, loss carryforwards, alternative minimum tax, etc.).
+        Those effects are implicitly rolled into the marginal rate you provide.
+      </p>
+
+      <h2>Inputs, Parsing, and Edge Cases</h2>
+      <ul>
+        <li>
+          All numeric inputs are parsed by stripping commas and whitespace; blank inputs are treated as 0. Invalid numbers fall back to 0 or the
+          documented default (e.g., 50% inclusion).
+        </li>
+        <li>
+          Proceeds and ACB are treated as whole-dollar CAD values; the calculator does not model transaction fees, commissions, or foreign exchange.
+        </li>
+        <li>
+          If A &gt; P (a capital loss), the calculator shows a negative Gain but sets TaxableGain and TaxOwing both to 0. It does not model loss
+          carryovers or how losses offset gains in other parts of your return.
+        </li>
+        <li>
+          Inclusion rate and marginal rate are constrained conceptually between 0 and 100; extremely high or low values may produce unrealistic
+          outputs but are allowed for “what if” scenarios.
+        </li>
+      </ul>
+
+      <h2>Implementation Notes</h2>
+      <ul>
+        <li>
+          The core arithmetic lives in a pure engine function <code>CapitalGainsTaxCanada.calculate()</code>, which accepts a simple inputs object and
+          returns the derived values and a <code>mathSteps</code> object with the exact numbers used.
+        </li>
+        <li>
+          The “Show the math” section on the calculator page reads <code>mathSteps</code> and renders each step (Gain, TaxableGain, TaxOwing,
+          AfterTaxProceeds) directly from these values.
+        </li>
+        <li>
+          The separate “How capital gains use your marginal tax rate” card uses static bracket data to display current federal and provincial
+          marginal rates for reference only; it does not feed back into the core calculation above.
+        </li>
+        <li>
+          All calculations are performed with JavaScript’s standard floating‑point arithmetic; any rounding is applied only at the display layer.
+        </li>
+      </ul>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between this documentation and the live calculator engine, the engine&apos;s arithmetic
+        (<code>CapitalGainsTaxCanada.calculate()</code>) is the source of truth. This page will be updated to match the engine.
+      </p>
+
+      <h2>Sources and References</h2>
+      <ul class="methodology-sources">
+        <li><a href="https://www.canada.ca/en/revenue-agency.html" target="_blank" rel="noopener noreferrer">Canada Revenue Agency (CRA)</a></li>
+        <li><a href="https://www.canada.ca/en.html" target="_blank" rel="noopener noreferrer">Government of Canada</a></li>
+        <li><a href="https://www.statcan.gc.ca/" target="_blank" rel="noopener noreferrer">Statistics Canada</a></li>
+        <li><a href="https://www.bankofcanada.ca/" target="_blank" rel="noopener noreferrer">Bank of Canada</a></li>
+        <li><a href="https://www.cmhc-schl.gc.ca/" target="_blank" rel="noopener noreferrer">CMHC</a> (housing and mortgage context, where relevant)</li>
+        <li><a href="https://www.osfi-bsif.gc.ca/" target="_blank" rel="noopener noreferrer">OSFI</a> (financial institution supervision, where relevant)</li>
+        <li><a href="https://www.spglobal.com/spdji/en/spiva/article/spiva-canada/" target="_blank" rel="noopener noreferrer">SPIVA Canada</a> (long-horizon fund performance context, where relevant)</li>
+        <li><a href="http://www.econ.yale.edu/~shiller/data.htm" target="_blank" rel="noopener noreferrer">Robert Shiller — historical data</a> (market and long-horizon data context, where relevant)</li>
+      </ul>
+
+    </div>
+
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>
+

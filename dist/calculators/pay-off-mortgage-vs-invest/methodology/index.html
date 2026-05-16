@@ -7,9 +7,9 @@
   <meta name="description" content="Formulae, computational structure, and assumptions for the Pay Off Mortgage vs Invest calculator, including monthly extra cash and lump-sum-at-start modes." />
   <link rel="canonical" href="https://thelongmath.com/calculators/pay-off-mortgage-vs-invest/methodology/" />
 
-  <script src="/assets/js/theme-init.40fc21015f.js"></script>
-  <link rel="stylesheet" href="/assets/css/styles.deb0166dcb.css" />
-  <script defer src="/assets/js/site.e5c747ad36.js"></script>
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
   <script>
@@ -49,6 +49,9 @@
       <p>
         The calculator reports mortgage balance, investment portfolio value, and net worth over time under constant return assumptions.
       </p>
+      <p>
+        For the narrative framing behind the cash-flow-neutral comparison, see <a href="/articles/investing-and-financial-literacy/pay-off-your-mortgage-faster-or-invest/" target="_blank" rel="noopener">Pay Off Your Mortgage Faster or Invest?</a>
+      </p>
 
       <h2>Definitions</h2>
       <p>All accruals below are monthly time steps unless noted.</p>
@@ -86,7 +89,7 @@
       <p class="formula-meta">In lump mode, E = 0, so Budget = P. In monthly mode, Budget = P + E.</p>
 
       <h2 id="mode-a">Mode A: Mortgage Payment Computed From Mortgage Inputs</h2>
-      <p>If “Use mortgage calculator” is enabled, the calculator computes the regular mortgage payment P using the standard amortization formula.</p>
+      <p>If <strong>Use mortgage calculator</strong> is enabled (the mode that reuses payment logic from the <a href="/calculators/mortgage-calculator/" target="_blank" rel="noopener">Canada Mortgage Calculator</a>), the calculator computes the regular mortgage payment P using the standard amortization formula.</p>
       <p>Let:</p>
       <ul>
         <li>L = H<sub>0</sub> − DownPayment</li>
@@ -98,7 +101,7 @@
       <p class="formula-meta">The simulation then proceeds using B<sub>0</sub> = L and that computed P.</p>
 
       <h2 id="mode-b">Mode B: Mortgage Payment Entered Manually</h2>
-      <p>If “Use mortgage calculator” is disabled, the user supplies: B<sub>0</sub> (current mortgage balance), r (Canadian nominal annual mortgage rate), P (monthly payment). The payoff time becomes whatever amortizes under those values.</p>
+      <p>If <strong>Use mortgage calculator</strong> is disabled, the user supplies: B<sub>0</sub> (current mortgage balance), r (Canadian nominal annual mortgage rate), P (monthly payment). The payoff time becomes whatever amortizes under those values.</p>
       <p class="formula-meta">Fallback: If B<sub>0</sub> ≤ 0 in manual mode, the engine estimates a principal from payment using a rough default (25 years, 5% Canadian nominal annual mortgage rate). This is a non-ideal fallback intended to keep the calculator functioning.</p>
 
       <h2 id="core-simulation">Core Simulation (Monthly Recurrence)</h2>
