@@ -1,6 +1,6 @@
 {% extends "layout.njk" %}
 {% block content %}
-<a href="{{ pathPrefix }}/calculators/" class="home-link">{{ t('calculators.backToTools') }}</a>
+<a href="{{ localizeRootHref('/calculators/') }}" class="home-link">{{ t('calculators.backToTools') }}</a>
 <header>
   <h1>{{ t('calculators.advisorFee.h1') }}</h1>
   <p class="calc-canada-scope">{{ t('calculators.advisorFee.canadaScopeNote') }}</p>
@@ -9,7 +9,7 @@
     <p>{{ t('calculators.advisorFee.lede2') }}</p>
     <p>{{ t('calculators.advisorFee.lede3') }}</p>
     <p>{{ t('calculators.advisorFee.lede4') }}</p>
-    <p>{{ t('calculators.advisorFee.lede5') }} <a href="{{ pathPrefix }}/calculators/flat-fee-or-hourly/" class="inline-link">{{ t('calculators.advisorFee.lede5Link') }}</a>.</p>
+    <p>{{ t('calculators.advisorFee.lede5') }} <a href="{{ localizeRootHref('/calculators/flat-fee-or-hourly/') }}" class="inline-link">{{ t('calculators.advisorFee.lede5Link') }}</a>.</p>
     <p><strong>{{ t('calculators.advisorFee.lede6') }}</strong></p>
   </div>
 </header>
@@ -69,7 +69,7 @@
   <section class="card panel panel--results">
     <div class="results-panel-header">
       <h2 class="section-title">{{ t('calculators.advisorFee.results') }}</h2>
-      <a href="{{ pathPrefix }}/calculators/advisor-fee/methodology/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">{{ t('calculators.advisorFee.inspectArithmetic') }}</a>
+      <a href="{{ localizeRootHref('/calculators/advisor-fee/methodology/') }}" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">{{ t('calculators.advisorFee.inspectArithmetic') }}</a>
     </div>
     <p id="advisor_calc_engine_error" class="shared-scenario-banner" hidden role="alert" style="border-color:rgba(220,90,90,.45);background:rgba(220,90,90,.1);color:var(--text);"></p>
     <p id="shared_scenario_banner" class="shared-scenario-banner" hidden>{{ t('calculators.advisorFee.sharedScenarioBanner') }}</p>
@@ -114,7 +114,7 @@
   </section>
 </div>
 <div class="report-issue-wrap">
-  <a href="{{ pathPrefix }}/contact/" class="report-issue-link">{{ t('common.links.reportIssue') }}</a>
+  <a href="{{ localizeRootHref('/contact/') }}" class="report-issue-link">{{ t('common.links.reportIssue') }}</a>
 </div>
 <section class="methods" id="methods">
   <div class="methods-card">

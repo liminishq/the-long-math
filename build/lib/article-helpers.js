@@ -66,15 +66,22 @@ function mergeArticlePayload(enA, locA) {
   return out;
 }
 
+const { fixPrefixedFrenchInternalLinks } = require("./fr-hrefs");
+
 /**
- * Prefix root-relative href/src with pathPrefix (e.g. /fr) for localized builds.
+ * Prefix root-relative links for localized builds (French mirrors).
+ * Calculator, /fees/, and /tools/ hrefs resolve to English routes except the hub
+ * and advisor-fee shell; logic lives in ../fr-hrefs.js.
  * @param {string} html
  * @param {string} pathPrefix
  * @returns {string}
  */
 function prefixRootRelativeLinks(html, pathPrefix) {
   if (!html || !pathPrefix) return html || "";
-  return html.replace(/(href|src)="\//g, `$1="${pathPrefix}/`);
+  let out = html.replace(/href="\//g, `href="${pathPrefix}/`);
+  out = fixPrefixedFrenchInternalLinks(out);
+  out = out.replace(/src="\//g, `src="${pathPrefix}/`);
+  return out;
 }
 
 /**

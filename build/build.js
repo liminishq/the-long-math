@@ -15,6 +15,9 @@ const {
   buildBreadcrumbSchema,
   buildArticleSchema,
 } = require("./lib/article-helpers.js");
+const {
+  localizeRootHref: localizeCalculatorRootHrefForLang,
+} = require("./lib/fr-hrefs.js");
 
 const ROOT = path.resolve(__dirname, "..");
 const DIST = path.join(ROOT, "dist");
@@ -450,6 +453,7 @@ function build() {
         calculatorsHub,
         essaysHub,
         aboutPage,
+        localizeRootHref: (rel) => localizeCalculatorRootHrefForLang(code, pathPrefix, rel),
       };
 
       const html = nunjucks.render(page.template, ctx);
@@ -491,6 +495,7 @@ function build() {
       hub,
       hubMainHtml: prefixRootRelativeLinks(hub.hubMainHtml || "", pathPrefix),
       disclaimerHtml: prefixRootRelativeLinks(hub.disclaimerHtml || "", pathPrefix),
+      localizeRootHref: (rel) => localizeCalculatorRootHrefForLang(code, pathPrefix, rel),
     };
     const hubOut = path.join(
       DIST,
@@ -539,6 +544,7 @@ function build() {
         ),
         disclaimerHtml: prefixRootRelativeLinks(article.disclaimerHtml || "", pathPrefix),
         ldJsonBlocks,
+        localizeRootHref: (rel) => localizeCalculatorRootHrefForLang(code, pathPrefix, rel),
       };
       const artOut = path.join(
         DIST,
@@ -631,6 +637,7 @@ function syncFrenchStaticHtmlToSource() {
     path.join("fr", "essays", "index.html"),
     path.join("fr", "contact", "index.html"),
     path.join("fr", "calculators", "index.html"),
+    path.join("fr", "calculators", "advisor-fee", "index.html"),
   ];
   for (const rel of files) {
     const src = path.join(DIST, rel);

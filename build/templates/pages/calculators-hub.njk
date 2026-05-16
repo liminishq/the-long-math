@@ -25,7 +25,7 @@
       <ul class="calc-cat-list">
         {% for item in cat.items %}
         <li class="calc-cat-item">
-          <a href="{{ pathPrefix }}{{ item.path }}">{{ item.title }}</a>
+          <a href="{{ localizeRootHref(item.path) }}">{{ item.title }}</a>
           <span class="calc-cat-item-desc">{{ item.desc }}</span>
         </li>
         {% endfor %}

@@ -75,8 +75,8 @@
         </div>
         <p class="hero-tagline">{{ t('meta.home.hero.tagline') }}</p>
         <div class="hero-ctas">
-          <a href="{{ pathPrefix }}/calculators/" class="home-cta home-cta-primary">{{ t('meta.home.hero.ctaCalculators') }}</a>
-          <a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/" class="home-cta">{{ t('meta.home.hero.ctaUnderstanding') }}</a>
+          <a href="{{ localizeRootHref('/calculators/') }}" class="home-cta home-cta-primary">{{ t('meta.home.hero.ctaCalculators') }}</a>
+          <a href="{{ localizeRootHref('/articles/investing-and-financial-literacy/') }}" class="home-cta">{{ t('meta.home.hero.ctaUnderstanding') }}</a>
         </div>
       </div>
     </section>
@@ -103,7 +103,7 @@
           </div>
           <p class="home-proof-caption">{{ t('meta.home.proof.caption') }}</p>
           <p class="home-proof-cta">
-            <a href="{{ pathPrefix }}/calculators/advisor-fee/" class="home-cta">{{ t('meta.home.proof.cta') }}</a>
+            <a href="{{ localizeRootHref('/calculators/advisor-fee/') }}" class="home-cta">{{ t('meta.home.proof.cta') }}</a>
           </p>
         </div>
 
@@ -176,7 +176,7 @@
             <li>{{ t('meta.home.pillars.calcLi4') }}</li>
             <li>{{ t('meta.home.pillars.calcLi5') }}</li>
           </ul>
-          <a href="{{ pathPrefix }}/calculators/" class="home-cta">{{ t('meta.home.pillars.calcCta') }}</a>
+          <a href="{{ localizeRootHref('/calculators/') }}" class="home-cta">{{ t('meta.home.pillars.calcCta') }}</a>
         </article>
 
         <article class="pillar-card">
@@ -191,14 +191,14 @@
             <li>{{ t('meta.home.pillars.underLi6') }}</li>
             <li>{{ t('meta.home.pillars.underLi7') }}</li>
           </ul>
-          <a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/" class="home-cta">{{ t('meta.home.pillars.underCta') }}</a>
+          <a href="{{ localizeRootHref('/articles/investing-and-financial-literacy/') }}" class="home-cta">{{ t('meta.home.pillars.underCta') }}</a>
         </article>
 
         <article class="pillar-card">
           <h3>{{ t('meta.home.pillars.beyondTitle') }}</h3>
           <p>{{ t('meta.home.pillars.beyondDesc') }}</p>
           <p>{{ t('meta.home.pillars.beyondFuture') }}</p>
-          <a href="{{ pathPrefix }}/essays/" class="home-cta">{{ t('meta.home.pillars.beyondCta') }}</a>
+          <a href="{{ localizeRootHref('/essays/') }}" class="home-cta">{{ t('meta.home.pillars.beyondCta') }}</a>
         </article>
       </div>
     </section>
@@ -207,11 +207,11 @@
       <h2 id="questions-heading" class="home-section-heading">{{ t('meta.home.questions.heading') }}</h2>
       <p class="questions-intro">{{ t('meta.home.questions.intro') }}</p>
       <ul class="questions-list">
-        <li><a href="{{ pathPrefix }}/calculators/advisor-fee/">{{ t('meta.home.questions.link1') }}</a></li>
-        <li><a href="{{ pathPrefix }}/calculators/pay-off-mortgage-vs-invest/">{{ t('meta.home.questions.link2') }}</a></li>
-        <li><a href="{{ pathPrefix }}/calculators/inflation-time-machine/">{{ t('meta.home.questions.link3') }}</a></li>
-        <li><a href="{{ pathPrefix }}/calculators/tfsa-rrsp-fhsa/">{{ t('meta.home.questions.link4') }}</a></li>
-        <li><a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/">{{ t('meta.home.questions.linkMore') }}</a></li>
+        <li><a href="{{ localizeRootHref('/calculators/advisor-fee/') }}">{{ t('meta.home.questions.link1') }}</a></li>
+        <li><a href="{{ localizeRootHref('/calculators/pay-off-mortgage-vs-invest/') }}">{{ t('meta.home.questions.link2') }}</a></li>
+        <li><a href="{{ localizeRootHref('/calculators/inflation-time-machine/') }}">{{ t('meta.home.questions.link3') }}</a></li>
+        <li><a href="{{ localizeRootHref('/calculators/tfsa-rrsp-fhsa/') }}">{{ t('meta.home.questions.link4') }}</a></li>
+        <li><a href="{{ localizeRootHref('/articles/investing-and-financial-literacy/') }}">{{ t('meta.home.questions.linkMore') }}</a></li>
       </ul>
     </section>
 
@@ -239,24 +239,24 @@
           <h3>{{ t('meta.home.featured.advTitle') }}</h3>
           <p class="featured-tool-desc">{{ t('meta.home.featured.advDesc') }}</p>
           <div class="featured-tool-buttons">
-            <a href="{{ pathPrefix }}/calculators/advisor-fee/" class="home-cta home-cta-primary">{{ t('meta.home.featured.advOpen') }}</a>
-            <a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/the-true-cost-of-financial-advisor-fees/" class="home-cta">{{ t('meta.home.featured.advExplain') }}</a>
+            <a href="{{ localizeRootHref('/calculators/advisor-fee/') }}" class="home-cta home-cta-primary">{{ t('meta.home.featured.advOpen') }}</a>
+            <a href="{{ localizeRootHref('/articles/investing-and-financial-literacy/the-true-cost-of-financial-advisor-fees/') }}" class="home-cta">{{ t('meta.home.featured.advExplain') }}</a>
           </div>
         </article>
         <article class="card featured-tool-card">
           <h3>{{ t('meta.home.featured.inflTitle') }}</h3>
           <p class="featured-tool-desc">{{ t('meta.home.featured.inflDesc') }}</p>
           <div class="featured-tool-buttons">
-            <a href="{{ pathPrefix }}/calculators/inflation-time-machine/" class="home-cta home-cta-primary">{{ t('meta.home.featured.inflOpen') }}</a>
-            <a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/inflation/" class="home-cta">{{ t('meta.home.featured.inflExplain') }}</a>
+            <a href="{{ localizeRootHref('/calculators/inflation-time-machine/') }}" class="home-cta home-cta-primary">{{ t('meta.home.featured.inflOpen') }}</a>
+            <a href="{{ localizeRootHref('/articles/investing-and-financial-literacy/inflation/') }}" class="home-cta">{{ t('meta.home.featured.inflExplain') }}</a>
           </div>
         </article>
         <article class="card featured-tool-card">
           <h3>{{ t('meta.home.featured.mortTitle') }}</h3>
           <p class="featured-tool-desc">{{ t('meta.home.featured.mortDesc') }}</p>
           <div class="featured-tool-buttons">
-            <a href="{{ pathPrefix }}/calculators/pay-off-mortgage-vs-invest/" class="home-cta home-cta-primary">{{ t('meta.home.featured.mortOpen') }}</a>
-            <a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/pay-off-your-mortgage-faster-or-invest/" class="home-cta">{{ t('meta.home.featured.mortExplain') }}</a>
+            <a href="{{ localizeRootHref('/calculators/pay-off-mortgage-vs-invest/') }}" class="home-cta home-cta-primary">{{ t('meta.home.featured.mortOpen') }}</a>
+            <a href="{{ localizeRootHref('/articles/investing-and-financial-literacy/pay-off-your-mortgage-faster-or-invest/') }}" class="home-cta">{{ t('meta.home.featured.mortExplain') }}</a>
           </div>
         </article>
       </div>
@@ -266,14 +266,14 @@
       <h2 id="start-here-heading" class="home-section-heading">{{ t('meta.home.start.heading') }}</h2>
       <p class="questions-intro">{{ t('meta.home.start.intro') }}</p>
       <ul class="start-here-list">
-        <li><a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/what-is-investing/">{{ t('meta.home.start.link1') }}</a></li>
-        <li><a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/what-is-the-stock-market/">{{ t('meta.home.start.link2') }}</a></li>
-        <li><a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/asset-classes-for-investing/">{{ t('meta.home.start.link3') }}</a></li>
-        <li><a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/compound-interest/">{{ t('meta.home.start.link4') }}</a></li>
-        <li><a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/inflation/">{{ t('meta.home.start.link5') }}</a></li>
+        <li><a href="{{ localizeRootHref('/articles/investing-and-financial-literacy/what-is-investing/') }}">{{ t('meta.home.start.link1') }}</a></li>
+        <li><a href="{{ localizeRootHref('/articles/investing-and-financial-literacy/what-is-the-stock-market/') }}">{{ t('meta.home.start.link2') }}</a></li>
+        <li><a href="{{ localizeRootHref('/articles/investing-and-financial-literacy/asset-classes-for-investing/') }}">{{ t('meta.home.start.link3') }}</a></li>
+        <li><a href="{{ localizeRootHref('/articles/investing-and-financial-literacy/compound-interest/') }}">{{ t('meta.home.start.link4') }}</a></li>
+        <li><a href="{{ localizeRootHref('/articles/investing-and-financial-literacy/inflation/') }}">{{ t('meta.home.start.link5') }}</a></li>
       </ul>
       <p style="margin:1.25rem 0 0;">
-        <a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/" class="home-cta">{{ t('meta.home.start.browseCta') }}</a>
+        <a href="{{ localizeRootHref('/articles/investing-and-financial-literacy/') }}" class="home-cta">{{ t('meta.home.start.browseCta') }}</a>
       </p>
     </section>
 
@@ -295,8 +295,8 @@
       <h2 id="final-heading" class="home-section-heading">{{ t('meta.home.final.heading') }}</h2>
       <p>{{ t('meta.home.final.p') }}</p>
       <div class="final-cta-buttons">
-        <a href="{{ pathPrefix }}/calculators/advisor-fee/" class="home-cta home-cta-primary">{{ t('meta.home.final.ctaAdvisor') }}</a>
-        <a href="{{ pathPrefix }}/articles/investing-and-financial-literacy/" class="home-cta">{{ t('meta.home.final.ctaUnderstanding') }}</a>
+        <a href="{{ localizeRootHref('/calculators/advisor-fee/') }}" class="home-cta home-cta-primary">{{ t('meta.home.final.ctaAdvisor') }}</a>
+        <a href="{{ localizeRootHref('/articles/investing-and-financial-literacy/') }}" class="home-cta">{{ t('meta.home.final.ctaUnderstanding') }}</a>
       </div>
     </section>
 
