@@ -683,7 +683,7 @@ function wireShareButtons() {
       try {
         const result = await window.TLM.shareCard.shareResultCard(payload);
         if (result && result.mode === 'download-and-copy-fallback') {
-          setShareStatus(result.copied ? 'PNG downloaded and link copied.' : 'PNG downloaded.');
+          setShareStatus(result.copied ? 'Calculation image saved and shareable link copied.' : 'Calculation image saved.');
         } else {
           setShareStatus('Share dialog opened.');
         }
@@ -696,12 +696,12 @@ function wireShareButtons() {
     downloadBtn.addEventListener('click', async () => {
       const payload = latestSharePayload || buildSharePayload();
       if (!payload) return;
-      setShareStatus('Generating PNG...');
+      setShareStatus('Preparing image...');
       try {
         await window.TLM.shareCard.downloadResultCard(payload);
-        setShareStatus('PNG downloaded.');
+        setShareStatus('Calculation image saved.');
       } catch (_e) {
-        setShareStatus('Could not generate PNG.', true);
+        setShareStatus('Could not prepare image.', true);
       }
     });
   }
@@ -709,7 +709,7 @@ function wireShareButtons() {
     copyBtn.addEventListener('click', async () => {
       try {
         await window.TLM.shareCard.copyResultLink({ url: window.location.href, calculatorName: 'canada-income-tax' });
-        setShareStatus('Result link copied.');
+        setShareStatus('Shareable link copied.');
       } catch (_e) {
         setShareStatus('Could not copy link.', true);
       }

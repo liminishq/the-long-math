@@ -5,6 +5,7 @@
 
   var WIDTH = 1080;
   var HEIGHT = 1350;
+  var FONT_STACK = 'Inter, "Segoe UI", Arial, sans-serif';
 
   function track(eventName, params) {
     if (typeof window.gtag !== "function") return;
@@ -49,6 +50,17 @@
     ctx.lineTo(x, y + r);
     ctx.quadraticCurveTo(x, y, x + r, y);
     ctx.closePath();
+  }
+
+  function font(weight, size) {
+    return weight + " " + size + "px " + FONT_STACK;
+  }
+
+  function waitForFonts() {
+    if (document.fonts && document.fonts.ready && typeof document.fonts.ready.then === "function") {
+      return document.fonts.ready.catch(function () {});
+    }
+    return Promise.resolve();
   }
 
   function canvasToBlob(canvas) {
@@ -183,18 +195,18 @@
     var y = 150;
 
     ctx.fillStyle = accent;
-    ctx.font = "700 42px Arial, sans-serif";
+    ctx.font = font(700, 42);
     ctx.fillText(config.brand || "The Long Math", left, y);
 
     y += 120;
     ctx.fillStyle = muted;
-    ctx.font = "600 52px Arial, sans-serif";
+    ctx.font = font(600, 52);
     drawWrappedText(ctx, config.headline || "Estimated result", left, y, contentWidth, 62);
 
     y += 180;
     // Highlight the main value with a blue panel + glow for stronger visual punch.
     var mainValue = String(config.mainValue || "—");
-    ctx.font = "700 110px Arial, sans-serif";
+    ctx.font = font(700, 110);
     var mvWidth = ctx.measureText(mainValue).width;
     var badgeX = left - 20;
     var badgeY = y - 112;
@@ -212,7 +224,7 @@
     ctx.stroke();
 
     ctx.fillStyle = text;
-    ctx.font = "700 110px Arial, sans-serif";
+    ctx.font = font(700, 110);
     ctx.fillText(mainValue, left, y);
 
     // Thin blue accent bar under the number panel.
@@ -222,14 +234,14 @@
 
     y += 100;
     ctx.fillStyle = muted;
-    ctx.font = "500 40px Arial, sans-serif";
+    ctx.font = font(500, 40);
     drawWrappedText(ctx, config.subline || "", left, y, contentWidth, 50);
 
     if (Array.isArray(config.contextLines) && config.contextLines.length) {
       y += 120;
       ctx.fillStyle = subtle;
-      ctx.font = "400 34px Arial, sans-serif";
-      for (var cl = 0; cl < config.contextLines.length; cl += 1) {
+      ctx.font = font(400, 34);
+      for (var cl = 0; cl < Math.min(config.contextLines.length, 7); cl += 1) {
         var line = String(config.contextLines[cl] || "").trim();
         if (!line) continue;
         y += drawWrappedText(ctx, line, left, y, contentWidth, 44) * 44;
@@ -238,7 +250,7 @@
     } else if (config.contextLine) {
       y += 120;
       ctx.fillStyle = subtle;
-      ctx.font = "400 34px Arial, sans-serif";
+      ctx.font = font(400, 34);
       drawWrappedText(ctx, config.contextLine, left, y, contentWidth, 44);
     }
 
@@ -250,7 +262,7 @@
     ctx.stroke();
 
     ctx.fillStyle = text;
-    ctx.font = "600 36px Arial, sans-serif";
+    ctx.font = font(600, 36);
     drawWrappedText(
       ctx,
       config.footer || "Run your own numbers at TheLongMath.com",
@@ -264,6 +276,7 @@
   }
 
   async function generateImageBlob(config) {
+    await waitForFonts();
     var canvas = createShareCardCanvas(config);
     var blob = await canvasToBlob(canvas);
     track("calculator_result_image_generated", {
@@ -395,6 +408,7 @@
       var c = b.card;
       return {
         calculatorName: slug,
+        brand: c.brand || "The Long Math",
         title: c.title || "The Long Math calculator result",
         headline: c.headline,
         mainValue: c.mainValue,

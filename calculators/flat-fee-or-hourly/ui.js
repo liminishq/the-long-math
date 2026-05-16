@@ -407,7 +407,14 @@
             headline: "Projected cost of fees and lost compounding",
             mainValue: fmtCAD(result.totalCost),
             subline: "Over a " + years + "-year investing horizon",
-            contextLine: "Based on user inputs",
+            contextLines: [
+              "Starting balance: " + fmtCAD(inp.startingBalance),
+              "Monthly contribution: " + fmtCAD(inp.monthlyContribution),
+              "Annual growth: " + fmtPct(inp.annualReturn),
+              "Flat fee: " + fmtCAD(inp.flatFee),
+              "Hourly work: " + inp.hoursPerYear + " hours at " + fmtCAD(inp.hourlyRate) + "/hour",
+              "AUM comparison: " + fmtPct(inp.aumFeePct),
+            ],
             shareText:
               "Estimated total fee cost over " +
               years +

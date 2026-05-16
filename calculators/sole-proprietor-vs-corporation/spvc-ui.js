@@ -491,7 +491,7 @@ export function initSpvcUi() {
     $("copy_result_link_btn")?.addEventListener("click", async () => {
       if (!latestSharePayload) return;
       await window.TLM.shareCard.copyResultLink(latestSharePayload);
-      setShareStatus("Result link copied.", false);
+      setShareStatus("Shareable link copied.", false);
     });
   }
 
