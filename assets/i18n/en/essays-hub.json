@@ -2,6 +2,7 @@
   "title": "Beyond the Numbers | The Long Math",
   "description": "Essays examining a life and career in medicine through a financial and business lens—training, income, incentives, opportunity cost, and long-term trade-offs.",
   "h1": "Beyond the Numbers",
+  "scopeIntro": "This section is a curated, slowly expanding essay library (work in progress). It uses arithmetic to explore career economics, long-horizon financial trade-offs, opportunity cost, medicine and professional training, retirement psychology, FIRE concepts, wealth behaviour, and major life decisions — not headlines or hot takes. Several published pieces focus on physician careers because that is where the author’s lived data are deepest; the scope is intentionally broader than medicine alone.",
   "heroLede": "A financial look at the real cost of becoming a doctor.",
   "introP1": "Beyond the Numbers examines the financial realities behind a career in medicine. These essays explore training length, tuition, delayed earnings, incentives, taxation, and long-term trade-offs through a personal and business financial lens.",
   "introP2": "Medicine is often discussed in terms of prestige, purpose, and service. Much less attention is given to the arithmetic behind the path: years of delayed income, the opportunity cost of training, compensation structures, and the long financial horizon that shapes a physician's life.",
@@ -33,7 +34,7 @@
       "status": "Coming soon"
     }
   ],
-  "footerNote": "Additional essays examining incentives, career structure, and financial trade-offs in medicine will be added to this section over time.",
+  "footerNote": "Additional essays on incentives, career structure, and financial trade-offs will be added over time. The library is small but deliberate — it will grow.",
   "disclaimerLabel": "Disclaimer",
   "disclaimerText": "Essays in this section reflect personal perspectives and analysis. They are provided for educational and informational purposes only and do not constitute financial, legal, or career advice. Decisions about education, career paths, or finances should be made based on your own research and circumstances and, where appropriate, with guidance from qualified professionals."
 }

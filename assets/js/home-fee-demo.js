@@ -36,7 +36,7 @@
   }
 
   function formatPercent(x) {
-    return x.toFixed(1) + "%";
+    return x.toFixed(2) + "%";
   }
 
   function compoundFV(rate) {
@@ -106,6 +106,7 @@
     var baseSeries = computeSeries(r);
     var feeSeries = computeSeries(r - fee);
     var maxSeries = Math.max.apply(null, baseSeries.concat(feeSeries));
+    if (!Number.isFinite(maxSeries) || maxSeries <= 0) maxSeries = 1;
     chartBasePath.setAttribute("d", buildPath(baseSeries, maxSeries));
     chartFeePath.setAttribute("d", buildPath(feeSeries, maxSeries));
   }
