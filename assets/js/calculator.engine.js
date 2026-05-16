@@ -21,8 +21,9 @@
 */
 
 /* ============================================================
-   DEFAULT ADVISOR FEE SCHEDULE (NON-BLENDED)
-   Single tier applies to entire balance at that AUM level
+   DEFAULT ADVISOR FEE SCHEDULE (BLENDED / MARGINAL TIERS)
+   Each tier applies only to dollars inside that band (like tax brackets).
+   Tiers use half-open intervals [min, max) in dollars CAD.
    ============================================================ */
 
 const DEFAULT_ADVISOR_FEE_SCHEDULE = [
@@ -34,18 +35,26 @@ const DEFAULT_ADVISOR_FEE_SCHEDULE = [
 ];
 
 /* ============================================================
-   Helper: lookup advisor fee rate for a given balance
+   Blended tiered advisor fee: annual dollars for a balance
    ============================================================ */
 
-function lookupAdvisorFeeRate(balance, schedule = DEFAULT_ADVISOR_FEE_SCHEDULE) {
+function computeBlendedAdvisorAnnualFee(balance, schedule = DEFAULT_ADVISOR_FEE_SCHEDULE) {
   if (!Number.isFinite(balance) || balance <= 0) return 0;
 
+  let annualFee = 0;
   for (const tier of schedule) {
-    if (balance >= tier.min && balance < tier.max) {
-      return tier.rate;
+    const upper = tier.max === Infinity ? Infinity : tier.max;
+    let dollarsInBand;
+    if (upper === Infinity) {
+      dollarsInBand = Math.max(0, balance - tier.min);
+    } else {
+      const bandWidth = upper - tier.min;
+      if (!Number.isFinite(bandWidth) || bandWidth <= 0) continue;
+      dollarsInBand = Math.min(Math.max(balance - tier.min, 0), bandWidth);
     }
+    annualFee += dollarsInBand * tier.rate;
   }
-  return 0;
+  return annualFee;
 }
 
 /* ============================================================
@@ -57,8 +66,9 @@ function simulatePortfolio({
   monthly_contribution,
   horizon_years,
   annual_return,
-  advisor_fee_rate_fn,   // function(balance) → annual %
-  mer_rate               // decimal (e.g. 0.02) or 0
+  advisor_fee_rate_fn, // (balance) → annual advisor rate as decimal; used when blended_advisor_schedule is null
+  blended_advisor_schedule, // non-null → marginal AUM schedule; advisor_fee_rate_fn ignored for advisor leg
+  mer_rate // decimal (e.g. 0.02) or 0
 }) {
   const months = Math.round(horizon_years * 12);
   const growth_factor =
@@ -76,10 +86,17 @@ function simulatePortfolio({
     // 2) Growth
     balance *= growth_factor;
 
-    // 3) Fees (applied to current AUM)
-    const advisor_rate = advisor_fee_rate_fn(balance);
-    const monthly_fee =
-      balance * ((advisor_rate + mer_rate) / 12);
+    // 3) Fees (advisor + MER), applied to current AUM after growth
+    const mer_monthly = balance * (mer_rate / 12);
+    let advisor_monthly;
+    if (blended_advisor_schedule != null) {
+      advisor_monthly = computeBlendedAdvisorAnnualFee(balance, blended_advisor_schedule) / 12;
+    } else {
+      const advisor_rate = advisor_fee_rate_fn(balance);
+      advisor_monthly = balance * (advisor_rate / 12);
+    }
+
+    const monthly_fee = advisor_monthly + mer_monthly;
 
     if (monthly_fee > 0) {
       balance -= monthly_fee;
@@ -103,6 +120,7 @@ function solveBreakEvenReturn({
   monthly_contribution,
   horizon_years,
   advisor_fee_rate_fn,
+  blended_advisor_schedule,
   mer_rate
 }) {
   let low = 0.0;
@@ -115,6 +133,7 @@ function solveBreakEvenReturn({
     horizon_years,
     annual_return: high,
     advisor_fee_rate_fn,
+    blended_advisor_schedule,
     mer_rate
   }).ending_value;
 
@@ -132,6 +151,7 @@ function solveBreakEvenReturn({
       horizon_years,
       annual_return: mid,
       advisor_fee_rate_fn,
+      blended_advisor_schedule,
       mer_rate
     }).ending_value;
 
@@ -177,8 +197,9 @@ function calculateLongMath(inputs) {
     throw new Error("Invalid annual return");
 
   // ---------- Fee model ----------
+  const blended_schedule = use_default_fee ? DEFAULT_ADVISOR_FEE_SCHEDULE : null;
   const advisor_fee_fn = use_default_fee
-    ? (bal) => lookupAdvisorFeeRate(bal)
+    ? () => 0
     : () => (Number(custom_advisor_fee_pct) || 0) / 100;
 
   const mer_rate = include_mer
@@ -192,6 +213,7 @@ function calculateLongMath(inputs) {
     horizon_years,
     annual_return,
     advisor_fee_rate_fn: () => 0,
+    blended_advisor_schedule: null,
     mer_rate: 0
   });
 
@@ -202,6 +224,7 @@ function calculateLongMath(inputs) {
     horizon_years,
     annual_return,
     advisor_fee_rate_fn: advisor_fee_fn,
+    blended_advisor_schedule: blended_schedule,
     mer_rate
   });
 
@@ -218,6 +241,7 @@ function calculateLongMath(inputs) {
     monthly_contribution,
     horizon_years,
     advisor_fee_rate_fn: advisor_fee_fn,
+    blended_advisor_schedule: blended_schedule,
     mer_rate
   });
 
@@ -239,3 +263,4 @@ function calculateLongMath(inputs) {
    ============================================================ */
 
 window.calculateLongMath = calculateLongMath;
+window.computeBlendedAdvisorAnnualFee = computeBlendedAdvisorAnnualFee;

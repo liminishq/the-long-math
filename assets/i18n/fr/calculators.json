@@ -1,6 +1,14 @@
 {
   "backToTools": "← Retour aux outils et calculateurs",
   "advisorFee": {
+    "canadaScopeNote": "Cet outil est conçu pour les règles fiscales et les comptes canadiens.",
+    "sharedScenarioBanner": "Scénario de calculateur partagé chargé. Vérifiez les hypothèses ci-dessous et lancez vos propres simulations.",
+    "shareScenarioTitle": "Partager le scénario",
+    "shareScenarioCopy": "Enregistrez une image de cette estimation avec les chiffres principaux.",
+    "shareScenarioHelper": "Comprend un lien reconstituable pour recharger les entrées, les résultats et les hypothèses dans ce calculateur.",
+    "btnShareScenario": "Partager le scénario",
+    "btnSaveCalculation": "Enregistrer ce calcul",
+    "btnCopyShareableLink": "Copier le lien partageable",
     "h1": "Le vrai coût calculé d'un conseiller financier (modèle AUM)",
     "lede1": "De nombreux conseillers financiers facturent des frais en pourcentage des actifs qu'ils gèrent.",
     "lede2": "Les conseillers peuvent aussi recommander ou vendre des produits d'investissement (fonds communs et FNB) qui comportent des frais de gestion supplémentaires, ce qui réduit encore les rendements nets au fil du temps.",
@@ -41,7 +49,7 @@
     "errorNoEngine": "Erreur : calculateLongMath(...) introuvable.",
     "methodTitle": "Méthode et hypothèses",
     "defaultFeeModel": "Modèle de frais conseiller (par défaut)",
-    "defaultFeeDesc": "Utilise une échelle de pourcentage des actifs (AUM) par paliers, cohérente avec celles des grandes institutions canadiennes (style des cinq grandes banques) et des plateformes similaires. Les frais sont appliqués aux actifs investis au fil du temps.",
+    "defaultFeeDesc": "Utilise une échelle de pourcentage des actifs (AUM) par paliers, cohérente avec celles des grandes institutions canadiennes (style des cinq grandes banques) et des plateformes similaires. Les paliers s'appliquent de façon progressive, comme les tranches d'imposition : chaque taux ne s'applique qu'aux dollars dans cette bande, et le modèle recalcule les frais combinés chaque mois à mesure que le solde évolue.",
     "defaultFeeNote": "À titre indicatif (votre calcul utilise cette échelle lorsque « Utiliser l'échelle de frais conseiller par défaut » est coché).",
     "feeTableAssets": "Actifs sous gestion (CAD)",
     "feeTableRate": "Frais annuels (%)",
@@ -61,7 +69,7 @@
     "methodBreakeven": "Rendement conseiller pour atteindre le seuil de rentabilité",
     "methodBreakevenExampleLabel": "Exemple :",
     "methodBreakevenDesc": "Le rendement annuel moyen requis pour qu'un portefeuille géré par un conseiller atteigne la même valeur finale que sans conseiller, selon les hypothèses choisies.",
-    "methodBreakevenExample": "Exemple : le scénario « Début de carrière » suppose un rendement de 7 % sur votre portefeuille. Si ce même portefeuille était géré par un conseiller avec l'échelle par défaut et le FGR supposé de 2 %, le conseiller devrait obtenir un rendement annuel de 10,71 % pour égaler un portefeuille non géré (sans FGR) à 7 %. Si vous utilisez l'échelle par défaut mais désactivez le FGR (adapté à un portefeuille sans fonds communs/FNB), le portefeuille doit rapporter 8,65 % par an pour égaler le cas sans conseiller.",
+    "methodBreakevenExample": "Exemple : le préréglage « Milieu de carrière » (1 000 000 $ de départ, 5 000 $/mois, 15 ans, rendement brut de 7 %) avec l'échelle AUM marginale par défaut et un FGR supposé de 2 % donne un rendement brut de seuil de rentabilité d'environ 10,71 % par an par rapport aux mêmes entrées sans frais de conseil ni FGR. Avec l'échelle par défaut mais sans FGR, le rendement brut de seuil est d'environ 8,52 % par an.",
     "methodScope": "Note de portée",
     "methodScopeDesc": "Les commissions de transaction, les impôts et autres coûts propres au compte ne sont pas inclus.",
     "disclaimer": "Avertissement : tout le contenu de The Long Math — articles, essais, calculateurs, outils ou tout autre matériel — est fourni uniquement à des fins éducatives et informatives et ne constitue pas un conseil financier, fiscal, juridique ou en investissement. Les résultats ou projections reposent sur des modèles simplifiés, des hypothèses et des données fournies par l'utilisateur et peuvent ne pas refléter les résultats réels. Vous êtes responsable d'évaluer l'exactitude et l'applicabilité des informations fournies et d'effectuer votre propre diligence raisonnable. Consultez un professionnel qualifié avant de prendre des décisions financières."

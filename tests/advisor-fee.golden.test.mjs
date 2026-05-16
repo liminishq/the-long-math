@@ -73,3 +73,23 @@ test("invalid starting balance throws", () => {
     /Invalid starting balance/
   );
 });
+
+test("default tiered schedule uses blended marginal fees (not single rate on full balance)", () => {
+  const marginalAnnualIfHeldConstant =
+    250_000 * 0.02 + 250_000 * 0.0175 + 250_000 * 0.015;
+  const wrongFlatOnEntireBalanceAtTopMarginalRate = 750_000 * 0.015;
+
+  const r = calculateLongMath({
+    starting_balance: 750_000,
+    monthly_contribution: 0,
+    horizon_years: 1,
+    annual_return: 0,
+    use_default_fee: true,
+    custom_advisor_fee_pct: 1,
+    include_mer: false,
+    mer_pct: 0,
+  });
+  // Monthly fee drag reduces AUM slightly each month, so twelve months sum < one year at the initial blended rate.
+  assert.ok(r.fees_paid < marginalAnnualIfHeldConstant);
+  assert.ok(r.fees_paid > wrongFlatOnEntireBalanceAtTopMarginalRate);
+});

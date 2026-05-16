@@ -27,7 +27,7 @@
   <div class="wrap">
     <div class="methodology-content">
       <h1>Inspectable Arithmetic for the Advisor Fee Calculator</h1>
-      <p class="methodology-meta">Version 1.0<br>Last updated: February 2026</p>
+      <p class="methodology-meta">Version 1.1<br>Last verified: May 2026</p>
 
       <p>Transparent arithmetic is the operating system of this calculator.</p>
       <p>This document publishes the formulae, computational structure, and assumptions used to generate the outputs displayed on the calculator page.</p>
@@ -46,16 +46,16 @@
         <li>P = starting balance</li>
         <li>C = monthly contribution</li>
         <li>r = annual nominal return (gross, before fees)</li>
-        <li>f<sub>a</sub> = annual advisor fee rate</li>
+        <li>f<sub>a</sub> = annual advisor fee rate (used only for the flat user override; not a single rate on the whole balance when the default tier schedule is enabled)</li>
+        <li>F<sub>adv</sub>(B) = annual advisor fee in dollars under the default marginal tier schedule, for balance B</li>
         <li>f<sub>m</sub> = annual MER rate (if enabled)</li>
         <li>T = investment horizon in years</li>
         <li>N = 12T = total number of months</li>
       </ul>
 
-      <p>Monthly rates:</p>
+      <p>Monthly growth factor and MER rate on balance:</p>
       <div class="formula-block">
-        r<sub>m</sub> = r/12<br>
-        f<sub>a,m</sub> = f<sub>a</sub>/12<br>
+        r<sub>m</sub> = (1 + r)<sup>1/12</sup> − 1<br>
         f<sub>m,m</sub> = f<sub>m</sub>/12
       </div>
 
@@ -63,45 +63,52 @@
       <p>The portfolio is simulated month-by-month.</p>
 
       <h3 id="growth-without-fees">1. Growth Without Advisor Fee or MER</h3>
+      <p>Let g = (1 + r)<sup>1/12</sup> (monthly compounding consistent with the simulation).</p>
       <div class="formula-block">
-        B<sub>t</sub> = (B<sub>t−1</sub> + C)(1 + r<sub>m</sub>)
+        B<sub>t</sub> = (B<sub>t−1</sub> + C) × g
       </div>
       <p class="formula-meta"><strong>Rationale:</strong> Models deterministic monthly compounding with fixed contributions.</p>
       <p class="formula-meta"><strong>Limitation:</strong> Assumes constant return and fixed contribution schedule; does not model volatility or sequence-of-returns risk.</p>
 
       <h3 id="growth-with-fees">2. Growth With Advisor Fee and MER</h3>
-      <p>Gross monthly growth:</p>
+      <p>Gross balance after contribution and growth:</p>
       <div class="formula-block">
         B<sub>t</sub><sup>gross</sup> = (B<sub>t−1</sub> + C)(1 + r<sub>m</sub>)
       </div>
 
-      <p>Total monthly cost rate:</p>
+      <p>MER fee (always a flat percentage of <em>current</em> AUM):</p>
       <div class="formula-block">
-        f<sub>total,m</sub> = f<sub>a,m</sub> + f<sub>m,m</sub>
+        Fee<sub>MER,t</sub> = f<sub>m,m</sub> × B<sub>t</sub><sup>gross</sup>
       </div>
 
-      <p>Fee deducted:</p>
+      <p>Advisor fee (default schedule — marginal / blended tiers):</p>
       <div class="formula-block">
-        Fee<sub>t</sub> = f<sub>total,m</sub> × B<sub>t</sub><sup>gross</sup>
+        Fee<sub>adv,t</sub> = F<sub>adv</sub>(B<sub>t</sub><sup>gross</sup>) / 12
       </div>
 
-      <p>Net balance:</p>
+      <p>Advisor fee (user override — single flat annual rate on total AUM):</p>
       <div class="formula-block">
+        Fee<sub>adv,t</sub> = f<sub>a</sub> × B<sub>t</sub><sup>gross</sup> / 12
+      </div>
+
+      <p>Total fee and net balance:</p>
+      <div class="formula-block">
+        Fee<sub>t</sub> = Fee<sub>adv,t</sub> + Fee<sub>MER,t</sub><br>
         B<sub>t</sub> = B<sub>t</sub><sup>gross</sup> − Fee<sub>t</sub>
       </div>
 
-      <p>Equivalent expression:</p>
-      <div class="formula-block">
-        B<sub>t</sub> = (B<sub>t−1</sub> + C)(1 + r<sub>m</sub>)(1 − f<sub>total,m</sub>)
-      </div>
+      <p class="formula-meta"><strong>Rationale:</strong> MER is modeled as a proportional monthly drag on AUM. Default advisor fees use dollar-based marginal tiers each month (see below), so the advisor leg is not generally expressible as a single effective rate times the whole balance.</p>
+      <p class="formula-meta"><strong>Limitation:</strong> Real-world billing may use daily accrual, tax treatment of fees, or embedded commissions; this model uses one monthly step.</p>
 
-      <p class="formula-meta"><strong>Rationale:</strong> Fees are modeled as proportional deductions from AUM.</p>
-      <p class="formula-meta"><strong>Limitation:</strong> Real billing schedules vary; this applies a monthly proportional drag.</p>
-
-      <h3 id="default-tiered-schedule">3. Default Tiered Advisor Fee Schedule</h3>
+      <h3 id="default-tiered-schedule">3. Default Tiered Advisor Fee Schedule (Blended)</h3>
       <p>
-        If enabled, the advisor fee rate is determined each month based on current AUM. The applicable rate is applied to the entire portfolio (non-blended).
+        When the default schedule is enabled, fee tiers are applied <strong>progressively</strong>, similar to tax brackets: each tier’s annual rate applies only to the dollars inside that tier’s band. The monthly advisor fee is one-twelfth of the resulting <em>annual dollar</em> fee for the current balance.
       </p>
+      <p>For tiers j = 1…J with lower bound L<sub>j</sub>, upper bound U<sub>j</sub> (exclusive, except the top open tier), and annual rate r<sub>j</sub>:</p>
+      <div class="formula-block">
+        F<sub>adv</sub>(B) = Σ<sub>j</sub> min(max(B − L<sub>j</sub>, 0), U<sub>j</sub> − L<sub>j</sub>) × r<sub>j</sub>
+      </div>
+      <p>The published bands are: $0–$250,000 at 2.00%; $250,000–$500,000 at 1.75%; $500,000–$1,000,000 at 1.50%; $1,000,000–$2,000,000 at 1.25%; over $2,000,000 at 1.00% (half-open intervals, consistent with the table on the calculator page).</p>
 
       <h3 id="total-fees-paid">4. Total Fees Paid</h3>
       <div class="formula-block">
@@ -147,8 +154,8 @@
         <li>Contributions occur monthly and remain constant.</li>
         <li>The compared scenarios assume the same gross pre-fee market return.</li>
         <li>The advisor-managed portfolio is assumed to match the market before fees, not to generate persistent outperformance. This is consistent with the empirical record: <a href="https://www.spglobal.com/spdji/en/spiva/article/spiva-canada/" target="_blank" rel="noopener noreferrer">SPIVA Canada</a> data show that the majority of actively managed funds underperform their benchmarks over long time horizons, net of costs.</li>
-        <li>Advisor fees and MERs are applied proportionally each month.</li>
-        <li>The default tiered schedule applies a single rate to the entire portfolio based on current AUM.</li>
+        <li>MERs are applied each month as a fixed percentage of current AUM. When the default advisor schedule is enabled, advisor fees use marginal tiering on current AUM (not a single bracket rate on the entire balance).</li>
+        <li>Fee tiers are applied progressively, similar to tax brackets.</li>
         <li>The model isolates fee drag by holding other structural variables constant between scenarios.</li>
         <li>The self-directed investor is assumed to contribute consistently, remain invested, and follow a simple long-term plan with similar discipline.</li>
         <li>No taxes, commissions, asset allocation changes, withdrawals, or advisor value-add beyond portfolio management are modeled.</li>
@@ -166,6 +173,22 @@
       <p style="margin-top: 2em; font-weight: 600;">
         If any discrepancy is identified between this documentation and the calculator output, the arithmetic here governs.
       </p>
+
+      <h2>What This Calculator Does Not Include</h2>
+      <ul>
+        <li>Tax treatment of advisory fees (e.g., deductibility in non-registered accounts).</li>
+        <li>HST/GST on advice, trailer fees, or other embedded product compensation.</li>
+        <li>Withdrawals, changing contribution rates, glide paths, or asset-allocation drift.</li>
+        <li>Market volatility, sequence-of-returns risk, or cash balances outside the invested portfolio.</li>
+        <li>Behavioral gaps (timing of contributions, panic selling) and implementation shortfall.</li>
+      </ul>
+
+      <h2>Sources and References</h2>
+      <ul class="methodology-sources">
+        <li><a href="https://www.spglobal.com/spdji/en/spiva/article/spiva-canada/" target="_blank" rel="noopener noreferrer">SPIVA Canada</a> — long-horizon active vs passive performance context.</li>
+        <li><a href="https://www.canada.ca/en.html" target="_blank" rel="noopener noreferrer">Government of Canada</a> — general regulatory and consumer context.</li>
+        <li><a href="https://www.osfi-bsif.gc.ca/" target="_blank" rel="noopener noreferrer">OSFI</a> — banking and supervisory context for large Canadian institutions.</li>
+      </ul>
     </div>
 
     <div id="footerMount"></div>
