@@ -4,12 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Inspectable Arithmetic – Pay Off Mortgage vs Invest Calculator | The Long Math</title>
-  <meta name="description" content="Formulae, computational structure, and assumptions for the Pay Off Mortgage vs Invest (Cash-Flow Neutral) Calculator." />
+  <meta name="description" content="Formulae, computational structure, and assumptions for the Pay Off Mortgage vs Invest calculator, including monthly extra cash and lump-sum-at-start modes." />
   <link rel="canonical" href="https://thelongmath.com/calculators/pay-off-mortgage-vs-invest/methodology/" />
 
   <script src="/assets/js/theme-init.40fc21015f.js"></script>
-  <link rel="stylesheet" href="/assets/css/styles.ec87251a1b.css" />
-  <script defer src="/assets/js/site.92f151cf7c.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.deb0166dcb.css" />
+  <script defer src="/assets/js/site.e5c747ad36.js"></script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
   <script>
@@ -26,7 +26,7 @@
   <div class="wrap">
     <div class="methodology-content">
       <h1>Inspectable Arithmetic for the Pay Off Mortgage vs Invest Calculator (Cash-Flow Neutral)</h1>
-      <p class="methodology-meta">Version 1.0<br>Last updated: February 2026</p>
+      <p class="methodology-meta">Version 1.2<br>Last verified: May 2026</p>
 
       <p>
         Transparent arithmetic is the operating system of this calculator.
@@ -40,20 +40,29 @@
 
       <h2>Purpose</h2>
       <p>
-        This calculator compares two strategies under a cash-flow-neutral rule: A fixed monthly cash budget is assumed. While a mortgage exists, cash is allocated between: mortgage payments (regular payment + optional extra paydown), and investment contributions. After the mortgage is paid off, the entire monthly budget is invested. The calculator reports mortgage balance, investment portfolio value, and net worth over time under constant return assumptions.
+        This calculator compares mortgage paydown versus investing under explicit rules. The user chooses one of two mutually exclusive ways to supply discretionary cash <em>in addition to</em> the regular mortgage payment <strong>P</strong>:
+      </p>
+      <ul>
+        <li><strong>Monthly extra cash:</strong> a fixed extra amount <strong>E</strong> every month. While a mortgage exists, <strong>P + E</strong> is split between the mortgage (scheduled payment plus allocated extra paydown) and the portfolio. After payoff, the full monthly budget <strong>P + E</strong> is invested each month.</li>
+        <li><strong>Lump sum at start:</strong> a one-time amount <strong>S</strong> applied at the beginning of month 1 only (before that month’s mortgage interest and scheduled payment). There is no recurring <strong>E</strong> in this mode. The same allocation slider splits <strong>S</strong> between extra principal and the portfolio. After payoff, only <strong>P</strong> is invested each month (because there was no recurring extra in this mode).</li>
+      </ul>
+      <p>
+        The calculator reports mortgage balance, investment portfolio value, and net worth over time under constant return assumptions.
       </p>
 
       <h2>Definitions</h2>
-      <p>All quantities below are monthly.</p>
+      <p>All accruals below are monthly time steps unless noted.</p>
 
       <h3>Inputs</h3>
       <ul>
         <li>B<sub>0</sub>: initial mortgage balance</li>
         <li>P: regular mortgage payment per month</li>
-        <li>E: extra cash available per month</li>
-        <li>a: allocation slider (0–100) interpreted as % of extra cash allocated to investing</li>
-        <li>extra to mortgage: E<sub>M</sub> = (1 − a/100) E</li>
-        <li>extra to invest: E<sub>I</sub> = (a/100) E</li>
+        <li><strong>Mode (exclusive):</strong> either monthly extra cash (inputs <strong>E</strong> and optional monthly budget tied to <strong>P</strong>) <em>or</em> lump sum (input <strong>S</strong> ≥ 0). The engine sets <strong>E = 0</strong> in lump mode regardless of other fields.</li>
+        <li>E: extra cash available per month (monthly mode only; <strong>E = 0</strong> in lump mode)</li>
+        <li>S: lump sum at start of month 1 (lump mode only; <strong>S = 0</strong> in monthly mode)</li>
+        <li>a: allocation slider (0–100), interpreted as % of the relevant discretionary cash allocated to <em>investing</em> (right end of slider). The remainder goes to extra mortgage principal.</li>
+        <li>Recurring extra to mortgage: E<sub>M</sub> = (1 − a/100) E</li>
+        <li>Recurring extra to invest: E<sub>I</sub> = (a/100) E</li>
         <li>r: Canadian nominal annual mortgage rate, compounded semi-annually (%)</li>
         <li>R: expected investment return before fees (annual, %)</li>
         <li>f: investment fees (annual, %)</li>
@@ -72,8 +81,9 @@
       <p>Monthly geometric investment return:</p>
       <div class="formula-block">μ = (1 + R<sub>net</sub>)<sup>1/12</sup> − 1</div>
       <p class="formula-meta">(Clamped internally so that R<sub>net</sub> ≥ −0.999.)</p>
-      <p>Monthly budget (cash-flow neutral):</p>
+      <p>Monthly budget used after the mortgage is paid off (same symbol in both modes):</p>
       <div class="formula-block">Budget = P + E</div>
+      <p class="formula-meta">In lump mode, E = 0, so Budget = P. In monthly mode, Budget = P + E.</p>
 
       <h2 id="mode-a">Mode A: Mortgage Payment Computed From Mortgage Inputs</h2>
       <p>If “Use mortgage calculator” is enabled, the calculator computes the regular mortgage payment P using the standard amortization formula.</p>
@@ -92,7 +102,17 @@
       <p class="formula-meta">Fallback: If B<sub>0</sub> ≤ 0 in manual mode, the engine estimates a principal from payment using a rough default (25 years, 5% Canadian nominal annual mortgage rate). This is a non-ideal fallback intended to keep the calculator functioning.</p>
 
       <h2 id="core-simulation">Core Simulation (Monthly Recurrence)</h2>
-      <p>The simulation advances month-by-month for t = 1, 2, …, N.</p>
+      <p>The simulation advances month-by-month for t = 1, 2, …, N. State at the end of month t is written B<sub>t</sub>, V<sub>t</sub>; month 0 records initial B<sub>0</sub>, V<sub>0</sub> = 0.</p>
+
+      <h3 id="lump-pre-step">Lump-sum pre-step (only month t = 1, only if S &gt; 0)</h3>
+      <p>If lump mode is active and S &gt; 0, the engine applies the following <em>before</em> interest due and the scheduled payment for that month. Let B<sup>−</sup> denote the mortgage balance at the start of the iteration (for t = 1, this is B<sub>0</sub>), and V<sup>−</sup> the portfolio at the start of the iteration (for t = 1, this is V<sub>0</sub> = 0).</p>
+      <p>Split the lump using the same slider <strong>a</strong> as for recurring extra:</p>
+      <div class="formula-block">S<sub>M</sub> = (1 − a/100) S &nbsp;&nbsp;(portion intended for mortgage principal)<br>S<sub>I</sub> = (a/100) S &nbsp;&nbsp;(portion intended for investing)</div>
+      <p>Extra principal from the lump cannot exceed the outstanding balance. Any mortgage-intended amount beyond what is needed to prepay the balance is redirected to the portfolio:</p>
+      <div class="formula-block">LumpPrincipal = min(max(0, S<sub>M</sub>), B<sup>−</sup>)<br>Overflow = S<sub>M</sub> − LumpPrincipal</div>
+      <p>Update balance and portfolio before the rest of the month:</p>
+      <div class="formula-block">B′ = max(0, B<sup>−</sup> − LumpPrincipal)<br>V′ = V<sup>−</sup> + S<sub>I</sub> + Overflow</div>
+      <p class="formula-meta">For t = 1, the simulation then continues using B′ and V′ as the starting balance and portfolio for that same month’s interest, mortgage payment, contributions, and compounding (below). For t &gt; 1, this pre-step is skipped (S is not applied again).</p>
 
       <h3>Home value</h3>
       <p>Home value is compounded in monthly steps:</p>
@@ -102,7 +122,8 @@
       <div class="formula-block">Equity<sub>t</sub> = max(0, H<sub>t</sub> − B<sub>t</sub>)<br>NetWorth<sub>t</sub> = Equity<sub>t</sub> + V<sub>t</sub></div>
       <p class="formula-meta">where V<sub>t</sub> is investment portfolio value.</p>
 
-      <h3 id="case-1">Case 1: Mortgage Still Outstanding (B<sub>t−1</sub> &gt; 0)</h3>
+      <h3 id="case-1">Case 1: Mortgage Still Outstanding at Start of Month t After Any Lump Pre-step</h3>
+      <p class="formula-meta">For t = 1, “B<sub>t−1</sub>” in the interest formula below is the balance <em>after</em> the lump pre-step when S &gt; 0 (i.e. B′ above); for t &gt; 1 it is the prior month’s ending balance. The same applies to V when composing contributions.</p>
 
       <p><strong>Step 1 — Mortgage interest due</strong></p>
       <div class="formula-block">InterestDue<sub>t</sub> = B<sub>t−1</sub> · i</div>
@@ -123,11 +144,12 @@
 
       <p><strong>Step 5 — Investment update (contribution first, then compound)</strong></p>
       <div class="formula-block">V<sub>t</sub>′ = V<sub>t−1</sub> + C<sub>t</sub><br>InterestEarned<sub>t</sub> = V<sub>t</sub>′ · μ<br>V<sub>t</sub> = V<sub>t</sub>′ · (1 + μ)</div>
-      <p class="formula-meta">Investment value is clamped to never go below zero.</p>
+      <p class="formula-meta">Investment value is clamped to never go below zero. For t = 1 with S &gt; 0, V<sub>t−1</sub> is the portfolio already increased by the lump pre-step (S<sub>I</sub> + Overflow).</p>
 
       <h3 id="case-2">Case 2: Mortgage Paid Off (B<sub>t−1</sub> ≤ 0)</h3>
-      <p>Once the mortgage balance reaches zero, the engine invests the entire monthly budget:</p>
+      <p>Once the mortgage balance reaches zero (including after the lump pre-step), the engine invests the entire monthly budget:</p>
       <div class="formula-block">C<sub>t</sub> = Budget = P + E</div>
+      <p class="formula-meta">In lump mode, E = 0, so each post-payoff contribution is C<sub>t</sub> = P.</p>
       <p>Then applies the same “contribution first, then compound” update:</p>
       <div class="formula-block">V<sub>t</sub>′ = V<sub>t−1</sub> + C<sub>t</sub><br>InterestEarned<sub>t</sub> = V<sub>t</sub>′ · μ<br>V<sub>t</sub> = V<sub>t</sub>′ · (1 + μ)</div>
 
@@ -143,7 +165,10 @@
       </ul>
 
       <h2 id="key-facts">Key facts (extreme allocations)</h2>
-      <p>The “Key facts” section computes two additional full simulations using identical inputs: 100% mortgage allocation (a = 0) and 100% investing allocation (a = 100). Those outputs are produced by the same simulation logic above.</p>
+      <p>The “Key facts” section computes two additional full simulations using identical inputs: 100% mortgage allocation (a = 0) and 100% investing allocation (a = 100). In monthly mode, that means all of <strong>E</strong> to mortgage versus all of <strong>E</strong> to investing. In lump mode, that means all of <strong>S</strong> to extra principal versus all of <strong>S</strong> to the portfolio at the start of month 1. The same recurrence (including the lump pre-step when applicable) is used.</p>
+
+      <h2 id="break-even">Break-even gross return</h2>
+      <p>The calculator may report a gross return <strong>R</strong> (before fees) at which the two extreme strategies tie at the horizon: a = 0 versus a = 100, holding all other inputs fixed. In monthly mode, both paths use the same <strong>E</strong>. In lump mode, both paths use the same <strong>S</strong> and E = 0. If there is no discretionary cash (E = 0 and S = 0), this quantity is not defined.</p>
 
       <h2>Assumptions</h2>
       <ol>
@@ -152,16 +177,31 @@
         <li>Investment returns are modeled as constant and deterministic.</li>
         <li>Investment fees are modeled as a constant annual % subtracted from expected return, then converted to a monthly geometric return.</li>
         <li>Contributions are applied before investment growth each month (beginning-of-period contributions).</li>
+        <li>In lump-sum mode, <strong>S</strong> is applied only once, at the beginning of month 1, before that month’s mortgage interest and scheduled payment; it is not repeated in later months.</li>
         <li>Home price growth is modeled as constant compounding at rate g (no volatility).</li>
         <li>Taxes, transaction costs, refinancing, prepayment penalties, and behavioral changes are not modeled unless explicitly added elsewhere.</li>
       </ol>
 
       <h2>Implementation Notes</h2>
       <ul>
-        <li>The slider controls extra cash allocation only. The regular mortgage payment always goes to the mortgage until payoff.</li>
+        <li>The slider allocates discretionary cash only: recurring (<strong>E</strong>) in monthly mode, or the lump (<strong>S</strong>) in lump mode. The regular payment <strong>P</strong> always goes to the mortgage until payoff.</li>
+        <li>Monthly and lump inputs are mutually exclusive in the UI; the engine does not apply both <strong>E</strong> and <strong>S</strong> in the same run.</li>
         <li>The mortgage recurrence uses i = (1 + (r/100) / 2)<sup>1/6</sup> − 1 for monthly mortgage interest, not simple APR/12 division.</li>
         <li>In the payoff month, any portion of the intended mortgage payment not required to close the mortgage is automatically redirected into investing (“remainderFromMortgage”).</li>
-        <li>After payoff, the full monthly budget (P + E) is invested each month.</li>
+        <li>After payoff, the engine invests <strong>Budget = P + E</strong> each month (so <strong>P</strong> only when E = 0).</li>
+        <li>Projected payoff month search uses the same lump pre-step on month 1 when S &gt; 0, then the same monthly mortgage recurrence with E<sub>M</sub> from recurring <strong>E</strong> only.</li>
+      </ul>
+
+      <h2>Sources and References</h2>
+      <ul class="methodology-sources">
+        <li><a href="https://www.canada.ca/en/revenue-agency.html" target="_blank" rel="noopener noreferrer">Canada Revenue Agency (CRA)</a></li>
+        <li><a href="https://www.canada.ca/en.html" target="_blank" rel="noopener noreferrer">Government of Canada</a></li>
+        <li><a href="https://www.statcan.gc.ca/" target="_blank" rel="noopener noreferrer">Statistics Canada</a></li>
+        <li><a href="https://www.bankofcanada.ca/" target="_blank" rel="noopener noreferrer">Bank of Canada</a></li>
+        <li><a href="https://www.cmhc-schl.gc.ca/" target="_blank" rel="noopener noreferrer">CMHC</a> (housing and mortgage context, where relevant)</li>
+        <li><a href="https://www.osfi-bsif.gc.ca/" target="_blank" rel="noopener noreferrer">OSFI</a> (financial institution supervision, where relevant)</li>
+        <li><a href="https://www.spglobal.com/spdji/en/spiva/article/spiva-canada/" target="_blank" rel="noopener noreferrer">SPIVA Canada</a> (long-horizon fund performance context, where relevant)</li>
+        <li><a href="http://www.econ.yale.edu/~shiller/data.htm" target="_blank" rel="noopener noreferrer">Robert Shiller — historical data</a> (market and long-horizon data context, where relevant)</li>
       </ul>
 
       <p style="margin-top: 2em; font-weight: 600;">

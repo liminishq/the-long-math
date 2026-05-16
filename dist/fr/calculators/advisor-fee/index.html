@@ -16,8 +16,8 @@
 
   <script src="/assets/js/theme-init.40fc21015f.js"></script>
   <script src="/assets/js/i18n.e9994b5f88.js"></script>
-  <link rel="stylesheet" href="/assets/css/styles.ec87251a1b.css">
-  <script defer src="/assets/js/site.92f151cf7c.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.deb0166dcb.css">
+  <script defer src="/assets/js/site.e5c747ad36.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
   <script>
   window.dataLayer = window.dataLayer || [];
@@ -35,6 +35,7 @@
 <a href="/fr/calculators/" class="home-link">← Retour aux outils et calculateurs</a>
 <header>
   <h1>Le vrai coût calculé d&#39;un conseiller financier (modèle AUM)</h1>
+  <p class="calc-canada-scope">Cet outil est conçu pour les règles fiscales et les comptes canadiens.</p>
   <div class="lede">
     <p>De nombreux conseillers financiers facturent des frais en pourcentage des actifs qu&#39;ils gèrent.</p>
     <p>Les conseillers peuvent aussi recommander ou vendre des produits d&#39;investissement (fonds communs et FNB) qui comportent des frais de gestion supplémentaires, ce qui réduit encore les rendements nets au fil du temps.</p>
@@ -103,12 +104,24 @@
       <a href="/fr/calculators/advisor-fee/methodology/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">Voir le détail des calculs</a>
     </div>
     <p id="advisor_calc_engine_error" class="shared-scenario-banner" hidden role="alert" style="border-color:rgba(220,90,90,.45);background:rgba(220,90,90,.1);color:var(--text);"></p>
+    <p id="shared_scenario_banner" class="shared-scenario-banner" hidden>Scénario de calculateur partagé chargé. Vérifiez les hypothèses ci-dessous et lancez vos propres simulations.</p>
     <div class="results">
       <div class="result prominent">
         <p class="k">Coût total calculé</p>
         <p class="v" id="out_total_cost">$–</p>
         <p class="subl">Frais payés + intérêts composés perdus</p>
       </div>
+      <section class="result-share-block" aria-labelledby="share-result-heading">
+        <h3 id="share-result-heading" class="result-share-title">Partager le scénario</h3>
+        <p class="result-share-copy">Enregistrez une image de cette estimation avec les chiffres principaux.</p>
+        <p class="result-share-helper">Comprend un lien reconstituable pour recharger les entrées, les résultats et les hypothèses dans ce calculateur.</p>
+        <div class="result-share-actions">
+          <button type="button" id="share_result_btn" class="result-share-btn-primary">Partager le scénario</button>
+          <button type="button" id="download_result_btn">Enregistrer ce calcul</button>
+          <button type="button" id="copy_result_link_btn">Copier le lien partageable</button>
+        </div>
+        <p class="result-share-status" id="result_share_status" aria-live="polite"></p>
+      </section>
       <div class="result">
         <p class="k">Rendement conseiller pour atteindre le seuil de rentabilité</p>
         <p class="v" id="out_breakeven">–</p>
@@ -141,7 +154,7 @@
     <div class="default-fee">
       <div>
         <h3>Modèle de frais conseiller (par défaut)</h3>
-        <p>Utilise une échelle de pourcentage des actifs (AUM) par paliers, cohérente avec celles des grandes institutions canadiennes (style des cinq grandes banques) et des plateformes similaires. Les frais sont appliqués aux actifs investis au fil du temps.</p>
+        <p>Utilise une échelle de pourcentage des actifs (AUM) par paliers, cohérente avec celles des grandes institutions canadiennes (style des cinq grandes banques) et des plateformes similaires. Les paliers s&#39;appliquent de façon progressive, comme les tranches d&#39;imposition : chaque taux ne s&#39;applique qu&#39;aux dollars dans cette bande, et le modèle recalcule les frais combinés chaque mois à mesure que le solde évolue.</p>
         <p class="default-note">À titre indicatif (votre calcul utilise cette échelle lorsque « Utiliser l&#39;échelle de frais conseiller par défaut » est coché).</p>
       </div>
       <div>
@@ -193,7 +206,7 @@
         <div>
           <span>Le rendement annuel moyen requis pour qu&#39;un portefeuille géré par un conseiller atteigne la même valeur finale que sans conseiller, selon les hypothèses choisies.</span><br><br>
           <strong>Exemple :</strong>
-          <span>Exemple : le scénario « Début de carrière » suppose un rendement de 7 % sur votre portefeuille. Si ce même portefeuille était géré par un conseiller avec l&#39;échelle par défaut et le FGR supposé de 2 %, le conseiller devrait obtenir un rendement annuel de 10,71 % pour égaler un portefeuille non géré (sans FGR) à 7 %. Si vous utilisez l&#39;échelle par défaut mais désactivez le FGR (adapté à un portefeuille sans fonds communs/FNB), le portefeuille doit rapporter 8,65 % par an pour égaler le cas sans conseiller.</span>
+          <span>Exemple : le préréglage « Milieu de carrière » (1 000 000 $ de départ, 5 000 $/mois, 15 ans, rendement brut de 7 %) avec l&#39;échelle AUM marginale par défaut et un FGR supposé de 2 % donne un rendement brut de seuil de rentabilité d&#39;environ 10,71 % par an par rapport aux mêmes entrées sans frais de conseil ni FGR. Avec l&#39;échelle par défaut mais sans FGR, le rendement brut de seuil est d&#39;environ 8,52 % par an.</span>
         </div>
       </div>
       <div class="method-item">
@@ -209,8 +222,8 @@
 
   </div>
   
-<script defer src="/assets/js/calculator.engine.0377a08a53.js"></script>
-<script defer src="/assets/js/calculator.ui.e4bb709599.js"></script>
+<script defer src="/assets/js/calculator.engine.a07301bca3.js"></script>
+<script defer src="/assets/js/calculator.ui.234da7d037.js"></script>
 <script src="/assets/js/theme.1fe3de3841.js"></script>
 
   <div id="footerMount"></div>

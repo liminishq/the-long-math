@@ -378,7 +378,7 @@
   }
 
   /**
-   * Generic wiring for Share image / Download PNG / Copy result link on calculator pages.
+   * Generic wiring for Share scenario / Save this calculation / Copy shareable link on calculator pages.
    * getBundle: () => { scenario: object for query URL, card: { headline, mainValue, subline, contextLine, shareText, title } }
    */
   function wireCalculatorShare(slug, getBundle, opts) {
@@ -421,9 +421,9 @@
           var result = await shareResultCard(p);
           if (result && result.mode === "download-and-copy-fallback") {
             if (result.copied) {
-              setShareStatusEl(statusId, "Shared via fallback: PNG opened/downloaded and scenario link copied.");
+              setShareStatusEl(statusId, "Shared via fallback: calculation image opened/saved and scenario link copied.");
             } else {
-              setShareStatusEl(statusId, "PNG opened/downloaded. Copy result link manually if needed.");
+              setShareStatusEl(statusId, "Calculation image opened/saved. Copy shareable link manually if needed.");
             }
           } else if (result && result.mode === "native-share-link") {
             setShareStatusEl(statusId, "Share dialog opened with result summary and scenario link.");
@@ -431,7 +431,7 @@
             setShareStatusEl(statusId, "Share dialog opened with image, summary, and scenario link.");
           }
         } catch (_err) {
-          setShareStatusEl(statusId, "Share cancelled or unavailable. Try Download PNG instead.", true);
+          setShareStatusEl(statusId, "Share cancelled or unavailable. Try Save this calculation instead.", true);
         }
       });
     }
@@ -440,12 +440,12 @@
       downloadBtn.addEventListener("click", async function () {
         var p = buildPayload();
         if (!p) return;
-        setShareStatusEl(statusId, "Generating PNG...");
+        setShareStatusEl(statusId, "Preparing image...");
         try {
           await downloadResultCard(p);
-          setShareStatusEl(statusId, "PNG downloaded.");
+          setShareStatusEl(statusId, "Calculation image saved.");
         } catch (_e) {
-          setShareStatusEl(statusId, "Could not generate PNG. Please try again.", true);
+          setShareStatusEl(statusId, "Could not prepare image. Please try again.", true);
         }
       });
     }
@@ -456,7 +456,7 @@
         if (!p) return;
         try {
           await copyResultLink(p);
-          setShareStatusEl(statusId, "Result link copied.");
+          setShareStatusEl(statusId, "Shareable link copied.");
         } catch (_e) {
           setShareStatusEl(statusId, "Could not copy link on this browser.", true);
         }

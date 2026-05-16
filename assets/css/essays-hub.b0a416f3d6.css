@@ -46,3 +46,11 @@
   font-weight: 600;
   color: var(--accent);
 }
+
+.page-essays .essays-hub-scope {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--muted);
+  margin: 0 0 1rem;
+  max-width: 52rem;
+}
