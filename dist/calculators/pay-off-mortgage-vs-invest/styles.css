@@ -350,6 +350,27 @@ input:checked + .slider:before {
   border: none;
 }
 
+.allocation-slider-card {
+  margin: 14px 0 18px;
+  padding: 14px;
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  background: rgba(217, 180, 106, 0.08);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+.allocation-slider-card .field {
+  margin: 0;
+}
+
+.calculator-share-mount {
+  margin-top: 18px;
+}
+
+.calculator-share-mount .result-share-block {
+  margin-top: 0;
+}
+
 /* Results */
 .results {
   display: flex;
