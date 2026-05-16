@@ -39,6 +39,7 @@
       "calcLi2": "Pay Off Mortgage vs Invest",
       "calcLi3": "Inflation Time Machine",
       "calcLi4": "TFSA Contribution Room",
+      "calcLi5": "Lots more calculators covering Canadian taxes and payroll, amortization with semi-annual mortgage rate conversion, registered-account combos, withdrawals, incorporation, capital gains, student debt, inflation-adjusted growth, behavioural fee scenarios...",
       "calcCta": "Explore Calculators →",
       "underTitle": "Understanding",
       "underDesc": "Clear explanations of the concepts behind investing and long-term financial arithmetic.",
@@ -48,18 +49,20 @@
       "underLi4": "What Is a Stock",
       "underLi5": "What Is the Stock Market",
       "underLi6": "Asset Classes",
-      "underCta": "Browse Understanding →",
+      "underLi7": "Lots more explanatory articles covering registered-account rules, ETFs, diversification, behavioural biases, sequencing risk near retirement, mortgage mechanics, leveraged strategies, and RESP basics among other topics.",
       "beyondTitle": "Beyond the Numbers",
       "beyondDesc": "Essays on a life and career in medicine through a personal and business finance lens.",
+      "beyondFuture": "Future topics may include career-path arithmetic, debt from professional training, physician income realities, small-business ownership, and the financial trade-offs behind medical career decisions. These lines are tentative essay directions—they are not a catalogue of titles already published on the site.",
       "beyondCta": "Read Essays →"
     },
     "questions": {
       "heading": "Questions the Long Math Can Answer",
       "intro": "Examples of questions this site addresses using explicit assumptions and inspectable arithmetic:",
-      "q1": "How much does a 1% advisory fee cost over 30 years?",
-      "q2": "Should extra money go toward paying down a mortgage or investing?",
-      "q3": "How does inflation change the long-term value of money?",
-      "q4": "When do different Canadian accounts (TFSA, RRSP, FHSA) produce different outcomes?"
+      "link1": "Estimate multi-decade cost of ongoing advisory fees on an investment portfolio",
+      "link2": "Compare accelerated mortgage payoff versus investing identical extra monthly cash flows",
+      "link3": "Translate dollar amounts across years using historical CPI and purchasing-power arithmetic",
+      "link4": "Contrast projected TFSA RRSP and FHSA balances under mirrored contribution assumptions",
+      "linkMore": "Investing mortgages inflation taxes calculators explanatory articles arithmetic walkthroughs and so much more"
     },
     "inspectable": {
       "heading": "Inspectable Arithmetic",
@@ -83,7 +86,8 @@
       "inflExplain": "See the Explanation →",
       "mortTitle": "Mortgage vs Invest",
       "mortDesc": "Compare the long-term arithmetic of accelerated mortgage repayment versus investing.",
-      "mortOpen": "Open Calculator →"
+      "mortOpen": "Open Calculator →",
+      "mortExplain": "See the Explanation →"
     },
     "start": {
       "heading": "Start Here",

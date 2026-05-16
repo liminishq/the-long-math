@@ -39,6 +39,7 @@
       "calcLi2": "Rembourser l’hypothèque ou investir",
       "calcLi3": "Machine à remonter l’inflation",
       "calcLi4": "Plafond de cotisation au CELI",
+      "calcLi5": "Encore plusieurs calculateurs : impôts personnels ou en société, amortissement avec taux nominal hypothécaire canadien capitalisé semestriellement, retraits à la retraite, gains en capital, dette étudiante, REEE, combinaisons CELI / REER / CELIAPP, remises et pénalités, portefeuilles ajustés pour l’inflation…",
       "calcCta": "Explorer les calculateurs →",
       "underTitle": "Compréhension",
       "underDesc": "Des explications claires des concepts derrière l’investissement et l’arithmétique financière à long terme.",
@@ -48,18 +49,21 @@
       "underLi4": "Qu’est-ce qu’une action",
       "underLi5": "Qu’est-ce que la bourse",
       "underLi6": "Classes d’actifs",
+      "underLi7": "Beaucoup d’autres articles : mécanisme des comptes enregistrés, fonds indiciels, diversification, biais comportementaux, risque de séquence en début de retraite, logique hypothécaire, effet de levier, REEE et autres sujets reliés.",
       "underCta": "Parcourir la compréhension →",
       "beyondTitle": "Au-delà des chiffres",
       "beyondDesc": "Essais sur une vie et une carrière en médecine vus par le prisme des finances personnelles et professionnelles.",
+      "beyondFuture": "Les sujets explorés pourraient inclure l’arithmétique des parcours professionnels la dette liée aux études médicales ou paramédicales le revenu de médecins la réalité de la petite entreprise propriétaire et les compromis financiers derrière une carrière médicale. Il s’agit d’ébauches futures d’articles, pas d’un inventaire déjà publié sur ce site.",
       "beyondCta": "Lire les essais →"
     },
     "questions": {
       "heading": "Questions auxquelles The Long Math peut répondre",
       "intro": "Exemples de questions traitées sur ce site avec des hypothèses explicites et une arithmétique vérifiable :",
-      "q1": "Combien coûte un frais de conseil de 1 % sur 30 ans ?",
-      "q2": "L’argent supplémentaire doit-il servir à rembourser une hypothèque ou à investir ?",
-      "q3": "Comment l’inflation modifie-t-elle la valeur de l’argent à long terme ?",
-      "q4": "Quand les différents comptes canadiens (CELI, REER, CELIAPP) produisent-ils des résultats différents ?"
+      "link1": "Estimer sur plusieurs décennies l’impact en dollars des frais de conseil indexés aux actifs d’un portefeuille",
+      "link2": "Comparer remboursement hypothécaire accéléré et investissement des mêmes liquidités mensuelles à flux équivalents",
+      "link3": "Traduire entre années le pouvoir d’achat de montants nominaux avec l’IPC historique",
+      "link4": "Analyser à paramètres miroirs les soldes projetés dans un CELI un REER et un CELIAPP",
+      "linkMore": "Ouvert encore plus large : hypothèque, inflation, impôts, pénalités, calculatrices, articles narratifs, arithmétique vérifiable… et encore tellement plus"
     },
     "inspectable": {
       "heading": "Arithmétique vérifiable",
@@ -83,7 +87,8 @@
       "inflExplain": "Voir l’explication →",
       "mortTitle": "Hypothèque ou investissement",
       "mortDesc": "Comparez l’arithmétique à long terme entre remboursement accéléré et investissement.",
-      "mortOpen": "Ouvrir le calculateur →"
+      "mortOpen": "Ouvrir le calculateur →",
+      "mortExplain": "Voir l’explication →"
     },
     "start": {
       "heading": "Par ici pour commencer",
