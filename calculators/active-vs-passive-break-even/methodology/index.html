@@ -66,7 +66,7 @@
         <li>r<sub>active,net</sub> = r<sub>active</sub> − f<sub>active</sub></li>
         <li>r<sub>active,net,break</sub> = r<sub>active,break</sub> − f<sub>active</sub></li>
         <li>FV<sub>annual</sub>(P, r, t, c) = future value with annual compounding and one end-of-year contribution of c when m = 1</li>
-        <li>FV<sub>periodic</sub>(P, r, t, c, m) = future value when the net annual rate r compounds m times per year and contribution c is added at the end of each of the m·t periods (same convention as the simple investment calculator)</li>
+        <li>FV<sub>periodic</sub>(P, r, t, c, m) = future value when the net annual rate r compounds m times per year and contribution c is added at the end of each of the m·t periods (same convention as the <a href="/calculators/investment-simple/" target="_blank" rel="noopener">Simple Investment Calculator</a>)</li>
       </ul>
 
       <h2>Core Equations</h2>
@@ -80,7 +80,7 @@
         FV<sub>annual</sub>(P, 0, t, c) = P + c · t, &nbsp; if r = 0
       </div>
       <p>
-        When the user selects <strong>weekly</strong> (m = 52) or <strong>monthly</strong> (m = 12) contributions, the implementation uses the same effective per-period rate as the simple investment calculator:
+        When the user selects <strong>weekly</strong> (m = 52) or <strong>monthly</strong> (m = 12) contributions, the implementation uses the same effective per-period rate as the <a href="/calculators/investment-simple/" target="_blank" rel="noopener">Simple Investment Calculator</a>:
         i = (1 + r)<sup>1/m</sup> − 1, with N = m·t periods and contribution c at the end of each period:
       </p>
       <div class="formula-block">

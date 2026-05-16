@@ -296,7 +296,7 @@
         <li>TFSA and RRSP room use opening user-entered balances plus January top-ups from simulation year 2 onward (new TFSA dollars and 18%-of-income RRSP room capped by a modeled dollar limit); unused room carries forward until used.</li>
         <li>Investment returns, fees, and (optionally) inflation are modeled as constant over the full horizon.</li>
         <li>RRSP and FHSA refunds are either treated as immediately spent (default) or reinvested in a TFSA-like bucket; actual tax timing and withholding are more complex in practice.</li>
-        <li>Tax rates t<sub>now</sub> and t<sub>ret</sub> are either estimated from modeled employment income and province using the same tax engine as the Canada Personal Income Tax Calculator, or set directly via manual override; they are held constant over the horizon.</li>
+        <li>Tax rates t<sub>now</sub> and t<sub>ret</sub> are either estimated from modeled employment income and province using the same tax engine as the <a href="/calculators/canada-income-tax/" target="_blank" rel="noopener">Canada Personal Income Tax Calculator</a>, or set directly via manual override; they are held constant over the horizon.</li>
         <li>FHSA modeling enforces the annual room you specify (default $8,000) and a $40,000 lifetime contribution cap per person; growth inside the FHSA does not count toward that cap. Contribution carry-forward and detailed withdrawal conditions beyond the home-qualified toggle are not modeled.</li>
         <li>Non-registered (taxable) accounts are not included in this version; it is an account-to-account comparison between registered options.</li>
         <li>All results are rounded for display; internal calculations use full floating-point precision.</li>

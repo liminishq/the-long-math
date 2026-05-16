@@ -163,7 +163,7 @@
       <h2>Personal Tax Arithmetic</h2>
       <p>
         Personal tax for each shareholder is computed by the shared personal tax engine <code>computePersonalTax()</code> in <code>tax.engine.js</code>,
-        using the same brackets, credits, CPP/EI logic, and dividend rules as the standalone Canada Personal Income Tax Calculator.
+        using the same brackets, credits, CPP/EI logic, and dividend rules as the standalone <a href="/calculators/canada-income-tax/" target="_blank" rel="noopener">Canada Personal Income Tax Calculator</a>.
       </p>
 
       <h3 id="personal-inputs">5. Mapping Corporate Inputs to Personal Inputs</h3>
@@ -177,7 +177,7 @@
         <li>Tax already paid = 0 (no modeled source deductions in this tool).</li>
       </ul>
       <p>
-        The personal engine then follows the methodology documented in the personal income tax methodology page:
+        The personal engine then follows the methodology documented on the <a href="/calculators/canada-income-tax/methodology/" target="_blank" rel="noopener">Canada Personal Income Tax Calculator methodology</a> page:
         it computes taxable income, federal and provincial tax, dividend gross‑up and DTC, CPP/EI, and marginal/average rates.
       </p>
 
@@ -249,7 +249,7 @@
       <h2>Implementation Notes</h2>
       <ul>
         <li>The corporate engine <code>calculateCorporateTax()</code> is pure and deterministic: given taxable income and province, it returns tax and a full breakdown, including SBD limit and per‑tier amounts.</li>
-        <li>The personal engine <code>computePersonalTax()</code> is shared with the Canada Personal Income Tax Calculator and is validated separately via known‑answer tests.</li>
+        <li>The personal engine <code>computePersonalTax()</code> is shared with the <a href="/calculators/canada-income-tax/" target="_blank" rel="noopener">Canada Personal Income Tax Calculator</a> and is validated separately via known‑answer tests.</li>
         <li>The bridge <code>computeCCPCTax()</code> combines these outputs and is responsible only for mapping inputs, summing taxes, and computing combined metrics.</li>
         <li>The “Show the Math” section on the CCPC calculator page reads directly from these engine outputs to render bracket tables and summary lines; this methodology page describes the underlying steps.</li>
       </ul>

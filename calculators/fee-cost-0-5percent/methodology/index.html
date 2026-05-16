@@ -65,7 +65,7 @@
 
       <h3 id="fv-annual">1. Future Value with Annual Compounding</h3>
       <p>
-        As with the 1% calculator, both paths use the same annual-compounding future value formula with end-of-year contributions:
+        As with the <a href="/calculators/fee-cost-1percent/" target="_blank" rel="noopener">1% fee cost calculator</a>, both paths use the same annual-compounding future value formula with end-of-year contributions:
       </p>
       <div class="formula-block">
         FV(P, r, t, c) = P(1 + r)<sup>t</sup> + c · \frac{(1 + r)<sup>t</sup> − 1}{r}, &nbsp; if r ≠ 0<br>
@@ -102,12 +102,12 @@
       <h2>Implementation Notes</h2>
       <ul>
         <li>
-          The 0.5% and 1% calculators share the same engine functions <code>TLM_FeeMath.fvAnnual</code> and
+          The <a href="/calculators/fee-cost-0-5percent/" target="_blank" rel="noopener">0.5%</a> and <a href="/calculators/fee-cost-1percent/" target="_blank" rel="noopener">1%</a> fee cost calculators share the same engine functions <code>TLM_FeeMath.fvAnnual</code> and
           <code>TLM_FeeMath.endingValueWithFee()</code> in <code>/assets/js/fee-math.js</code> and the same UI wiring in
           <code>initFeeCostPage()</code> in <code>/assets/js/fee-ui.js</code>. Only the default <code>feePct</code> differs between pages.
         </li>
         <li>
-          All other notes on compounding, contribution timing, and display rounding are identical to the 1% methodology page.
+          All other notes on compounding, contribution timing, and display rounding are identical to the <a href="/calculators/fee-cost-1percent/methodology/" target="_blank" rel="noopener">1% fee cost methodology</a> page.
         </li>
       </ul>
 
