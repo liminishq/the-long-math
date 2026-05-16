@@ -49,15 +49,36 @@
         <li>H = home price</li>
         <li>D = down payment</li>
         <li>L = H − D = loan amount (principal)</li>
-        <li>r = nominal annual interest rate (APR, as entered)</li>
+        <li>r = annual mortgage rate expressed as a decimal (entered annual rate percent / 100)</li>
         <li>n = payments per year (12, 26, or 52 depending on frequency)</li>
         <li>T = amortization period in years</li>
         <li>N = nT = number of payment periods implied by the amortization period and payment frequency</li>
-        <li>r<sub>p</sub> = r/(100n) = periodic interest rate</li>
+        <li>r<sub>p</sub> = payment-period interest rate after Canadian mortgage-rate conversion</li>
         <li>P<sub>m</sub> = standard monthly payment (monthly schedule basis)</li>
         <li>P = payment amount for the selected frequency</li>
         <li>B<sub>t</sub> = outstanding balance after payment t</li>
       </ul>
+
+      <h2>Canadian Mortgage Rate Convention</h2>
+      <p>
+        Canadian mortgage rates are generally quoted as nominal annual rates compounded semi-annually, not as monthly-compounded rates. This calculator converts the entered nominal annual mortgage rate into an equivalent payment-period rate before calculating interest.
+      </p>
+      <p>For a payment frequency with n payments per year:</p>
+      <div class="formula-block">r<sub>p</sub> = (1 + r / 2)<sup>2 / n</sup> − 1</div>
+      <p>where:</p>
+      <ul>
+        <li>r is the annual mortgage rate expressed as a decimal</li>
+        <li>n is the number of payments per year</li>
+      </ul>
+      <p>For monthly payments:</p>
+      <div class="formula-block">r<sub>m</sub> = (1 + r / 2)<sup>1 / 6</sup> − 1</div>
+      <p>For biweekly payments:</p>
+      <div class="formula-block">r<sub>bw</sub> = (1 + r / 2)<sup>2 / 26</sup> − 1</div>
+      <p>For weekly payments:</p>
+      <div class="formula-block">r<sub>w</sub> = (1 + r / 2)<sup>2 / 52</sup> − 1</div>
+      <p>
+        Payment-size conventions remain separate from interest-rate conversion. Accelerated biweekly and accelerated weekly payments use the same periodic interest-rate conversion as ordinary biweekly and weekly schedules; they simply use larger payment amounts.
+      </p>
 
       <h2>Formulae</h2>
 
@@ -69,9 +90,9 @@
       <p>If r = 0:</p>
       <div class="formula-block">P<sub>m</sub> = L / (12T)</div>
       <p>Otherwise:</p>
-      <div class="formula-block">P<sub>m</sub> = L · r<sub>m</sub> / (1 − (1 + r<sub>m</sub>)<sup>−12T</sup>)<br>where r<sub>m</sub> = r / (100 · 12)</div>
+      <div class="formula-block">r<sub>m</sub> = (1 + r / 2)<sup>1 / 6</sup> − 1<br>P<sub>m</sub> = L · r<sub>m</sub> / (1 − (1 + r<sub>m</sub>)<sup>−12T</sup>)</div>
       <p class="formula-meta"><strong>Rationale:</strong> This is the standard fixed-rate fully amortizing payment formula for a monthly schedule.</p>
-      <p class="formula-meta"><strong>Limitation:</strong> Assumes constant APR and constant amortization horizon.</p>
+      <p class="formula-meta"><strong>Limitation:</strong> Assumes a constant nominal annual mortgage rate and constant amortization horizon.</p>
 
       <h3 id="payment-by-frequency">3. Payment Amount by Frequency</h3>
       <p>Payment frequency options and payment amount conventions:</p>
@@ -89,11 +110,11 @@
       <p class="formula-meta"><strong>Limitation:</strong> This models payment amount conventions, not lender-specific billing rules.</p>
 
       <h3 id="periodic-interest-principal">4. Periodic Interest and Principal</h3>
-      <p>Periodic rate uses the selected payment frequency:</p>
-      <div class="formula-block">r<sub>p</sub> = r / (100n)</div>
+      <p>Periodic rate uses the Canadian mortgage-rate conversion for the selected payment frequency:</p>
+      <div class="formula-block">r<sub>p</sub> = (1 + r / 2)<sup>2 / n</sup> − 1</div>
       <p>For each payment period t ≥ 1:</p>
       <div class="formula-block">Interest<sub>t</sub> = B<sub>t−1</sub> · r<sub>p</sub><br>Principal<sub>t</sub> = P − Interest<sub>t</sub></div>
-      <p class="formula-meta"><strong>Limitation:</strong> Uses simple APR division by payment frequency. It does not apply jurisdiction-specific compounding conventions (for example, Canadian mortgage rates are typically quoted as nominal rates compounded semi-annually and then converted to payment-period rates). This simplified calculator treats the entered APR as directly divisible by the payment frequency unless a jurisdiction-specific conversion is implemented elsewhere.</p>
+      <p class="formula-meta"><strong>Rationale:</strong> The entered nominal annual mortgage rate is first converted into an equivalent payment-period rate, then applied period-by-period to the outstanding balance.</p>
 
       <h3 id="balance-update">5. Balance Update</h3>
       <div class="formula-block">B<sub>t</sub> = B<sub>t−1</sub> − Principal<sub>t</sub><br>with B<sub>0</sub> = L</div>
@@ -108,10 +129,11 @@
 
       <h2>Assumptions</h2>
       <ol>
-        <li>The entered interest rate is treated as a nominal annual APR and converted to a periodic rate by dividing by payments per year.</li>
+        <li>The entered rate is treated as a Canadian nominal annual mortgage rate compounded semi-annually.</li>
+        <li>The calculator converts that rate into an equivalent payment-period rate for amortization.</li>
         <li>Interest rate remains constant over the modeled horizon.</li>
-        <li>Payments occur at the selected frequency and remain constant under the payment convention listed above.</li>
-        <li>No prepayments, lump sums, refinancing, mortgage insurance, taxes, or penalties are modeled.</li>
+        <li>Payments occur at the selected frequency and remain constant under the selected payment convention.</li>
+        <li>This still does not model lender-specific rounding, payment timing quirks, mortgage insurance, prepayments, refinancing, penalties, taxes, or rate changes.</li>
         <li>The amortization schedule is simulated period-by-period until the balance reaches zero (subject to rounding).</li>
         <li>Rounding occurs at the display layer; internal calculations use floating-point arithmetic.</li>
       </ol>
@@ -119,7 +141,7 @@
       <h2>Implementation Notes</h2>
       <ul>
         <li>Payment amount is derived from a monthly base payment and then converted to the selected frequency using the formulas above.</li>
-        <li>The amortization schedule uses the selected frequency’s periodic rate r<sub>p</sub> = r/(100n).</li>
+        <li>The amortization schedule uses the selected frequency’s Canadian-converted periodic rate r<sub>p</sub> = (1 + r / 2)<sup>2 / n</sup> − 1.</li>
         <li>The calculator detects non-amortizing inputs (when P ≤ B<sub>0</sub> · r<sub>p</sub>) and returns an error state rather than producing a schedule.</li>
         <li>Tiny negative balances caused by floating-point error are clamped to zero.</li>
       </ul>
@@ -128,6 +150,7 @@
         If any discrepancy is identified between this documentation and the calculator output, the arithmetic here governs.
       </p>
     </div>
+
 
     <div id="footerMount"></div>
   </div>

@@ -6,16 +6,20 @@
 (function (g) {
   "use strict";
 
+  function calculatePeriodicRate(annualRate, paymentsPerYear) {
+    const annualRateDecimal = annualRate / 100;
+    return Math.pow(1 + annualRateDecimal / 2, 2 / paymentsPerYear) - 1;
+  }
+
   /**
-   * Calculate standard monthly payment for fixed-rate mortgage
-   * Formula: P * r / (1 - (1+r)^-n)
-   * Where P = principal, r = periodic rate, n = number of payments
+   * Calculate standard monthly payment for fixed-rate mortgage.
+   * Canadian mortgage rates are quoted as nominal annual rates compounded semi-annually.
    */
   function calculateMonthlyPayment(principal, annualRate, years) {
     if (annualRate === 0) {
       return principal / (years * 12);
     }
-    const monthlyRate = annualRate / 100 / 12;
+    const monthlyRate = calculatePeriodicRate(annualRate, 12);
     const numPayments = years * 12;
     const payment = (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -numPayments));
     return payment;
@@ -111,7 +115,7 @@
     }
 
     const paymentsPerYear = getPaymentsPerYear(frequency);
-    const periodicRate = annualRate / 100 / paymentsPerYear;
+    const periodicRate = calculatePeriodicRate(annualRate, paymentsPerYear);
     const totalPayments = Math.floor(years * paymentsPerYear);
 
     let paymentAmount;
@@ -296,6 +300,7 @@
   }
 
   g.MortgageEngine = {
+    calculatePeriodicRate,
     calculateMonthlyPayment,
     calculatePaymentAmount,
     getPaymentsPerYear,
