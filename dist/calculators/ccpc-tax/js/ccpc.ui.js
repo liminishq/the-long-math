@@ -44,13 +44,13 @@ export async function initUI() {
   });
 
   // Set default year
-  document.getElementById('year').value = '2025';
+  document.getElementById('year').value = '2026';
 
   // Load tax data
   try {
     await Promise.all([
-      loadCorporateTaxData(2025),
-      loadTaxData(2025)
+      loadCorporateTaxData(2026),
+      loadTaxData(2026)
     ]);
     corporateDataLoaded = true;
     personalDataLoaded = true;
@@ -72,7 +72,25 @@ export async function initUI() {
  * Attach event listeners to input fields
  */
 function attachEventListeners() {
-  const inputs = document.querySelectorAll('input[type="text"], select');
+  const yearSelect = document.getElementById('year');
+  if (yearSelect) {
+    yearSelect.addEventListener('change', async () => {
+      const y = parseInt(yearSelect.value, 10) || 2026;
+      try {
+        corporateDataLoaded = false;
+        personalDataLoaded = false;
+        await Promise.all([loadCorporateTaxData(y), loadTaxData(y)]);
+        corporateDataLoaded = true;
+        personalDataLoaded = true;
+        calculate();
+      } catch (error) {
+        console.error('Failed to load tax data for year', y, error);
+        showError('Failed to load tax data for the selected year. Please try again.');
+      }
+    });
+  }
+
+  const inputs = document.querySelectorAll('input[type="text"], select:not(#year)');
   inputs.forEach(input => {
     input.addEventListener('input', () => {
       updateProvinceNote();
@@ -136,7 +154,7 @@ function updateProvinceNote() {
  * Reset all input fields to default/empty values
  */
 function resetAllInputs() {
-  document.getElementById('year').value = '2025';
+  document.getElementById('year').value = '2026';
   document.getElementById('province').value = '';
   document.getElementById('grossRevenue').value = '';
   document.getElementById('expenses').value = '';
@@ -178,7 +196,7 @@ function resetAllInputs() {
 function getInputs() {
   const incomeSplitting = document.getElementById('incomeSplitting').checked;
   const base = {
-    year: parseInt(document.getElementById('year').value) || 2025,
+    year: parseInt(document.getElementById('year').value) || 2026,
     province: document.getElementById('province').value,
     grossRevenue: parseInput(document.getElementById('grossRevenue').value),
     expenses: parseInput(document.getElementById('expenses').value),
@@ -437,9 +455,9 @@ function buildSharePayload() {
     : 'Selected province';
   return {
     calculatorName: 'ccpc-tax',
-    title: 'CCPC Tax Calculator 2025 | The Long Math',
+    title: 'CCPC Tax Calculator | The Long Math',
     brand: 'The Long Math',
-    headline: 'CCPC Tax Estimate (2025)',
+    headline: 'CCPC Tax Estimate',
     mainValue: formatCurrency(combined.totalTaxBurden || 0),
     subline: 'Combined corporate + personal tax burden',
     contextLines: [

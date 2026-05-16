@@ -1,0 +1,30 @@
+{
+  "year": 2026,
+  "brackets": [
+    { "threshold": 0, "rate": 0.14 },
+    { "threshold": 58523, "rate": 0.205 },
+    { "threshold": 117045, "rate": 0.26 },
+    { "threshold": 181440, "rate": 0.29 },
+    { "threshold": 258482, "rate": 0.33 }
+  ],
+  "credits": {
+    "lowestRateForCredits": 0.14,
+    "_noteLowestRate": "Schedule 1: federal non-refundable credits use the statutory lowest rate for 2026 (14% first bracket).",
+    "basicPersonalAmount": {
+      "amount": 16452,
+      "_note": "2026 CRA-indexed BPA (CRA indexation table). Credit = amount × lowestRateForCredits. Enhanced BPA phase-out is not implemented here."
+    },
+    "canadaEmploymentAmount": {
+      "amount": 1501,
+      "_note": "2026 indexed Canada employment amount (maximum)."
+    },
+    "cppEiCredit": {
+      "rate": 0.14,
+      "_note": "CPP/EI non-refundable credit rate matches statutory lowest federal rate for 2026."
+    }
+  },
+  "rrspRoomRate": 0.18,
+  "rrspDollarMax": 33810,
+  "_source": "CRA: https://www.canada.ca/en/revenue-agency/services/tax/individuals/frequently-asked-questions-individuals/canadian-income-tax-rates-individuals-current-previous-years.html and https://www.canada.ca/en/revenue-agency/services/tax/individuals/frequently-asked-questions-individuals/adjustment-personal-income-tax-benefit-amounts.html",
+  "_note": "2026 federal brackets and indexed amounts. RRSP 2026 dollar maximum $33,810 (earned income room is 18% of prior year to this cap)."
+}

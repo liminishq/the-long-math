@@ -1,0 +1,21 @@
+{
+  "year": 2026,
+  "cpp": {
+    "rate": 0.0595,
+    "basicExemption": 3500,
+    "maxPensionableEarnings": 74600,
+    "maxContribution": 4230.45
+  },
+  "cpp2": {
+    "rate": 0.04,
+    "maxAdditionalEarnings": 10400,
+    "maxAdditionalContribution": 416.0,
+    "_note": "CPP2 on earnings above YMPE ($74,600) up to YAMPE ($85,000 for 2026). Source: CRA CPP contribution rates and maximums."
+  },
+  "ei": {
+    "rate": 0.0163,
+    "maxInsurableEarnings": 68900,
+    "maxPremium": 1123.07,
+    "_note": "EI employee rate and max premium for workers outside Quebec (2026). Quebec uses QPP/QPIP; this calculator does not split QC EI."
+  }
+}

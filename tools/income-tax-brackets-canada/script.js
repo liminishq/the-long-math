@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  const AVAILABLE_YEARS = [2025];
+  const AVAILABLE_YEARS = [2026, 2025];
   const DEFAULT_YEAR = AVAILABLE_YEARS[0];
 
   async function loadData(year) {

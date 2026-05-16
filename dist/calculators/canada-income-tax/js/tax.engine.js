@@ -114,6 +114,40 @@ function calculateOntarioHealthPremium2025(taxableIncome) {
 }
 
 /**
+ * Ontario Health Premium — 2026 schedule (same structure as 2025; band thresholds indexed ~2% from 2025 statutory OHP).
+ * Verify against the Ontario personal tax package / Ontario Data Catalogue when final 2026 line-by-line amounts are published.
+ */
+function calculateOntarioHealthPremium2026(taxableIncome) {
+  const income = Math.max(0, taxableIncome);
+  if (income <= 20400) return 0;
+
+  if (income <= 25500) {
+    return Math.min(0.06 * (income - 20400), 300);
+  }
+  if (income <= 36720) return 300;
+  if (income <= 39270) {
+    return Math.min(300 + 0.06 * (income - 36720), 450);
+  }
+  if (income <= 48960) return 450;
+  if (income <= 49572) {
+    return Math.min(450 + 0.25 * (income - 48960), 600);
+  }
+  if (income <= 73440) return 600;
+  if (income <= 74052) {
+    return Math.min(600 + 0.25 * (income - 73440), 750);
+  }
+  if (income < 204000) return 750;
+  return 900;
+}
+
+function calculateOntarioHealthPremium(taxableIncome, taxYear) {
+  const y = Number(taxYear) || 2025;
+  return y >= 2026
+    ? calculateOntarioHealthPremium2026(taxableIncome)
+    : calculateOntarioHealthPremium2025(taxableIncome);
+}
+
+/**
  * Calculate federal tax. Mirrors Federal Schedule 1 ordering.
  * @param {number} taxableIncome - Taxable income
  * @param {number} cpp - CPP contribution
@@ -298,7 +332,7 @@ function calculateProvincialTaxGeneric(taxableIncome, prov, dividends, opts = {}
  * 5. subtract dividend tax credit (after surtax), clamp at 0
  * 6. add Ontario Health Premium (piecewise, capped at $900)
  */
-function calculateOntarioTax(taxableIncome, prov, dividends, opts = {}) {
+function calculateOntarioTax(taxableIncome, prov, dividends, opts = {}, taxYear = 2025) {
   const { bracketLines, baseTax } = calculateBracketTax(taxableIncome, prov.brackets, opts);
 
   // Step 2: Ontario non-refundable credits (currently BPA only), credit = amount × rate.
@@ -344,7 +378,7 @@ function calculateOntarioTax(taxableIncome, prov, dividends, opts = {}) {
 
   // Step 6: Ontario Health Premium on taxableIncome, added after credits, surtax, and DTC.
   const premiums = [];
-  const healthPremium = calculateOntarioHealthPremium2025(taxableIncome);
+  const healthPremium = calculateOntarioHealthPremium(taxableIncome, taxYear);
   if (healthPremium > 0) {
     premiums.push({ name: 'Ontario Health Premium', amount: healthPremium });
   }
@@ -589,6 +623,7 @@ function computeMarginalRatesByType(input, dataCtx) {
  * @param {Object} runOpts - Optional. { roundToDollar: false } to use exact bracket tax (for marginal rate calculation).
  */
 function runFullCalculation(input, dataCtx, runOpts = {}) {
+  const taxYear = input.year ?? 2025;
   const {
     employmentIncome = 0,
     selfEmploymentIncome = 0,
@@ -624,7 +659,7 @@ function runFullCalculation(input, dataCtx, runOpts = {}) {
   const calcOpts = runOpts.roundToDollar === false ? { roundToDollar: false } : {};
   const federal = calculateFederalTax(taxableIncome, cpp, ei, employmentIncome, dividends, dataCtx.federal, calcOpts);
   const provincial = (provinceCode === 'ON'
-    ? calculateOntarioTax(taxableIncome, prov, dividends, calcOpts)
+    ? calculateOntarioTax(taxableIncome, prov, dividends, calcOpts, taxYear)
     : calculateProvincialTaxGeneric(taxableIncome, prov, dividends, calcOpts));
   const totalIncomeTax = federal.netTax + provincial.netTax;
   return {

@@ -1,6 +1,6 @@
 {
-  "year": 2025,
-  "_sourceEligibleProv": "TaxTips.ca — Eligible Dividend Tax Credit Rates (% of grossed-up taxable dividend), 2022–26 row. http://www.taxtips.ca/dtc/eligible-dividends/eligible-dividend-tax-credit-rates.htm",
+  "year": 2026,
+  "_sourceEligibleProv": "TaxTips.ca — Eligible Dividend Tax Credit Rates (% of grossed-up taxable dividend), 2022–26 row applies to the 2026 tax year. http://www.taxtips.ca/dtc/eligible-dividends/eligible-dividend-tax-credit-rates.htm",
   "_sourceNonEligibleProv": "TaxTips.ca — Non-Eligible Dividend Tax Credit Rates (% of grossed-up taxable dividend), 2025/2026 row. http://www.taxtips.ca/dtc/non-eligible-dividend-tax-credit.htm",
   "_sourceFederalFed": "Federal rates per Income Tax Act / TaxTips summary: 15.0198% of grossed-up taxable amount (eligible); 9.0301% (non-eligible) for 2019+.",
   "eligible": {

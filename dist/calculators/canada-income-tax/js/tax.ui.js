@@ -66,7 +66,7 @@ export async function initUI() {
   // Set default year
   const yearSelect = document.getElementById('year');
   if (yearSelect) {
-    yearSelect.value = '2025';
+    yearSelect.value = '2026';
   }
 
   // Use setTimeout to ensure DOM is updated before setting value
@@ -93,7 +93,7 @@ export async function initUI() {
 
   // Load tax data
   try {
-    await loadTaxData(2025);
+    await loadTaxData(2026);
     taxDataLoaded = true;
   } catch (error) {
     console.error('Failed to load tax data:', error);
@@ -127,13 +127,30 @@ function attachEventListeners() {
   });
 
   // Select elements only get change events (they don't fire input events)
-  const selects = document.querySelectorAll('select');
+  const selects = document.querySelectorAll('select:not(#year)');
   selects.forEach(select => {
     select.addEventListener('change', calculate);
     // Ensure select is interactive
     select.style.pointerEvents = 'auto';
     select.style.cursor = 'pointer';
   });
+
+  const yearSelect = document.getElementById('year');
+  if (yearSelect) {
+    yearSelect.addEventListener('change', async () => {
+      const y = parseInt(yearSelect.value, 10) || 2026;
+      try {
+        taxDataLoaded = false;
+        await loadTaxData(y);
+        taxDataLoaded = true;
+        updateRRSPMaxValue();
+        calculate();
+      } catch (error) {
+        console.error('Failed to load tax data for year', y, error);
+        showError('Failed to load tax data for the selected year. Please try again.');
+      }
+    });
+  }
 
   // Reset button
   const resetButton = document.getElementById('resetButton');
@@ -146,7 +163,7 @@ function attachEventListeners() {
  * Reset all input fields to default/empty values
  */
 function resetAllInputs() {
-  document.getElementById('year').value = '2025';
+  document.getElementById('year').value = '2026';
   document.getElementById('province').value = 'ON';
   document.getElementById('employmentIncome').value = '';
   document.getElementById('selfEmploymentIncome').value = '';
@@ -201,7 +218,7 @@ function getInputs() {
   const MAX_INPUT = 1e9;
 
   const parsed = {
-    year: parseInt(raw.year) || 2025,
+    year: parseInt(raw.year) || 2026,
     province: raw.province,
     employmentIncome: parseInput(raw.employmentIncome),
     selfEmploymentIncome: parseInput(raw.selfEmploymentIncome),
@@ -761,7 +778,13 @@ function updateRRSPMaxValue() {
     const federalData = getFederalData();
     const rrspMaxEl = document.getElementById('rrsp-max-value');
     const rrspMaxText = document.getElementById('rrsp-max-text');
-    
+    const rrspYearEl = document.getElementById('rrsp-max-year');
+    const yearVal = document.getElementById('year')?.value;
+
+    if (rrspYearEl && yearVal) {
+      rrspYearEl.textContent = yearVal;
+    }
+
     if (federalData && federalData.rrspDollarMax && rrspMaxEl) {
       rrspMaxEl.textContent = formatCurrency(federalData.rrspDollarMax);
     } else if (rrspMaxText) {

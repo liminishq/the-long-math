@@ -1,0 +1,42 @@
+{
+  "year": 2026,
+  "_sourceEligibleProv": "Provincial dividend tax credit rates for 2026 follow the same methodology as 2025 until jurisdiction-specific 2026 DTC tables are fully wired; verify against provincial/federal schedules for your filing year.",
+  "eligible": {
+    "grossUpRate": 1.38,
+    "credits": {
+      "federal": { "base": "grossed_up", "rate": 0.150198 },
+      "provincial": {
+        "base": "grossed_up",
+        "provinces": {
+          "AB": 0.0812, "BC": 0.12, "MB": 0.08, "NB": 0.14, "NL": 0.063,
+          "NS": 0.0885, "NT": 0.115, "NU": 0.0551, "ON": 0.1, "PE": 0.105,
+          "QC": 0.117, "SK": 0.11, "YT": 0.1202
+        }
+      }
+    }
+  },
+  "nonEligible": {
+    "grossUpRate": 1.15,
+    "credits": {
+      "federal": { "base": "grossed_up", "rate": 0.0903018 },
+      "provincial": {
+        "base": "grossed_up",
+        "provinces": {
+          "AB": 0.0218,
+          "BC": 0.0196,
+          "MB": 0.007835,
+          "NB": 0.0275,
+          "NL": 0.032,
+          "NS": 0.015,
+          "NT": 0.06,
+          "NU": 0.0261,
+          "ON": 0.029863,
+          "PE": 0.013,
+          "QC": 0.03,
+          "SK": 0.03,
+          "YT": 0.02
+        }
+      }
+    }
+  }
+}

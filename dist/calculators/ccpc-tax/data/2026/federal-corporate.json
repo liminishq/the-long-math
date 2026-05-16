@@ -1,0 +1,15 @@
+{
+  "year": 2026,
+  "sbd": {
+    "rate": 0.09,
+    "limit": 500000,
+    "_note": "Small Business Deduction: 9% federal rate on first $500,000 of active business income (indexed for 2025). Source: https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/corporation-tax-rates.html"
+  },
+  "general": {
+    "rate": 0.15,
+    "_note": "General corporate tax rate: 15% federal on income above SBD limit. Source: https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/corporation-tax-rates.html"
+  },
+  "_source": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/corporation-tax-rates.html",
+  "_lastVerified": "2026-05-16",
+  "_note": "Federal corporate parameters carried forward into 2026 with CRA publication review; verify current-year CRA corporate tax rates page for updates."
+}

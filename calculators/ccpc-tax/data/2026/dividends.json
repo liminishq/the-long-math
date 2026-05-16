@@ -1,5 +1,5 @@
 {
-  "year": 2025,
+  "year": 2026,
   "_source": "Federal and provincial dividend tax credit rates (% of grossed-up taxable dividend) aligned with TaxTips.ca tables (eligible: 2022–26 row; non-eligible: 2025/2026 row). Same arithmetic inputs as the Canada Personal Income Tax Calculator after schema mapping.",
   "eligible": {
     "grossUpRate": 1.38,
