@@ -700,27 +700,27 @@
         try {
           const result = await window.TLM.shareCard.shareResultCard(latestSharePayload);
           if (result && result.mode === "download-and-copy-fallback") {
-            if (result.copied) setShareStatus("Shared via fallback: PNG opened/downloaded and scenario link copied.");
-            else setShareStatus("PNG opened/downloaded. Copy result link manually if needed.");
+            if (result.copied) setShareStatus("Shared via fallback: calculation image opened/saved and scenario link copied.");
+            else setShareStatus("Calculation image opened/saved. Copy shareable link manually if needed.");
           } else if (result && result.mode === "native-share-link") {
             setShareStatus("Share dialog opened with result summary and scenario link.");
           } else {
             setShareStatus("Share dialog opened with image, summary, and scenario link.");
           }
         } catch (_e) {
-          setShareStatus("Share cancelled or unavailable. Try Download PNG instead.", true);
+          setShareStatus("Share cancelled or unavailable. Try Save this calculation instead.", true);
         }
       });
     }
     if (downloadBtn) {
       downloadBtn.addEventListener("click", async function () {
         if (!latestSharePayload) return;
-        setShareStatus("Generating PNG...");
+        setShareStatus("Preparing image...");
         try {
           await window.TLM.shareCard.downloadResultCard(latestSharePayload);
-          setShareStatus("PNG downloaded.");
+          setShareStatus("Calculation image saved.");
         } catch (_e) {
-          setShareStatus("Could not generate PNG. Please try again.", true);
+          setShareStatus("Could not prepare image. Please try again.", true);
         }
       });
     }
@@ -729,7 +729,7 @@
         if (!latestSharePayload) return;
         try {
           await window.TLM.shareCard.copyResultLink(latestSharePayload);
-          setShareStatus("Result link copied.");
+          setShareStatus("Shareable link copied.");
         } catch (_e) {
           setShareStatus("Could not copy link on this browser.", true);
         }
