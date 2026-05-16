@@ -571,6 +571,46 @@
     return "";
   }
 
+  function labelForField(el) {
+    if (!el) return "";
+    var label = "";
+    if (el.id) {
+      var byFor = document.querySelector('label[for="' + el.id.replace(/"/g, '\\"') + '"]');
+      if (byFor) label = (byFor.textContent || "").trim();
+    }
+    if (!label) {
+      var parentLabel = el.closest && el.closest("label");
+      if (parentLabel) label = (parentLabel.textContent || "").trim();
+    }
+    return label.replace(/\s+/g, " ");
+  }
+
+  function collectShareContextLines(limit) {
+    var lines = [];
+    var fields = document.querySelectorAll("input[id], select[id], textarea[id]");
+    fields.forEach(function (el) {
+      if (lines.length >= limit) return;
+      var tag = (el.tagName || "").toLowerCase();
+      var type = (el.type || "").toLowerCase();
+      if (type === "password" || type === "file" || type === "hidden") return;
+      var label = labelForField(el);
+      if (!label) return;
+      var value = "";
+      if (type === "checkbox" || type === "radio") {
+        if (!el.checked) return;
+        value = "selected";
+      } else if (tag === "select") {
+        value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].text : el.value;
+      } else {
+        value = (el.value || "").trim();
+      }
+      if (!value && value !== "0") return;
+      if (String(value).length > 40) return;
+      lines.push(label + ": " + value);
+    });
+    return lines;
+  }
+
   function collectCalculatorScenario() {
     var scenario = {};
     var fields = document.querySelectorAll("input[id], select[id], textarea[id]");
@@ -601,6 +641,7 @@
     // Calculators that ship their own .result-share-block (custom button ids) must not get a second card.
     if (document.querySelector(".result-share-block")) return false;
     var targetPanel =
+      document.querySelector("[data-calculator-share-mount]") ||
       document.querySelector(".panel--results") ||
       document.querySelector(".results") ||
       document.querySelector(".card") ||
@@ -612,13 +653,13 @@
     section.className = "result-share-block";
     section.setAttribute("aria-labelledby", "generic-share-heading");
     section.innerHTML =
-      '<h3 id="generic-share-heading" class="result-share-title">Share this result</h3>' +
+      '<h3 id="generic-share-heading" class="result-share-title">Share scenario</h3>' +
       '<p class="result-share-copy">Snapshot your estimate as a shareable image.</p>' +
       '<p class="result-share-helper">Shares an image plus a link to this calculator scenario.</p>' +
       '<div class="result-share-actions">' +
-      '<button type="button" id="share_result_btn">Share image</button>' +
+      '<button type="button" id="share_result_btn">Share scenario</button>' +
       '<button type="button" id="download_result_btn">Save this calculation</button>' +
-      '<button type="button" id="copy_result_link_btn">Copy result link</button>' +
+      '<button type="button" id="copy_result_link_btn">Copy shareable link</button>' +
       "</div>" +
       '<p class="result-share-status" id="result_share_status" aria-live="polite"></p>';
 
@@ -639,17 +680,21 @@
       var main = firstNonEmptyText([
         ".result.prominent .v",
         ".result .v",
+        ".result-card.primary .result-value",
+        ".highlight-value",
+        ".result-value",
         "[id^='out']",
         ".kpi-value",
       ]);
       var scenario = collectCalculatorScenario();
+      var contextLines = collectShareContextLines(5);
       return {
         scenario: scenario,
         card: {
           headline: title ? title + " result snapshot" : "Calculator result snapshot",
           mainValue: main || "Estimate",
           subline: "Based on current calculator inputs",
-          contextLine: "The Long Math",
+          contextLines: contextLines.length ? contextLines : ["The Long Math"],
           shareText: (title || "Calculator") + " snapshot from The Long Math. Run your own numbers:",
           title: "The Long Math calculator result",
         },

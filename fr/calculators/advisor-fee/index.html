@@ -1,20 +1,23 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr-CA">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Calculateur du coût d'un conseiller financier – The Long Math</title>
-  <meta name="description" content="Quantifier l'impact à long terme des frais de conseil et des intérêts composés perdus, avec des hypothèses explicites et des calculs vérifiables." />
-  <link rel="canonical" href="https://thelongmath.com/fr/calculators/advisor-fee/" />
-  <link rel="alternate" hreflang="en" href="https://thelongmath.com/calculators/advisor-fee/" />
-  <link rel="alternate" hreflang="fr" href="https://thelongmath.com/fr/calculators/advisor-fee/" />
-  <link rel="alternate" hreflang="x-default" href="https://thelongmath.com/calculators/advisor-fee/" />
+  <title>Calculateur du coût d&#39;un conseiller financier – The Long Math</title>
+  <meta name="description" content="Quantifier l&#39;impact à long terme des frais de conseil et des intérêts composés perdus, avec des hypothèses explicites et des calculs vérifiables." />
+  <link rel="canonical" href="https://www.thelongmath.com/fr/calculators/advisor-fee/" />
+  
+  <link rel="alternate" hreflang="en" href="https://www.thelongmath.com/calculators/advisor-fee/" />
+  
+  <link rel="alternate" hreflang="fr" href="https://www.thelongmath.com/fr/calculators/advisor-fee/" />
+  
+  <link rel="alternate" hreflang="x-default" href="https://www.thelongmath.com/calculators/advisor-fee/" />
+  
 
-  <script src="/assets/js/theme-init.js"></script>
-  <script src="/assets/js/i18n.js"></script>
-  <link rel="stylesheet" href="/assets/css/styles.css">
-  <script defer src="/assets/js/site.js"></script>
-  <!-- Google tag (gtag.js) -->
+  <script src="/assets/js/theme-init.40fc21015f.js"></script>
+  <script src="/assets/js/i18n.e9994b5f88.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.deb0166dcb.css">
+  <script defer src="/assets/js/site.4fbf708cdd.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
   <script>
   window.dataLayer = window.dataLayer || [];
@@ -22,193 +25,144 @@
   gtag('js', new Date());
   gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
   </script>
+  
 </head>
-
-
 <body data-fee-calc-layout="1">
+  
   <div id="site-header"></div>
   <div class="wrap">
-
-    <!-- Header -->
-    <header>
-      <h1 data-i18n="calculators.advisorFee.h1">The True Calculated Cost of a Financial Advisor (AUM Model)</h1>
-
-      <div class="lede">
-        <p data-i18n="calculators.advisorFee.lede1">Many financial advisors charge fees as a percentage of the assets they manage.</p>
-
-        <p data-i18n="calculators.advisorFee.lede2">
-          Advisors may also recommend or sell investment products (including mutual funds and ETFs) that carry additional management expenses, which further reduce net investment returns over time.
-        </p>
-
-        <p data-i18n="calculators.advisorFee.lede3">
-          Over long time horizons, the true cost of this fee structure is not limited to the fees paid. It also includes the opportunity cost of no longer being able to compound those fees over time.
-        </p>
-
-        <p>
-          <span data-i18n="calculators.advisorFee.lede4">This calculator accounts for both components — direct fees and lost compounding — to estimate the true long-term cost of using an advisor with an assets-under-management (AUM) fee structure.</span>
-        </p>
-
-        <p>
-          <span data-i18n="calculators.advisorFee.lede5">Rarely, advisors may charge flat annual fees or hourly fees instead of percentage-based AUM fees. Because these fees do not scale with portfolio size, they are usually arithmetically less costly over time. A calculator outlining these fee structures is available</span>
-          <a href="/fr/calculators/flat-fee-or-hourly/" class="inline-link" data-i18n="calculators.advisorFee.lede5Link">ici</a>.
-        </p>
-
-        <p><strong data-i18n="calculators.advisorFee.lede6">No opinions. No hidden assumptions. Just arithmetic.</strong></p>
+    
+<a href="/fr/calculators/" class="home-link">← Retour aux outils et calculateurs</a>
+<header>
+  <h1>Le vrai coût calculé d&#39;un conseiller financier (modèle AUM)</h1>
+  <p class="calc-canada-scope">Cet outil est conçu pour les règles fiscales et les comptes canadiens.</p>
+  <div class="lede">
+    <p>De nombreux conseillers financiers facturent des frais en pourcentage des actifs qu&#39;ils gèrent.</p>
+    <p>Les conseillers peuvent aussi recommander ou vendre des produits d&#39;investissement (fonds communs et FNB) qui comportent des frais de gestion supplémentaires, ce qui réduit encore les rendements nets au fil du temps.</p>
+    <p>Sur de longues périodes, le coût réel de cette structure de frais ne se limite pas aux frais payés. Il inclut aussi le coût d&#39;opportunité de ne plus pouvoir faire fructifier ces frais.</p>
+    <p>Ce calculateur tient compte des deux composantes — les frais directs et les intérêts composés perdus — pour estimer le coût à long terme réel de faire appel à un conseiller avec une structure de frais fondée sur les actifs sous gestion (AUM).</p>
+    <p>Plus rarement, les conseillers peuvent facturer des frais annuels forfaitaires ou horaires au lieu de pourcentages AUM. Comme ces frais ne varient pas avec la taille du portefeuille, ils sont généralement moins coûteux à long terme. Un calculateur décrivant ces structures est disponible <a href="/calculators/flat-fee-or-hourly/" class="inline-link">ici</a>.</p>
+    <p><strong>Pas d&#39;opinions. Pas d&#39;hypothèses cachées. Juste l&#39;arithmétique.</strong></p>
+  </div>
+</header>
+<div class="calc-grid calc-grid--fee-cost-balanced">
+  <section class="card panel panel--inputs">
+    <h2 class="section-title">Entrées</h2>
+    <div class="btns">
+      <button id="preset-starting" type="button">Début de carrière</button>
+      <button id="preset-mid" type="button">Milieu de carrière</button>
+      <button id="preset-retire" type="button">Proche de la retraite</button>
+    </div>
+    <p class="hint">Les préréglages reflètent des situations courantes. Ajustez les hypothèses ci-dessous au besoin.</p>
+    <div class="fee-cost-input-fields">
+      <div class="fee-cost-field">
+        <label for="starting_balance">Solde initial ($)</label>
+        <input id="starting_balance" type="number" value="1000000" />
       </div>
-    </header>
-
-    <!-- =========================
-         MAIN GRID (2 columns)
-         ========================= -->
-    <div class="calc-grid calc-grid--fee-cost-balanced">
-
-      <!-- INPUTS -->
-      <section class="card panel panel--inputs">
-        <h2 class="section-title" data-i18n="calculators.advisorFee.inputs">Inputs</h2>
-
-        <div class="btns">
-          <button id="preset-starting" type="button" data-i18n="calculators.advisorFee.presetStarting">Starting out</button>
-          <button id="preset-mid" type="button" data-i18n="calculators.advisorFee.presetMid">Mid career</button>
-          <button id="preset-retire" type="button" data-i18n="calculators.advisorFee.presetRetire">Near retirement</button>
+      <div class="fee-cost-field">
+        <label for="monthly_contribution">Cotisation mensuelle ($/mois)</label>
+        <input id="monthly_contribution" type="number" value="5000" />
+      </div>
+      <div class="fee-cost-field">
+        <label for="horizon_years">Horizon (années)</label>
+        <input id="horizon_years" type="number" value="15" />
+      </div>
+      <div class="fee-cost-field">
+        <label for="annual_return">Rendement annuel attendu (%)</label>
+        <input id="annual_return" type="text" value="7" placeholder="p. ex. 7 ou 4,5" />
+      </div>
+      <div class="slider-block">
+        <div class="slider-top">
+          <div class="lbl">Curseur du rendement annuel attendu</div>
+          <div class="val" id="annual_return_label">–</div>
         </div>
-
-        <p class="hint" data-i18n="calculators.advisorFee.presetHint">Presets reflect common situations. Adjust any assumption below.</p>
-
-        <div class="fee-cost-input-fields">
-          <div class="fee-cost-field">
-            <label for="starting_balance" data-i18n="calculators.advisorFee.startingBalance">Starting balance ($)</label>
-            <input id="starting_balance" type="number" value="1000000" />
-          </div>
-
-          <div class="fee-cost-field">
-            <label for="monthly_contribution" data-i18n="calculators.advisorFee.monthlyContribution">Monthly contribution ($/mo)</label>
-            <input id="monthly_contribution" type="number" value="5000" />
-          </div>
-
-          <div class="fee-cost-field">
-            <label for="horizon_years" data-i18n="calculators.advisorFee.timeHorizon">Time horizon (years)</label>
-            <input id="horizon_years" type="number" value="15" />
-          </div>
-
-          <div class="fee-cost-field">
-            <label for="annual_return" data-i18n="calculators.advisorFee.annualReturn">Expected annual return (%)</label>
-            <input id="annual_return" type="text" value="7" placeholder="e.g. 7 or 4.5" data-i18n-attr="placeholder:calculators.advisorFee.annualReturnPlaceholder" />
-          </div>
-
-          <div class="slider-block">
-            <div class="slider-top">
-              <div class="lbl" data-i18n="calculators.advisorFee.annualReturnSlider">Expected annual return slider</div>
-              <div class="val" id="annual_return_label">–</div>
-            </div>
-            <input id="annual_return_slider" type="range" />
-          </div>
-
-          <!-- Advisor fee toggle -->
-          <div class="toggle">
-            <input id="use_default_fee" type="checkbox" checked />
-            <label for="use_default_fee" data-i18n="calculators.advisorFee.useDefaultFee">Use default advisor fee schedule</label>
-          </div>
-
-          <p class="helper" data-i18n="calculators.advisorFee.defaultFeeHelper">
-            If unchecked, a flat annual advisor fee entered below is applied instead.
-          </p>
-
-          <div class="fee-cost-field">
-            <label for="custom_advisor_fee" data-i18n="calculators.advisorFee.advisorFeePct">Advisor fee (%/yr)</label>
-            <input id="custom_advisor_fee" type="text" placeholder="e.g. 1.0" data-i18n-attr="placeholder:calculators.advisorFee.advisorFeePlaceholder" />
-          </div>
-
-          <!-- MER -->
-          <div class="toggle">
-            <input id="include_mer" type="checkbox" checked />
-            <label for="include_mer" data-i18n="calculators.advisorFee.includeMer">Include fund / ETF MER</label>
-          </div>
-
-          <p class="helper" data-i18n="calculators.advisorFee.merHelper">
-            Typical mutual funds ~2%+. Broad index ETFs often ≤0.30%.
-          </p>
-
-          <div class="fee-cost-field">
-            <label for="mer_pct" data-i18n="calculators.advisorFee.merPct">MER (%/yr)</label>
-            <input id="mer_pct" type="text" placeholder="e.g. 2.0" data-i18n-attr="placeholder:calculators.advisorFee.merPlaceholder" />
-          </div>
-        </div>
-      </section>
-
-      <!-- RESULTS -->
-      <section class="card panel panel--results">
-        <div class="results-panel-header">
-          <h2 class="section-title" data-i18n="calculators.advisorFee.results">Calculated Results</h2>
-          <a href="/calculators/advisor-fee/methodology/" class="inspect-arithmetic-btn" data-locale-path="/calculators/advisor-fee/methodology/" target="_blank" rel="noopener noreferrer" data-i18n="calculators.advisorFee.inspectArithmetic">Inspect the Arithmetic</a>
-        </div>
-        <p id="advisor_calc_engine_error" class="shared-scenario-banner" hidden role="alert" style="border-color:rgba(220,90,90,.45);background:rgba(220,90,90,.1);color:var(--text);"></p>
-
-        <div class="results">
-
-          <div class="result prominent">
-            <p class="k" data-i18n="calculators.advisorFee.totalCost">Total calculated cost</p>
-            <p class="v" id="out_total_cost">$–</p>
-            <p class="subl" data-i18n="calculators.advisorFee.totalCostSubl">Fees paid + lost compounding</p>
-          </div>
-
-          <div class="result">
-            <p class="k" data-i18n="calculators.advisorFee.breakeven">Break-even advisor performance</p>
-            <p class="v" id="out_breakeven">–</p>
-          </div>
-
-          <div class="result">
-            <p class="k" data-i18n="calculators.advisorFee.endingWith">Ending value (with advisor)</p>
-            <p class="v" id="out_with">$–</p>
-          </div>
-
-          <div class="result">
-            <p class="k" data-i18n="calculators.advisorFee.endingWithout">Ending value (without advisor)</p>
-            <p class="v" id="out_without">$–</p>
-          </div>
-
-          <div class="result">
-            <p class="k" data-i18n="calculators.advisorFee.feesPaid">Fees paid</p>
-            <p class="v" id="out_fees">$–</p>
-          </div>
-
-          <div class="result">
-            <p class="k" data-i18n="calculators.advisorFee.lostCompounding">Lost compounding</p>
-            <p class="v" id="out_lost">$–</p>
-          </div>
-
-        </div>
-
-      </section>
+        <input id="annual_return_slider" type="range" />
+      </div>
+      <div class="toggle">
+        <input id="use_default_fee" type="checkbox" checked />
+        <label for="use_default_fee">Utiliser l&#39;échelle de frais conseiller par défaut</label>
+      </div>
+      <p class="helper">Si décoché, un pourcentage annuel forfaitaire saisi ci-dessous est appliqué.</p>
+      <div class="fee-cost-field">
+        <label for="custom_advisor_fee">Frais conseiller (%/an)</label>
+        <input id="custom_advisor_fee" type="text" placeholder="p. ex. 1,0" />
+      </div>
+      <div class="toggle">
+        <input id="include_mer" type="checkbox" checked />
+        <label for="include_mer">Inclure les frais de gestion (FGR) des fonds / FNB</label>
+      </div>
+      <p class="helper">Fonds communs typiques ~2 % et plus. FNB indiciels souvent ≤ 0,30 %.</p>
+      <div class="fee-cost-field">
+        <label for="mer_pct">FGR (%/an)</label>
+        <input id="mer_pct" type="text" placeholder="p. ex. 2,0" />
+      </div>
     </div>
-
-    <div class="report-issue-wrap">
-      <a href="/contact/" class="report-issue-link" data-locale-path="/contact/" data-i18n="common.links.reportIssue">Report an Issue</a>
+  </section>
+  <section class="card panel panel--results">
+    <div class="results-panel-header">
+      <h2 class="section-title">Résultats calculés</h2>
+      <a href="/calculators/advisor-fee/methodology/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">Voir le détail des calculs</a>
     </div>
-
-<!-- FULL-WIDTH METHODS SECTION -->
+    <p id="advisor_calc_engine_error" class="shared-scenario-banner" hidden role="alert" style="border-color:rgba(220,90,90,.45);background:rgba(220,90,90,.1);color:var(--text);"></p>
+    <p id="shared_scenario_banner" class="shared-scenario-banner" hidden>Scénario de calculateur partagé chargé. Vérifiez les hypothèses ci-dessous et lancez vos propres simulations.</p>
+    <div class="results">
+      <div class="result prominent">
+        <p class="k">Coût total calculé</p>
+        <p class="v" id="out_total_cost">$–</p>
+        <p class="subl">Frais payés + intérêts composés perdus</p>
+      </div>
+      <section class="result-share-block" aria-labelledby="share-result-heading">
+        <h3 id="share-result-heading" class="result-share-title">Partager le scénario</h3>
+        <p class="result-share-copy">Enregistrez une image de cette estimation avec les chiffres principaux.</p>
+        <p class="result-share-helper">Comprend un lien reconstituable pour recharger les entrées, les résultats et les hypothèses dans ce calculateur.</p>
+        <div class="result-share-actions">
+          <button type="button" id="share_result_btn" class="result-share-btn-primary">Partager le scénario</button>
+          <button type="button" id="download_result_btn">Enregistrer ce calcul</button>
+          <button type="button" id="copy_result_link_btn">Copier le lien partageable</button>
+        </div>
+        <p class="result-share-status" id="result_share_status" aria-live="polite"></p>
+      </section>
+      <div class="result">
+        <p class="k">Rendement conseiller pour atteindre le seuil de rentabilité</p>
+        <p class="v" id="out_breakeven">–</p>
+      </div>
+      <div class="result">
+        <p class="k">Valeur finale (avec conseiller)</p>
+        <p class="v" id="out_with">$–</p>
+      </div>
+      <div class="result">
+        <p class="k">Valeur finale (sans conseiller)</p>
+        <p class="v" id="out_without">$–</p>
+      </div>
+      <div class="result">
+        <p class="k">Frais payés</p>
+        <p class="v" id="out_fees">$–</p>
+      </div>
+      <div class="result">
+        <p class="k">Intérêts composés perdus</p>
+        <p class="v" id="out_lost">$–</p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="report-issue-wrap">
+  <a href="/fr/contact/" class="report-issue-link">Signaler un problème</a>
+</div>
 <section class="methods" id="methods">
   <div class="methods-card">
-    <h2 data-i18n="calculators.advisorFee.methodTitle">Method & assumptions</h2>
-
-    <!-- Prominent default model: text + table side-by-side -->
+    <h2>Méthode et hypothèses</h2>
     <div class="default-fee">
       <div>
-        <h3 data-i18n="calculators.advisorFee.defaultFeeModel">Advisor fee model (default)</h3>
-        <p data-i18n="calculators.advisorFee.defaultFeeDesc">
-          Uses a tiered percentage-of-assets (AUM) fee schedule consistent with those used by large Canadian institutions
-          (Big Five–style) and similar platforms. Fees are applied to invested assets over time.
-        </p>
-        <p class="default-note" data-i18n="calculators.advisorFee.defaultFeeNote">
-          Display only (your calculation uses this schedule when "Use default advisor fee schedule" is checked).
-        </p>
+        <h3>Modèle de frais conseiller (par défaut)</h3>
+        <p>Utilise une échelle de pourcentage des actifs (AUM) par paliers, cohérente avec celles des grandes institutions canadiennes (style des cinq grandes banques) et des plateformes similaires. Les paliers s&#39;appliquent de façon progressive, comme les tranches d&#39;imposition : chaque taux ne s&#39;applique qu&#39;aux dollars dans cette bande, et le modèle recalcule les frais combinés chaque mois à mesure que le solde évolue.</p>
+        <p class="default-note">À titre indicatif (votre calcul utilise cette échelle lorsque « Utiliser l&#39;échelle de frais conseiller par défaut » est coché).</p>
       </div>
-
       <div>
         <table class="fee-table">
           <thead>
             <tr>
-              <th data-i18n="calculators.advisorFee.feeTableAssets">Assets under management (CAD)</th>
-              <th data-i18n="calculators.advisorFee.feeTableRate">Annual fee (%)</th>
+              <th>Actifs sous gestion (CAD)</th>
+              <th>Frais annuels (%)</th>
             </tr>
           </thead>
           <tbody>
@@ -221,89 +175,57 @@
         </table>
       </div>
     </div>
-
-    <!-- Stacked "cards" like the failed version -->
     <div class="method-list">
       <div class="method-item">
-        <strong data-i18n="calculators.advisorFee.methodAdvisorOverride">Advisor fee (user override)</strong>
-        <div data-i18n="calculators.advisorFee.methodAdvisorOverrideDesc">
-          If the default schedule is disabled, a single flat annual percentage of assets—entered by the user—is applied instead.
-        </div>
+        <strong>Frais conseiller (saisie manuelle)</strong>
+        <div>Si l&#39;échelle par défaut est désactivée, un seul pourcentage annuel forfaitaire des actifs — saisi par l&#39;utilisateur — est appliqué à la place.</div>
       </div>
-
       <div class="method-item">
-        <strong data-i18n="calculators.advisorFee.methodMer">Product costs (MER)</strong>
+        <strong>Coûts des produits (FGR)</strong>
         <div>
-          <span data-i18n="calculators.advisorFee.methodMerDesc">MER is the Management Expense Ratio. It is the fee charged by each individual mutual fund to cover trading fees, salaries, and other expenses of their fund managers. When enabled, the MER is applied to invested assets in addition to advisory fees.</span>
-          <br><br>
-          <span data-i18n="calculators.advisorFee.methodMerDesc2">MER is usually charged in addition to any fees your advisor would charge, causing further fee drag on investment returns. Occasionally, your advisor's fee may be partially embedded within the MER of a product they sell you. MERs can vary significantly—usually between 2–6% for mutual funds—but are much less expensive for ETFs, often &lt;0.3%.</span>
-          <br><br>
-          <span data-i18n="calculators.advisorFee.methodMerDesc3">We assume 2% in this calculator by default. Please adjust accordingly based on your own investment portfolio.</span>
-          <br><br>
-          <span class="inline-note"><strong data-i18n="calculators.advisorFee.methodMerNote">Note: MER meaningfully changes outcomes. Careful consideration is required to determine true calculated costs in your specific case.</strong></span>
+          <span>Le FGR (frais de gestion des fonds) est le frais facturé par chaque fonds commun pour couvrir les frais de transaction, les salaires et autres dépenses des gestionnaires. Lorsqu&#39;il est activé, le FGR s&#39;applique aux actifs investis en plus des frais de conseil.</span><br><br>
+          <span>Le FGR est généralement facturé en plus des frais de votre conseiller, ce qui alourdit encore les rendements. Parfois, une partie des frais du conseiller peut être incluse dans le FGR d&#39;un produit qu&#39;il vous vend. Les FGR varient beaucoup — souvent entre 2 % et 6 % pour les fonds communs — mais sont bien moins élevés pour les FNB, souvent &lt; 0,3 %.</span><br><br>
+          <span>Nous supposons 2 % par défaut dans ce calculateur. Ajustez selon votre portefeuille.</span><br><br>
+          <span class="inline-note"><strong>Note : le FGR influence sensiblement les résultats. Une analyse attentive est nécessaire pour déterminer les vrais coûts dans votre situation.</strong></span>
         </div>
       </div>
-
       <div class="method-item">
-        <strong data-i18n="calculators.advisorFee.methodFeesPaid">Fees paid</strong>
-        <div data-i18n="calculators.advisorFee.methodFeesPaidDesc">The cumulative dollar amount deducted from the portfolio due to advisory fees (and MER, if included).</div>
+        <strong>Frais payés</strong>
+        <div>Le montant cumulatif en dollars déduit du portefeuille au titre des frais de conseil (et du FGR, si inclus).</div>
       </div>
-
       <div class="method-item">
-        <strong data-i18n="calculators.advisorFee.methodLostCompounding">Lost compounding</strong>
-        <div data-i18n="calculators.advisorFee.methodLostCompoundingDesc">The reduction in ending value attributable to fees no longer remaining invested and compounding.</div>
+        <strong>Intérêts composés perdus</strong>
+        <div>La réduction de la valeur finale due aux frais qui ne restent plus investis et ne composent plus.</div>
       </div>
-
       <div class="method-item">
-        <strong data-i18n="calculators.advisorFee.methodTotalCost">Total calculated cost</strong>
-        <div data-i18n="calculators.advisorFee.methodTotalCostDesc">Fees paid plus lost compounding, including both advisory fees and any included MER.</div>
+        <strong>Coût total calculé</strong>
+        <div>Frais payés plus intérêts composés perdus, incluant les frais de conseil et le FGR si applicable.</div>
       </div>
-
       <div class="method-item">
-        <strong data-i18n="calculators.advisorFee.methodBreakeven">Break-even advisor performance</strong>
+        <strong>Rendement conseiller pour atteindre le seuil de rentabilité</strong>
         <div>
-          <span data-i18n="calculators.advisorFee.methodBreakevenDesc">The average annual return required for an advisor-managed portfolio to produce the same ending value as the non-advisor case, using the assumptions you selected.</span>
-          <br><br>
-          <strong data-i18n="calculators.advisorFee.methodBreakevenExampleLabel">Example:</strong>
-          <span data-i18n="calculators.advisorFee.methodBreakevenExample">The "Starting out" scenario assumes a 7% return on your portfolio over time. If this same portfolio were managed by an advisor, using the default fee schedule plus the assumed 2% MER, the advisor would need to obtain a 10.71% annual return to break even with an unmanaged (and MER-free) portfolio returning 7% annually. If you applied the default advisor fee schedule but de-selected MER (appropriate for a portfolio containing no mutual funds/ETFs/other managed products), the portfolio must return 8.65% annually to break even with an identical unmanaged portfolio.</span>
+          <span>Le rendement annuel moyen requis pour qu&#39;un portefeuille géré par un conseiller atteigne la même valeur finale que sans conseiller, selon les hypothèses choisies.</span><br><br>
+          <strong>Exemple :</strong>
+          <span>Exemple : le préréglage « Milieu de carrière » (1 000 000 $ de départ, 5 000 $/mois, 15 ans, rendement brut de 7 %) avec l&#39;échelle AUM marginale par défaut et un FGR supposé de 2 % donne un rendement brut de seuil de rentabilité d&#39;environ 10,71 % par an par rapport aux mêmes entrées sans frais de conseil ni FGR. Avec l&#39;échelle par défaut mais sans FGR, le rendement brut de seuil est d&#39;environ 8,52 % par an.</span>
         </div>
       </div>
-
       <div class="method-item">
-        <strong data-i18n="calculators.advisorFee.methodScope">Scope note</strong>
-        <div data-i18n="calculators.advisorFee.methodScopeDesc">Trading commissions, taxes, and other account-specific costs are not included.</div>
+        <strong>Note de portée</strong>
+        <div>Les commissions de transaction, les impôts et autres coûts propres au compte ne sont pas inclus.</div>
       </div>
     </div>
   </div>
 </section>
-
-    <section class="card calc-related-bottom" aria-labelledby="calc-related-heading">
-      <h2 id="calc-related-heading" class="section-title">Calculateurs et articles connexes</h2>
-      <ul>
-        <li><a href="/fr/calculators/flat-fee-or-hourly/">Coût d’un conseiller à honoraires fixes ou horaires</a></li>
-        <li><a href="/fr/calculators/required-return-to-offset-fee/">Rendement supplémentaire requis pour compenser un frais annuel</a></li>
-        <li><a href="/fr/calculators/fee-cost-1percent/">Coût d’un frais annuel de 1&nbsp;%</a></li>
-        <li><a href="/fr/calculators/active-vs-passive-break-even/">Seuil de rentabilité actif vs passif</a></li>
-        <li><a href="/fr/calculators/compound-multipliers/">Table des multiplicateurs d’intérêts composés</a></li>
-        <li><a href="/fr/articles/investing-and-financial-literacy/the-true-cost-of-financial-advisor-fees/">Le véritable coût des honoraires du conseiller financier</a></li>
-        <li><a href="/fr/calculators/tfsa-rrsp-fhsa/">Calculateur CELI vs REER vs CELIAPP (Canada)</a></li>
-      </ul>
-    </section>
-
-    <!-- Disclaimer -->
-    <div class="disclaimer">
-      <p data-i18n="calculators.advisorFee.disclaimer">
-        <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
-      </p>
-    </div>
+<div class="disclaimer">
+  <p>Avertissement : tout le contenu de The Long Math — articles, essais, calculateurs, outils ou tout autre matériel — est fourni uniquement à des fins éducatives et informatives et ne constitue pas un conseil financier, fiscal, juridique ou en investissement. Les résultats ou projections reposent sur des modèles simplifiés, des hypothèses et des données fournies par l&#39;utilisateur et peuvent ne pas refléter les résultats réels. Vous êtes responsable d&#39;évaluer l&#39;exactitude et l&#39;applicabilité des informations fournies et d&#39;effectuer votre propre diligence raisonnable. Consultez un professionnel qualifié avant de prendre des décisions financières.</p>
+</div>
 
   </div>
+  
+<script defer src="/assets/js/calculator.engine.a07301bca3.js"></script>
+<script defer src="/assets/js/calculator.ui.21608883f0.js"></script>
+<script src="/assets/js/theme.1fe3de3841.js"></script>
 
-  <!-- Logic -->
-  <script defer src="/assets/js/calculator.engine.js"></script>
-  <script defer src="/assets/js/calculator.ui.js"></script>
-  <script src="/assets/js/theme.js"></script>
   <div id="footerMount"></div>
-
 </body>
 </html>

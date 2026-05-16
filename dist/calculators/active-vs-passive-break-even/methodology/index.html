@@ -7,9 +7,9 @@
   <meta name="description" content="Formulae, computational structure, and assumptions for the Active vs Passive break-even calculator." />
   <link rel="canonical" href="https://thelongmath.com/calculators/active-vs-passive-break-even/methodology/" />
 
-  <script src="/assets/js/theme-init.js"></script>
-  <link rel="stylesheet" href="/assets/css/styles.css" />
-  <script defer src="/assets/js/site.js"></script>
+  <script src="/assets/js/theme-init.40fc21015f.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.deb0166dcb.css" />
+  <script defer src="/assets/js/site.4fbf708cdd.js"></script>
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
@@ -136,11 +136,11 @@
       <h2>Implementation Notes</h2>
       <ul>
         <li>
-          All future values are computed via <code>TLM_FeeMath.endingValueWithFee()</code> in <code>/assets/js/fee-math.js</code>, using the
+          All future values are computed via <code>TLM_FeeMath.endingValueWithFee()</code> in <code>/assets/js/fee-math.38dee80455.js</code>, using the
           specified gross return and fee pair for each path. Optional <code>contribFreq</code> of <code>"monthly"</code> or <code>"weekly"</code> selects periodic compounding; otherwise contributions are treated as annual end-of-year cash flows.
         </li>
         <li>
-          The page-specific logic in <code>initActiveVsPassivePage()</code> inside <code>/assets/js/fee-ui.js</code> computes
+          The page-specific logic in <code>initActiveVsPassivePage()</code> inside <code>/assets/js/fee-ui.328c2c1822.js</code> computes
           α<sub>break</sub>, r<sub>active,break</sub>, and the three ending values, then formats them for display.
         </li>
         <li>
