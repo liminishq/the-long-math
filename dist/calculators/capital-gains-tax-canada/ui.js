@@ -213,7 +213,7 @@
         try {
           const res = await window.TLM.shareCard.shareResultCard(payload);
           if (res && res.mode === "download-and-copy-fallback") {
-            setShareStatus(res.copied ? "PNG downloaded and link copied." : "PNG downloaded.", false);
+            setShareStatus(res.copied ? "Calculation image saved and shareable link copied." : "Calculation image saved.", false);
           } else {
             setShareStatus("Share dialog opened.", false);
           }
@@ -227,12 +227,12 @@
       pngBtn.addEventListener("click", async function () {
         const payload = buildSharePayload();
         if (!payload) return;
-        setShareStatus("Generating PNG...", false);
+        setShareStatus("Preparing image...", false);
         try {
           await window.TLM.shareCard.downloadResultCard(payload);
-          setShareStatus("PNG downloaded.", false);
+          setShareStatus("Calculation image saved.", false);
         } catch (_err) {
-          setShareStatus("Could not generate PNG.", true);
+          setShareStatus("Could not prepare image.", true);
         }
       });
     }
@@ -241,7 +241,7 @@
       copyBtn.addEventListener("click", async function () {
         try {
           await window.TLM.shareCard.copyResultLink({ url: window.location.href, calculatorName: "capital-gains-tax-canada" });
-          setShareStatus("Result link copied.", false);
+          setShareStatus("Shareable link copied.", false);
         } catch (_err) {
           setShareStatus("Could not copy link.", true);
         }

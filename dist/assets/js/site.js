@@ -571,6 +571,46 @@
     return "";
   }
 
+  function labelForField(el) {
+    if (!el) return "";
+    var label = "";
+    if (el.id) {
+      var byFor = document.querySelector('label[for="' + el.id.replace(/"/g, '\\"') + '"]');
+      if (byFor) label = (byFor.textContent || "").trim();
+    }
+    if (!label) {
+      var parentLabel = el.closest && el.closest("label");
+      if (parentLabel) label = (parentLabel.textContent || "").trim();
+    }
+    return label.replace(/\s+/g, " ");
+  }
+
+  function collectShareContextLines(limit) {
+    var lines = [];
+    var fields = document.querySelectorAll("input[id], select[id], textarea[id]");
+    fields.forEach(function (el) {
+      if (lines.length >= limit) return;
+      var tag = (el.tagName || "").toLowerCase();
+      var type = (el.type || "").toLowerCase();
+      if (type === "password" || type === "file" || type === "hidden") return;
+      var label = labelForField(el);
+      if (!label) return;
+      var value = "";
+      if (type === "checkbox" || type === "radio") {
+        if (!el.checked) return;
+        value = "selected";
+      } else if (tag === "select") {
+        value = el.options && el.selectedIndex >= 0 ? el.options[el.selectedIndex].text : el.value;
+      } else {
+        value = (el.value || "").trim();
+      }
+      if (!value && value !== "0") return;
+      if (String(value).length > 40) return;
+      lines.push(label + ": " + value);
+    });
+    return lines;
+  }
+
   function collectCalculatorScenario() {
     var scenario = {};
     var fields = document.querySelectorAll("input[id], select[id], textarea[id]");
@@ -640,17 +680,21 @@
       var main = firstNonEmptyText([
         ".result.prominent .v",
         ".result .v",
+        ".result-card.primary .result-value",
+        ".highlight-value",
+        ".result-value",
         "[id^='out']",
         ".kpi-value",
       ]);
       var scenario = collectCalculatorScenario();
+      var contextLines = collectShareContextLines(5);
       return {
         scenario: scenario,
         card: {
           headline: title ? title + " result snapshot" : "Calculator result snapshot",
           mainValue: main || "Estimate",
           subline: "Based on current calculator inputs",
-          contextLine: "The Long Math",
+          contextLines: contextLines.length ? contextLines : ["The Long Math"],
           shareText: (title || "Calculator") + " snapshot from The Long Math. Run your own numbers:",
           title: "The Long Math calculator result",
         },

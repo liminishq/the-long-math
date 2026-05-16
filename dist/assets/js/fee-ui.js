@@ -149,7 +149,12 @@
             headline: "Estimated ending value gap from fees",
             mainValue: fmtMoney(diff),
             subline: "Over a " + years + "-year investing horizon",
-            contextLine: "Based on user inputs",
+            contextLines: [
+              "Starting amount: " + fmtMoney(P),
+              "Contribution: " + fmtMoney(contrib) + " per year",
+              "Gross return: " + fmtPctDec(rGross, 2),
+              "Fee: " + fmtPctDec(fee, 2),
+            ],
             shareText:
               "Estimated fee impact over " +
               years +
@@ -461,7 +466,12 @@
             headline: "Active vs passive ending balance",
             mainValue: shareMain,
             subline: "Over " + years + " years, after fees in this model",
-            contextLine: "Based on user inputs",
+            contextLines: [
+              "Starting amount: " + fmtMoney(P),
+              "Contribution: " + fmtMoney(contrib) + " per " + contribFreq,
+              "Passive: " + fmtPctDec(rPassivePortfolio, 2) + " return, " + fmtPctDec(feePassive, 2) + " fee",
+              "Active: " + fmtPctDec(rActivePortfolio, 2) + " return, " + fmtPctDec(feeActive, 2) + " fee",
+            ],
             shareText: shareSentence + " Run your own numbers:",
           },
         };
