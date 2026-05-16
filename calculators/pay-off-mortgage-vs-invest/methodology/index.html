@@ -54,7 +54,7 @@
         <li>a: allocation slider (0–100) interpreted as % of extra cash allocated to investing</li>
         <li>extra to mortgage: E<sub>M</sub> = (1 − a/100) E</li>
         <li>extra to invest: E<sub>I</sub> = (a/100) E</li>
-        <li>r: mortgage interest rate (APR, annual, %)</li>
+        <li>r: Canadian nominal annual mortgage rate, compounded semi-annually (%)</li>
         <li>R: expected investment return before fees (annual, %)</li>
         <li>f: investment fees (annual, %)</li>
         <li>g: home price growth rate (annual, %)</li>
@@ -65,7 +65,8 @@
 
       <h3>Derived constants</h3>
       <p>Mortgage monthly rate:</p>
-      <div class="formula-block">i = r / (100 · 12)</div>
+      <div class="formula-block">i = (1 + (r/100) / 2)<sup>1/6</sup> − 1</div>
+      <p class="formula-meta">Canadian mortgage rates are generally quoted as nominal annual rates compounded semi-annually. The calculator converts the entered mortgage rate to an equivalent monthly rate before applying mortgage interest.</p>
       <p>Net annual investment return (after fees):</p>
       <div class="formula-block">R<sub>net</sub> = (R − f) / 100</div>
       <p>Monthly geometric investment return:</p>
@@ -79,7 +80,7 @@
       <p>Let:</p>
       <ul>
         <li>L = H<sub>0</sub> − DownPayment</li>
-        <li>i = r/(100·12)</li>
+        <li>i = (1 + (r/100) / 2)<sup>1/6</sup> − 1</li>
         <li>n = 12 · AmortYears</li>
       </ul>
       <p>Then:</p>
@@ -87,8 +88,8 @@
       <p class="formula-meta">The simulation then proceeds using B<sub>0</sub> = L and that computed P.</p>
 
       <h2 id="mode-b">Mode B: Mortgage Payment Entered Manually</h2>
-      <p>If “Use mortgage calculator” is disabled, the user supplies: B<sub>0</sub> (current mortgage balance), r (APR), P (monthly payment). The payoff time becomes whatever amortizes under those values.</p>
-      <p class="formula-meta">Fallback: If B<sub>0</sub> ≤ 0 in manual mode, the engine estimates a principal from payment using a rough default (25 years, 5% APR). This is a non-ideal fallback intended to keep the calculator functioning.</p>
+      <p>If “Use mortgage calculator” is disabled, the user supplies: B<sub>0</sub> (current mortgage balance), r (Canadian nominal annual mortgage rate), P (monthly payment). The payoff time becomes whatever amortizes under those values.</p>
+      <p class="formula-meta">Fallback: If B<sub>0</sub> ≤ 0 in manual mode, the engine estimates a principal from payment using a rough default (25 years, 5% Canadian nominal annual mortgage rate). This is a non-ideal fallback intended to keep the calculator functioning.</p>
 
       <h2 id="core-simulation">Core Simulation (Monthly Recurrence)</h2>
       <p>The simulation advances month-by-month for t = 1, 2, …, N.</p>
@@ -147,7 +148,7 @@
       <h2>Assumptions</h2>
       <ol>
         <li>All calculations are performed in monthly time steps.</li>
-        <li>Mortgage interest is modeled as APR/12 applied to the outstanding balance each month.</li>
+        <li>The entered mortgage rate is treated as a Canadian nominal annual mortgage rate compounded semi-annually, then converted to the equivalent monthly rate before interest is applied to the outstanding balance.</li>
         <li>Investment returns are modeled as constant and deterministic.</li>
         <li>Investment fees are modeled as a constant annual % subtracted from expected return, then converted to a monthly geometric return.</li>
         <li>Contributions are applied before investment growth each month (beginning-of-period contributions).</li>
@@ -158,6 +159,7 @@
       <h2>Implementation Notes</h2>
       <ul>
         <li>The slider controls extra cash allocation only. The regular mortgage payment always goes to the mortgage until payoff.</li>
+        <li>The mortgage recurrence uses i = (1 + (r/100) / 2)<sup>1/6</sup> − 1 for monthly mortgage interest, not simple APR/12 division.</li>
         <li>In the payoff month, any portion of the intended mortgage payment not required to close the mortgage is automatically redirected into investing (“remainderFromMortgage”).</li>
         <li>After payoff, the full monthly budget (P + E) is invested each month.</li>
       </ul>

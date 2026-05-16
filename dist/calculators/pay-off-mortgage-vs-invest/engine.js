@@ -35,11 +35,16 @@ function periodsPerYear(frequency) {
 /* ============================================================
    Calculate monthly mortgage payment from parameters
    ============================================================ */
+function canadianMortgagePeriodicRate(annualRate, periodsPerYear) {
+  const annualRateDecimal = annualRate / 100;
+  return Math.pow(1 + annualRateDecimal / 2, 2 / periodsPerYear) - 1;
+}
+
 function calculateMortgagePayment(principal, annualRate, years, periodsPerYear) {
   if (annualRate === 0) {
     return principal / (years * periodsPerYear);
   }
-  const periodRate = annualRate / 100 / periodsPerYear;
+  const periodRate = canadianMortgagePeriodicRate(annualRate, periodsPerYear);
   const numPayments = years * periodsPerYear;
   const payment = principal * periodRate / (1 - Math.pow(1 + periodRate, -numPayments));
   return payment;
@@ -61,6 +66,7 @@ function monthlyReturnFromAnnual(rAnnualNet) {
    Investment return does not change the mortgage balance.
    ============================================================ */
 const MAX_PAYOFF_SEARCH_MONTHS = 1200; // 100 years
+const MORTGAGE_BALANCE_EPSILON = 1e-6;
 
 function findMortgagePayoffMonth({
   initialMortgageBalance,
@@ -72,7 +78,7 @@ function findMortgagePayoffMonth({
   if (!Number.isFinite(initialMortgageBalance) || initialMortgageBalance <= 0) {
     return 0;
   }
-  const periodRate = annualRate / 100 / 12;
+  const periodRate = canadianMortgagePeriodicRate(annualRate, 12);
   const extraToMortgage = ((100 - allocationPercent) / 100) * extraCashPerPeriod;
   let balance = initialMortgageBalance;
 
@@ -84,7 +90,7 @@ function findMortgagePayoffMonth({
     const actualMortgagePaymentClamped = Math.max(0, actualMortgagePayment);
     const principalPaid = Math.max(0, actualMortgagePaymentClamped - interestDue);
     balance = balance - principalPaid;
-    if (balance < 0) balance = 0;
+    if (balance < MORTGAGE_BALANCE_EPSILON) balance = 0;
     if (balance <= 0) {
       return Math.ceil(period);
     }
@@ -106,8 +112,8 @@ function simulate({
   homePrice,
   homeGrowthRate
 }) {
-  // Everything is monthly now, so period rate = monthly rate
-  const periodRate = annualRate / 100 / 12;
+  // Everything is monthly; convert Canadian nominal mortgage rates to a monthly rate.
+  const periodRate = canadianMortgagePeriodicRate(annualRate, 12);
   const periodReturn = monthlyReturn;
   
   let balance = initialMortgageBalance;
@@ -177,7 +183,7 @@ function simulate({
       
       // Update balance
       balance = balance - principalPaid;
-      if (balance < 0) balance = 0;
+      if (balance < MORTGAGE_BALANCE_EPSILON) balance = 0;
       
       // Track interest paid
       if (actualMortgagePaymentClamped > 0) {
@@ -447,7 +453,7 @@ function calculateMortgageVsInvest(inputs) {
     const estRate = 5;
     const estPpy = 12; // Always monthly
     // Reverse calculate: payment * (1 - (1+r)^-n) / r = principal
-    const estPeriodRate = estRate / 100 / estPpy;
+    const estPeriodRate = canadianMortgagePeriodicRate(estRate, estPpy);
     const estNumPayments = estAmortYears * estPpy;
     if (estPeriodRate > 0) {
       initialMortgageBalance = actualMortgagePayment * (1 - Math.pow(1 + estPeriodRate, -estNumPayments)) / estPeriodRate;
@@ -553,5 +559,13 @@ function calculateMortgageVsInvest(inputs) {
   };
 }
 
-// Export to window for UI
+// Export to window for UI and tests
+window.PayOffMortgageVsInvestEngine = {
+  canadianMortgagePeriodicRate,
+  calculateMortgagePayment,
+  findMortgagePayoffMonth,
+  monthlyReturnFromAnnual,
+  simulate,
+  calculateMortgageVsInvest,
+};
 window.calculateMortgageVsInvest = calculateMortgageVsInvest;

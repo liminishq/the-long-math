@@ -41,6 +41,11 @@
     return (dec * 100).toFixed(1) + "%";
   }
 
+  function canadianMortgagePeriodicRate(annualRate, periodsPerYear) {
+    const annualRateDecimal = annualRate / 100;
+    return Math.pow(1 + annualRateDecimal / 2, 2 / periodsPerYear) - 1;
+  }
+
   // Canadian CPI long-term average (default when custom not set)
   const DEFAULT_INFLATION_PCT = 3.73;
 
@@ -304,7 +309,7 @@
     if (rate === 0) {
       return principal / (years * ppy);
     }
-    const periodRate = rate / 100 / ppy;
+    const periodRate = canadianMortgagePeriodicRate(rate, ppy);
     const numPayments = years * ppy;
     const payment = principal * periodRate / (1 - Math.pow(1 + periodRate, -numPayments));
     return payment;
