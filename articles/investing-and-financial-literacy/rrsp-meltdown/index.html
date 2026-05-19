@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RRSP Meltdown: The Tax Problem Inside a Successful Retirement Plan – The Long Math</title>
+  <meta name="description" content="RRSP meltdown explained in Canada: how early RRSP or RRIF withdrawals can reduce future forced withdrawals, OAS clawback, and estate tax concentration." />
+  <link rel="canonical" href="https://thelongmath.com/articles/investing-and-financial-literacy/rrsp-meltdown/" />
+  
+  <link rel="alternate" hreflang="en" href="https://thelongmath.com/articles/investing-and-financial-literacy/rrsp-meltdown/" />
+  
+  <link rel="alternate" hreflang="fr" href="https://thelongmath.com/fr/articles/investing-and-financial-literacy/rrsp-meltdown/" />
+  
+  <link rel="alternate" hreflang="x-default" href="https://thelongmath.com/articles/investing-and-financial-literacy/rrsp-meltdown/" />
+  
+
+  <script src="/assets/js/theme-init.40fc21015f.js"></script>
+  <script src="/assets/js/i18n.e9994b5f88.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.deb0166dcb.css">
+  <script defer src="/assets/js/site.4fbf708cdd.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+  
+<style>
+    .article-content { max-width: 980px; margin: 0 auto; line-height: 1.7; }
+    .article-content h2 { margin: 0 0 0.75em; }
+    .article-content h3 { margin: 1.25em 0 0.5em; }
+    .article-content ul,
+    .article-content ol { margin: 1em 0; padding-left: 2em; }
+    .article-content li { margin: 0.5em 0; }
+    .article-content p { margin: 0.9em 0; }
+    .article-content table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.95em; }
+    .article-content th,
+    .article-content td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; }
+    .article-content th { background: var(--card-bg, rgba(0, 0, 0, 0.03)); font-weight: 600; }
+    .section-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      margin: 18px 0;
+      background: var(--card-bg, var(--surface, #fff));
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
+    }
+    .section-card.intro-card { margin-top: 14px; }
+    .related-articles h2 { font-size: 18px; margin: 0 0 10px; }
+    .related-articles ul { list-style: none; padding-left: 0; margin: 0; }
+    .related-articles li { margin: 12px 0; }
+    .related-articles a { color: var(--accent); text-decoration: none; }
+    .related-articles a:hover { text-decoration: underline; }
+    .faq-accordion { margin: 0; }
+    .faq-accordion details { border: 1px solid var(--border); border-radius: 10px; margin: 10px 0; overflow: hidden; }
+    .faq-accordion details[open] { border-color: var(--accent, #d6b36a); }
+    .faq-accordion summary { padding: 14px 18px; font-weight: 700; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .faq-accordion summary::-webkit-details-marker { display: none; }
+    .faq-accordion summary::after { content: "+"; font-size: 1.2em; color: var(--accent); flex-shrink: 0; }
+    .faq-accordion details[open] summary::after { content: "\2212"; }
+    .faq-accordion .faq-answer { padding: 0 18px 16px; }
+    .faq-accordion .faq-answer p { margin: 0 0 0.9em 0; }
+    .faq-accordion .faq-answer p:last-child { margin-bottom: 0; }
+    .highlight-table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.95em; }
+    .highlight-table th,
+    .highlight-table td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; }
+    .highlight-table th { background: var(--card-bg, rgba(0, 0, 0, 0.03)); font-weight: 600; }
+    .article-math-block { margin: 0.9em 0; padding: 14px 16px; border-left: 3px solid var(--accent); background: rgba(0, 0, 0, 0.02); border-radius: 8px; }
+    .article-math-block p { margin: 0.35em 0; }
+    .meltdown-svg { width: 100%; max-height: 420px; height: auto; display: block; }
+    .chart-heading { margin: 0 0 8px; font-size: 1.05rem; color: var(--accent);font-weight: 600; letter-spacing: 0.03em;}
+    figure.meltdown-chart { margin: 1em 0; }
+    .chart-legend { display: flex; flex-wrap: wrap; gap: 12px 20px; margin: 12px 0 4px; font-size: 0.9rem; color: var(--muted); }
+    .chart-key { position: relative; padding-left: 22px; }
+    .chart-key::before { content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 14px; height: 3px; border-radius: 1px; }
+    .chart-key-accent::before { background: var(--accent); }
+    .chart-key-muted::before { background: var(--muted); }
+  </style>
+
+  <meta name="article:modified" content="May 2026" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="RRSP Meltdown: The Tax Problem Inside a Successful Retirement Plan – The Long Math" />
+  <meta property="og:description" content="RRSP meltdown explained in Canada: how early RRSP or RRIF withdrawals can reduce future forced withdrawals, OAS clawback, and estate tax concentration." />
+  <meta property="og:url" content="https://thelongmath.com/articles/investing-and-financial-literacy/rrsp-meltdown/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="RRSP Meltdown: The Tax Problem Inside a Successful Retirement Plan – The Long Math" />
+  <meta name="twitter:description" content="RRSP meltdown explained in Canada: how early RRSP or RRIF withdrawals can reduce future forced withdrawals, OAS clawback, and estate tax concentration." />
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://thelongmath.com/"},{"@type":"ListItem","position":2,"name":"Investment and Financial Literacy","item":"https://thelongmath.com/articles/investing-and-financial-literacy/"},{"@type":"ListItem","position":3,"name":"RRSP Meltdown: The Tax Problem Inside a Successful Retirement Plan","item":"https://thelongmath.com/articles/investing-and-financial-literacy/rrsp-meltdown/"}]}</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"RRSP Meltdown: The Tax Problem Inside a Successful Retirement Plan","description":"RRSP meltdown explained in Canada: how early RRSP or RRIF withdrawals can reduce future forced withdrawals, OAS clawback, and estate tax concentration.","author":{"@type":"Person","name":"Phil Evans"},"publisher":{"@type":"Organization","name":"The Long Math","logo":{"@type":"ImageObject","url":"https://www.thelongmath.com/assets/logo.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://thelongmath.com/articles/investing-and-financial-literacy/rrsp-meltdown/"},"datePublished":"2026-05-16","dateModified":"2026-05-16"}</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is an RRSP meltdown?","acceptedAnswer":{"@type":"Answer","text":"A deliberate strategy to withdraw RRSP or RRIF assets earlier than required - typically during lower-income years before CPP, OAS, and mandatory RRIF minimums converge - to reduce future forced withdrawals, limit tax bracket exposure, and manage OAS clawback. The name overstates the drama; it is tax bracket smoothing."}},{"@type":"Question","name":"Should I withdraw from my RRSP before age 71?","acceptedAnswer":{"@type":"Answer","text":"Only if your marginal tax rate on those early withdrawals is materially lower than the rate on the future RRIF withdrawals they would replace. The calculation depends on current income, expected future income, province, TFSA room, and whether a spousal rollover is available. There is no universal answer - it requires your own actual numbers."}},{"@type":"Question","name":"How does OAS clawback interact with RRIF withdrawals?","acceptedAnswer":{"@type":"Answer","text":"OAS is reduced by 15 cents for every dollar of net income above $95,323 (2026 income year threshold). RRIF withdrawals count toward that figure, so a large RRIF minimum stacked on CPP and OAS can push significant income into the clawback zone - effectively adding 15 percentage points to the marginal rate on those dollars. TFSA withdrawals do not count."}},{"@type":"Question","name":"Should I use my TFSA before my RRSP in retirement?","acceptedAnswer":{"@type":"Answer","text":"Not automatically. TFSA withdrawals avoid taxable income this year, but using them exclusively during low-income years may preserve too much RRSP balance for later years, with forced withdrawals at higher rates. A coordinated plan draws on both - using deliberate RRSP withdrawals to fill available low-bracket room and TFSA withdrawals to manage income in years when RRIF minimums must be large."}},{"@type":"Question","name":"What happens to an RRSP or RRIF when the annuitant dies?","acceptedAnswer":{"@type":"Answer","text":"The fair market value is generally included in income on the final tax return - potentially at top marginal rates on the full balance. A surviving spouse named as successor annuitant or sole beneficiary can receive the balance on a tax-deferred basis. Without a qualifying successor or beneficiary, the estate bears the full tax cost in the year of death."}},{"@type":"Question","name":"Can RRIF minimum withdrawals be reduced?","acceptedAnswer":{"@type":"Answer","text":"No - the prescribed minimum must be withdrawn each year regardless of need. However, setting up the RRIF to use a younger spouse's age for the minimum calculation reduces the required factor and lowers the annual minimum each year. Withdrawing above the minimum is always permitted; below it is not."}},{"@type":"Question","name":"Is a large RRSP a planning mistake?","acceptedAnswer":{"@type":"Answer","text":"Not inherently. A large RRSP often reflects years of high-income contributions at meaningful marginal rates - the account working as designed. The planning challenge is distributing the embedded deferred tax as efficiently as possible over the remainder of the retiree's life."}}]}</script>
+
+
+</head>
+<body>
+  
+  <div id="site-header"></div>
+  <div class="wrap">
+    
+      <article class="article-content">
+      <header>
+        <h1>RRSP Meltdown: The Tax Problem Inside a Successful Retirement Plan</h1>
+
+        <p class="reading-time">12-minute read</p>
+
+        <p class="last-updated">Last updated May 2026</p>
+      </header>
+
+      <section class="section-card intro-card">
+        <h2 id="paradox">The Paradox of a Large RRSP</h2>
+        <p>Here is a situation that surprises more retirees than it should.</p>
+        <p>A disciplined Canadian saver contributes to their RRSP for thirty years. They invest carefully, defer withdrawals, and let the account compound. By retirement, the RRSP holds over a million dollars. They did everything the plan was designed to encourage.</p>
+        <p>Then their 70s arrive. CPP is paying. OAS is paying. Investment income flows from non-registered accounts. And the government now requires mandatory withdrawals from a RRIF &mdash; the converted RRSP &mdash; on a schedule that rises every year regardless of how much the retiree actually needs to spend. The account that spent thirty years accumulating is now generating six-figure taxable income whether the retiree wants it or not.</p>
+        <p>This is the RRSP paradox: an account can work exactly as intended and still create a tax problem later &mdash; one that could have been planned for. Not a sign of failure, but a signal that the accumulation phase and the decumulation phase require different kinds of thinking. The account succeeded. The question now is whether the mandatory exit from that account can be managed efficiently across time.</p>
+        <p>A note before going further. None of what follows means RRSPs are bad. A large RRSP usually reflects decades of disciplined saving and effective tax deferral. The question is not whether the account succeeded. The question is whether the withdrawal phase &mdash; which must happen eventually &mdash; can be managed more efficiently across time.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="what-meltdown-means">What &quot;RRSP Meltdown&quot; Actually Means</h2>
+        <p>An RRSP meltdown is the deliberate drawdown of RRSP or RRIF assets earlier than required &mdash; often before mandatory conversion at 71 &mdash; to reduce future forced withdrawals, OAS clawback exposure, and the tax concentration that can land on a final return.</p>
+        <p>The name overstates the drama. In practice, it is tax bracket smoothing: a choice to realize some registered income in years when the marginal rate is manageable, rather than leaving the full balance to compound until larger mandatory withdrawals arrive at potentially higher rates.</p>
+        <p>The central question: would it be better to withdraw some registered money now at a known rate, instead of leaving it until later when forced withdrawals may be taxed at a higher rate?</p>
+        <p>It is a comparison, not a rule. The arithmetic must be done with your own actual numbers.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="tax-deferral">Tax Deferral Is Not Tax Elimination</h2>
+        <p>The first mistake is treating an RRSP as though it makes tax disappear. It does not. It moves tax forward in time.</p>
+        <p>A contribution reduces taxable income today. Growth inside the account is not taxed annually. But every dollar withdrawn is included in taxable income in the year it comes out. The value of that deferral depends entirely on the gap between the marginal rate at contribution and the effective rate at withdrawal.</p>
+        <p>A simple example, isolating only the tax mechanics:</p>
+        <ul>
+          <li>Assume a $10,000 RRSP contribution at a 40% marginal rate.</li>
+          <li>Deduction value: $10,000 &times; 40% = $4,000</li>
+          <li>Later withdrawn at 25%: $10,000 &times; 25% = $2,500 tax. Net benefit: $1,500.</li>
+          <li>Later withdrawn at 45%: $10,000 &times; 45% = $4,500 tax. Net result: &#8722;$500.</li>
+        </ul>
+        <p>The counterintuitive part: the RRSP&apos;s value is not simply &quot;I saved tax by contributing.&quot; The full statement is &quot;I saved tax if my withdrawal rate is lower than my contribution rate.&quot; For a retiree with a large RRSP, mandatory RRIF withdrawals stacked on CPP, OAS, and investment income can push that withdrawal rate higher than it was when contributions were made.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="rrif-forced-withdrawals">The Forced RRIF Withdrawal Problem</h2>
+        <p>An RRSP must be wound up by December 31 of the year the annuitant turns 71. The three options are: convert to a RRIF, purchase an eligible annuity, or withdraw the balance as a lump sum. The lump sum triggers income inclusion of the full amount in a single year &mdash; generally at top marginal rates for meaningful balances. For most Canadians, RRIF conversion is the only practical path.</p>
+        <p>Once a RRIF is established, minimum annual withdrawals are mandatory each year, calculated by multiplying the January 1 market value by a prescribed government percentage. That percentage rises with age:</p>
+        <table class="highlight-table">
+          <thead>
+            <tr><th>Age</th><th>Prescribed factor (all other RRIFs)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>71</td><td>5.28%</td></tr>
+            <tr><td>72</td><td>5.40%</td></tr>
+            <tr><td>75</td><td>5.82%</td></tr>
+            <tr><td>80</td><td>6.82%</td></tr>
+            <tr><td>85</td><td>8.51%</td></tr>
+            <tr><td>90</td><td>11.92%</td></tr>
+            <tr><td>95 or older</td><td>20.00%</td></tr>
+          </tbody>
+        </table>
+        <p><a href="https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/completing-slips-summaries/t4rsp-t4rif-information-returns/payments/chart-prescribed-factors.html">Source: CRA &mdash; chart of prescribed RRIF factors (Canada.ca)</a></p>
+        <p>Those minimum withdrawals are taxable income. The tax system does not care whether the cash is needed for spending, reinvested, or contributed to a TFSA. It is income.</p>
+        <p>A retiree aged 72, RRIF balance $1,200,000, other taxable income $55,000:</p>
+        <blockquote class="article-math-block">
+          <p>$1,200,000 &times; 5.40% = $64,800 minimum withdrawal</p>
+          <p>Total taxable income: $119,800 &mdash; even if only $30,000 was needed for spending.</p>
+        </blockquote>
+        <p>If the invested RRIF balance earns more than the minimum withdrawal each year, the dollar amount of future minimums keeps growing. That is the compounding of the problem.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="core-comparison">The Core Comparison</h2>
+        <p>The RRSP meltdown comparison is:</p>
+        <ul>
+          <li>Tax paid on planned early withdrawals + tax on smaller later forced withdrawals<br><strong>vs.</strong></li>
+          <li>Tax paid on delayed, larger forced withdrawals.</li>
+        </ul>
+        <p>This is not &quot;withdraw early to pay less tax&quot; in the abstract. It is a year-by-year arithmetic question requiring actual federal and provincial brackets, CPP and OAS income, investment income, and &mdash; for couples &mdash; both returns.</p>
+        <p>Early withdrawals only make sense when the marginal rate on those early dollars is genuinely lower than the marginal rate on the future forced withdrawals they displace. When rates are similar, the compounding advantage of leaving money inside the registered account tends to win.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="bracket-smoothing">Bracket Smoothing: The Tax Mechanics</h2>
+        <p>Progressive tax means each additional dollar of income is taxed at the rate of the bracket it falls into. RRIF withdrawals arriving on top of CPP and OAS can push the top portion of a year&apos;s income into high brackets &mdash; and potentially into OAS clawback territory.</p>
+        <p>Here is a concrete two-year example for an Ontario retiree, using 2026 combined federal-provincial rates. To keep the focus on the bracket mechanics, base income is the same in both years &mdash; only the RRSP and RRIF timing changes.</p>
+        <table class="highlight-table">
+          <thead>
+            <tr><th>Approach</th><th>Year 1</th><th>Year 2</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1 &mdash; no early RRSP withdrawal</td>
+              <td>$40,000 base (investment income, no RRSP withdrawal)</td>
+              <td>$40,000 base + $100,000 RRIF minimum = $140,000</td>
+            </tr>
+            <tr>
+              <td>2 &mdash; planned RRSP withdrawal Year 1</td>
+              <td>$40,000 base + $50,000 RRSP = $90,000</td>
+              <td>$40,000 base + $50,000 RRIF minimum = $90,000</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>Same two-year total income of $180,000 in both cases. What changes is the distribution across the bracket structure &mdash; and what happens to OAS.</p>
+        <p>The tax arithmetic (Ontario 2026, basic personal credit only, approximate):</p>
+        <p><strong>Approach 1</strong> &mdash; Year 1: ~$7,000 tax on $40,000. Year 2: ~$44,000 tax on $140,000. Two-year total: ~$51,000 tax. Year 2 also triggers OAS clawback: at $140,000 of income, roughly $6,700 of OAS is recovered (15% of ($140,000 &minus; $95,323) = 15% of $44,677; ~$6,700).</p>
+        <p><strong>Approach 2</strong> &mdash; Year 1: ~$22,000 tax on $90,000. Year 2: ~$22,000 tax on $90,000. Two-year total: ~$44,000 tax. Income stays below the $95,323 clawback threshold both years &mdash; zero OAS recovery.</p>
+        <p><strong>Result:</strong> Approach 2 pays roughly $7,000 less in combined income tax and avoids ~$6,700 of OAS clawback &mdash; approximately $13,700 better over the two years, on the same total income.</p>
+        <p>Note: These are simplified approximations using combined marginal rates from TaxTips.ca (Ontario, 2026). They assume the basic personal credit only and do not include the age credit, pension income credit, or other credits that a real retiree would typically claim. A complete calculation using your own income and credits would be needed to determine the actual difference in your situation.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="gap-years">Retirement Gap Years: Where the Opportunity Usually Lives</h2>
+        <p>Many Canadians retire before CPP, OAS, and mandatory RRIF withdrawals begin. Between leaving employment and the convergence of those income sources, there is often a window of several years when taxable income is lower than both the working years behind and the later retirement years ahead.</p>
+        <p>Low bracket room that goes unused this year does not carry forward. It is gone.</p>
+        <p>A retiree aged 62 with $15,000 of investment income, no CPP, no OAS, and enough TFSA and non-registered assets to fund spending without touching the RRSP: if they rely entirely on those sources, taxable income stays at $15,000 and substantial low-bracket room is unused every year until mandatory RRIF withdrawals begin.</p>
+        <p>Alternatively, a deliberate $45,000 RRSP withdrawal each year brings taxable income to $60,000 &mdash; taxed at moderate combined rates in most provinces, well below the OAS clawback threshold (<a href="https://www.canada.ca/en/services/benefits/publicpensions/old-age-security/recovery-tax.html">Canada.ca &mdash; OAS pension recovery tax (recovery tax thresholds)</a>). The gap-year question is whether that rate is materially lower than the rate those dollars would face at 72, stacked on CPP, OAS, and investment income. If yes, the early withdrawal paid for itself. Retirement gap years are where that answer is most often yes.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="oas-layer">OAS Clawback: The Extra Marginal Rate Layer</h2>
+        <p>OAS benefits are reduced by 15 cents for every dollar of net income above the annual clawback threshold &mdash; officially called the OAS pension recovery tax. For the 2026 income year, that threshold is $95,323. This operates as an additional marginal rate layered on top of regular income tax.</p>
+        <p>A retiree in a 33% combined federal-provincial bracket, with income inside the clawback zone, faces an effective marginal rate of approximately 48% on those dollars (33% + 15%). That is before provincial surtaxes.</p>
+        <p>A large RRIF minimum stacked on CPP, OAS, and investment income can push substantial dollars above the threshold. As the bracket-smoothing example above shows, keeping income below $95,323 in both years &mdash; rather than spiking to $140,000 in one of them &mdash; avoids the clawback entirely.</p>
+        <p>TFSA withdrawals are not included in net income and do not affect OAS clawback calculations. This is the <a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/">TFSA</a>&apos;s most underappreciated retirement advantage: not higher returns, but income you can spend without it counting.</p>
+        <p>Note: The OAS clawback threshold is adjusted annually. The 2026 income year figure of $95,323 determines OAS payments running July 2027 through June 2028. Verify the current threshold at <a href="https://www.canada.ca/">canada.ca</a> before applying any analysis to your own situation.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="estate-problem">The Estate Problem: Tax on the Final Return</h2>
+        <p>When an RRSP or RRIF annuitant dies, the fair market value of the plan is generally included in income on the final tax return for the year of death.</p>
+        <p>If there is a surviving spouse or common-law partner, they can be named as a successor annuitant in the RRIF contract or will. In that case, they simply step into the RRIF as the new annuitant &mdash; the balance does not appear on the deceased&apos;s final return, and tax is deferred until the survivor makes withdrawals. A similar deferral is available if the surviving spouse is named as the sole beneficiary and the eligible balance transfers directly into their own registered plan by December 31 of the year following the year of death.</p>
+        <p>Without a qualifying successor or beneficiary, the full balance lands on the final return. A retiree with a $900,000 RRIF, no surviving spouse, and $60,000 of other income in the year of death reports $960,000 of income. In most provinces, income above approximately $250,000 is taxed at combined marginal rates exceeding 50%. The estate pays substantially more than it would have if the same registered money had been withdrawn gradually at moderate marginal rates.</p>
+        <p>For retirees without an expected spousal rollover, this estate arithmetic is often the most compelling input to the meltdown calculation.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="example-claire">A Complete Example: Claire at 62</h2>
+        <p>All of the mechanics above converge in a single household. The example is structural &mdash; it shows the shape of the planning problem, not a specific tax return.</p>
+        <p><strong>Setup:</strong></p>
+        <ul>
+          <li>Age: 62, recently retired</li>
+          <li>RRSP: $1,100,000 &middot; TFSA: $220,000 &middot; Non-registered: $300,000</li>
+          <li>Annual after-tax spending need: $75,000</li>
+          <li>Taxable income from non-registered investments: $18,000</li>
+          <li>CPP planned at 70, OAS at 65</li>
+          <li>Nominal RRSP return: 5% per year; all figures nominal</li>
+        </ul>
+        <p><strong>Scenario A:</strong> No RRSP withdrawals, ages 62&ndash;71</p>
+        <blockquote class="article-math-block">
+          <p>$1,100,000 &times; 1.05<sup>9</sup> = $1,706,537 at age 71</p>
+          <p>First RRIF minimum at 72: $1,706,537 &times; 5.40% = $92,153</p>
+        </blockquote>
+        <p>That $92,153 arrives on top of enhanced CPP (deferred to 70), OAS, and investment income. In most provinces, a portion falls above the OAS clawback threshold.</p>
+        <p><strong>Scenario B:</strong> $55,000/year withdrawals, ages 62&ndash;70</p>
+        <p>Rather than letting the full balance compound, Claire withdraws $55,000 at the end of each year while the remaining balance continues to earn 5%. After 9 years:</p>
+        <blockquote class="article-math-block">
+          <p>Future value of starting balance: $1,100,000 &times; 1.05<sup>9</sup> = $1,706,537</p>
+          <p>Future value of annual withdrawals: $55,000 &times; [(1.05<sup>9</sup> &minus; 1) / 0.05] = $606,485</p>
+          <p>RRSP balance at age 71: $1,706,537 &minus; $606,485 = $1,100,052</p>
+          <p>First RRIF minimum at 72: $1,100,052 &times; 5.40% = $59,403</p>
+        </blockquote>
+      </section>
+
+      <section class="section-card">
+        <h2 id="rrsp-chart">RRSP Balance Paths (Scenarios A and B)</h2>
+        <figure class="meltdown-chart" role="group" aria-labelledby="rrsp-meltdown-chart-title">
+          <h3 id="rrsp-meltdown-chart-title" class="chart-heading">Balances from age 62 through 80 (nominal)</h3>
+          <svg class="meltdown-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" aria-describedby="rrsp-chart-desc">
+            <desc id="rrsp-chart-desc">Line chart comparing RRSP slash RRIF balances for two withdrawal strategies. Scenario A climbs from roughly 1.1 million to roughly 1.7 million before mandatory RRIF minimums begin shrinking the balance. Scenario B stays near 1.1 million through early withdrawals, then declines more slowly once RRIF minimums apply.</desc>
+            <text x="12" y="16" fill="currentColor" class="meltdown-svg-muted" font-size="12">$000s</text>
+            <line x1="68" x2="704" y1="296" y2="296" stroke="var(--border)" stroke-width="1"/>
+            <line x1="68" x2="68" y1="296" y2="20" stroke="var(--border)" stroke-width="1"/>
+            <text x="64" y="302" fill="currentColor" class="meltdown-svg-muted" font-size="11" text-anchor="end">62</text>
+            <text x="240" y="302" fill="currentColor" class="meltdown-svg-muted" font-size="11" text-anchor="middle">67</text>
+            <text x="456" y="302" fill="currentColor" class="meltdown-svg-muted" font-size="11" text-anchor="middle">72</text>
+            <text x="670" y="302" fill="currentColor" class="meltdown-svg-muted" font-size="11" text-anchor="middle">77</text>
+            <text x="698" y="302" fill="currentColor" class="meltdown-svg-muted" font-size="11" text-anchor="end">80</text>
+            <text x="4" y="46" fill="currentColor" class="meltdown-svg-muted" font-size="11" text-anchor="start">1750</text>
+            <text x="4" y="123" fill="currentColor" class="meltdown-svg-muted" font-size="11" text-anchor="start">1350</text>
+            <text x="4" y="205" fill="currentColor" class="meltdown-svg-muted" font-size="11" text-anchor="start">950</text>
+            <path d="M 68 257.3 L 103.3 237.2 L 138.7 216.1 L 174 194 L 209.3 170.7 L 244.7 146.3 L 280 120.7 L 315.3 93.8 L 350.7 65.5 L 386 35.9 L 421.3 38.4 L 456.7 41.6 L 492 45.8 L 527.3 50.8 L 562.7 56.8 L 598 63.8 L 633.3 71.9 L 668.7 81.2 L 704 91.7" fill="none" stroke="var(--accent)" stroke-width="2"/>
+            <path d="M 68 257.3 L 103.3 257.3 L 138.7 257.3 L 174 257.3 L 209.3 257.3 L 244.7 257.3 L 280 257.3 L 315.3 257.3 L 350.7 257.3 L 386 257.2 L 421.3 258.8 L 456.7 261 L 492 263.6 L 527.3 266.9 L 562.7 270.7 L 598 275.2 L 633.3 280.5 L 668.7 286.4 L 704 293.2" fill="none" stroke="var(--muted)" stroke-width="2"/>
+            <circle cx="456.7" cy="41.6" r="3" fill="var(--accent)"/>
+            <circle cx="456.7" cy="261" r="3" fill="var(--muted)"/>
+            <rect x="400" y="8" width="304" height="56" rx="6" ry="6" fill="var(--surface,transparent)" stroke="var(--border)"/>
+            <text x="412" y="26" fill="currentColor" class="meltdown-svg-label" font-size="12">First RRIF min. (age&nbsp;72), from article&apos;s rounding</text>
+            <text x="412" y="44" fill="var(--accent)" font-size="12">Scenario&nbsp;A:&nbsp;$92,153</text>
+            <text x="412" y="60" fill="var(--muted)" font-size="12">Scenario&nbsp;B:&nbsp;$59,403</text>
+            <text x="420" y="334" fill="currentColor" class="meltdown-svg-muted" font-size="11">Difference: about $32,750 lower RRIF income at age&nbsp;72.</text>
+          </svg>
+          <figcaption><strong>Scenario A:</strong> no RRSP withdrawals to age&nbsp;71, then illustrative RRIF path using each year&apos;s &ldquo;all other RRIFs&rdquo; prescribed factor (<a href="https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/completing-slips-summaries/t4rsp-t4rif-information-returns/payments/chart-prescribed-factors.html">Canada.ca</a>) and a 5% nominal return applied after each minimum withdrawal. <strong>Scenario B:</strong> $55,000 end-of-year RRSP withdrawals from age&nbsp;62 through&nbsp;70, then the same RRIF rules. Ages 62&ndash;71 anchor to the Claire example (including rounded intermediate totals). Assumes $1,100,000 RRSP at age&nbsp;62, 5% nominal annual return on balances, RRIF factor&nbsp;5.40% at age&nbsp;72, and nominal dollars without tax modeled on withdrawals.</figcaption>
+          <div class="chart-legend" aria-hidden="true">
+            <span class="chart-key chart-key-accent">Scenario&nbsp;A (no early RRSP withdrawals)</span>
+            <span class="chart-key chart-key-muted">Scenario&nbsp;B ($55,000/year withdrawals, ages&nbsp;62&ndash;70)</span>
+          </div>
+        </figure>
+        <p>The chart above shows both balance trajectories from age 62 through 80.</p>
+        <p><strong>What changed?</strong></p>
+        <ul>
+          <li>Each $55,000 early withdrawal was taxed at approximately 30&ndash;33% combined (Ontario), likely well below the future RRIF rate.</li>
+          <li>First-year RRIF minimum dropped by $32,750, and that reduction persists as minimums continue rising with age.</li>
+          <li>Future OAS clawback exposure is substantially reduced.</li>
+          <li>Nine years of tax-sheltered compounding were given up on each $55,000 &mdash; that is the real cost of the strategy.</li>
+          <li>It helps if and only if the early marginal rate was materially lower than the rate on the displaced future RRIF income.</li>
+          <li>Where the after-tax proceeds go matters equally: TFSA contribution, planned-spending replacement, or non-registered reinvestment all preserve capital. Spending above the plan quietly erodes it.</li>
+        </ul>
+      </section>
+
+      <section class="section-card">
+        <h2 id="tfsa-coordination">TFSA Coordination: Not Always &quot;Tax-Free First&quot;</h2>
+        <p>The TFSA is powerful in retirement because withdrawals do not affect taxable income or income-tested programs. But using TFSA assets exclusively during low-income years may preserve too much RRSP balance for later years, with forced withdrawals at higher rates.</p>
+        <p>Two retirees, identical situation: $80,000 spending need, $25,000 other taxable income, $300,000 <a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/">TFSA</a>, $900,000 RRSP.</p>
+        <table class="highlight-table">
+          <thead><tr><th>Option</th><th>This year&apos;s withdrawals</th><th>Approx. taxable income</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td>$55,000 from TFSA</td><td>$25,000 (low bill)</td></tr>
+            <tr><td>B</td><td>$25,000 from TFSA, $30,000 from RRSP</td><td>$55,000 (moderate bill)</td></tr>
+          </tbody>
+        </table>
+        <p>Option A wins the single-year comparison. Option B may win the lifetime comparison if that $30,000 RRSP withdrawal fills a bracket that would otherwise go unused and reduces a future RRIF minimum that would have arrived at a higher rate.</p>
+        <p>&quot;Spend taxable first, then RRSP, then <a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/">TFSA</a>&quot; is too rigid as a standing rule. So is &quot;preserve the RRSP as long as possible.&quot; The right answer depends on current marginal rates, expected future rates, benefit thresholds, and estate objectives.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="spouse-coordination">Spouse Coordination and the Survivor Problem</h2>
+        <p>For couples, meltdown planning requires looking at both incomes together.</p>
+        <p>Several tools are relevant. Spousal RRSPs allow contributions in a lower-earning spouse&apos;s name, shifting future taxable withdrawals to that spouse &mdash; provided no spousal contributions were made in the withdrawal year or the two preceding calendar years. RRIF income qualifies for pension income splitting after the RRIF owner turns 65, allowing up to 50% to be allocated to a spouse without a cash transfer; RRSP withdrawals before RRIF conversion do not qualify. When setting up a RRIF, electing to base the minimum withdrawal calculation on a younger spouse&apos;s age &mdash; before the first RRIF payment is made &mdash; reduces the prescribed factor and lowers the annual minimum, providing more flexibility each year.</p>
+        <p>The survivor scenario deserves particular attention. A couple may have manageable combined taxable income while both are alive &mdash; CPP, OAS, RRIF withdrawals, and investment income spread across two returns. When one spouse dies, the survivor reports all of that on a single return. The full RRIF balance continues generating mandatory withdrawals, CPP survivor benefits offset only part of the lost income, and two sets of basic credits become one.</p>
+        <p>Any plan that looks sensible for a couple should be tested explicitly under the survivor scenario. The household&apos;s tax position at the second death &mdash; with one large registered balance still unwinding &mdash; is often where the estate arithmetic is most consequential.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="when-worth-analyzing">When a Meltdown May Be Worth Analyzing</h2>
+        <p>Several conditions, when present together, tend to make the comparison worth doing in detail:</p>
+        <ul>
+          <li>A large RRSP or RRIF balance relative to expected spending needs</li>
+          <li>A multi-year gap between retirement and the convergence of CPP, OAS, and mandatory RRIF minimums</li>
+          <li>Future income expected to be significantly higher than current income once those sources combine</li>
+          <li>OAS clawback exposure likely in later years</li>
+          <li>No surviving spouse expected to receive a tax-free rollover</li>
+          <li>Available <a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/">TFSA</a> contribution room to absorb after-tax proceeds</li>
+          <li>Significant income imbalance between spouses</li>
+        </ul>
+        <p>This is not a recommendation to withdraw. It is a checklist for identifying when the arithmetic is likely to produce a clear result.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="when-not">When It May Not Make Sense</h2>
+        <p>A meltdown strategy offers little benefit when current marginal rates are already elevated and early withdrawals would be taxed at rates similar to future RRIF income. When the retiree expects lower future income due to declining spending or fewer income sources. When the RRSP is genuinely needed for long-term spending security. When limited assets outside the RRSP mean the household needs the registered balance intact. When early withdrawals would be spent above planned consumption rather than preserved. When a spousal rollover is expected and estate concentration is not a concern.</p>
+        <p>The phrase &quot;RRSP meltdown&quot; can make inaction sound negligent. Sometimes inaction is correct. Tax-sheltered compounding has value. Longevity protection has value. The right comparison is early tax versus later tax &mdash; with uncertainty on both sides.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="misconceptions">Common Misconceptions</h2>
+        <ul>
+          <li><strong>Everyone should drain their RRSP before 71.</strong> False. Many retirees are better served by deferral, especially if future tax rates will be lower, longevity protection is needed, or assets outside the RRSP are limited.</li>
+          <li><strong>Paying tax earlier is always bad.</strong> Also false. Paying 25% today may be clearly preferable to paying 45% later, if those are the realistic alternatives. Tax must be compared with the tax it displaces, not evaluated in isolation.</li>
+          <li><strong>RRSP meltdown is mainly about the OAS clawback.</strong> OAS matters, but bracket effects, provincial tax, estate concentration, and spousal coordination can each dominate the analysis depending on the household.</li>
+          <li><strong><a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/">TFSA</a> withdrawals should always come first.</strong> Using the TFSA exclusively during low-income years may preserve too much RRSP balance for later years, with forced withdrawals at higher rates.</li>
+          <li><strong>A large RRSP means a planning failure.</strong> Often the opposite. A large RRSP may reflect decades of high earnings, disciplined saving, and effective tax deferral. The next task is not regret. It is decumulation planning.</li>
+          <li><strong>The RRSP disappears to tax at death.</strong> Not necessarily. A spousal rollover &mdash; through successor annuitant designation or direct transfer &mdash; defers tax until the surviving spouse withdraws. Without a qualifying successor or beneficiary, the estate bears the full cost at marginal rates.</li>
+        </ul>
+      </section>
+
+      <section class="section-card">
+        <h2 id="tax-diversification">Tax Diversification in Retirement</h2>
+        <p>A retiree with only registered assets has limited flexibility &mdash; almost all spending from the portfolio creates taxable income. A retiree with registered, TFSA, and non-registered assets can manage total taxable income in any given year by choosing which pool to draw from.</p>
+        <p>RRSP and RRIF withdrawals increase taxable income directly. TFSA withdrawals do not. Non-registered withdrawals may trigger capital gains, dividends, or interest &mdash; each with different tax treatment. The value of tax diversification is not that one account type is always superior. It is that different accounts solve different problems in different years, and the flexibility to choose is itself a form of retirement income security.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="verification-note">Applying these ideas to your own numbers</h2>
+        <p>Tax thresholds, RRIF prescribed factors, and OAS clawback rules change annually and vary by province. The 2026 income year OAS clawback threshold is $95,323, per <a href="https://www.canada.ca/en/services/benefits/publicpensions/old-age-security/recovery-tax.html">canada.ca</a>. The age-72 prescribed RRIF factor is 5.40%, per the current CRA prescribed factor table. Verify current figures before applying any analysis to your own situation. This article is educational in nature and does not constitute tax or financial advice.</p>
+      </section>
+
+      <section class="newsletter-signup card" aria-labelledby="newsletter-article-heading">
+<h2 id="newsletter-article-heading" class="newsletter-signup-heading">Get the new work without checking back</h2>
+<p class="newsletter-signup-copy">One concise monthly email with new calculators, articles, and essays from The Long Math, plus a short note on why each one matters.</p>
+<p class="newsletter-signup-meta">Free. Unsubscribe anytime.</p>
+<div class="newsletter-embed-wrap">
+<iframe
+  src="https://subscribe-forms.beehiiv.com/bfdc64a5-2697-4bb0-bec5-5a557c9f274b"
+  class="beehiiv-embed"
+  data-test-id="beehiiv-embed"
+  frameborder="0"
+  scrolling="no"
+  style="width: 330px; height: 53px; margin: 0; border-radius: 0; background-color: transparent; box-shadow: 0 0 #0000; max-width: 100%;"
+  title="Newsletter signup"
+></iframe>
+
+</div>
+
+</section>
+
+<section class="section-card">
+        <h2 id="faq">Frequently Asked Questions</h2>
+        <div class="faq-accordion">
+          <details>
+            <summary>What is an RRSP meltdown?</summary>
+            <div class="faq-answer">
+              <p>A deliberate strategy to withdraw RRSP or RRIF assets earlier than required &mdash; typically during lower-income years before CPP, OAS, and mandatory RRIF minimums converge &mdash; to reduce future forced withdrawals, limit tax bracket exposure, and manage OAS clawback. The name overstates the drama; it is tax bracket smoothing.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Should I withdraw from my RRSP before age 71?</summary>
+            <div class="faq-answer">
+              <p>Only if your marginal tax rate on those early withdrawals is materially lower than the rate on the future RRIF withdrawals they would replace. The calculation depends on current income, expected future income, province, TFSA room, and whether a spousal rollover is available. There is no universal answer &mdash; it requires your own actual numbers.</p>
+            </div>
+          </details>
+          <details>
+            <summary>How does OAS clawback interact with RRIF withdrawals?</summary>
+            <div class="faq-answer">
+              <p>OAS is reduced by 15 cents for every dollar of net income above $95,323 (2026 income year threshold). RRIF withdrawals count toward that figure, so a large RRIF minimum stacked on CPP and OAS can push significant income into the clawback zone &mdash; effectively adding 15 percentage points to the marginal rate on those dollars. <a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/">TFSA</a> withdrawals do not count.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Should I use my TFSA before my RRSP in retirement?</summary>
+            <div class="faq-answer">
+              <p>Not automatically. TFSA withdrawals avoid taxable income this year, but using them exclusively during low-income years may preserve too much RRSP balance for later years, with forced withdrawals at higher rates. A coordinated plan draws on both &mdash; using deliberate RRSP withdrawals to fill available low-bracket room and TFSA withdrawals to manage income in years when RRIF minimums must be large.</p>
+            </div>
+          </details>
+          <details>
+            <summary>What happens to an RRSP or RRIF when the annuitant dies?</summary>
+            <div class="faq-answer">
+              <p>The fair market value is generally included in income on the final tax return &mdash; potentially at top marginal rates on the full balance. A surviving spouse named as successor annuitant or sole beneficiary can receive the balance on a tax-deferred basis. Without a qualifying successor or beneficiary, the estate bears the full tax cost in the year of death.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Can RRIF minimum withdrawals be reduced?</summary>
+            <div class="faq-answer">
+              <p>No &mdash; the prescribed minimum must be withdrawn each year regardless of need. However, setting up the RRIF to use a younger spouse&apos;s age for the minimum calculation reduces the required factor and lowers the annual minimum each year. Withdrawing above the minimum is always permitted; below it is not.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Is a large RRSP a planning mistake?</summary>
+            <div class="faq-answer">
+              <p>Not inherently. A large RRSP often reflects years of high-income contributions at meaningful marginal rates &mdash; the account working as designed. The planning challenge is distributing the embedded deferred tax as efficiently as possible over the remainder of the retiree&apos;s life.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="section-card related-articles">
+        <h2>Related calculators and articles</h2>
+        <ul>
+          <li><a href="/articles/investing-and-financial-literacy/what-is-an-rrsp/">What Is an RRSP?</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/">RRSP vs. TFSA vs. FHSA: Which Account Is Best?</a></li>
+          <li><a href="/calculators/tfsa-rrsp-fhsa/">RRSP vs. TFSA vs. FHSA calculator</a></li>
+          <li><a href="/calculators/canada-income-tax/">Canada personal income tax calculator</a></li>
+          <li><a href="/calculators/retirement-withdrawal-calculator/">Retirement withdrawal calculator</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/tfsa-withdrawal-rules-over-contribution-penalties/">TFSA withdrawal rules and over-contribution penalties</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/inflation/">Inflation: The Math That Makes Future Money Smaller</a></li>
+        </ul>
+      </section>
+
+      </article>
+
+<div class="disclaimer"><p>
+        <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
+      </p></div>
+
+  </div>
+  
+  <div id="footerMount"></div>
+</body>
+</html>

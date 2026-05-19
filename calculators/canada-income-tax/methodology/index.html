@@ -27,7 +27,7 @@
   <div class="wrap">
     <div class="methodology-content">
       <h1>Inspectable Arithmetic for the Canada Personal Income Tax Calculator</h1>
-      <p class="methodology-meta">Version 1.1<br>Last verified: May 2026</p>
+      <p class="methodology-meta">Version 1.2<br>Last verified: May 2026</p>
 
       <p>
         Transparent arithmetic is the operating system of this calculator.
@@ -41,7 +41,7 @@
 
       <h2>Purpose</h2>
       <p>
-        This calculator estimates combined federal and provincial/territorial personal income tax for the 2025 tax year in Canada. It models regular income,
+        This calculator estimates combined federal and provincial/territorial personal income tax for the selected tax year (2025 or 2026) in Canada. It models regular income,
         common investment income types, registered-account deductions, and payroll contributions, then reports total income tax, CPP/EI, average and marginal
         tax rates, and take-home pay by province or territory.
       </p>
@@ -79,7 +79,11 @@
         <li>MaxInsurableEarnings = maximum EI insurable earnings</li>
         <li>r<sub>EI</sub> = EI contribution rate</li>
         <li>MaxEI = maximum EI premium</li>
-        <li>TI = taxable income</li>
+        <li>GI = gross income for tax (employment + business + other + grossed-up dividends + taxable capital gains)</li>
+        <li>NI = net income (GI minus RRSP/FHSA/other deductions and line 22215 enhanced CPP deduction)</li>
+        <li>TI = taxable income (NI in this calculator; no additional line 23400–26000 adjustments modeled)</li>
+        <li>CPP<sub>base</sub> = base CPP employee amount eligible for line 30800 credit</li>
+        <li>CPP<sub>enh</sub> = first additional CPP + CPP2 (line 22215 deduction from income)</li>
         <li>BPA<sub>fed</sub> = federal Basic Personal Amount</li>
         <li>CEA = federal Canada Employment Amount</li>
         <li>c<sub>fed</sub> = federal non-refundable credit rate (lowest federal bracket rate)</li>
@@ -112,13 +116,15 @@
       <div class="formula-block">
         G<sub>taxable</sub> = G × r<sub>cg</sub>
       </div>
-      <p>Taxable income TI:</p>
+      <p>Gross income for tax and net income (T1 lines 15000 → 23600):</p>
       <div class="formula-block">
-        TI = max(0,
-        E + S + O + D<sub>elig,gross</sub> + D<sub>ne,gross</sub> + G<sub>taxable</sub> − R<sub>RRSP</sub> − R<sub>FHSA</sub> − D<sub>est</sub>)
+        GI = E + S + O + D<sub>elig,gross</sub> + D<sub>ne,gross</sub> + G<sub>taxable</sub><br>
+        NI = max(0, GI − R<sub>RRSP</sub> − R<sub>FHSA</sub> − D<sub>est</sub> − CPP<sub>enh</sub>)<br>
+        TI = NI
       </div>
       <p class="formula-meta">
         RRSP and FHSA are treated purely as deductions against income for the current year; contribution room, over-contribution penalties, and carry-forward rules are not modeled.
+        <strong>CPP<sub>enh</sub></strong> is first additional CPP plus CPP2 (line 22215). EI is credit-only, not deducted from TI.
       </p>
 
       <h3 id="federal-tax">2. Federal Tax</h3>
@@ -134,10 +140,11 @@
       <ul>
         <li>Basic Personal Amount: BPA<sub>fed</sub> × c<sub>fed</sub></li>
         <li>Canada Employment Amount (if E &gt; 0): CEA × c<sub>fed</sub></li>
-        <li>CPP/EI credit: (CPP + EI) × r<sub>CPP/EI,cred</sub></li>
+        <li>Base CPP credit (line 30800): CPP<sub>base</sub> × r<sub>CPP/EI,cred</sub></li>
+        <li>EI credit: EI × r<sub>CPP/EI,cred</sub></li>
       </ul>
       <div class="formula-block">
-        Credits<sub>fed</sub> = BPA<sub>fed</sub> × c<sub>fed</sub> + [CEA × c<sub>fed</sub> if E &gt; 0] + (CPP + EI) × r<sub>CPP/EI,cred</sub><br>
+        Credits<sub>fed</sub> = BPA<sub>fed</sub> × c<sub>fed</sub> + [CEA × c<sub>fed</sub> if E &gt; 0] + CPP<sub>base</sub> × r<sub>CPP/EI,cred</sub> + EI × r<sub>CPP/EI,cred</sub><br>
         TaxAfterCredits<sub>fed</sub> = max(0, BaseTax<sub>fed</sub> − Credits<sub>fed</sub>)
       </div>
       <p>Step 3 — federal dividend tax credit (DTC):</p>
@@ -194,21 +201,24 @@
         Tax<sub>ON</sub> = max(0, TaxAfterCredits<sub>ON</sub> + Surtax<sub>ON</sub> − DTC<sub>ON</sub>) + OHP
       </div>
 
-      <h3 id="payroll">4. CPP and EI</h3>
-      <p>CPP is split into base CPP (CPP1) and additional CPP (CPP2) for 2025.</p>
-      <p>CPP1 (base CPP):</p>
+      <h3 id="payroll">4. CPP and EI (annual return, not payroll withholding)</h3>
+      <p>Employee CPP uses CRA YMPE/YAMPE and rates in <code>payroll.json</code> (Schedule 8 / T4), not per-paycheque withholding tables.</p>
+      <p>CPP1 on earnings up to YMPE:</p>
       <div class="formula-block">
         Pensionable = max(0, min(E, YMPE) − BasicExemption)<br>
-        CPP1 = min(Pensionable × r<sub>CPP</sub>, MaxCPP1)
+        CPP<sub>base</sub> = min(Pensionable × r<sub>base</sub>, MaxBaseCPP) — line 30800 credit<br>
+        CPP<sub>1st add</sub> = min(Pensionable × r<sub>1st add</sub>, MaxFirstAdditionalCPP) — line 22215 deduction<br>
+        CPP1 = CPP<sub>base</sub> + CPP<sub>1st add</sub>
       </div>
-      <p>CPP2 (additional CPP on earnings above YMPE):</p>
+      <p>CPP2 between YMPE and YAMPE:</p>
       <div class="formula-block">
         AdditionalEarnings = max(0, min(E, YAMPE) − YMPE)<br>
-        CPP2 = min(AdditionalEarnings × r<sub>CPP2</sub>, MaxCPP2)
+        CPP2 = min(AdditionalEarnings × r<sub>CPP2</sub>, MaxCPP2) — line 22215 deduction<br>
+        CPP<sub>enh</sub> = CPP<sub>1st add</sub> + CPP2
       </div>
       <p>Total CPP:</p>
       <div class="formula-block">
-        CPP = CPP1 + CPP2
+        CPP = CPP1 + CPP2 — NI reduced by CPP<sub>enh</sub> only; credits use CPP<sub>base</sub> and EI
       </div>
       <p>EI:</p>
       <div class="formula-block">
@@ -268,7 +278,8 @@
       <ol>
         <li>Tax year is fixed at 2025; only provinces and territories supported by the underlying data files are available.</li>
         <li>RRSP and FHSA inputs are treated strictly as deductions; contribution room, over-contribution penalties, and carry-forward rules are out of scope.</li>
-        <li>Only common non-refundable credits are modeled (federal BPA, Canada Employment Amount, CPP/EI credit, provincial BPAs, selected credits encoded in data files).</li>
+        <li>Only common non-refundable credits are modeled (federal BPA, Canada Employment Amount, base CPP and EI credits, provincial BPAs and provincial base CPP/EI where configured, selected credits in data files).</li>
+        <li>Enhanced CPP (first additional + CPP2) is deducted from net income (line 22215); payroll withholding calculators that do not model the return split may disagree with this calculator.</li>
         <li>Additional credits and deductions (medical expenses, tuition, donations, prior-year loss carryforwards, etc.) are not modeled individually; they can be approximated via the “Estimated Additional Deductions” field.</li>
         <li>Dividend gross-up and tax credit rates come from federal and provincial data tables for 2025; province-specific nuances beyond the encoded schema are not modeled.</li>
         <li>Capital gains use a fixed 50% inclusion rate for 2025 across all provinces.</li>

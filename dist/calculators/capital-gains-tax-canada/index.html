@@ -7,9 +7,9 @@
   <meta name="description" content="Estimate Canadian capital gains tax using ACB, proceeds, inclusion rate, and marginal tax rate. Educational calculator with inspectable arithmetic." />
   <link rel="canonical" href="https://thelongmath.com/calculators/capital-gains-tax-canada/" />
 
-  <script src="/assets/js/theme-init.js"></script>
-  <link rel="stylesheet" href="/assets/css/styles.css" />
-  <script defer src="/assets/js/site.js"></script>
+  <script src="/assets/js/theme-init.40fc21015f.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.deb0166dcb.css" />
+  <script defer src="/assets/js/site.4fbf708cdd.js"></script>
   <link rel="stylesheet" href="/calculators/capital-gains-tax-canada/styles.css" />
 
   <style>
@@ -204,11 +204,19 @@
           capital gain can push you into a higher bracket than your employment or other income alone would suggest.
         </p>
         <p>
-          Select your province or territory below to see the federal and provincial bracket rates as a reference. This does
+          Select the reference tax year and your province or territory below to see the federal and provincial bracket rates as a quick reference. This does
           <em>not</em> change the calculator's math — you still enter your combined marginal rate in the field above. To estimate
           your marginal rate based on your total projected income, use the
           <a href="/calculators/canada-income-tax/">Canada Personal Income Tax Calculator</a>.
         </p>
+
+        <div class="field" style="margin-top: 12px;">
+          <label for="bracket-year">Reference tax year (for tables below)</label>
+          <select id="bracket-year" aria-label="Tax year for bracket tables">
+            <option value="2026" selected>2026</option>
+            <option value="2025">2025</option>
+          </select>
+        </div>
 
         <div class="field" style="margin-top: 12px;">
           <label for="province">Province or territory</label>
@@ -229,7 +237,7 @@
             <option value="YT">Yukon</option>
           </select>
           <div class="help-text">
-            Select your province or territory to display federal and provincial income tax brackets for reference. This
+            Select the reference year and your province or territory to display federal and provincial income tax brackets. This
             does not change the calculation — enter your combined marginal rate in the field above.
           </div>
 
@@ -237,7 +245,7 @@
             <div class="bracket-reference-title" id="bracketReferenceTitle"></div>
             <div class="bracket-tables-wrap">
               <div class="bracket-table-block">
-                <h4>Federal (2025)</h4>
+                <h4 id="cg-fed-bracket-heading">Federal</h4>
                 <table class="bracket-table">
                   <thead><tr><th>Income over</th><th>Rate</th></tr></thead>
                   <tbody id="federalBracketBody"></tbody>
@@ -354,36 +362,28 @@
   <div id="footerMount"></div>
 
   <script>
-    const FEDERAL_BRACKETS = [
-      { threshold: 0,       rate: 0.145 },
-      { threshold: 57375,   rate: 0.205 },
-      { threshold: 114750,  rate: 0.26  },
-      { threshold: 177882,  rate: 0.29  },
-      { threshold: 253414,  rate: 0.33  }
-    ];
+    const BRACKET_JSON_BASE = '/calculators/canada-income-tax/data';
+    const bracketCache = Object.create(null);
 
-    const PROVINCIAL_BRACKETS = {
-      AB: { name: "Alberta",                   brackets: [{threshold:0,rate:0.08},{threshold:60000,rate:0.10},{threshold:151234,rate:0.12},{threshold:181481,rate:0.13},{threshold:241974,rate:0.14},{threshold:362961,rate:0.15}] },
-      BC: { name: "British Columbia",          brackets: [{threshold:0,rate:0.0506},{threshold:49279,rate:0.077},{threshold:98560,rate:0.105},{threshold:113158,rate:0.1229},{threshold:137407,rate:0.147},{threshold:186306,rate:0.168},{threshold:259829,rate:0.205}] },
-      MB: { name: "Manitoba",                  brackets: [{threshold:0,rate:0.108},{threshold:47000,rate:0.1275},{threshold:100000,rate:0.174}] },
-      NB: { name: "New Brunswick",             brackets: [{threshold:0,rate:0.094},{threshold:51306,rate:0.14},{threshold:102614,rate:0.16},{threshold:190060,rate:0.195}] },
-      NL: { name: "Newfoundland and Labrador", brackets: [{threshold:0,rate:0.087},{threshold:44192,rate:0.145},{threshold:88382,rate:0.158},{threshold:157792,rate:0.178},{threshold:220910,rate:0.198},{threshold:282214,rate:0.208},{threshold:564429,rate:0.213},{threshold:1128858,rate:0.218}] },
-      NS: { name: "Nova Scotia",               brackets: [{threshold:0,rate:0.0879},{threshold:30507,rate:0.1495},{threshold:61015,rate:0.1667},{threshold:95883,rate:0.175},{threshold:154650,rate:0.21}] },
-      NT: { name: "Northwest Territories",     brackets: [{threshold:0,rate:0.059},{threshold:51964,rate:0.086},{threshold:103930,rate:0.122},{threshold:168967,rate:0.1405}] },
-      NU: { name: "Nunavut",                   brackets: [{threshold:0,rate:0.04},{threshold:54707,rate:0.07},{threshold:109413,rate:0.09},{threshold:177881,rate:0.115}] },
-      ON: { name: "Ontario",                   brackets: [{threshold:0,rate:0.0505},{threshold:52886,rate:0.0915},{threshold:105775,rate:0.1116},{threshold:150000,rate:0.1216},{threshold:220000,rate:0.1316}] },
-      PE: { name: "Prince Edward Island",      brackets: [{threshold:0,rate:0.095},{threshold:33328,rate:0.1347},{threshold:64656,rate:0.166},{threshold:105000,rate:0.1762},{threshold:140000,rate:0.19}] },
-      QC: { name: "Quebec",                    brackets: [{threshold:0,rate:0.14},{threshold:51480,rate:0.19},{threshold:102970,rate:0.24},{threshold:119910,rate:0.2575}] },
-      SK: { name: "Saskatchewan",              brackets: [{threshold:0,rate:0.105},{threshold:53463,rate:0.125},{threshold:152750,rate:0.145}] },
-      YT: { name: "Yukon",                     brackets: [{threshold:0,rate:0.064},{threshold:57375,rate:0.09},{threshold:114750,rate:0.109},{threshold:177882,rate:0.1293},{threshold:253414,rate:0.128},{threshold:500000,rate:0.15}] }
-    };
+    async function loadBracketTables(yearNum) {
+      const y = String(yearNum);
+      if (bracketCache[y]) return bracketCache[y];
+      const [fRes, pRes] = await Promise.all([
+        fetch(BRACKET_JSON_BASE + '/' + y + '/federal.json'),
+        fetch(BRACKET_JSON_BASE + '/' + y + '/provinces.json')
+      ]);
+      if (!fRes.ok || !pRes.ok) throw new Error('bracket data');
+      const federal = await fRes.json();
+      const provinces = await pRes.json();
+      bracketCache[y] = { federal, provinces };
+      return bracketCache[y];
+    }
 
     function fmtThreshold(n) {
       return '$' + n.toLocaleString('en-CA');
     }
 
     function fmtRate(r) {
-      // e.g. 0.0506 → "5.06%", 0.08 → "8%"
       const pct = (r * 100);
       return (Number.isInteger(pct) ? pct.toString() : pct.toFixed(2).replace(/0+$/, '').replace(/\.$/, '')) + '%';
     }
@@ -397,27 +397,52 @@
       });
     }
 
-    document.getElementById('province').addEventListener('change', function() {
-      const code = this.value;
+    async function refreshBracketReference() {
+      const code = document.getElementById('province').value;
+      const yearEl = document.getElementById('bracket-year');
+      const year = yearEl ? parseInt(yearEl.value, 10) || 2026 : 2026;
       const panel = document.getElementById('bracketReference');
 
-      if (!code || !PROVINCIAL_BRACKETS[code]) {
+      if (!code) {
         panel.classList.remove('visible');
         return;
       }
 
-      const prov = PROVINCIAL_BRACKETS[code];
-      document.getElementById('bracketReferenceTitle').textContent =
-        '2025 income tax brackets — Federal + ' + prov.name;
-      document.getElementById('provBracketHeader').textContent =
-        prov.name + ' (2025)';
-      renderRows(document.getElementById('federalBracketBody'), FEDERAL_BRACKETS);
-      renderRows(document.getElementById('provBracketBody'), prov.brackets);
-      panel.classList.add('visible');
+      try {
+        const data = await loadBracketTables(year);
+        const provData = data.provinces[code];
+        if (!provData || !Array.isArray(provData.brackets)) {
+          panel.classList.remove('visible');
+          return;
+        }
+
+        const fedHeading = document.getElementById('cg-fed-bracket-heading');
+        if (fedHeading) fedHeading.textContent = 'Federal (' + year + ')';
+
+        document.getElementById('bracketReferenceTitle').textContent =
+          year + ' income tax brackets — Federal + ' + (provData.name || code);
+        document.getElementById('provBracketHeader').textContent =
+          (provData.name || code) + ' (' + year + ')';
+        renderRows(document.getElementById('federalBracketBody'), data.federal.brackets);
+        renderRows(document.getElementById('provBracketBody'), provData.brackets);
+        panel.classList.add('visible');
+      } catch (_e) {
+        panel.classList.remove('visible');
+      }
+    }
+
+    document.getElementById('province').addEventListener('change', function() {
+      refreshBracketReference();
     });
+    var bracketYearEl = document.getElementById('bracket-year');
+    if (bracketYearEl) {
+      bracketYearEl.addEventListener('change', function() {
+        refreshBracketReference();
+      });
+    }
   </script>
 
-  <script defer src="/assets/js/calculator-share.js?v=20260426"></script>
+  <script defer src="/assets/js/calculator-share.7c41e5f4f7.js"></script>
   <script src="/calculators/capital-gains-tax-canada/engine.js"></script>
   <script src="/calculators/capital-gains-tax-canada/ui.js"></script>
 </body>

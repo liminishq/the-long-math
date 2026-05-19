@@ -29,6 +29,7 @@ const SLUGS = [
   "norberts-gambit",
   "pay-off-your-mortgage-faster-or-invest",
   "what-is-a-non-registered-account",
+  "rrsp-meltdown",
   "rrsp-vs-tfsa-vs-fhsa",
   "sequence-of-returns-risk",
   "should-you-break-your-mortgage-for-a-lower-rate",

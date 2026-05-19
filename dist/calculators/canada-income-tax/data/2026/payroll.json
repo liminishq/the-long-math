@@ -2,9 +2,14 @@
   "year": 2026,
   "cpp": {
     "rate": 0.0595,
+    "baseRate": 0.0495,
+    "firstAdditionalRate": 0.01,
     "basicExemption": 3500,
     "maxPensionableEarnings": 74600,
-    "maxContribution": 4230.45
+    "maxBaseContribution": 3519.45,
+    "maxFirstAdditionalContribution": 711.0,
+    "maxContribution": 4230.45,
+    "_noteSplit": "CPP1 = base (line 30800 credit) + first additional (line 22215 deduction). Rates from CRA CPP contribution rates page."
   },
   "cpp2": {
     "rate": 0.04,

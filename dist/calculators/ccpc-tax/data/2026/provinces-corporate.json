@@ -11,8 +11,8 @@
       "_note": "Alberta general corporate rate: 8% (effective July 1, 2020)"
     },
     "_source": "https://www.alberta.ca/about-tax-levy-rates-prescribed-interest-rates#corporate",
-    "_lastVerified": "2025-01-28",
-    "_note": "Alberta administers corporate tax separately from CRA. Rates verified from official Alberta.ca source. Small business threshold is $500,000."
+    "_lastVerified": "2026-05-16",
+    "_note": "Alberta corporate tax administered by province. Rates verified against Alberta.ca corporate tax page (2026 review); matches long-standing 2% / 8% structure on $500,000 business limit."
   },
   "BC": {
     "name": "British Columbia",
@@ -155,11 +155,11 @@
     },
     "general": {
       "rate": 0.115,
-      "_note": "Quebec general corporate rate: 11.50% (2025). Combined with federal 15% general rate = approximately 26.50% total."
+      "_note": "Quebec general corporate rate: 11.50%. Combined with federal 15% general rate = 26.50% provincial+federal component before surtaxes."
     },
-    "_source": "Invest Quebec - Taxation in Quebec 2025 publication",
-    "_lastVerified": "2025-01-28",
-    "_note": "Quebec administers corporate tax separately from CRA. Rates verified from Invest Quebec official publication. Quebec SBD threshold is $500,000 (same as federal) for 2025."
+    "_source": "Revenu Québec corporate tax documentation / public budget summaries",
+    "_lastVerified": "2026-05-16",
+    "_note": "Quebec administers corporate tax separately from CRA. 2026 provincial budget materials indicated no change to these headline CCPC rates; provincial small business rate 3.2% on first $500,000 remains standard in public summaries (confirm remuneration-hour tests on your T2)."
   },
   "YT": {
     "name": "Yukon",
@@ -175,6 +175,6 @@
     "_source": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/corporation-tax-rates.html"
   },
   "_source": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/corporations/corporation-tax-rates.html",
-  "_lastVerified": "2025-01-28",
-  "_note": "2025 provincial corporate tax rates from official sources. Federal and most provinces: CRA source. Alberta: verified from Alberta.ca official tax rates page. Quebec: verified from Invest Quebec official publication. Some provinces have different SBD limits than federal ($500,000): Nova Scotia ($700,000), PEI ($600,000), Saskatchewan ($600,000). Some rates changed during 2025: Nova Scotia (April 1), PEI (July 1). For full 2025 tax year calculations, using post-change rates."
+  "_lastVerified": "2026-05-16",
+  "_note": "Provincial/territorial lower (small business) and higher (general) rates and business limits reconciled against the CRA ‘Corporation tax rates’ table (May 2026 page review). Alberta: alberta.ca corporate rates. Quebec: combined with Revenu Québec / public 2026 budget summaries (no announced rate change to these parameters as of review). Dual-rate provinces: if a rate changed mid-year, CRA requires day-count proration — this calculator applies the current table rates for arithmetic illustration."
 }

@@ -188,6 +188,13 @@ function validatePayroll(data) {
   assert(isFiniteNumber(data.cpp.maxPensionableEarnings) && data.cpp.maxPensionableEarnings >= 0, "payroll.json: cpp.maxPensionableEarnings must be >= 0");
   assert(isFiniteNumber(data.cpp.maxContribution) && data.cpp.maxContribution >= 0, "payroll.json: cpp.maxContribution must be >= 0");
 
+  if (data.cpp.baseRate != null) {
+    assert(isFiniteNumber(data.cpp.baseRate) && data.cpp.baseRate >= 0 && data.cpp.baseRate <= 1, "payroll.json: cpp.baseRate must be 0..1");
+    assert(isFiniteNumber(data.cpp.firstAdditionalRate) && data.cpp.firstAdditionalRate >= 0 && data.cpp.firstAdditionalRate <= 1, "payroll.json: cpp.firstAdditionalRate must be 0..1");
+    assert(isFiniteNumber(data.cpp.maxBaseContribution) && data.cpp.maxBaseContribution >= 0, "payroll.json: cpp.maxBaseContribution must be >= 0");
+    assert(isFiniteNumber(data.cpp.maxFirstAdditionalContribution) && data.cpp.maxFirstAdditionalContribution >= 0, "payroll.json: cpp.maxFirstAdditionalContribution must be >= 0");
+  }
+
   assert(data.ei && typeof data.ei === "object", "payroll.json: missing ei");
   assert(isFiniteNumber(data.ei.rate) && data.ei.rate >= 0 && data.ei.rate <= 1, "payroll.json: ei.rate must be 0..1");
   assert(isFiniteNumber(data.ei.maxInsurableEarnings) && data.ei.maxInsurableEarnings >= 0, "payroll.json: ei.maxInsurableEarnings must be >= 0");

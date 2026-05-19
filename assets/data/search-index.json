@@ -68,6 +68,30 @@
   },
   {
     "type": "article",
+    "title": "Fixed vs Variable Mortgage in Canada: The Math, Not the Narrative",
+    "url": "/articles/investing-and-financial-literacy/fixed-vs-variable-mortgage-in-canada/",
+    "desc": "Fixed or variable mortgage in Canada? Compare rate certainty, payment mechanics, rate paths, break-risk, and cash-flow cushion—using arithmetic, not slogans.",
+    "keywords": [
+      "Fixed vs Variable Mortgage in Canada: The Math, Not the Narrative",
+      "fixed vs variable mortgage in canada",
+      "fixed",
+      "variable",
+      "mortgage",
+      "canada",
+      "compare",
+      "rate",
+      "certainty",
+      "payment",
+      "mechanics",
+      "paths",
+      "break",
+      "risk",
+      "cash",
+      "flow"
+    ]
+  },
+  {
+    "type": "article",
     "title": "How Does a Mortgage Work in Canada?",
     "url": "/articles/investing-and-financial-literacy/how-does-a-mortgage-work-in-canada/",
     "desc": "How Canadian mortgages work: principal vs interest, term vs amortization, fixed vs variable, down payments, CMHC insurance, stress tests, renewal risk, and the arithmetic behind total cost.",
@@ -88,27 +112,6 @@
       "insurance",
       "stress",
       "tests"
-    ]
-  },
-  {
-    "type": "article",
-    "title": "Fixed vs Variable Mortgage in Canada: The Math, Not the Narrative",
-    "url": "/articles/investing-and-financial-literacy/fixed-vs-variable-mortgage-in-canada/",
-    "desc": "Fixed or variable mortgage in Canada? Compare rate certainty, payment mechanics, rate paths, break-risk, and cash-flow cushion—using arithmetic, not slogans.",
-    "keywords": [
-      "Fixed vs Variable Mortgage in Canada: The Math, Not the Narrative",
-      "fixed vs variable mortgage",
-      "Canada",
-      "variable mortgage",
-      "fixed mortgage",
-      "Bank of Canada",
-      "prime rate",
-      "payment shock",
-      "cash flow",
-      "break penalty",
-      "mortgage term",
-      "rate path",
-      "amortization"
     ]
   },
   {
@@ -234,36 +237,45 @@
     "desc": "Compare paying down your mortgage faster versus investing the same extra cash. See how mortgage rates, expected returns, fees, time horizon, and registered accounts affect the outcome.",
     "keywords": [
       "Pay Off Your Mortgage Faster or Invest?",
+      "pay off your mortgage faster or invest",
+      "compare",
+      "paying",
       "mortgage",
-      "invest",
-      "pay down",
-      "accelerated payment",
-      "TFSA",
-      "RRSP",
-      "break-even",
-      "Canada",
-      "extra payment",
-      "mortgage rate",
-      "time horizon"
+      "faster",
+      "versus",
+      "investing",
+      "same",
+      "extra",
+      "cash",
+      "see",
+      "rates",
+      "expected",
+      "returns",
+      "fees"
     ]
   },
   {
     "type": "article",
-    "title": "Should You Break Your Mortgage for a Lower Rate?",
-    "url": "/articles/investing-and-financial-literacy/should-you-break-your-mortgage-for-a-lower-rate/",
-    "desc": "Thinking about breaking your Canadian mortgage for a lower rate? Learn how to compare rate savings against IRD penalties, fees, and amortization resets using simple arithmetic.",
+    "title": "RRSP Meltdown: The Tax Problem Inside a Successful Retirement Plan",
+    "url": "/articles/investing-and-financial-literacy/rrsp-meltdown/",
+    "desc": "RRSP meltdown explained in Canada: how early RRSP or RRIF withdrawals can reduce future forced withdrawals, OAS clawback, and estate tax concentration.",
     "keywords": [
-      "Should You Break Your Mortgage for a Lower Rate?",
-      "break mortgage",
-      "refinance",
-      "IRD",
-      "interest rate differential",
-      "prepayment penalty",
-      "Canada",
-      "mortgage",
-      "lower rate",
-      "amortization",
-      "switching costs"
+      "RRSP Meltdown: The Tax Problem Inside a Successful Retirement Plan",
+      "rrsp meltdown",
+      "rrsp",
+      "meltdown",
+      "explained",
+      "canada",
+      "early",
+      "rrif",
+      "withdrawals",
+      "reduce",
+      "future",
+      "forced",
+      "oas",
+      "clawback",
+      "estate",
+      "tax"
     ]
   },
   {
@@ -312,6 +324,31 @@
       "see",
       "mechanism",
       "math"
+    ]
+  },
+  {
+    "type": "article",
+    "title": "Should You Break Your Mortgage for a Lower Rate?",
+    "url": "/articles/investing-and-financial-literacy/should-you-break-your-mortgage-for-a-lower-rate/",
+    "desc": "Thinking about breaking your Canadian mortgage for a lower rate? Learn how to compare rate savings against IRD penalties, fees, and amortization resets using simple arithmetic.",
+    "keywords": [
+      "Should You Break Your Mortgage for a Lower Rate? (Canada)",
+      "Should You Break Your Mortgage for a Lower Rate?",
+      "should you break your mortgage for a lower rate",
+      "thinking",
+      "breaking",
+      "canadian",
+      "mortgage",
+      "lower",
+      "rate",
+      "compare",
+      "savings",
+      "against",
+      "ird",
+      "penalties",
+      "fees",
+      "amortization",
+      "resets"
     ]
   },
   {
@@ -459,6 +496,31 @@
   },
   {
     "type": "article",
+    "title": "What Is an RESP? Registered Education Savings Plan Explained (Canada)",
+    "url": "/articles/investing-and-financial-literacy/what-is-an-resp/",
+    "desc": "Learn how RESPs work in Canada, including RESP contribution limits, CESG grants, Canada Learning Bond, tax rules, withdrawals, and whether an RESP is worth it.",
+    "keywords": [
+      "What Is an RESP? Registered Education Savings Plan Explained Canada",
+      "What Is an RESP? Registered Education Savings Plan Explained (Canada)",
+      "what is an resp",
+      "resps",
+      "work",
+      "canada",
+      "resp",
+      "contribution",
+      "limits",
+      "cesg",
+      "grants",
+      "learning",
+      "bond",
+      "tax",
+      "rules",
+      "withdrawals",
+      "whether"
+    ]
+  },
+  {
+    "type": "article",
     "title": "What Is an RRSP? Registered Retirement Savings Plan Explained (Canada)",
     "url": "/articles/investing-and-financial-literacy/what-is-an-rrsp/",
     "desc": "A clear explanation of the Canadian RRSP: how the tax deduction works, why tax-sheltered growth matters, and how to think about RRSP vs TFSA using actual arithmetic.",
@@ -478,25 +540,6 @@
       "tfsa",
       "actual",
       "arithmetic"
-    ]
-  },
-  {
-    "type": "article",
-    "title": "What Is an RESP? Registered Education Savings Plan Explained Canada | The Long Math",
-    "url": "/articles/investing-and-financial-literacy/what-is-an-resp/",
-    "desc": "Learn how RESPs work in Canada, including RESP contribution limits, CESG grants, Canada Learning Bond, tax rules, withdrawals, and whether an RESP is worth it.",
-    "keywords": [
-      "What Is an RESP",
-      "registered education savings plan",
-      "resp",
-      "canada",
-      "cesg",
-      "canada learning bond",
-      "eap",
-      "pse",
-      "education savings",
-      "contributions",
-      "withdrawals"
     ]
   },
   {
@@ -595,18 +638,24 @@
     "type": "essay",
     "title": "The Price of the White Coat",
     "url": "/beyond-the-numbers/the-price-of-the-white-coat/",
-    "desc": "A data-driven essay on the real cost of medical training in Canada, including tuition, debt-funded living costs, residency salary, and training-related debt at the start of practice.",
+    "desc": "The real cost of medical training in Canada: tuition, living costs financed by debt, interest, residency, and training-related debt before independent practice.",
     "keywords": [
       "The Price of the White Coat",
-      "white coat",
-      "medical training",
+      "the price of the white coat",
+      "real",
+      "cost",
+      "medical",
+      "training",
+      "canada",
       "tuition",
+      "living",
+      "costs",
+      "financed",
       "debt",
+      "interest",
       "residency",
-      "Canada",
-      "physician",
-      "NOSM",
-      "Dalhousie"
+      "related",
+      "independent"
     ]
   },
   {
@@ -697,12 +746,11 @@
   },
   {
     "type": "calculator",
-    "title": "Canada Personal Income Tax Calculator (2025)",
+    "title": "Canada Personal Income Tax Calculator (2025 &amp; 2026)",
     "url": "/calculators/canada-income-tax/",
     "desc": "",
     "keywords": [
-      "Canada Personal Income Tax Calculator 2025",
-      "Canada Personal Income Tax Calculator (2025)",
+      "Canada Personal Income Tax Calculator (2025 &amp; 2026)",
       "canada income tax"
     ]
   },
@@ -778,7 +826,7 @@
     "url": "/calculators/ccpc-tax/",
     "desc": "",
     "keywords": [
-      "CCPC Tax Calculator 2025",
+      "CCPC Tax Calculator (2025 &amp; 2026)",
       "CCPC Tax Calculator",
       "ccpc tax"
     ]
@@ -1051,36 +1099,6 @@
   },
   {
     "type": "calculator",
-    "title": "Retirement Withdrawal Calculator",
-    "url": "/calculators/retirement-withdrawal-calculator/",
-    "desc": "Estimate how long a portfolio may last under a fixed return and fixed nominal withdrawals, with an optional “today’s dollars” overlay for the ending balance. Includes a year-by-year table and export/share options.",
-    "keywords": [
-      "Retirement Withdrawal Calculator",
-      "retirement withdrawal",
-      "portfolio drawdown",
-      "how long will my money last",
-      "withdrawal rate",
-      "fixed withdrawals",
-      "4 percent rule",
-      "safe withdrawal"
-    ]
-  },
-  {
-    "type": "calculator",
-    "title": "Retirement Withdrawal Calculator: Inspect the Arithmetic",
-    "url": "/calculators/retirement-withdrawal-calculator/inspect-the-arithmetic/",
-    "desc": "Formulas and assumptions for the Retirement Withdrawal Calculator, including compounding, withdrawal frequency, depletion timing, and inflation-adjusted display values.",
-    "keywords": [
-      "Retirement withdrawal methodology",
-      "inspect the arithmetic",
-      "drawdown",
-      "withdrawal frequency",
-      "depletion",
-      "inflation adjusted display"
-    ]
-  },
-  {
-    "type": "calculator",
     "title": "Simple Investment Calculator",
     "url": "/calculators/investment-simple/",
     "desc": "Estimate compound investment growth with recurring contributions. Enter a starting balance, contribution amount, time horizon, and expected return — get a projected balance, milestone table, and money-weighted IRR in seconds.",
@@ -1234,7 +1252,7 @@
     "type": "calculator",
     "title": "Inspectable Arithmetic for the Pay Off Mortgage vs Invest Calculator (Cash-Flow Neutral)",
     "url": "/calculators/pay-off-mortgage-vs-invest/methodology/",
-    "desc": "Formulae, computational structure, and assumptions for the Pay Off Mortgage vs Invest (Cash-Flow Neutral) Calculator.",
+    "desc": "Formulae, computational structure, and assumptions for the Pay Off Mortgage vs Invest calculator, including monthly extra cash and lump-sum-at-start modes.",
     "keywords": [
       "Inspectable Arithmetic – Pay Off Mortgage vs Invest Calculator",
       "Inspectable Arithmetic for the Pay Off Mortgage vs Invest Calculator (Cash-Flow Neutral)",
@@ -1247,10 +1265,12 @@
       "off",
       "mortgage",
       "invest",
+      "calculator",
+      "monthly",
+      "extra",
       "cash",
-      "flow",
-      "neutral",
-      "calculator"
+      "lump",
+      "sum"
     ]
   },
   {
@@ -1281,6 +1301,53 @@
       "offset",
       "fee",
       "calculator"
+    ]
+  },
+  {
+    "type": "calculator",
+    "title": "Retirement Withdrawal Calculator",
+    "url": "/calculators/retirement-withdrawal-calculator/",
+    "desc": "Use this retirement withdrawal calculator to estimate how long your retirement savings may last under fixed withdrawals, a fixed return, and optional inflation adjustment.",
+    "keywords": [
+      "Retirement Withdrawal Calculator | How Long Will Savings Last?",
+      "Retirement Withdrawal Calculator",
+      "retirement withdrawal calculator",
+      "retirement",
+      "withdrawal",
+      "calculator",
+      "estimate",
+      "savings",
+      "last",
+      "under",
+      "fixed",
+      "withdrawals",
+      "return",
+      "optional",
+      "inflation",
+      "adjustment"
+    ]
+  },
+  {
+    "type": "calculator",
+    "title": "Retirement Withdrawal Calculator: Inspect the Arithmetic",
+    "url": "/calculators/retirement-withdrawal-calculator/inspect-the-arithmetic/",
+    "desc": "See the formulas and assumptions behind the Retirement Withdrawal Calculator, including withdrawal frequency, depletion timing, and inflation-adjusted values.",
+    "keywords": [
+      "Retirement Withdrawal Calculator: Inspect the Arithmetic",
+      "inspect the arithmetic",
+      "see",
+      "formulas",
+      "assumptions",
+      "behind",
+      "retirement",
+      "withdrawal",
+      "calculator",
+      "frequency",
+      "depletion",
+      "timing",
+      "inflation",
+      "adjusted",
+      "values"
     ]
   },
   {
@@ -1329,6 +1396,55 @@
       "see",
       "deduction",
       "cost"
+    ]
+  },
+  {
+    "type": "calculator",
+    "title": "Sole Proprietor vs Corporation Calculator",
+    "url": "/calculators/sole-proprietor-vs-corporation/",
+    "desc": "Compare earning income personally versus through a corporation. See how much after-tax capital is available to invest after RRSP deductions, personal spending, and retained corporate earnings.",
+    "keywords": [
+      "Sole Proprietor vs Corporation Calculator Canada",
+      "Sole Proprietor vs Corporation Calculator",
+      "sole proprietor vs corporation",
+      "compare",
+      "earning",
+      "income",
+      "personally",
+      "versus",
+      "corporation",
+      "see",
+      "tax",
+      "capital",
+      "available",
+      "invest",
+      "rrsp",
+      "deductions",
+      "personal"
+    ]
+  },
+  {
+    "type": "calculator",
+    "title": "Inspect the Arithmetic: Sole Proprietor vs Corporation Calculator",
+    "url": "/calculators/sole-proprietor-vs-corporation/inspect-the-arithmetic/",
+    "desc": "How the Sole Proprietor vs Corporation Calculator compares personal RRSP investing with retained corporate earnings after the same after-tax lifestyle spending.",
+    "keywords": [
+      "Inspect the Arithmetic: Sole Proprietor vs Corporation Calculator",
+      "inspect the arithmetic",
+      "sole",
+      "proprietor",
+      "corporation",
+      "calculator",
+      "compares",
+      "personal",
+      "rrsp",
+      "investing",
+      "retained",
+      "corporate",
+      "earnings",
+      "same",
+      "tax",
+      "lifestyle"
     ]
   },
   {

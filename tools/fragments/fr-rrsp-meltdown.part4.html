@@ -1,0 +1,44 @@
+      <section class="section-card">
+        <h2 id="rrsp-chart">Trajectoires du solde REER (scénarios A et B)</h2>
+        <figure class="meltdown-chart" role="group" aria-labelledby="rrsp-meltdown-chart-title">
+          <h3 id="rrsp-meltdown-chart-title" class="chart-heading">Soldes de l’âge 62 ans à 80 ans (valeurs nominales)</h3>
+          <svg class="meltdown-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" aria-describedby="rrsp-chart-desc">
+            <desc id="rrsp-chart-desc">Graphique linéaire comparant les soldes REER ou FERR pour deux stratégies de retrait. Le scénario&nbsp;A monte d’environ 1,1 million à environ 1,7 million avant que les minimums obligatoires du FERR commencent à réduire le solde. Le scénario&nbsp;B demeure près de 1,1 million durant les retraits anticipés, puis décline plus lentement une fois les minimums appliqués.</desc>
+            <text x="12" y="16" fill="currentColor" class="meltdown-svg-muted" font-size="12">Milliers&nbsp;$</text>
+            <line x1="68" x2="704" y1="296" y2="296" stroke="var(--border)" stroke-width="1"/>
+            <line x1="68" x2="68" y1="296" y2="20" stroke="var(--border)" stroke-width="1"/>
+            <text x="64" y="302" fill="currentColor" class="meltdown-svg-muted" font-size="11" text-anchor="end">62</text>
+            <text x="240" y="302" fill="currentColor" class="meltdown-svg-muted" font-size="11" text-anchor="middle">67</text>
+            <text x="456" y="302" fill="currentColor" class="meltdown-svg-muted" font-size="11" text-anchor="middle">72</text>
+            <text x="670" y="302" fill="currentColor" class="meltdown-svg-muted" font-size="11" text-anchor="middle">77</text>
+            <text x="698" y="302" fill="currentColor" class="meltdown-svg-muted" font-size="11" text-anchor="end">80</text>
+            <text x="4" y="46" fill="currentColor" class="meltdown-svg-muted" font-size="11" text-anchor="start">1750</text>
+            <text x="4" y="123" fill="currentColor" class="meltdown-svg-muted" font-size="11" text-anchor="start">1350</text>
+            <text x="4" y="205" fill="currentColor" class="meltdown-svg-muted" font-size="11" text-anchor="start">950</text>
+            <path d="M 68 257.3 L 103.3 237.2 L 138.7 216.1 L 174 194 L 209.3 170.7 L 244.7 146.3 L 280 120.7 L 315.3 93.8 L 350.7 65.5 L 386 35.9 L 421.3 38.4 L 456.7 41.6 L 492 45.8 L 527.3 50.8 L 562.7 56.8 L 598 63.8 L 633.3 71.9 L 668.7 81.2 L 704 91.7" fill="none" stroke="var(--accent)" stroke-width="2"/>
+            <path d="M 68 257.3 L 103.3 257.3 L 138.7 257.3 L 174 257.3 L 209.3 257.3 L 244.7 257.3 L 280 257.3 L 315.3 257.3 L 350.7 257.3 L 386 257.2 L 421.3 258.8 L 456.7 261 L 492 263.6 L 527.3 266.9 L 562.7 270.7 L 598 275.2 L 633.3 280.5 L 668.7 286.4 L 704 293.2" fill="none" stroke="var(--muted)" stroke-width="2"/>
+            <circle cx="456.7" cy="41.6" r="3" fill="var(--accent)"/>
+            <circle cx="456.7" cy="261" r="3" fill="var(--muted)"/>
+            <rect x="400" y="8" width="304" height="56" rx="6" ry="6" fill="var(--surface,transparent)" stroke="var(--border)"/>
+            <text x="412" y="26" fill="currentColor" class="meltdown-svg-label" font-size="12">Premier minimum FERR (72&nbsp;ans), arrondis de l’article</text>
+            <text x="412" y="44" fill="var(--accent)" font-size="12">Scénario&nbsp;A&nbsp;: 92&nbsp;153&nbsp;$</text>
+            <text x="412" y="60" fill="var(--muted)" font-size="12">Scénario&nbsp;B&nbsp;: 59&nbsp;403&nbsp;$</text>
+            <text x="420" y="334" fill="currentColor" class="meltdown-svg-muted" font-size="11">Écart&nbsp;: revenu FERR environ 32&nbsp;750&nbsp;$ plus bas à 72&nbsp;ans.</text>
+          </svg>
+          <figcaption><strong>Scénario&nbsp;A&nbsp;:</strong> aucun retrait du REER avant 71 ans, puis trajectoire illustrée du FERR avec le facteur prescrit «&nbsp;tous les autres FERR&nbsp;» pour chaque année (<a href="https://www.canada.ca/fr/agence-revenu/services/impot/entreprises/sujets/remplir-feuillets-sommaires/declaration-renseignements-t4rsp-t4rif/paiements/tableau-facteurs-prescrits.html">Canada.ca</a>) et un rendement nominal de 5&nbsp;% après chaque minimum. <strong>Scénario&nbsp;B&nbsp;:</strong> retraits de 55&nbsp;000&nbsp;$ en fin d’année du REER de 62 à 70&nbsp;ans, puis les mêmes règles FERR. Les âges 62&ndash;71 correspondent à l’exemple Claire (totaux intermédiaires arrondis comme dans le texte). Hypothèses&nbsp;: 1&nbsp;100&nbsp;000&nbsp;$ au REER à 62&nbsp;ans, 5&nbsp;% nominal sur les soldes, facteur FERR de 5,40&nbsp;% à 72&nbsp;ans, dollars nominaux sans modéliser l’impôt sur les retraits.</figcaption>
+          <div class="chart-legend" aria-hidden="true">
+            <span class="chart-key chart-key-accent">Scénario&nbsp;A (aucun retrait anticipé du REER)</span>
+            <span class="chart-key chart-key-muted">Scénario&nbsp;B (55&nbsp;000&nbsp;$ par an, âges&nbsp;62&ndash;70)</span>
+          </div>
+        </figure>
+        <p>Le graphique montre les deux trajectoires de solde de 62 à 80 ans.</p>
+        <p><strong>Qu’est-ce qui change&nbsp;?</strong></p>
+        <ul>
+          <li>Chaque retrait anticipé de 55&nbsp;000&nbsp;$ était imposé à environ 30&ndash;33&nbsp;% combiné (Ontario), vraisemblablement bien sous le taux futur sur le FERR.</li>
+          <li>Le premier minimum FERR baisse de 32&nbsp;750&nbsp;$ et cette réduction se prolonge alors que les minimums augmentent avec l’âge.</li>
+          <li>L’exposition future à la récupération de la PSV diminue fortement.</li>
+          <li>Neuf années de capitalisation sous abri fiscal sont abandonnées sur chaque tranche de 55&nbsp;000&nbsp;$ &mdash; c’est le coût réel de la stratégie.</li>
+          <li>Ça aide <em>si et seulement si</em> le taux marginal anticipé était nettement plus bas que celui sur le revenu FERR futur évité.</li>
+          <li>La destination des dollars après impôt importe tout autant&nbsp;: cotisation au CELI, remplacement de dépenses planifiées ou réinvestissement non enregistré préservent le capital. Des dépenses au-delà du plan l’érodent sans bruit.</li>
+        </ul>
+      </section>

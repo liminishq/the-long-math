@@ -19,12 +19,12 @@
         "taxPaid": 0
       },
       "expected": {
-        "federalTax": 28380,
-        "federalTax_note": "Schedule 1: bracket 31846 - BPA 2419.35 - employment 220.65 - CPP/EI credit 826.14 = 28379.86",
+        "federalTax": 28262,
+        "federalTax_note": "Schedule 1 on TI 158926: bracket tax minus BPA/CEA/base-CPP/EI credits (line 22215 enhanced CPP deducted from income)",
         "provTax": 16732,
         "provTax_note": "External comparator ON 160k employment (form-verify with ON428 when needed)",
-        "totalIncomeTax": 45105,
-        "totalIncomeTax_note": "External comparator total (federal + provincial income tax only)"
+        "totalIncomeTax": 44987,
+        "totalIncomeTax_note": "Federal 28262 + provincial comparator ~16732 (provincial unchanged; federal reflects CPP split)"
       },
       "toleranceFederal": 10,
       "toleranceProvincial": 600,

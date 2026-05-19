@@ -1,5 +1,5 @@
 {
-  "_source": "Federal/provincial brackets: CRA https://www.canada.ca/en/revenue-agency/services/tax/individuals/frequently-asked-questions-individuals/canadian-income-tax-rates-individuals-current-previous-years.html (2026). Quebec brackets: Revenu Québec indexed parameters for 2026. Basic personal amounts: CRA/TaxTips indexation cross-check. Ontario surtax and OHP: Ontario rules; surtax thresholds indexed ~2% from 2025; OHP piecewise bands indexed ~2% from 2025 statutory schedule (verify line-by-line on filing).",
+  "_source": "Federal/provincial brackets: CRA https://www.canada.ca/en/revenue-agency/services/tax/individuals/frequently-asked-questions-individuals/canadian-income-tax-rates-individuals-current-previous-years.html (2026). Quebec brackets: Revenu Québec indexed parameters for 2026. Basic personal amounts: CRA/TaxTips indexation cross-check. Ontario surtax: dollar thresholds on post-credit tax indexed for 2026 in data file (verify Ontario worksheets). Ontario Health Premium: calculated in-engine from the Ontario Taxation Act, 2007 fixed taxable-income bands (not CPI-indexed; see TaxTips Ontario Health Premium table / ontario.ca).",
   "AB": {
     "name": "Alberta",
     "brackets": [
@@ -28,7 +28,8 @@
       { "threshold": 265545, "rate": 0.205 }
     ],
     "credits": {
-      "basicPersonalAmount": { "amount": 13216, "rate": 0.0506 }
+      "basicPersonalAmount": { "amount": 13216, "rate": 0.0506 },
+      "cppEiCredit": { "rate": 0.0506, "_note": "Form BC428 line 58240: provincial credit on base CPP/QPP and EI (same bases as federal line 30800 + EI)." }
     },
     "surtaxes": [],
     "premiums": []

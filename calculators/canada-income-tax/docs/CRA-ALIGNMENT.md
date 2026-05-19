@@ -42,7 +42,8 @@ You can run this for as many scenarios as you need (per province, per income typ
 
 ## Form-line mapping in this codebase
 
-- **Federal:** `tax.engine.js` → `calculateFederalTax()` mirrors **Schedule 1** order: bracket tax → non-refundable credits (BPA, Canada Employment Amount, CPP/EI credit) → dividend tax credit. Each credit is documented (e.g. BPA = amount × lowest rate).
+- **Federal:** `tax.engine.js` → `calculateFederalTax()` mirrors **Schedule 1** order: bracket tax on TI (after line 22215 enhanced CPP deduction) → non-refundable credits (BPA, Canada Employment Amount, **base CPP** line 30800, EI) → dividend tax credit. Enhanced CPP is **not** included in the CPP credit base.
+- **CPP split:** `calculateCPP()` returns `cppBaseCreditable`, `cppFirstAdditionalDeductible`, `cpp2Deductible`, and `cppDeductible` (sum of enhanced portions). See `payroll.json` `baseRate` / `firstAdditionalRate`.
 - **Provincial:** `calculateProvincialTaxGeneric()` and `calculateOntarioTax()` follow the same idea: brackets → credits → surtax → dividend credit → premiums. Provincial forms (e.g. ON428, T428 for other provinces) are the reference; we add comments as we align each province.
 
 Adding a short comment like `// Schedule 1 line 13` next to the corresponding line in the engine makes discrepancy-tracing and AI-assisted debugging much easier.

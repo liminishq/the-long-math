@@ -97,9 +97,8 @@ export function test_ON_2025_employment_only_160k() {
   if (result.totals.totalIncome !== 160000) {
     throw new Error(`totalIncome: expected 160000, got ${result.totals.totalIncome}`);
   }
-  if (result.totals.taxableIncome !== 160000) {
-    throw new Error(`taxableIncome: expected 160000, got ${result.totals.taxableIncome}`);
-  }
+  // Taxable income reduced by line 22215 enhanced CPP deduction (max $1,074 in 2025).
+  assertApprox(result.totals.taxableIncome, 158926, TOLERANCE, 'taxableIncome');
   // Federal + provincial + CPP + EI should be substantial; exact numbers depend on brackets/credits
   if (result.totals.totalIncomeTax <= 0 || result.totals.provTax <= 0 || result.totals.federalTax <= 0) {
     throw new Error('Expected positive federal and provincial tax for $160k employment');
@@ -179,9 +178,9 @@ export function test_ON_OHP_ramp_at_taxable_income_200300() {
   const input = {
     year: 2025,
     province: 'ON',
-    employmentIncome: 200300,
+    employmentIncome: 0,
     selfEmploymentIncome: 0,
-    otherIncome: 0,
+    otherIncome: 200300,
     eligibleDividends: 0,
     nonEligibleDividends: 0,
     capitalGains: 0,

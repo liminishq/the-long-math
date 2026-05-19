@@ -67,6 +67,7 @@ const ARTICLE_SLUGS = [
   "norberts-gambit",
   "pay-off-your-mortgage-faster-or-invest",
   "what-is-a-non-registered-account",
+  "rrsp-meltdown",
   "rrsp-vs-tfsa-vs-fhsa",
   "sequence-of-returns-risk",
   "should-you-break-your-mortgage-for-a-lower-rate",
@@ -104,6 +105,35 @@ function getHreflangUrls(logicalPath) {
     fr: BASE_URL + "/fr" + logicalPath,
     xDefault: BASE_URL + logicalPath,
   };
+}
+
+/**
+ * Optional hostname override per article meta (canonicalSiteOrigin).
+ * Keeps canonical + hreflang on the bare domain while the global default remains BASE_URL (www).
+ * @param {object|undefined} meta
+ */
+function canonicalSiteOriginForArticle(meta) {
+  const raw = meta && meta.canonicalSiteOrigin && String(meta.canonicalSiteOrigin).trim();
+  const origin = raw ? raw.replace(/\/+$/, "") : BASE_URL.replace(/\/+$/, "");
+  return origin;
+}
+
+/**
+ * Alternate language URLs for articles when canonicalSiteOrigin is set or default.
+ */
+function articleHreflangsForOrigin(logicalPath, siteOrigin) {
+  const o = siteOrigin.replace(/\/+$/, "");
+  let pathSegment = logicalPath;
+  if (pathSegment.endsWith("/") === false) {
+    pathSegment += "/";
+  }
+  const enAbs = `${o}${pathSegment}`;
+  const frAbs = `${o}/fr${pathSegment}`;
+  return [
+    { hreflang: "en", url: enAbs },
+    { hreflang: "fr", url: frAbs },
+    { hreflang: "x-default", url: enAbs },
+  ];
 }
 
 /**
@@ -182,8 +212,14 @@ function shouldCopyToDist(srcPath) {
 
 function buildLdJsonBlocks(article, canonical, pathPrefix) {
   const blocks = [];
+  let breadcrumbBase = BASE_URL.replace(/\/+$/, "");
+  try {
+    breadcrumbBase = new URL(canonical).origin;
+  } catch (_) {
+    breadcrumbBase = BASE_URL.replace(/\/+$/, "");
+  }
   if (article.breadcrumbItems && article.breadcrumbItems.length) {
-    blocks.push(JSON.stringify(buildBreadcrumbSchema(article.breadcrumbItems, BASE_URL, pathPrefix)));
+    blocks.push(JSON.stringify(buildBreadcrumbSchema(article.breadcrumbItems, breadcrumbBase, pathPrefix)));
   }
   blocks.push(JSON.stringify(buildArticleSchema(article, canonical)));
   const faqLd = buildFaqPageSchema(article.faq);
@@ -211,6 +247,29 @@ function toPosixPath(p) {
 
 function shortHash(content) {
   return crypto.createHash("sha256").update(content).digest("hex").slice(0, 10);
+}
+
+function sleepMs(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
+/**
+ * On some Windows setups, Defender/Indexing can intermittently deny short-lived writes during bulk HTML rewriting.
+ */
+function writeUtf8HtmlWithRetry(absPath, html) {
+  let lastErr;
+  for (let attempt = 0; attempt < 8; attempt++) {
+    try {
+      fs.writeFileSync(absPath, html, "utf8");
+      return;
+    } catch (err) {
+      lastErr = err;
+      const code = err && err.code;
+      if (code !== "EBUSY" && code !== "UNKNOWN" && code !== "EPERM") throw err;
+      sleepMs(Math.min(200, 20 * Math.pow(2, attempt)));
+    }
+  }
+  throw lastErr;
 }
 
 /**
@@ -251,7 +310,7 @@ function fingerprintAssetsAndRewriteHtml() {
       const re = new RegExp(`${escaped}(?:\\?[^"'\\s>]*)?`, "g");
       html = html.replace(re, hashed);
     }
-    fs.writeFileSync(htmlPath, html, "utf8");
+    writeUtf8HtmlWithRetry(htmlPath, html);
   }
 
   const manifest = {};
@@ -519,20 +578,33 @@ function build() {
       const article = mergeArticlePayload(enArt, locArt);
       const logicalPath = `/articles/investing-and-financial-literacy/${slug}/`;
       const currentPath = pathPrefix === "" ? logicalPath : pathPrefix + logicalPath;
-      const canonical = BASE_URL + currentPath.replace(/\/+$/, "") + "/";
-      const ah = getHreflangUrls(logicalPath);
-      const ldJsonBlocks = buildLdJsonBlocks(article, canonical, pathPrefix);
+      const siteOrigin = canonicalSiteOriginForArticle(article.meta);
+      const trimmedOrigin = siteOrigin.replace(/\/+$/, "");
+      const canonicalPathSeg = currentPath.startsWith("/") ? currentPath : `/${currentPath}`;
+      let canonicalFinal = trimmedOrigin + canonicalPathSeg.replace(/\/+$/, "") + "/";
+
+      const hasExplicitCanonicalOrigin =
+        article.meta &&
+        article.meta.canonicalSiteOrigin &&
+        String(article.meta.canonicalSiteOrigin).trim();
+      const hreflangLinks = hasExplicitCanonicalOrigin
+        ? articleHreflangsForOrigin(logicalPath, trimmedOrigin)
+        : (() => {
+            const ah = getHreflangUrls(logicalPath);
+            return [
+              { hreflang: "en", url: ah.en },
+              { hreflang: "fr", url: ah.fr },
+              { hreflang: "x-default", url: ah.xDefault },
+            ];
+          })();
+      const ldJsonBlocks = buildLdJsonBlocks(article, canonicalFinal, pathPrefix);
       const artCtx = {
         lang: code,
         htmlLang: htmlLang(code),
         pathPrefix,
         path: currentPath,
-        canonical,
-        hreflangLinks: [
-          { hreflang: "en", url: ah.en },
-          { hreflang: "fr", url: ah.fr },
-          { hreflang: "x-default", url: ah.xDefault },
-        ],
+        canonical: canonicalFinal,
+        hreflangLinks,
         title: article.meta.title,
         description: article.meta.description,
         t: tFn,

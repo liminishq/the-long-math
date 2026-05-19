@@ -566,16 +566,15 @@ function renderPayroll(payroll) {
   const div = document.createElement('div');
   div.className = 'breakdown-section';
   
+  const cpp = payroll.cpp;
   div.innerHTML += `
     <h4>CPP</h4>
-    <p>Pensionable Earnings: ${formatCurrency(payroll.cpp.pensionableEarnings)}</p>
-    <p>CPP1 Rate: ${formatPercent(payroll.cpp.inputs.rate)}</p>
-    <p>CPP1 Contribution: ${formatCurrency(payroll.cpp.cpp1 || payroll.cpp.cpp)}</p>
-    ${payroll.cpp.cpp2 > 0 ? `
-      <p>CPP2 Rate: ${formatPercent(payroll.cpp.inputs.cpp2Rate || 0.04)}</p>
-      <p>CPP2 Contribution: ${formatCurrency(payroll.cpp.cpp2)}</p>
-    ` : ''}
-    <p><strong>Total CPP Contribution: ${formatCurrency(payroll.cpp.cpp)}</strong></p>
+    <p>Pensionable Earnings (CPP1): ${formatCurrency(cpp.pensionableEarnings)}</p>
+    <p>Base CPP (line 30800 credit): ${formatCurrency(cpp.cppBaseCreditable ?? 0)}</p>
+    <p>First additional CPP (line 22215 deduction): ${formatCurrency(cpp.cppFirstAdditionalDeductible ?? 0)}</p>
+    ${cpp.cpp2 > 0 ? `<p>CPP2 (line 22215 deduction): ${formatCurrency(cpp.cpp2Deductible ?? cpp.cpp2)}</p>` : ''}
+    <p>Total employee CPP: ${formatCurrency(cpp.cpp)}</p>
+    <p class="formula-meta">Enhanced CPP (first additional + CPP2) reduces taxable income; base CPP is a federal/provincial non-refundable credit only.</p>
   `;
 
   div.innerHTML += `

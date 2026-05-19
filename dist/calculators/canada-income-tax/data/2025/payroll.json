@@ -3,9 +3,14 @@
   "year": 2025,
   "cpp": {
     "rate": 0.0595,
+    "baseRate": 0.0495,
+    "firstAdditionalRate": 0.01,
     "basicExemption": 3500,
     "maxPensionableEarnings": 71300,
-    "maxContribution": 4034.10
+    "maxBaseContribution": 3356.10,
+    "maxFirstAdditionalContribution": 678.0,
+    "maxContribution": 4034.10,
+    "_noteSplit": "CPP1 = base (line 30800 credit) + first additional (line 22215 deduction). Maxima from CRA line 30800/22215 pages for 2025."
   },
   "cpp2": {
     "rate": 0.04,

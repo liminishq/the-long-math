@@ -28,7 +28,8 @@
       { "threshold": 265545, "rate": 0.205 }
     ],
     "credits": {
-      "basicPersonalAmount": { "amount": 13216, "rate": 0.0506 }
+      "basicPersonalAmount": { "amount": 13216, "rate": 0.0506 },
+      "cppEiCredit": { "rate": 0.0506, "_note": "Form BC428 line 58240: provincial credit on base CPP/QPP and EI (same bases as federal line 30800 + EI)." }
     },
     "surtaxes": [],
     "premiums": []

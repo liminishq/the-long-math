@@ -91,10 +91,19 @@ function prefixRootRelativeLinks(html, pathPrefix) {
  */
 function stripHtml(html) {
   if (!html) return "";
-  return html
+  let s = html
     .replace(/<[^>]+>/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+  s = s
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&mdash;/gi, "-")
+    .replace(/&ndash;/gi, "-")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&#8217;/g, "'");
+  return s.trim();
 }
 
 /**

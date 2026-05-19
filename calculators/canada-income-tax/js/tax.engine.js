@@ -124,50 +124,53 @@ function calculateOntarioHealthPremium(taxableIncome, _taxYear) {
 
 /**
  * Calculate federal tax. Mirrors Federal Schedule 1 ordering.
- * @param {number} taxableIncome - Taxable income
- * @param {number} cpp - CPP contribution
- * @param {number} ei - EI premium
+ * @param {number} taxableIncome - Taxable income (after line 22215 enhanced CPP deduction)
+ * @param {number} cppCreditable - Base CPP for line 30800 credit only (not enhanced CPP or CPP2)
+ * @param {number} ei - EI premium (credit only; not deducted from taxable income)
  * @param {number} employmentIncome - Employment income (for Canada Employment Amount eligibility)
  * @param {Object} dividends - Pre-computed dividend amounts (eligibleDTCFed, nonEligibleDTCFed)
  * @param {Object} federal - Federal tax data (brackets, credits)
  * @returns {Object} Federal tax breakdown
  */
-function calculateFederalTax(taxableIncome, cpp, ei, employmentIncome, dividends, federal, opts = {}) {
+function calculateFederalTax(taxableIncome, cppCreditable, ei, employmentIncome, dividends, federal, opts = {}) {
   const { bracketLines, baseTax } = calculateBracketTax(taxableIncome, federal.brackets, opts);
 
-  // Step B — Federal non-refundable credits.
-  // Mirrors Federal Schedule 1 ordering: bracket tax → non-refundable credits → dividend tax credit.
+  // Step B — Federal non-refundable credits (Schedule 1 / line 35000 worksheet).
   const credits = [];
+  const creditBases = [];
   let totalCredits = 0;
 
-  // Basic Personal Amount (credit = BPA × rate). Schedule 1 uses 15% for credits, not effective first-bracket rate.
   const creditRate = federal.credits.lowestRateForCredits ?? Math.min(...federal.brackets.map(b => b.rate));
+
   if (federal.credits.basicPersonalAmount) {
-    const credit = federal.credits.basicPersonalAmount.amount * creditRate;
-    credits.push({
-      name: 'Basic Personal Amount',
-      amount: credit
-    });
+    const base = federal.credits.basicPersonalAmount.amount;
+    const credit = base * creditRate;
+    creditBases.push({ name: 'Basic Personal Amount', base, rate: creditRate, credit });
+    credits.push({ name: 'Basic Personal Amount', amount: credit });
     totalCredits += credit;
   }
 
-  // Canada Employment Amount (credit = amount × credit rate). Must only apply when employment income > 0.
   if (federal.credits.canadaEmploymentAmount && employmentIncome > 0) {
-    const credit = federal.credits.canadaEmploymentAmount.amount * creditRate;
-    credits.push({
-      name: 'Canada Employment Amount',
-      amount: credit
-    });
+    const base = federal.credits.canadaEmploymentAmount.amount;
+    const credit = base * creditRate;
+    creditBases.push({ name: 'Canada Employment Amount', base, rate: creditRate, credit });
+    credits.push({ name: 'Canada Employment Amount', amount: credit });
     totalCredits += credit;
   }
 
-  // CPP/EI Credit
-  if (federal.credits.cppEiCredit) {
-    const credit = (cpp + ei) * federal.credits.cppEiCredit.rate;
-    credits.push({
-      name: 'CPP/EI Credit',
-      amount: credit
-    });
+  // Line 30800 base CPP credit + EI (line 31200); enhanced CPP is deducted, not credited.
+  if (federal.credits.cppEiCredit && cppCreditable > 0) {
+    const rate = federal.credits.cppEiCredit.rate;
+    const credit = cppCreditable * rate;
+    creditBases.push({ name: 'CPP (base)', base: cppCreditable, rate, credit });
+    credits.push({ name: 'CPP (base)', amount: credit });
+    totalCredits += credit;
+  }
+  if (federal.credits.cppEiCredit && ei > 0) {
+    const rate = federal.credits.cppEiCredit.rate;
+    const credit = ei * rate;
+    creditBases.push({ name: 'EI', base: ei, rate, credit });
+    credits.push({ name: 'EI', amount: credit });
     totalCredits += credit;
   }
 
@@ -186,12 +189,13 @@ function calculateFederalTax(taxableIncome, cpp, ei, employmentIncome, dividends
   // Step D — Federal minimum tax adjustments (placeholder for future implementation).
   const minimumTaxAdjustments = 0;
 
-  const netTax = Math.max(0, taxAfterDividendCredits + minimumTaxAdjustments);
+  const netTax = Math.round(Math.max(0, taxAfterDividendCredits + minimumTaxAdjustments));
 
   return {
     bracketLines,
     baseTax,
     credits,
+    creditBases,
     taxAfterCredits,
     federalDividendCredits,
     taxAfterDividendCredits,
@@ -204,21 +208,42 @@ function calculateFederalTax(taxableIncome, cpp, ei, employmentIncome, dividends
  * Generic provincial tax calculation for non-Ontario provinces.
  * Flow: brackets → credits → surtax → minTax → dividendCredit → reduction → premiums.
  */
-function calculateProvincialTaxGeneric(taxableIncome, prov, dividends, opts = {}) {
+function calculateProvincialTaxGeneric(taxableIncome, prov, dividends, cppCreditable, ei, opts = {}) {
   const { bracketLines, baseTax } = calculateBracketTax(taxableIncome, prov.brackets, opts);
 
-  // Non-refundable credits (BPA, etc.)
   const credits = [];
+  const creditBases = [];
   let totalCredits = 0;
+
+  const defaultProvCreditRate = Math.min(...prov.brackets.map(b => b.rate));
 
   if (prov.credits && prov.credits.basicPersonalAmount) {
     const configuredRate = prov.credits.basicPersonalAmount.rate;
     const creditRate = typeof configuredRate === 'number'
       ? configuredRate
-      : Math.min(...prov.brackets.map(b => b.rate));
-    const credit = prov.credits.basicPersonalAmount.amount * creditRate;
+      : defaultProvCreditRate;
+    const base = prov.credits.basicPersonalAmount.amount;
+    const credit = base * creditRate;
+    creditBases.push({ name: 'Basic Personal Amount', base, rate: creditRate, credit });
     credits.push({ name: 'Basic Personal Amount', amount: credit });
     totalCredits += credit;
+  }
+
+  // Form 428 line 58240 — provincial credit on base CPP/QPP and EI (when configured).
+  if (prov.credits?.cppEiCredit) {
+    const creditRate = prov.credits.cppEiCredit.rate ?? defaultProvCreditRate;
+    if (cppCreditable > 0) {
+      const credit = cppCreditable * creditRate;
+      creditBases.push({ name: 'CPP (base)', base: cppCreditable, rate: creditRate, credit });
+      credits.push({ name: 'CPP (base)', amount: credit });
+      totalCredits += credit;
+    }
+    if (ei > 0) {
+      const credit = ei * creditRate;
+      creditBases.push({ name: 'EI', base: ei, rate: creditRate, credit });
+      credits.push({ name: 'EI', amount: credit });
+      totalCredits += credit;
+    }
   }
 
   const taxAfterCredits = Math.max(0, baseTax - totalCredits);
@@ -278,12 +303,13 @@ function calculateProvincialTaxGeneric(taxableIncome, prov, dividends, opts = {}
     }
   }
 
-  const netTax = taxAfterReductions + premiumsTotal;
+  const netTax = Math.round(taxAfterReductions + premiumsTotal);
 
   return {
     bracketLines,
     baseTax,
     credits,
+    creditBases,
     surtaxes,
     premiums,
     taxAfterCredits,
@@ -307,7 +333,7 @@ function calculateProvincialTaxGeneric(taxableIncome, prov, dividends, opts = {}
  * 5. subtract dividend tax credit (after surtax), clamp at 0
  * 6. add Ontario Health Premium (piecewise, capped at $900)
  */
-function calculateOntarioTax(taxableIncome, prov, dividends, opts = {}, taxYear = 2025) {
+function calculateOntarioTax(taxableIncome, prov, dividends, cppCreditable, ei, opts = {}, taxYear = 2025) {
   const { bracketLines, baseTax } = calculateBracketTax(taxableIncome, prov.brackets, opts);
 
   // Step 2: Ontario non-refundable credits (currently BPA only), credit = amount × rate.
@@ -361,12 +387,13 @@ function calculateOntarioTax(taxableIncome, prov, dividends, opts = {}, taxYear 
   const provincialTaxReduction = 0;
   const minimumTaxAdjustments = 0;
   const taxAfterReductions = taxAfterDividendCredits; // no reductions implemented yet
-  const netTax = taxAfterReductions + healthPremium;
+  const netTax = Math.round(taxAfterReductions + healthPremium);
 
   return {
     bracketLines,
     baseTax,
     credits,
+    creditBases: [],
     surtaxes,
     premiums,
     taxAfterCredits,
@@ -428,41 +455,70 @@ function calculateDividends(eligibleDividends, nonEligibleDividends, provinceCod
 }
 
 /**
- * Calculate CPP contribution (CPP1 + CPP2)
- * @param {number} employmentIncome - Employment income
- * @param {Object} payroll - Payroll data (cpp, cpp2)
- * @returns {Object} CPP calculation
+ * CPP employee contributions split for T1 return (Schedule 8 / lines 30800, 22215).
+ * - Base CPP (CPP1 base rate): non-refundable credit only (line 30800).
+ * - First additional CPP (CPP1 enhancement): deductible (line 22215).
+ * - CPP2 (second additional): deductible (line 22215).
  */
 function calculateCPP(employmentIncome, payroll) {
-  
-  // CPP1: Base CPP on earnings up to YMPE
-  const pensionableEarnings = Math.max(0, Math.min(employmentIncome, payroll.cpp.maxPensionableEarnings) - payroll.cpp.basicExemption);
-  const cpp1 = Math.min(pensionableEarnings * payroll.cpp.rate, payroll.cpp.maxContribution);
-  
-  // CPP2: Additional CPP on earnings above YMPE up to YAMPE (2025)
+  const ympe = payroll.cpp.maxPensionableEarnings;
+  const pensionableEarnings = Math.max(
+    0,
+    Math.min(employmentIncome, ympe) - payroll.cpp.basicExemption
+  );
+
+  const baseRate = payroll.cpp.baseRate ?? payroll.cpp.rate;
+  const firstAdditionalRate = payroll.cpp.firstAdditionalRate ?? 0;
+  const combinedCpp1Rate = payroll.cpp.rate;
+
+  const cppBase = Math.min(
+    pensionableEarnings * baseRate,
+    payroll.cpp.maxBaseContribution ?? pensionableEarnings * baseRate
+  );
+  const cppFirstAdditional = Math.min(
+    pensionableEarnings * firstAdditionalRate,
+    payroll.cpp.maxFirstAdditionalContribution ?? pensionableEarnings * firstAdditionalRate
+  );
+  const cpp1 = Math.min(
+    cppBase + cppFirstAdditional,
+    payroll.cpp.maxContribution
+  );
+
   let cpp2 = 0;
-  if (payroll.cpp2 && employmentIncome > payroll.cpp.maxPensionableEarnings) {
-    const yampe = payroll.cpp.maxPensionableEarnings + payroll.cpp2.maxAdditionalEarnings; // 71,300 + 73,000 = 144,300
-    const additionalEarnings = Math.min(employmentIncome, yampe) - payroll.cpp.maxPensionableEarnings;
-    cpp2 = Math.min(additionalEarnings * payroll.cpp2.rate, payroll.cpp2.maxAdditionalContribution);
+  if (payroll.cpp2 && employmentIncome > ympe) {
+    const yampe = ympe + payroll.cpp2.maxAdditionalEarnings;
+    const additionalEarnings = Math.min(employmentIncome, yampe) - ympe;
+    cpp2 = Math.min(
+      additionalEarnings * payroll.cpp2.rate,
+      payroll.cpp2.maxAdditionalContribution
+    );
   }
-  
+
+  const cppDeductible = cppFirstAdditional + cpp2;
   const totalCpp = cpp1 + cpp2;
 
   return {
     cpp: totalCpp,
     cpp1,
     cpp2: cpp2 || 0,
+    cppBaseCreditable: cppBase,
+    cppFirstAdditionalDeductible: cppFirstAdditional,
+    cpp2Deductible: cpp2,
+    cppDeductible,
     pensionableEarnings,
     inputs: {
       employmentIncome,
-      maxPensionableEarnings: payroll.cpp.maxPensionableEarnings,
+      maxPensionableEarnings: ympe,
       basicExemption: payroll.cpp.basicExemption,
-      rate: payroll.cpp.rate,
+      baseRate,
+      firstAdditionalRate,
+      combinedCpp1Rate,
+      maxBaseContribution: payroll.cpp.maxBaseContribution,
+      maxFirstAdditionalContribution: payroll.cpp.maxFirstAdditionalContribution,
       maxContribution: payroll.cpp.maxContribution,
       cpp2Rate: payroll.cpp2 ? payroll.cpp2.rate : 0,
-      cpp2MaxContribution: payroll.cpp2 ? payroll.cpp2.maxAdditionalContribution : 0
-    }
+      cpp2MaxContribution: payroll.cpp2 ? payroll.cpp2.maxAdditionalContribution : 0,
+    },
   };
 }
 
@@ -620,31 +676,41 @@ function runFullCalculation(input, dataCtx, runOpts = {}) {
   const grossedUpNonEligible = nonEligibleDividends * dividendsData.nonEligible.grossUpRate;
   const capitalGainsInclusionRate = 0.50;
   const taxableCapitalGains = capitalGains * capitalGainsInclusionRate;
-  const taxableIncome = Math.max(0,
-    employmentIncome + selfEmploymentIncome + otherIncome +
-    grossedUpEligible + grossedUpNonEligible + taxableCapitalGains -
-    rrspDeduction - fhsaDeduction - estimatedDeductions
-  );
 
   const cppCalc = calculateCPP(employmentIncome, dataCtx.payroll);
   const eiCalc = calculateEI(employmentIncome, dataCtx.payroll);
   const cpp = cppCalc.cpp;
   const ei = eiCalc.ei;
+  const cppCreditable = cppCalc.cppBaseCreditable;
+  const cppDeductible = cppCalc.cppDeductible;
+
+  const grossIncomeForTax = employmentIncome + selfEmploymentIncome + otherIncome +
+    grossedUpEligible + grossedUpNonEligible + taxableCapitalGains;
+  const netIncome = Math.max(0,
+    grossIncomeForTax - rrspDeduction - fhsaDeduction - estimatedDeductions - cppDeductible
+  );
+  const taxableIncome = netIncome;
 
   const calcOpts = runOpts.roundToDollar === false ? { roundToDollar: false } : {};
-  const federal = calculateFederalTax(taxableIncome, cpp, ei, employmentIncome, dividends, dataCtx.federal, calcOpts);
+  const federal = calculateFederalTax(
+    taxableIncome, cppCreditable, ei, employmentIncome, dividends, dataCtx.federal, calcOpts
+  );
   const provincial = (provinceCode === 'ON'
-    ? calculateOntarioTax(taxableIncome, prov, dividends, calcOpts, taxYear)
-    : calculateProvincialTaxGeneric(taxableIncome, prov, dividends, calcOpts));
+    ? calculateOntarioTax(taxableIncome, prov, dividends, cppCreditable, ei, calcOpts, taxYear)
+    : calculateProvincialTaxGeneric(taxableIncome, prov, dividends, cppCreditable, ei, calcOpts));
   const totalIncomeTax = federal.netTax + provincial.netTax;
   return {
     totalIncomeTax,
     totalIncome: employmentIncome + selfEmploymentIncome + otherIncome + eligibleDividends + nonEligibleDividends + capitalGains,
+    grossIncomeForTax,
+    netIncome,
     taxableIncome,
     federal,
     provincial,
     cpp,
     ei,
+    cppCreditable,
+    cppDeductible,
     cppCalc,
     eiCalc,
     dividends,
@@ -695,11 +761,15 @@ export function computePersonalTax(input, opts = {}) {
   const result = runFullCalculation(normalizedInput, dataCtx);
   const {
     totalIncome,
+    grossIncomeForTax,
+    netIncome,
     taxableIncome,
     federal,
     provincial,
     cpp,
     ei,
+    cppCreditable,
+    cppDeductible,
     cppCalc,
     eiCalc,
     dividends,
@@ -736,14 +806,44 @@ export function computePersonalTax(input, opts = {}) {
     }
   }
 
+  const auditBreakdown = opts?.debug || opts?.validationMode ? {
+    grossIncomeForTax,
+    netIncome,
+    taxableIncome,
+    cppSplit: {
+      total: cpp,
+      creditableBase: cppCreditable,
+      deductibleEnhanced: cppDeductible,
+      firstAdditional: cppCalc.cppFirstAdditionalDeductible,
+      cpp2: cppCalc.cpp2Deductible,
+    },
+    ei,
+    federal: {
+      baseTax: federal.baseTax,
+      creditBases: federal.creditBases,
+      credits: federal.credits,
+      netTax: federal.netTax,
+    },
+    provincial: {
+      baseTax: provincial.baseTax,
+      creditBases: provincial.creditBases,
+      credits: provincial.credits,
+      netTax: provincial.netTax,
+    },
+  } : undefined;
+
   return {
     totals: {
       totalIncome,
+      grossIncomeForTax,
+      netIncome,
       taxableIncome,
       federalTax,
       provTax,
       cpp,
       ei,
+      cppCreditable,
+      cppDeductible,
       totalIncomeTax,
       totalBurden,
       afterTaxIncome,
@@ -760,5 +860,6 @@ export function computePersonalTax(input, opts = {}) {
       payroll: { cpp: cppCalc, ei: eiCalc },
       marginalRates,
     },
+    auditBreakdown,
   };
 }

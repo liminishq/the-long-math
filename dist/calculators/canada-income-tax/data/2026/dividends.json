@@ -1,6 +1,8 @@
 {
   "year": 2026,
-  "_sourceEligibleProv": "Provincial dividend tax credit rates for 2026 follow the same methodology as 2025 until jurisdiction-specific 2026 DTC tables are fully wired; verify against provincial/federal schedules for your filing year.",
+  "_sourceEligibleProv": "TaxTips.ca — Eligible Dividend Tax Credit Rates (% of grossed-up taxable dividend), 2022–26 row applies to the 2026 tax year. http://www.taxtips.ca/dtc/eligible-dividends/eligible-dividend-tax-credit-rates.htm",
+  "_sourceNonEligibleProv": "TaxTips.ca — Non-Eligible Dividend Tax Credit Rates (% of grossed-up taxable dividend), 2025/2026 row. http://www.taxtips.ca/dtc/non-eligible-dividend-tax-credit.htm",
+  "_sourceFederalFed": "Federal rates per Income Tax Act / TaxTips summary: 15.0198% of grossed-up taxable amount (eligible); 9.0301% (non-eligible) for 2019+.",
   "eligible": {
     "grossUpRate": 1.38,
     "credits": {
@@ -8,9 +10,19 @@
       "provincial": {
         "base": "grossed_up",
         "provinces": {
-          "AB": 0.0812, "BC": 0.12, "MB": 0.08, "NB": 0.14, "NL": 0.063,
-          "NS": 0.0885, "NT": 0.115, "NU": 0.0551, "ON": 0.1, "PE": 0.105,
-          "QC": 0.117, "SK": 0.11, "YT": 0.1202
+          "AB": 0.0812,
+          "BC": 0.12,
+          "MB": 0.08,
+          "NB": 0.14,
+          "NL": 0.063,
+          "NS": 0.0885,
+          "NT": 0.115,
+          "NU": 0.0551,
+          "ON": 0.1,
+          "PE": 0.105,
+          "QC": 0.117,
+          "SK": 0.11,
+          "YT": 0.1202
         }
       }
     }
@@ -18,7 +30,7 @@
   "nonEligible": {
     "grossUpRate": 1.15,
     "credits": {
-      "federal": { "base": "grossed_up", "rate": 0.0903018 },
+      "federal": { "base": "grossed_up", "rate": 0.090301 },
       "provincial": {
         "base": "grossed_up",
         "provinces": {
@@ -32,9 +44,9 @@
           "NU": 0.0261,
           "ON": 0.029863,
           "PE": 0.013,
-          "QC": 0.03,
-          "SK": 0.03,
-          "YT": 0.02
+          "QC": 0.0342,
+          "SK": 0.02519,
+          "YT": 0.0067
         }
       }
     }

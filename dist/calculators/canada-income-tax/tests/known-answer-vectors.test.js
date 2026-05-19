@@ -97,9 +97,8 @@ export function test_ON_2025_employment_only_160k() {
   if (result.totals.totalIncome !== 160000) {
     throw new Error(`totalIncome: expected 160000, got ${result.totals.totalIncome}`);
   }
-  if (result.totals.taxableIncome !== 160000) {
-    throw new Error(`taxableIncome: expected 160000, got ${result.totals.taxableIncome}`);
-  }
+  // Taxable income reduced by line 22215 enhanced CPP deduction (max $1,074 in 2025).
+  assertApprox(result.totals.taxableIncome, 158926, TOLERANCE, 'taxableIncome');
   // Federal + provincial + CPP + EI should be substantial; exact numbers depend on brackets/credits
   if (result.totals.totalIncomeTax <= 0 || result.totals.provTax <= 0 || result.totals.federalTax <= 0) {
     throw new Error('Expected positive federal and provincial tax for $160k employment');
@@ -169,12 +168,49 @@ export function test_AB_2025_eligible_dividends_only() {
   return true;
 }
 
+/**
+ * Ontario Health Premium: statutory ramp between $200,000 and $200,600 of taxable income
+ * (Ontario Taxation Act schedule; see TaxTips Ontario Health Premium table).
+ * At $200,300: $750 + 25% × ($200,300 − $200,000) = $825.
+ */
+export function test_ON_OHP_ramp_at_taxable_income_200300() {
+  const data = getDataOverride();
+  const input = {
+    year: 2025,
+    province: 'ON',
+    employmentIncome: 0,
+    selfEmploymentIncome: 0,
+    otherIncome: 200300,
+    eligibleDividends: 0,
+    nonEligibleDividends: 0,
+    capitalGains: 0,
+    rrspDeduction: 0,
+    fhsaDeduction: 0,
+    estimatedDeductions: 0,
+    taxPaid: 0,
+  };
+  const result = computePersonalTax(input, { dataOverride: data });
+
+  if (result.totals.taxableIncome !== 200300) {
+    throw new Error(`taxableIncome: expected 200300, got ${result.totals.taxableIncome}`);
+  }
+
+  const premiums = result.breakdown.provincial.premiums || [];
+  const ohp = premiums.find((p) => p.name === 'Ontario Health Premium');
+  if (!ohp) {
+    throw new Error('Expected Ontario Health Premium in breakdown.provincial.premiums');
+  }
+  assertApprox(ohp.amount, 825, 0.01, 'Ontario Health Premium');
+  return true;
+}
+
 function runAll() {
   const tests = [
     ['ON 2025 eligible dividends $160k', test_ON_2025_eligible_dividends_only_160k],
     ['ON 2025 employment $160k', test_ON_2025_employment_only_160k],
     ['ON 2025 employment $160k (CRA expected)', test_ON_2025_employment_160k_CRA_expected],
     ['AB 2025 eligible dividends $100k', test_AB_2025_eligible_dividends_only],
+    ['ON: OHP at taxable income $200,300 (200k–200.6k ramp)', test_ON_OHP_ramp_at_taxable_income_200300],
   ];
   let passed = 0;
   let failed = 0;
