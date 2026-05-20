@@ -1,6 +1,6 @@
 {
   "year": 2025,
-  "_source": "CRA Schedule 1 step-by-step (bracket tax round per line, BPA/employment/CPP-EI credit at 15%). Provincial from external comparator tool until form-verified.",
+  "_source": "CRA Schedule 1 + ON428 form traces (docs/form-traces/ON-employment-160000-2025-vs-2026.md).",
   "scenarios": [
     {
       "id": "ON_employment_160k",
@@ -22,13 +22,13 @@
         "federalTax": 28262,
         "federalTax_note": "Schedule 1 on TI 158926: bracket tax minus BPA/CEA/base-CPP/EI credits (line 22215 enhanced CPP deducted from income)",
         "provTax": 16732,
-        "provTax_note": "External comparator ON 160k employment (form-verify with ON428 when needed)",
-        "totalIncomeTax": 44987,
-        "totalIncomeTax_note": "Federal 28262 + provincial comparator ~16732 (provincial unchanged; federal reflects CPP split)"
+        "provTax_note": "ON428: brackets, BPA + 58240 CPP/EI @ 5.05%, surtax, OHP $750",
+        "totalIncomeTax": 44994,
+        "totalIncomeTax_note": "Federal 28262 + Ontario 16732 (form trace ON-employment-160000-2025)"
       },
-      "toleranceFederal": 10,
-      "toleranceProvincial": 600,
-      "toleranceTotal": 650
+      "toleranceFederal": 2,
+      "toleranceProvincial": 2,
+      "toleranceTotal": 2
     }
   ]
 }

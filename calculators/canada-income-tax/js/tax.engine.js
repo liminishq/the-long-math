@@ -336,14 +336,34 @@ function calculateProvincialTaxGeneric(taxableIncome, prov, dividends, cppCredit
 function calculateOntarioTax(taxableIncome, prov, dividends, cppCreditable, ei, opts = {}, taxYear = 2025) {
   const { bracketLines, baseTax } = calculateBracketTax(taxableIncome, prov.brackets, opts);
 
-  // Step 2: Ontario non-refundable credits (currently BPA only), credit = amount × rate.
+  // Step 2: Ontario non-refundable credits (ON428 — BPA, line 58240 CPP/EI when configured).
   const credits = [];
+  const creditBases = [];
   let creditTotal = 0;
-  if (prov.credits && prov.credits.basicPersonalAmount) {
+  const defaultRate = prov.credits?.basicPersonalAmount?.rate ?? Math.min(...prov.brackets.map(b => b.rate));
+
+  if (prov.credits?.basicPersonalAmount) {
     const rate = prov.credits.basicPersonalAmount.rate;
-    const credit = prov.credits.basicPersonalAmount.amount * rate;
+    const base = prov.credits.basicPersonalAmount.amount;
+    const credit = base * rate;
+    creditBases.push({ name: 'Basic Personal Amount', base, rate, credit });
     credits.push({ name: 'Basic Personal Amount', amount: credit });
     creditTotal += credit;
+  }
+  if (prov.credits?.cppEiCredit) {
+    const rate = prov.credits.cppEiCredit.rate ?? defaultRate;
+    if (cppCreditable > 0) {
+      const credit = cppCreditable * rate;
+      creditBases.push({ name: 'CPP (base)', base: cppCreditable, rate, credit });
+      credits.push({ name: 'CPP (base)', amount: credit });
+      creditTotal += credit;
+    }
+    if (ei > 0) {
+      const credit = ei * rate;
+      creditBases.push({ name: 'EI', base: ei, rate, credit });
+      credits.push({ name: 'EI', amount: credit });
+      creditTotal += credit;
+    }
   }
   const taxAfterCredits = Math.max(0, baseTax - creditTotal);
 
@@ -393,7 +413,7 @@ function calculateOntarioTax(taxableIncome, prov, dividends, cppCreditable, ei, 
     bracketLines,
     baseTax,
     credits,
-    creditBases: [],
+    creditBases,
     surtaxes,
     premiums,
     taxAfterCredits,
@@ -793,16 +813,36 @@ export function computePersonalTax(input, opts = {}) {
   const refundOrOwing = taxPaid - totalIncomeTax;
 
   if (opts?.validationMode) {
-    const isOnDividendTestCase =
-      year === 2025 && province === 'ON' &&
-      employmentIncome === 0 && selfEmploymentIncome === 0 && otherIncome === 0 &&
-      nonEligibleDividends === 0 && capitalGains === 0 &&
-      rrspDeduction === 0 && fhsaDeduction === 0 && estimatedDeductions === 0 &&
-      taxPaid === 0 && eligibleDividends === 160000;
-    if (isOnDividendTestCase) {
-      console.assert(Math.abs(federalTax - 13570) < 1, 'Federal tax validation failed for ON eligible dividend test case.');
-      console.assert(Math.abs(provTax - 6898) < 1, 'Ontario tax validation failed for ON eligible dividend test case.');
-      console.assert(Math.abs(totalIncomeTax - 20470) < 1, 'Total tax validation failed for ON eligible dividend test case.');
+    const CRA_TRACE_TOL = 2;
+    const assertCraTrace = (actual, expected, label) => {
+      console.assert(
+        Math.abs(actual - expected) <= CRA_TRACE_TOL,
+        `${label}: expected ${expected} (CRA form trace), got ${actual}`
+      );
+    };
+    const noOtherIncome =
+      selfEmploymentIncome === 0 && otherIncome === 0 &&
+      eligibleDividends === 0 && nonEligibleDividends === 0 && capitalGains === 0 &&
+      rrspDeduction === 0 && fhsaDeduction === 0 && estimatedDeductions === 0 && taxPaid === 0;
+    const noEmployment =
+      employmentIncome === 0 && selfEmploymentIncome === 0 &&
+      rrspDeduction === 0 && fhsaDeduction === 0 && estimatedDeductions === 0 && taxPaid === 0;
+
+    // docs/form-traces/ON-employment-160000-2025-vs-2026.md (Schedule 1 + ON428)
+    if (year === 2025 && province === 'ON' && employmentIncome === 160000 && noOtherIncome) {
+      assertCraTrace(taxableIncome, 158926, 'taxableIncome');
+      assertCraTrace(federalTax, 28262, 'federalTax');
+      assertCraTrace(provTax, 16732, 'provTax');
+      assertCraTrace(totalIncomeTax, 44994, 'totalIncomeTax');
+    }
+
+    // docs/form-traces/ON-eligible-dividends-160000-2025.md (Schedule 1 + ON428)
+    if (year === 2025 && province === 'ON' && eligibleDividends === 160000 && noEmployment && otherIncome === 0 &&
+        nonEligibleDividends === 0 && capitalGains === 0) {
+      assertCraTrace(taxableIncome, 220800, 'taxableIncome');
+      assertCraTrace(federalTax, 13358, 'federalTax');
+      assertCraTrace(provTax, 6902, 'provTax');
+      assertCraTrace(totalIncomeTax, 20260, 'totalIncomeTax');
     }
   }
 

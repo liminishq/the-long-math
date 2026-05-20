@@ -28,8 +28,7 @@ function getDataOverride() {
   };
 }
 
-const TOLERANCE = 2; // allow $2 rounding difference
-const TOLERANCE_TAX = 2700; // allow until CRA-exact methodology is locked; tighten when official values confirmed
+const TOLERANCE = 2; // allow $2 rounding difference on CRA form-trace display amounts
 
 function assertApprox(actual, expected, tolerance, msg) {
   const diff = Math.abs(actual - expected);
@@ -42,7 +41,7 @@ function assertApprox(actual, expected, tolerance, msg) {
 
 /**
  * 2025 ON: $160,000 eligible dividends only, all else zero.
- * Expected (CRA-aligned): federal ~13,570, Ontario ~6,898, total ~20,470.
+ * Expected (CRA form trace): federal 13,358, Ontario 6,902, total 20,260.
  */
 export function test_ON_2025_eligible_dividends_only_160k() {
   const data = getDataOverride();
@@ -63,9 +62,9 @@ export function test_ON_2025_eligible_dividends_only_160k() {
   const result = computePersonalTax(input, { dataOverride: data });
 
   assertApprox(result.totals.taxableIncome, 220800, TOLERANCE, 'taxableIncome (160000 * 1.38)');
-  assertApprox(result.totals.federalTax, 13570, TOLERANCE_TAX, 'federalTax (CRA-aligned target)');
-  assertApprox(result.totals.provTax, 6898, TOLERANCE_TAX, 'provTax (ON428-aligned target)');
-  assertApprox(result.totals.totalIncomeTax, 20470, TOLERANCE_TAX + 20, 'totalIncomeTax');
+  assertApprox(result.totals.federalTax, 13358, TOLERANCE, 'federalTax');
+  assertApprox(result.totals.provTax, 6902, TOLERANCE, 'provTax');
+  assertApprox(result.totals.totalIncomeTax, 20260, TOLERANCE, 'totalIncomeTax');
   assertApprox(result.totals.takeHomeAfterPayroll, 139530, 2500, 'takeHomeAfterPayroll'); // 160000 - totalTax; tighten when methodology locked
   if (result.totals.totalIncome !== 160000) {
     throw new Error(`totalIncome: expected 160000, got ${result.totals.totalIncome}`);
@@ -98,7 +97,8 @@ export function test_ON_2025_employment_only_160k() {
     throw new Error(`totalIncome: expected 160000, got ${result.totals.totalIncome}`);
   }
   // Taxable income reduced by line 22215 enhanced CPP deduction (max $1,074 in 2025).
-  assertApprox(result.totals.taxableIncome, 158926, TOLERANCE, 'taxableIncome');
+  assertApprox(result.totals.taxableIncome, 158926, TOLERANCE, 'taxableIncome (after line 22215)');
+  assertApprox(result.totals.provTax, 16732, TOLERANCE, 'provTax (ON428 + OHP)');
   // Federal + provincial + CPP + EI should be substantial; exact numbers depend on brackets/credits
   if (result.totals.totalIncomeTax <= 0 || result.totals.provTax <= 0 || result.totals.federalTax <= 0) {
     throw new Error('Expected positive federal and provincial tax for $160k employment');
@@ -111,8 +111,7 @@ export function test_ON_2025_employment_only_160k() {
 }
 
 /**
- * 2025 ON: $160k employment — CRA-derived federal (Schedule 1 step-by-step), provincial from an external comparator tax tool.
- * Ensures we stay within tolerance of cra-expected.2025.json.
+ * 2025 ON: $160k employment — CRA form trace (Schedule 1 + ON428). See cra-expected.2025.json.
  */
 export function test_ON_2025_employment_160k_CRA_expected() {
   const data = getDataOverride();

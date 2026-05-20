@@ -1,10 +1,11 @@
 {
   "eligibleDiv160k": {
-    "totalTax": 20470,
-    "federal": 13570,
-    "provincial": 6898,
+    "_source": "docs/form-traces/ON-eligible-dividends-160000-2025.md (Schedule 1 + ON428)",
+    "totalTax": 20260,
+    "federal": 13358,
+    "provincial": 6902,
     "taxableIncome": 220800,
-    "toleranceTax": 2700,
+    "toleranceTax": 2,
     "toleranceIncome": 2
   }
 }
