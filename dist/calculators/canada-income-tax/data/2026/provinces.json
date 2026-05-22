@@ -1,17 +1,42 @@
 {
-  "_source": "Federal/provincial brackets: CRA https://www.canada.ca/en/revenue-agency/services/tax/individuals/frequently-asked-questions-individuals/canadian-income-tax-rates-individuals-current-previous-years.html (2026). Quebec brackets: Revenu Québec indexed parameters for 2026. Basic personal amounts: CRA/TaxTips indexation cross-check. Ontario surtax: dollar thresholds on post-credit tax indexed for 2026 in data file (verify Ontario worksheets). Ontario Health Premium: calculated in-engine from the Ontario Taxation Act, 2007 fixed taxable-income bands (not CPI-indexed; see TaxTips Ontario Health Premium table / ontario.ca).",
+  "_source": "Federal/provincial brackets: CRA tax rates page (2026). BC 2026 lowest rate 5.60% per BC Budget 2026 (gov.bc.ca personal tax rates). Quebec: Revenu Québec indexed parameters (not form-verified in calculator). Ontario surtax thresholds indexed in data (verify ON428). Ontario Health Premium: Ontario Taxation Act 2007 bands in-engine.",
   "AB": {
     "name": "Alberta",
     "brackets": [
-      { "threshold": 0, "rate": 0.08 },
-      { "threshold": 61200, "rate": 0.1 },
-      { "threshold": 154259, "rate": 0.12 },
-      { "threshold": 185111, "rate": 0.13 },
-      { "threshold": 246813, "rate": 0.14 },
-      { "threshold": 370220, "rate": 0.15 }
+      {
+        "threshold": 0,
+        "rate": 0.08
+      },
+      {
+        "threshold": 61200,
+        "rate": 0.1
+      },
+      {
+        "threshold": 154259,
+        "rate": 0.12
+      },
+      {
+        "threshold": 185111,
+        "rate": 0.13
+      },
+      {
+        "threshold": 246813,
+        "rate": 0.14
+      },
+      {
+        "threshold": 370220,
+        "rate": 0.15
+      }
     ],
     "credits": {
-      "basicPersonalAmount": { "amount": 22769, "rate": 0.08 }
+      "basicPersonalAmount": {
+        "amount": 22769,
+        "rate": 0.08
+      },
+      "cppEiCredit": {
+        "rate": 0.08,
+        "_note": "Provincial credit on base CPP and EI (lowest rate 8.0000% for 2026)."
+      }
     },
     "surtaxes": [],
     "premiums": []
@@ -19,17 +44,44 @@
   "BC": {
     "name": "British Columbia",
     "brackets": [
-      { "threshold": 0, "rate": 0.0506 },
-      { "threshold": 50363, "rate": 0.077 },
-      { "threshold": 100728, "rate": 0.105 },
-      { "threshold": 115648, "rate": 0.1229 },
-      { "threshold": 140430, "rate": 0.147 },
-      { "threshold": 190405, "rate": 0.168 },
-      { "threshold": 265545, "rate": 0.205 }
+      {
+        "threshold": 0,
+        "rate": 0.056
+      },
+      {
+        "threshold": 50363,
+        "rate": 0.077
+      },
+      {
+        "threshold": 100728,
+        "rate": 0.105
+      },
+      {
+        "threshold": 115648,
+        "rate": 0.1229
+      },
+      {
+        "threshold": 140430,
+        "rate": 0.147
+      },
+      {
+        "threshold": 190405,
+        "rate": 0.168
+      },
+      {
+        "threshold": 265545,
+        "rate": 0.205
+      }
     ],
     "credits": {
-      "basicPersonalAmount": { "amount": 13216, "rate": 0.0506 },
-      "cppEiCredit": { "rate": 0.0506, "_note": "Form BC428 line 58240: provincial credit on base CPP/QPP and EI (same bases as federal line 30800 + EI)." }
+      "basicPersonalAmount": {
+        "amount": 13216,
+        "rate": 0.056
+      },
+      "cppEiCredit": {
+        "rate": 0.056,
+        "_note": "Provincial credit on base CPP and EI (lowest rate 5.6000% for 2026)."
+      }
     },
     "surtaxes": [],
     "premiums": []
@@ -37,12 +89,28 @@
   "MB": {
     "name": "Manitoba",
     "brackets": [
-      { "threshold": 0, "rate": 0.108 },
-      { "threshold": 47000, "rate": 0.1275 },
-      { "threshold": 100000, "rate": 0.174 }
+      {
+        "threshold": 0,
+        "rate": 0.108
+      },
+      {
+        "threshold": 47000,
+        "rate": 0.1275
+      },
+      {
+        "threshold": 100000,
+        "rate": 0.174
+      }
     ],
     "credits": {
-      "basicPersonalAmount": { "amount": 15780, "rate": 0.108 }
+      "basicPersonalAmount": {
+        "amount": 15780,
+        "rate": 0.108
+      },
+      "cppEiCredit": {
+        "rate": 0.108,
+        "_note": "Provincial credit on base CPP and EI (lowest rate 10.8000% for 2026)."
+      }
     },
     "surtaxes": [],
     "premiums": []
@@ -50,13 +118,32 @@
   "NB": {
     "name": "New Brunswick",
     "brackets": [
-      { "threshold": 0, "rate": 0.094 },
-      { "threshold": 52333, "rate": 0.14 },
-      { "threshold": 104666, "rate": 0.16 },
-      { "threshold": 193861, "rate": 0.195 }
+      {
+        "threshold": 0,
+        "rate": 0.094
+      },
+      {
+        "threshold": 52333,
+        "rate": 0.14
+      },
+      {
+        "threshold": 104666,
+        "rate": 0.16
+      },
+      {
+        "threshold": 193861,
+        "rate": 0.195
+      }
     ],
     "credits": {
-      "basicPersonalAmount": { "amount": 13664, "rate": 0.094 }
+      "basicPersonalAmount": {
+        "amount": 13664,
+        "rate": 0.094
+      },
+      "cppEiCredit": {
+        "rate": 0.094,
+        "_note": "Provincial credit on base CPP and EI (lowest rate 9.4000% for 2026)."
+      }
     },
     "surtaxes": [],
     "premiums": []
@@ -64,17 +151,48 @@
   "NL": {
     "name": "Newfoundland and Labrador",
     "brackets": [
-      { "threshold": 0, "rate": 0.087 },
-      { "threshold": 44678, "rate": 0.145 },
-      { "threshold": 89354, "rate": 0.158 },
-      { "threshold": 159528, "rate": 0.178 },
-      { "threshold": 223340, "rate": 0.198 },
-      { "threshold": 285319, "rate": 0.208 },
-      { "threshold": 570638, "rate": 0.213 },
-      { "threshold": 1141275, "rate": 0.218 }
+      {
+        "threshold": 0,
+        "rate": 0.087
+      },
+      {
+        "threshold": 44678,
+        "rate": 0.145
+      },
+      {
+        "threshold": 89354,
+        "rate": 0.158
+      },
+      {
+        "threshold": 159528,
+        "rate": 0.178
+      },
+      {
+        "threshold": 223340,
+        "rate": 0.198
+      },
+      {
+        "threshold": 285319,
+        "rate": 0.208
+      },
+      {
+        "threshold": 570638,
+        "rate": 0.213
+      },
+      {
+        "threshold": 1141275,
+        "rate": 0.218
+      }
     ],
     "credits": {
-      "basicPersonalAmount": { "amount": 11188, "rate": 0.087 }
+      "basicPersonalAmount": {
+        "amount": 11188,
+        "rate": 0.087
+      },
+      "cppEiCredit": {
+        "rate": 0.087,
+        "_note": "Provincial credit on base CPP and EI (lowest rate 8.7000% for 2026)."
+      }
     },
     "surtaxes": [],
     "premiums": []
@@ -82,14 +200,36 @@
   "NS": {
     "name": "Nova Scotia",
     "brackets": [
-      { "threshold": 0, "rate": 0.0879 },
-      { "threshold": 30995, "rate": 0.1495 },
-      { "threshold": 61991, "rate": 0.1667 },
-      { "threshold": 97417, "rate": 0.175 },
-      { "threshold": 157124, "rate": 0.21 }
+      {
+        "threshold": 0,
+        "rate": 0.0879
+      },
+      {
+        "threshold": 30995,
+        "rate": 0.1495
+      },
+      {
+        "threshold": 61991,
+        "rate": 0.1667
+      },
+      {
+        "threshold": 97417,
+        "rate": 0.175
+      },
+      {
+        "threshold": 157124,
+        "rate": 0.21
+      }
     ],
     "credits": {
-      "basicPersonalAmount": { "amount": 11932, "rate": 0.0879 }
+      "basicPersonalAmount": {
+        "amount": 11932,
+        "rate": 0.0879
+      },
+      "cppEiCredit": {
+        "rate": 0.0879,
+        "_note": "Provincial credit on base CPP and EI (lowest rate 8.7900% for 2026)."
+      }
     },
     "surtaxes": [],
     "premiums": []
@@ -97,13 +237,32 @@
   "NT": {
     "name": "Northwest Territories",
     "brackets": [
-      { "threshold": 0, "rate": 0.059 },
-      { "threshold": 53003, "rate": 0.086 },
-      { "threshold": 106009, "rate": 0.122 },
-      { "threshold": 172346, "rate": 0.1405 }
+      {
+        "threshold": 0,
+        "rate": 0.059
+      },
+      {
+        "threshold": 53003,
+        "rate": 0.086
+      },
+      {
+        "threshold": 106009,
+        "rate": 0.122
+      },
+      {
+        "threshold": 172346,
+        "rate": 0.1405
+      }
     ],
     "credits": {
-      "basicPersonalAmount": { "amount": 18198, "rate": 0.059 }
+      "basicPersonalAmount": {
+        "amount": 18198,
+        "rate": 0.059
+      },
+      "cppEiCredit": {
+        "rate": 0.059,
+        "_note": "Provincial credit on base CPP and EI (lowest rate 5.9000% for 2026)."
+      }
     },
     "surtaxes": [],
     "premiums": []
@@ -111,48 +270,129 @@
   "NU": {
     "name": "Nunavut",
     "brackets": [
-      { "threshold": 0, "rate": 0.04 },
-      { "threshold": 55801, "rate": 0.07 },
-      { "threshold": 111602, "rate": 0.09 },
-      { "threshold": 181439, "rate": 0.115 }
+      {
+        "threshold": 0,
+        "rate": 0.04
+      },
+      {
+        "threshold": 55801,
+        "rate": 0.07
+      },
+      {
+        "threshold": 111602,
+        "rate": 0.09
+      },
+      {
+        "threshold": 181439,
+        "rate": 0.115
+      }
     ],
     "credits": {
-      "basicPersonalAmount": { "amount": 19659, "rate": 0.04 }
+      "basicPersonalAmount": {
+        "amount": 19659,
+        "rate": 0.04
+      },
+      "cppEiCredit": {
+        "rate": 0.04,
+        "_note": "Provincial credit on base CPP and EI (lowest rate 4.0000% for 2026)."
+      }
     },
     "surtaxes": [],
     "premiums": []
   },
   "ON": {
     "name": "Ontario",
-    "computationSteps": ["brackets", "credits", "surtax", "minTax", "dividendCredit", "reduction", "premiums"],
+    "computationSteps": [
+      "brackets",
+      "credits",
+      "surtax",
+      "minTax",
+      "dividendCredit",
+      "reduction",
+      "premiums"
+    ],
     "brackets": [
-      { "threshold": 0, "rate": 0.0505 },
-      { "threshold": 53891, "rate": 0.0915 },
-      { "threshold": 107785, "rate": 0.1116 },
-      { "threshold": 150000, "rate": 0.1216 },
-      { "threshold": 220000, "rate": 0.1316 }
+      {
+        "threshold": 0,
+        "rate": 0.0505
+      },
+      {
+        "threshold": 53891,
+        "rate": 0.0915
+      },
+      {
+        "threshold": 107785,
+        "rate": 0.1116
+      },
+      {
+        "threshold": 150000,
+        "rate": 0.1216
+      },
+      {
+        "threshold": 220000,
+        "rate": 0.1316
+      }
     ],
     "credits": {
-      "basicPersonalAmount": { "amount": 12989, "rate": 0.0505 }
+      "basicPersonalAmount": {
+        "amount": 12989,
+        "rate": 0.0505
+      },
+      "cppEiCredit": {
+        "rate": 0.0505,
+        "_note": "Provincial credit on base CPP and EI (lowest rate 5.0500% for 2026)."
+      }
     },
     "surtaxes": [
-      { "name": "Ontario Surtax", "threshold": 5824, "rate": 0.20, "threshold2": 7453, "rate2": 0.36, "_note": "Dollar thresholds on Ontario tax after credits; indexed from 2025 for 2026 (verify Ontario tax forms)." }
+      {
+        "name": "Ontario Surtax",
+        "threshold": 5824,
+        "rate": 0.2,
+        "threshold2": 7453,
+        "rate2": 0.36,
+        "_note": "Dollar thresholds on Ontario tax after credits; indexed from 2025 for 2026 (verify Ontario tax forms)."
+      }
     ],
     "premiums": [
-      { "name": "Ontario Health Premium", "formula": "ontarioHealthPremium" }
+      {
+        "name": "Ontario Health Premium",
+        "formula": "ontarioHealthPremium"
+      }
     ]
   },
   "PE": {
     "name": "Prince Edward Island",
     "brackets": [
-      { "threshold": 0, "rate": 0.095 },
-      { "threshold": 33928, "rate": 0.1347 },
-      { "threshold": 65820, "rate": 0.166 },
-      { "threshold": 106890, "rate": 0.1762 },
-      { "threshold": 142250, "rate": 0.19 }
+      {
+        "threshold": 0,
+        "rate": 0.095
+      },
+      {
+        "threshold": 33928,
+        "rate": 0.1347
+      },
+      {
+        "threshold": 65820,
+        "rate": 0.166
+      },
+      {
+        "threshold": 106890,
+        "rate": 0.1762
+      },
+      {
+        "threshold": 142250,
+        "rate": 0.19
+      }
     ],
     "credits": {
-      "basicPersonalAmount": { "amount": 15000, "rate": 0.095 }
+      "basicPersonalAmount": {
+        "amount": 15000,
+        "rate": 0.095
+      },
+      "cppEiCredit": {
+        "rate": 0.095,
+        "_note": "Provincial credit on base CPP and EI (lowest rate 9.5000% for 2026)."
+      }
     },
     "surtaxes": [],
     "premiums": []
@@ -161,13 +401,28 @@
     "name": "Quebec",
     "_note": "Quebec personal tax calculated using Revenu Québec parameters (2026 indexation).",
     "brackets": [
-      { "threshold": 0, "rate": 0.14 },
-      { "threshold": 54345, "rate": 0.19 },
-      { "threshold": 108680, "rate": 0.24 },
-      { "threshold": 132245, "rate": 0.2575 }
+      {
+        "threshold": 0,
+        "rate": 0.14
+      },
+      {
+        "threshold": 54345,
+        "rate": 0.19
+      },
+      {
+        "threshold": 108680,
+        "rate": 0.24
+      },
+      {
+        "threshold": 132245,
+        "rate": 0.2575
+      }
     ],
     "credits": {
-      "basicPersonalAmount": { "amount": 18952, "rate": 0.14 }
+      "basicPersonalAmount": {
+        "amount": 18952,
+        "rate": 0.14
+      }
     },
     "surtaxes": [],
     "premiums": []
@@ -175,12 +430,28 @@
   "SK": {
     "name": "Saskatchewan",
     "brackets": [
-      { "threshold": 0, "rate": 0.105 },
-      { "threshold": 54532, "rate": 0.125 },
-      { "threshold": 155805, "rate": 0.145 }
+      {
+        "threshold": 0,
+        "rate": 0.105
+      },
+      {
+        "threshold": 54532,
+        "rate": 0.125
+      },
+      {
+        "threshold": 155805,
+        "rate": 0.145
+      }
     ],
     "credits": {
-      "basicPersonalAmount": { "amount": 20381, "rate": 0.105 }
+      "basicPersonalAmount": {
+        "amount": 20381,
+        "rate": 0.105
+      },
+      "cppEiCredit": {
+        "rate": 0.105,
+        "_note": "Provincial credit on base CPP and EI (lowest rate 10.5000% for 2026)."
+      }
     },
     "surtaxes": [],
     "premiums": []
@@ -188,14 +459,36 @@
   "YT": {
     "name": "Yukon",
     "brackets": [
-      { "threshold": 0, "rate": 0.064 },
-      { "threshold": 58523, "rate": 0.09 },
-      { "threshold": 117045, "rate": 0.109 },
-      { "threshold": 181440, "rate": 0.128 },
-      { "threshold": 500000, "rate": 0.15 }
+      {
+        "threshold": 0,
+        "rate": 0.064
+      },
+      {
+        "threshold": 58523,
+        "rate": 0.09
+      },
+      {
+        "threshold": 117045,
+        "rate": 0.109
+      },
+      {
+        "threshold": 181440,
+        "rate": 0.128
+      },
+      {
+        "threshold": 500000,
+        "rate": 0.15
+      }
     ],
     "credits": {
-      "basicPersonalAmount": { "amount": 16452, "rate": 0.064 }
+      "basicPersonalAmount": {
+        "amount": 16452,
+        "rate": 0.064
+      },
+      "cppEiCredit": {
+        "rate": 0.064,
+        "_note": "Provincial credit on base CPP and EI (lowest rate 6.4000% for 2026)."
+      }
     },
     "surtaxes": [],
     "premiums": []

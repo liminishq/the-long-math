@@ -261,6 +261,21 @@ function getInputs() {
   };
 }
 
+const QC_SCOPE_WARNING =
+  'Quebec personal tax (QPP, QPIP, TP-1) is not form-verified in this version. Figures may not match a Quebec return.';
+
+/** Show v1 out-of-scope notice for Quebec; returns true if warning is displayed. */
+function setProvinceScopeWarning(province) {
+  const provinceWarning = document.getElementById('provinceWarning');
+  if (!provinceWarning) return false;
+  if (province === 'QC') {
+    provinceWarning.textContent = QC_SCOPE_WARNING;
+    provinceWarning.style.display = 'block';
+    return true;
+  }
+  return false;
+}
+
 /**
  * Perform tax calculation and update UI
  */
@@ -302,9 +317,8 @@ function calculate() {
       return;
     }
 
-    // Remove validation state
     provinceSelect.classList.remove('is-invalid');
-    if (provinceWarning) {
+    if (!setProvinceScopeWarning(inputs.province) && provinceWarning) {
       provinceWarning.style.display = 'none';
     }
 

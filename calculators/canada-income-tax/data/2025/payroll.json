@@ -14,9 +14,9 @@
   },
   "cpp2": {
     "rate": 0.04,
-    "maxAdditionalEarnings": 73000,
+    "maxAdditionalEarnings": 9900,
     "maxAdditionalContribution": 396.00,
-    "_note": "CPP2 applies to earnings above YMPE (71,300) up to YAMPE (144,300 = 71,300 + 73,000)"
+    "_note": "CPP2 on earnings above YMPE ($71,300) up to YAMPE ($81,200 for 2025). Band width = $9,900."
   },
   "ei": {
     "rate": 0.0164,

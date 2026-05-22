@@ -52,6 +52,24 @@ function compute(input) {
   return computePersonalTax(input, { dataOverride: loadData(year) });
 }
 
+/** BC 2025 employment $85,000 — form trace BC-employment-85000-2025-vs-2026.md */
+export function test_BC_2025_employment_85k() {
+  const r = compute(baseInput({ year: 2025, employmentIncome: 85000 }));
+  const { totals, breakdown } = r;
+
+  assertApprox(totals.taxableIncome, 83926, TOL, 'taxableIncome');
+  assertApprox(totals.cpp, 4430.10, TOL, 'cpp total');
+  assertApprox(totals.cppCreditable, 3356.10, TOL, 'cpp creditable base');
+  assertApprox(totals.cppDeductible, 1074, TOL, 'cpp deductible (enhanced)');
+  assertApprox(breakdown.payroll.cpp.cpp2Deductible, 396, TOL, 'cpp2 deductible');
+  assertApprox(totals.ei, 1077.48, TOL, 'ei');
+  assertApprox(breakdown.federal.baseTax, 13762, TOL, 'federal tax before credits');
+  assertApprox(totals.federalTax, 10457, TOL, 'federal tax after credits');
+  assertApprox(totals.provTax, 4283, TOL, 'BC tax after credits (BC428; 5.06% 2025)');
+  assertApprox(totals.totalIncomeTax, 14740, TOL, 'combined income tax');
+  assertApprox(totals.totalBurden, 20247.58, TOL, 'total burden incl. CPP/EI');
+}
+
 /** BC 2026 employment $85,000 — primary audit vector (Schedule 1 + line 22215 + BC428). */
 export function test_BC_2026_employment_85k() {
   const r = compute(baseInput({ employmentIncome: 85000 }));
@@ -65,9 +83,9 @@ export function test_BC_2026_employment_85k() {
   assertApprox(totals.ei, 1123.07, TOL, 'ei');
   assertApprox(breakdown.federal.baseTax, 13390, TOL, 'federal tax before credits');
   assertApprox(totals.federalTax, 10227, TOL, 'federal tax after credits');
-  assertApprox(totals.provTax, 4224, TOL, 'BC tax after credits (incl. line 58240 CPP/EI)');
-  assertApprox(totals.totalIncomeTax, 14451, TOL, 'combined income tax');
-  assertApprox(totals.totalBurden, 20220.52, TOL, 'total burden incl. CPP/EI');
+  assertApprox(totals.provTax, 4400, TOL, 'BC tax after credits (BC428; 5.60% bracket/credits 2026)');
+  assertApprox(totals.totalIncomeTax, 14627, TOL, 'combined income tax');
+  assertApprox(totals.totalBurden, 20396.52, TOL, 'total burden incl. CPP/EI');
 }
 
 /** Below YMPE — no CPP2, partial CPP1. */
@@ -129,7 +147,8 @@ export function test_BC_2026_eligible_dividends_only() {
 
 function runAll() {
   const tests = [
-    ['BC 2026 employment $85k (CRA vector)', test_BC_2026_employment_85k],
+    ['BC 2025 employment $85k (form trace)', test_BC_2025_employment_85k],
+    ['BC 2026 employment $85k (form trace)', test_BC_2026_employment_85k],
     ['BC 2026 below YMPE', test_BC_2026_below_ympe],
     ['BC 2026 between YMPE and YAMPE', test_BC_2026_between_ympe_yampe],
     ['BC 2026 at YAMPE', test_BC_2026_at_yampe],

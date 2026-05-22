@@ -1,39 +1,33 @@
 # Canada Income Tax Calculator — Tests
 
-## How to run tests
+## Run all golden tests
 
-### Known-answer regression tests (Node)
-
-From the calculator directory (`calculators/canada-income-tax/`):
+From `calculators/canada-income-tax/`:
 
 ```bash
+node tests/form-trace-vectors.test.js
+node tests/cra-cpp-vectors.test.js
 node tests/known-answer-vectors.test.js
 ```
 
-Requires Node 18+ (ES modules). The test file loads `data/2025/*.json` and calls the engine with `dataOverride`, so no browser or `loadTaxData()` is needed.
+## Test suites
 
-**Vectors:**
+| File | Purpose |
+|------|---------|
+| `form-trace-vectors.test.js` | Primary golden tests tied to `docs/form-traces/*.md` (BC/ON employment, dividends, cap gains, OHP) |
+| `cra-cpp-vectors.test.js` | CPP bands, RRSP, bracket edges, BC employment |
+| `known-answer-vectors.test.js` | Legacy suite + `data/2025/cra-expected.2025.json` |
 
-| Scenario | Assertions |
-|----------|------------|
-| **2025 ON, $160,000 eligible dividends only** | `taxableIncome` ≈ 220,800; federal ≈ 13,570; Ontario ≈ 6,898; total tax ≈ 20,470; take-home ≈ 139,530 |
-| **2025 ON, $160,000 employment only** | `totalIncome` = 160,000; `taxableIncome` = 160,000; positive federal/provincial tax; take-home in (0, 160,000) |
-| **2025 AB, $100,000 eligible dividends only** | `taxableIncome` ≈ 138,000; positive federal and provincial tax |
+Tolerance is **$2** on display-rounded tax amounts unless noted.
 
-If any assertion fails, the script exits with code 1 and prints the failure. Update the expected values only when the official form logic or rates change.
+## Form traces
 
-The ON eligible-dividends vector uses a tolerance band until CRA-exact methodology is locked; tighten the constants in `known-answer-vectors.test.js` when official values are confirmed.
+| Trace | Scenario |
+|-------|----------|
+| `BC-employment-85000-2025-vs-2026.md` | BC $85k employment |
+| `ON-employment-160000-2025-vs-2026.md` | ON $160k employment |
+| `ON-eligible-dividends-160000-2025.md` | ON $160k eligible dividends |
 
-### Browser tests
+## Browser tests
 
-Open `tests/test.html` in a browser (after serving the site so that `loadTaxData(2025)` can fetch `data/2025/*.json`). The existing engine tests in `engine.test.js` run in that environment.
-
-### Node (CLI)
-
-From the repo root:
-
-```bash
-node calculators/canada-income-tax/tests/engine.test.js
-```
-
-Uses `loadTaxData(2025, { fsDataRoot: ... })` so JSON is read from disk (no `fetch` to `file:` URLs).
+Open `tests/test.html` after serving the site (loads `data/{year}/*.json` via `loadTaxData`).

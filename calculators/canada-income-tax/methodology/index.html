@@ -283,7 +283,9 @@
         <li>Additional credits and deductions (medical expenses, tuition, donations, prior-year loss carryforwards, etc.) are not modeled individually; they can be approximated via the “Estimated Additional Deductions” field.</li>
         <li>Dividend gross-up and tax credit rates come from federal and provincial data tables for 2025; province-specific nuances beyond the encoded schema are not modeled.</li>
         <li>Capital gains use a fixed 50% inclusion rate for 2025 across all provinces.</li>
-        <li>CPP and EI are modeled from the employee perspective only, using official maximums and rates for 2025; employer contributions are not included.</li>
+        <li>CPP and EI are modeled from the <strong>employee</strong> perspective on <strong>employment income only</strong>, using official annual maximums and rates. <strong>Self-employment income</strong> is included in income for tax brackets but does <strong>not</strong> generate CPP or EI in v1 (no Schedule 8 self-employment path). Employer contributions are not included.</li>
+        <li>Quebec (QPP/QPIP), multiple employers, and Schedule 8 overpayment are out of scope for v1; see <code>docs/SCOPE-v1.md</code>.</li>
+        <li><strong>Display rounding:</strong> Federal and provincial net income tax are each rounded to the nearest dollar for display; total income tax shown is the sum of those two rounded amounts. Internal tests compare unrounded form-trace values.</li>
         <li>All amounts are in Canadian dollars; inflation, indexation beyond the configured year, and time value of money are not modeled in this calculator.</li>
         <li>All calculations use full floating-point precision internally; rounding occurs only where required to mirror CRA per-bracket rounding and at the display layer.</li>
       </ol>
