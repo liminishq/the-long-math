@@ -222,3 +222,59 @@ test("January top-ups add to remaining TFSA and RRSP room (no contributions)", (
   );
 });
 
+// 8) With refund reinvested, RRSP wins when t_now > t_ret (even with large TFSA room).
+//    This covers the bug scenario where the UI might seem to incorrectly favour TFSA
+//    when the "reinvest refund" checkbox is checked.
+test("monthly contributions, t_now > t_ret, reinvest – RRSP beats TFSA", () => {
+  const result = runAccountStrategySimulation({
+    contributionMode: "monthly",
+    contributionAmount: 1000,
+    horizonYears: 25,
+    annualReturn: 7,
+    annualFees: 0,
+    useRealDollars: false,
+    t_now: 43,
+    t_ret: 30,
+    refundMode: "reinvest",
+    fhsaEligible: false,
+    tfsaRemainingRoom: 100000,
+    rrspRemainingRoom: 200000
+  });
+
+  const tfsa = getStrategy(result, "ALL_TFSA");
+  const rrsp = getStrategy(result, "ALL_RRSP");
+
+  assert.ok(
+    rrsp.finalAfterTax > tfsa.finalAfterTax,
+    `RRSP+reinvest should beat TFSA when t_now (43%) > t_ret (30%); ` +
+    `got RRSP=${Math.round(rrsp.finalAfterTax)}, TFSA=${Math.round(tfsa.finalAfterTax)}`
+  );
+});
+
+// 9) With refund reinvested, TFSA wins when t_now < t_ret.
+//    The optimal strategy should have $0 RRSP in year-1 allocation (TFSA fills first).
+test("monthly contributions, t_now < t_ret, reinvest – TFSA optimal with no year-1 RRSP", () => {
+  const result = runAccountStrategySimulation({
+    contributionMode: "monthly",
+    contributionAmount: 500,
+    horizonYears: 20,
+    annualReturn: 7,
+    annualFees: 0,
+    useRealDollars: false,
+    t_now: 26,
+    t_ret: 43,
+    refundMode: "reinvest",
+    fhsaEligible: false,
+    tfsaRemainingRoom: 80000,
+    rrspRemainingRoom: 150000
+  });
+
+  assert.equal(result.optimalStrategyKey, "ALL_TFSA", "TFSA should be optimal when t_now < t_ret");
+
+  // Optimal strategy in year 1 should have no RRSP contributions (TFSA has room)
+  const y1 = result.strategies.OPTIMAL?.meta?.year1Allocation || {};
+  assert.ok(
+    (y1.rrspDirect || 0) < 0.01,
+    "Optimal strategy should have no year-1 RRSP contributions when TFSA has ample room"
+  );
+});

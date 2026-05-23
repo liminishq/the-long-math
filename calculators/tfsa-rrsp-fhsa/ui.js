@@ -215,6 +215,12 @@ function render() {
 
   const { strategies, priorityRanking, allocationSummary, optimalStrategyKey } = result;
 
+  // Compute refund for the optimal strategy's year 1 outside the allocationSummary block
+  // so it is accessible when rendering the refund hint below.
+  const _optY1 = strategies.OPTIMAL?.meta?.year1Allocation || {};
+  const estimatedRefundOptimal =
+    (((_optY1.rrsp || 0) + (_optY1.fhsa || 0)) * (inputs.t_now / 100));
+
   // Top strategy card is based on the scenario-constrained optimal allocation.
   if (strategies.OPTIMAL) {
     $("winnerName").textContent = describeStrategyAccountOrder(
@@ -307,7 +313,9 @@ function render() {
     const reinvested = inputs.refundMode === "reinvest";
     $("year1Initial").textContent = fmtMoney(initial);
     $("year1Refund").textContent = fmtMoney(estimatedRefund);
-    $("year1RefundMode").textContent = reinvested ? "Yes" : "No";
+    $("year1RefundMode").textContent = reinvested
+      ? (estimatedRefund > 0.01 ? "Yes" : "N/A")
+      : "No";
     $("year1TotalInvested").textContent = fmtMoney(initial + (reinvested ? estimatedRefund : 0));
   }
 
@@ -340,8 +348,24 @@ function render() {
         "Refund handling (spent vs reinvested) affects both RRSP and FHSA-style strategies. Use the toggle to compare these cases explicitly.";
     }
   } else {
-    $("refundHint").textContent =
-      "Refunds are assumed reinvested to TFSA first (up to room), then non-registered. To model a more conservative case, toggle refunds to 'spent'.";
+    if (estimatedRefundOptimal > 0.01) {
+      $("refundHint").textContent =
+        "Refunds are assumed reinvested to TFSA first (up to room), then non-registered. To model a more conservative case, toggle refunds to 'spent'.";
+    } else {
+      // The optimal strategy has no RRSP/FHSA contributions in year 1 (TFSA is filled directly),
+      // so there is no refund to reinvest. Clarify this to avoid a contradictory recommendation.
+      const optLabel = describeStrategyAccountOrder(
+        optimalStrategyKey || "ALL_TFSA",
+        inputs.fhsaEligible
+      );
+      $("refundHint").textContent =
+        `The optimal strategy (${optLabel}) fills TFSA with direct contributions in year 1 — ` +
+        `no RRSP or FHSA contributions are made, so no tax refund is generated to reinvest. ` +
+        `The "reinvest refund" setting was used to fairly compare RRSP and FHSA alternatives; ` +
+        `TFSA first remains optimal because your current marginal rate (${fmtPct(inputs.t_now)}) ` +
+        `is at or below your modelled retirement rate (${fmtPct(inputs.t_ret)}). ` +
+        `If you expect a lower retirement rate, RRSP or FHSA may become the better choice.`;
+    }
   }
   if (inputs.manualRateOverride) {
     $("derivedRateSummary").textContent =
