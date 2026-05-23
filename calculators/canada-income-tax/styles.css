@@ -671,3 +671,37 @@ select.is-invalid{
 @media (max-width:640px){
   .result-share-actions{ grid-template-columns:1fr; }
 }
+
+/* -------------------------------------------------------
+   MOBILE OVERRIDES
+   ------------------------------------------------------- */
+@media (max-width:640px){
+  /* Flatten inner panel borders: avoids border-inside-border.
+     The .calc-grid panels become section-divider style. */
+  .calc-grid > .panel{
+    border-left:none;
+    border-right:none;
+    border-bottom:none;
+    border-radius:0;
+    padding-left:0;
+    padding-right:0;
+    background:transparent;
+  }
+  .calc-grid > .panel:first-child{
+    border-top:none;
+  }
+  .calc-grid{
+    gap:0;
+    margin-top:10px;
+  }
+
+  /* Results: ensure each tile takes full width on narrow phones */
+  .result.prominent .v{
+    font-size:clamp(22px,8vw,32px);
+  }
+
+  /* Section break .sep: tighter margin on phones */
+  .sep{
+    margin:12px 0;
+  }
+}

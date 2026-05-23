@@ -9,7 +9,8 @@
 
   <!-- Site-wide theme + styles -->
   <script src="/assets/js/theme-init.40fc21015f.js"></script>
-  <link rel="stylesheet" href="/assets/css/styles.deb0166dcb.css" />
+  <link rel="stylesheet" href="/assets/css/styles.a9bfe05385.css" />
+  <link rel="stylesheet" href="/assets/css/calc-mobile.b65b13bb36.css" />
   <script defer src="/assets/js/site.4fbf708cdd.js"></script>
 
   <style>
@@ -390,6 +391,84 @@
     }
     .calc-related a {
       font-weight: 600;
+    }
+
+    /* -------------------------------------------------------
+       MOBILE OVERRIDES (max-width: 640px)
+       ------------------------------------------------------- */
+    @media (max-width: 640px) {
+      /* 1. Flatten nested panel borders inside the outer card.
+            The .account-grid collapses to 1 col at 980px; on
+            phones the two panels sit stacked. Remove their
+            individual borders so the outer .card border is the
+            only visible container. Use a top-border as divider. */
+      .account-grid .panel {
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        border-radius: 0;
+        padding-left: 0;
+        padding-right: 0;
+        background: transparent;
+      }
+      .account-grid .panel:first-child {
+        border-top: none;
+      }
+      .account-grid {
+        gap: 0;
+        margin-top: 8px;
+      }
+
+      /* 2. Stack .inputs-compact fields: label above control.
+            Override the 2-col grid (minmax(180px,1fr) / minmax(120px,170px))
+            which causes overflow at 305px effective content width. */
+      .inputs-compact .field:not(.checkbox) {
+        grid-template-columns: 1fr;
+      }
+      .inputs-compact .field:not(.checkbox) > input,
+      .inputs-compact .field:not(.checkbox) > select,
+      .inputs-compact .field:not(.checkbox) > .inline,
+      .inputs-compact .field:not(.checkbox) > .input-with-unit {
+        grid-column: 1;
+        max-width: 100%;
+        width: 100%;
+        justify-self: stretch;
+      }
+      .inputs-compact .field:not(.checkbox) > .help-inline,
+      .inputs-compact .field:not(.checkbox) > .help {
+        grid-column: 1;
+      }
+
+      /* Input-with-unit: fill full width, override max-width: 170px */
+      .inputs-compact .input-with-unit {
+        max-width: 100%;
+        justify-self: stretch;
+      }
+
+      /* Inline flex: allow wrapping so $ + number + stepper don't squish */
+      .inputs-compact .inline {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+      }
+      .inputs-compact .inline input {
+        width: auto;
+        flex: 1 1 80px;
+      }
+    }
+
+    /* 3. Priority compact: single column on small phones */
+    @media (max-width: 480px) {
+      .priority-compact {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* 4. Results secondary grid: already collapses at 720px (in place).
+          On very small phones further ensure results hero value fits. */
+    @media (max-width: 390px) {
+      .results-hero-value {
+        font-size: clamp(22px, 8vw, 32px);
+      }
     }
   </style>
 

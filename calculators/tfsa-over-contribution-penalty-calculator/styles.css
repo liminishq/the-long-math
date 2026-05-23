@@ -392,3 +392,50 @@
 .rel-section a:hover {
   text-decoration: underline;
 }
+
+/* -------------------------------------------------------
+   MOBILE OVERRIDES
+   ------------------------------------------------------- */
+@media (max-width: 640px) {
+  /* Mode buttons: ensure tap-friendly height */
+  .mode-btn {
+    min-height: 44px;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  /* Flat inner panel borders to avoid nesting collision */
+  .panel {
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 0;
+    padding-left: 0;
+    padding-right: 0;
+    background: transparent;
+  }
+
+  /* Result rows: allow label+value to wrap on very narrow screens */
+  .result-row {
+    flex-wrap: wrap;
+    gap: 4px 14px;
+  }
+  .result-row .label {
+    flex: 1 1 auto;
+  }
+  .result-row .value {
+    flex: 0 0 auto;
+  }
+
+  /* Explainer box: slightly tighter */
+  .explainer-box {
+    padding: 10px 11px;
+  }
+
+  /* Add-transaction button: full width */
+  .add-txn-btn {
+    width: 100%;
+    text-align: center;
+    min-height: 44px;
+  }
+}

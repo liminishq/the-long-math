@@ -1,4 +1,7 @@
 {% extends "layout.njk" %}
+{% block headExtra %}
+  <link rel="stylesheet" href="/assets/css/calc-mobile.css">
+{% endblock %}
 {% block content %}
 <a href="{{ localizeRootHref('/calculators/') }}" class="home-link">{{ t('calculators.backToTools') }}</a>
 <header>

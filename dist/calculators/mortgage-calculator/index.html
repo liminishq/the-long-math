@@ -9,7 +9,8 @@
 
   <!-- Site-wide theme + styles -->
   <script src="/assets/js/theme-init.40fc21015f.js"></script>
-  <link rel="stylesheet" href="/assets/css/styles.deb0166dcb.css">
+  <link rel="stylesheet" href="/assets/css/styles.a9bfe05385.css">
+  <link rel="stylesheet" href="/assets/css/calc-mobile.b65b13bb36.css">
   <script defer src="/assets/js/site.4fbf708cdd.js"></script>
 
   <style>
@@ -295,6 +296,38 @@
       color: var(--text);
       border-color: var(--accent);
       background: var(--accentSoft);
+    }
+
+    /* -------------------------------------------------------
+       MOBILE OVERRIDES
+       ------------------------------------------------------- */
+    @media (max-width: 640px) {
+      /* Chart: shorter on phones to leave room for content */
+      .chart-container {
+        height: 260px;
+      }
+
+      /* Summary sentence: tighter on phones */
+      .summary-sentence {
+        font-size: 13px;
+        padding: 10px;
+      }
+
+      /* Accordion table: ensure horizontal scroll */
+      .accordion-content {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Slider selector: allow wrapping */
+      .slider-selector {
+        flex-wrap: wrap;
+      }
+
+      /* Down-payment toggle: full-width buttons */
+      .down-payment-toggle button {
+        min-height: 44px;
+      }
     }
   </style>
   <!-- Google tag (gtag.js) -->

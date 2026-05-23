@@ -314,3 +314,50 @@
   display: none;
   content: none;
 }
+
+/* -------------------------------------------------------
+   MOBILE OVERRIDES
+   ------------------------------------------------------- */
+@media (max-width: 640px) {
+  /* Input column panels: remove individual borders to avoid
+     border-inside-border with the outer .card.rw-calc.
+     Use top-border as a section divider instead. */
+  .rw-input-column .panel {
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 0;
+    padding-left: 0;
+    padding-right: 0;
+    background: transparent;
+  }
+  .rw-input-column .panel:first-child {
+    border-top: none;
+  }
+  .rw-input-column {
+    gap: 0;
+  }
+
+  /* Toggle rows: allow wrapping so checkboxes don't squish */
+  .rw-toggle-row {
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+  }
+
+  /* Export controls: stack on phones */
+  .rw-calc .export-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .rw-calc .export-btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  /* Summary box: tighter padding */
+  .rw-summary {
+    font-size: 0.93rem;
+    padding: 10px 11px;
+  }
+}

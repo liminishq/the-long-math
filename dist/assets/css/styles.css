@@ -1288,6 +1288,27 @@ html[data-theme="light"] .default-fee{
   }
 }
 
+/* -------------------------------------------------------
+   FEE CALC MOBILE OVERRIDES
+   ------------------------------------------------------- */
+@media (max-width: 640px){
+  /* Fee input fields: ensure full-width and touch-friendly */
+  body[data-fee-calc-layout="1"] .fee-cost-field input[type="number"],
+  body[data-fee-calc-layout="1"] .fee-cost-field input[type="text"]{
+    min-height:44px;
+    font-size:16px;
+  }
+
+  /* Fee results: stack share actions */
+  body[data-fee-calc-layout="1"] .panel--results .result-share-block .result-share-actions{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  body[data-fee-calc-layout="1"] .panel--results .result-share-block .result-share-actions button{
+    width:100%;
+  }
+}
+
 /* =========================
    HOMEPAGE / NAV ADDITIONS (MATCH CALCULATOR TONE)
    ========================= */

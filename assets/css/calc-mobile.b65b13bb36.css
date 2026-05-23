@@ -1,0 +1,273 @@
+/* =========================================================
+   The Long Math — Calculator Mobile Patterns
+   Shared responsive utilities for all calculator pages.
+   Link AFTER styles.css on every calculator page.
+
+   Class vocabulary (mirrors user-facing task spec):
+     .calculator-shell   — outermost .wrap equivalent
+     .calculator-section — bordered input/result group
+     .calculator-input-grid — label + control 2-col grid
+     .calculator-results-grid — result tiles grid
+     .chart-wrap         — chart container
+     .mobile-stack       — utility: always single-column
+   ========================================================= */
+
+/* -------------------------------------------------------
+   OUTER SHELL: tighter edge-padding on phones
+   ------------------------------------------------------- */
+@media (max-width: 640px) {
+  .wrap {
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 16px;
+  }
+}
+
+/* -------------------------------------------------------
+   CARDS: reduce padding and radius on narrow phones
+   ------------------------------------------------------- */
+@media (max-width: 640px) {
+  .card {
+    padding: 12px;
+    border-radius: 12px;
+  }
+}
+
+/* -------------------------------------------------------
+   NESTED CARDS (mortgage pattern: .card > .grid > .card)
+   On mobile, strip inner card decoration so the outer
+   border doesn't visually collide with inner borders.
+   Use border-top as a section divider instead.
+   ------------------------------------------------------- */
+@media (max-width: 640px) {
+  /* Generic: any .card that is a child of a named grid
+     inside a parent .card loses its box treatment. */
+  .card .mortgage-grid > .card,
+  .card .mortgage-grid > section.card {
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    padding: 14px 0 0;
+  }
+  .card .mortgage-grid > .card:first-of-type,
+  .card .mortgage-grid > section.card:first-of-type {
+    border-top: none;
+    padding-top: 0;
+  }
+  .mortgage-grid {
+    gap: 0 !important;
+  }
+}
+
+/* -------------------------------------------------------
+   PANELS INSIDE CALC-GRID (all 2-col input|result layouts)
+   Same treatment: remove inner panel border on phones to
+   avoid border-inside-border. A top-border acts as divider.
+   ------------------------------------------------------- */
+@media (max-width: 640px) {
+  .card > .calc-grid > .panel,
+  .card > .account-grid > .panel {
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 0;
+    padding-left: 0;
+    padding-right: 0;
+    background: transparent;
+  }
+  .card > .calc-grid > .panel:first-child,
+  .card > .account-grid > .panel:first-child {
+    border-top: none;
+  }
+  .card > .calc-grid,
+  .card > .account-grid {
+    gap: 0;
+    margin-top: 10px;
+  }
+}
+
+/* -------------------------------------------------------
+   INPUT ROW (.row — label | fixed-width input)
+   Stack label above input on phones.
+   ------------------------------------------------------- */
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+  .row input,
+  .row select {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* -------------------------------------------------------
+   INPUTS / SELECTS / BUTTONS — touch targets
+   iOS auto-zoom fires when focused input < 16px.
+   min-height 44px matches Apple HIG / WCAG touch targets.
+   ------------------------------------------------------- */
+@media (max-width: 640px) {
+  input[type="number"],
+  input[type="text"],
+  input[type="date"],
+  select {
+    font-size: 16px;
+    min-height: 44px;
+  }
+
+  /* Inline input inside composite controls:
+     inherit size from parent, don't re-apply min-height
+     (the composite wrapper sets the effective height). */
+  .input-with-unit.numeric-combo input[type="number"],
+  .inline input[type="number"],
+  .inline input[type="text"] {
+    min-height: unset;
+    font-size: 15px;
+  }
+
+  button:not(.step-btn):not(.menu-btn):not(.mode-btn) {
+    min-height: 44px;
+  }
+}
+
+/* -------------------------------------------------------
+   ACTION BUTTONS (.btns preset row)
+   Wrap and fill width on phones.
+   ------------------------------------------------------- */
+@media (max-width: 640px) {
+  .btns {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .btns button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* -------------------------------------------------------
+   RESULTS: scale down very large prominent values
+   on the smallest phones so they don't overflow.
+   ------------------------------------------------------- */
+@media (max-width: 390px) {
+  .result.prominent .v {
+    font-size: clamp(22px, 8vw, 32px);
+  }
+}
+
+/* -------------------------------------------------------
+   SHARE / EXPORT ACTIONS
+   Stack share buttons vertically on phones.
+   (Per-calculator CSS may override with grid pattern.)
+   ------------------------------------------------------- */
+@media (max-width: 640px) {
+  .result-share-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .result-share-actions button {
+    width: 100%;
+  }
+}
+
+/* -------------------------------------------------------
+   MODE SELECTOR (pill-style tab bar used in some calcs)
+   Allow wrapping on very narrow phones.
+   ------------------------------------------------------- */
+@media (max-width: 480px) {
+  .mode-selector {
+    flex-wrap: wrap;
+    border-radius: 10px;
+  }
+  .mode-btn:first-of-type {
+    border-radius: 8px 0 0 0;
+  }
+  .mode-btn:last-of-type {
+    border-radius: 0 0 8px 0;
+  }
+}
+
+/* -------------------------------------------------------
+   INSPECT / TOOLBAR BAR
+   Allow the toolbar to wrap on very small phones.
+   ------------------------------------------------------- */
+@media (max-width: 480px) {
+  .inspect-bar {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
+
+/* -------------------------------------------------------
+   HELPER TEXT: keep line-length readable on narrow phones
+   ------------------------------------------------------- */
+@media (max-width: 640px) {
+  .help-inline,
+  .help-text,
+  .helper,
+  .hint {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+}
+
+/* -------------------------------------------------------
+   RESULT CARDS GRID
+   Any 2-col result card grid: single column on phones.
+   ------------------------------------------------------- */
+@media (max-width: 640px) {
+  .results-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* -------------------------------------------------------
+   TABLE SCROLL WRAPPER (utility class)
+   Wrap any table in .table-scroll-wrap to enable
+   horizontal scrolling without breaking page layout.
+   ------------------------------------------------------- */
+.table-scroll-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 10px;
+}
+
+/* -------------------------------------------------------
+   CHART WRAP (utility class)
+   Ensures canvas/chart containers shrink to viewport.
+   ------------------------------------------------------- */
+.chart-wrap {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+.chart-wrap canvas,
+.chart-wrap svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* -------------------------------------------------------
+   .mobile-stack — utility: force single column anywhere
+   ------------------------------------------------------- */
+@media (max-width: 640px) {
+  .mobile-stack {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+}
+
+/* -------------------------------------------------------
+   DISCLAIMER / ASSUMPTION SECTIONS
+   Slightly tighter on phones.
+   ------------------------------------------------------- */
+@media (max-width: 640px) {
+  .disclaimer {
+    font-size: 11px;
+  }
+}
