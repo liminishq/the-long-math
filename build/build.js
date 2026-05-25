@@ -69,6 +69,7 @@ const ARTICLE_SLUGS = [
   "what-is-a-non-registered-account",
   "rrsp-meltdown",
   "rrsp-vs-tfsa-vs-fhsa",
+  "safe-withdrawal-rate",
   "sequence-of-returns-risk",
   "should-you-break-your-mortgage-for-a-lower-rate",
   "the-true-cost-of-financial-advisor-fees",
