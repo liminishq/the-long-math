@@ -1,0 +1,293 @@
+<!-- TLM Editorial Pipeline v1.1 — May 2026 -->
+---
+description: Full 8-stage editorial pipeline for Long Math articles. Load before starting any article.
+alwaysApply: false
+---
+
+# Long Math Article Editorial Pipeline
+
+## Rule Hierarchy
+
+**Rule 90 governs:** editorial pipeline process, stage sequencing, locking behavior, convergence criteria, scoring hierarchy, revision scope, and all pipeline-level decisions.
+
+**Rules 10–80 govern:** domain and content behavior within each stage — writing style (10), SEO/AEO (20), financial accuracy (30), citations (40), drafting workflow (50), editing workflow (60), internal linking (70), human review (80).
+
+**In case of conflict:** Rule 90 controls pipeline process and sequencing. Rules 10–80 control factual and content standards within stages. Neither overrides the other's domain. Both must be satisfied simultaneously; if they cannot be, surface the conflict in `UNRESOLVED_EDITORIAL_DEBATES.md`.
+
+## Trigger
+
+Any request in the form: "write an article about [topic]", "create the next article", "new Long Math article: [topic]", or equivalent. Begin Stage 1 immediately — no additional pipeline explanation is needed.
+
+## Self-Audit Limitation
+
+This pipeline designates the same model as both author (Stages 2, 4, 7) and auditor (Stages 3, 5, 8). Adversarial posture reduces but does not eliminate self-critique blind spots. The model cannot reliably detect problems it did not know it was creating. Human review is mandatory quality control — not ceremonial approval.
+
+---
+
+## Primary Metrics (in priority order)
+
+| Metric | Target | Floor |
+|---|---|---|
+| Craftsmanship | ≥ 9.5 | 9.0 |
+| Reader Engagement | ≥ 9.3 | 9.0 |
+| SEO | ≥ 9.2 | 9.0 |
+| AEO | ≥ 9.2 | 9.0 |
+
+SEO and AEO are hard constraints, not optimization targets. If improving either would materially damage craftsmanship or engagement, preserve the stronger article and surface the tradeoff in `UNRESOLVED_EDITORIAL_DEBATES.md`.
+
+---
+
+## Score Calibration Anchors
+
+### Craftsmanship
+
+**9.5+** Every paragraph earns its place. No AI cadence detectable: no repetitive three-beat sentence rhythm, no "but here's the thing" / "here's what most people miss" constructions, no templated transitions. Examples are precise and non-generic — chosen for conceptual clarity, not accessibility theater. Sentence length varies with meaning, not formula. Prose has texture: short sentences after long ones are intentional, not reflexive. Voice is consistent and distinctively human throughout.
+
+**9.0** Solid with occasional flat passages. Transitions are functional but predictable in places. Examples are generally good but sometimes chosen for recognizability over precision. Some AI patterning visible to skilled readers.
+
+**8.5 or below** AI shaping is detectable. Repetitive sentence structure. Paragraph-length uniformity. Transitions feel inserted rather than grown. Examples are generic or pedagogically convenient rather than illuminating. Score at this level is a pipeline failure.
+
+### Reader Engagement
+
+**9.3+** The reader is pulled forward by conceptual momentum — clarity creates forward motion, not hooks or suspense. Each section resolves one question and opens a better one. The article cannot be fully summarized without loss. Structure serves understanding, not searchability. The reader continues because the ideas are worth following, not because the formatting manages their attention.
+
+**9.0** Functional. Some sections feel like necessary coverage rather than earned exposition. Reader continues but is not compelled.
+
+**8.5 or below** Engagement is structural rather than conceptual: lists, subheadings, and formatting carry the reader instead of ideas. Sections could be skipped without consequence.
+
+### SEO
+
+**9.2+ (floor)** Semantic coverage is complete, hierarchy is logical, answer extraction compatibility is strong. Optimization is **invisible to readers**: no keyword clustering, no unnatural phrasing, no section headings that read like search queries rather than section titles. If a skilled reader can detect that SEO was being optimized, the score is below threshold.
+
+**Below 9.2** Optimization visible in prose. Keyword clustering detectable. Headings formatted as search queries. FAQ structure robotic. Score below floor is a pipeline failure requiring revision.
+
+### AEO
+
+**9.2+ (floor)** Definitions are direct and extractable. FAQs are genuinely useful — written for readers, not for snippet harvesting. Answer-engine compatibility emerges from clarity, not from structural manipulation. Extractable answers provide sufficient context that a reader who only reads the answer is not misled.
+
+**Below 9.2** FAQ answers padded or circular. Definitions evasive. Extractable answers mislead by omitting necessary context. Score below floor is a pipeline failure.
+
+---
+
+## Optimization Smell Detection
+
+Smell detection must be **instance-level**. Vague commentary ("some engagement bait detected") is not acceptable audit output.
+
+When optimization smell is detected, the audit must:
+
+1. **Quote the exact offending passage** — verbatim, no paraphrase
+2. **Classify the smell type:**
+   - `fake-suspense` — artificial tension, rhetorical cliffhangers, "but wait" constructions
+   - `seo-shaped` — phrasing that prioritizes keyword inclusion over clarity or naturalness
+   - `engagement-bait` — emotional manipulation, false urgency, clickbait framing, manufactured relatability
+   - `repetitive-transitions` — formulaic connectors reused across multiple sections
+   - `sentence-per-paragraph-spam` — isolated single sentences used for visual rhythm rather than meaning
+   - `emotionally-artificial` — performed empathy, hollow reassurance, unearned warmth
+   - `robotic-faq` — FAQ answers padded, circular, or written for extraction rather than for readers
+   - `algorithmic-shaping` — any pattern suggesting the text was written to satisfy a scoring model rather than a human reader
+3. **Quantify the metric impact** — e.g., "This construction reduces craftsmanship from 9.4 to 8.8"
+4. **Classify as local or structural:**
+   - *Local*: one passage can be rewritten without reconceiving the section
+   - *Structural*: the section was drafted with the wrong intent and needs reconception, not polish
+
+---
+
+## Authenticity Preservation Rule
+
+**Do not rewrite prose solely because an alternative phrasing is smoother, more optimized, or more algorithmically effective.**
+
+Preserve distinctive, authentic, memorable, or slightly imperfect phrasing unless:
+- clarity materially suffers,
+- trust materially suffers,
+- coherence breaks,
+- or a metric threshold materially fails.
+
+The pipeline produces **a maximally authentic draft for human completion** — not a perfectly optimized final publication artifact. The human editor holds final authority over authenticity, emotional realism, prose texture, philosophical integrity, and publication judgment. AI cannot fully optimize taste and should not attempt to.
+
+---
+
+## Simplification Fraud Rule
+
+Avoid technically true but materially misleading simplifications. Nuance must be layered progressively — accessible to general readers at the surface, accurate for sophisticated ones in depth. A simplification is fraud when it would cause a careful reader to draw a false conclusion.
+
+---
+
+## Pipeline Stages
+
+### Stage 1 — Strategic Editorial Blueprint → `OUTLINE.md`
+
+Not a heading list. Must include:
+- Teaching architecture and conceptual sequencing
+- Emotional/intellectual tension and likely reader objections
+- Misconceptions to proactively address
+- Pacing logic and cognitive fatigue points
+- Chart/table placement opportunities
+- Internal link opportunities (existing Long Math articles and calculators)
+- Natural FAQ and AEO targets
+- SEO semantic coverage targets
+- Trust-building caveats
+- Progressive complexity layering
+
+Initialize `LOCK_REGISTRY.md` as an empty file at this stage.
+
+### Stage 2 — Draft V1 → `DRAFT_V1.md`
+
+Complete, coherent, readable article. Apply domain standards from rules 10–80 within this stage. Read rule `05-voice-signatures.mdc` before drafting to ensure site-specific voice signatures are preserved.
+
+Do not add optimization markers, keyword clusters, or structural choices visible as SEO/AEO optimization to readers.
+
+### Stage 3 — Full Systems Audit → `AUDIT_V1.md`
+
+**Posture: adversarial auditor. Not the author.**
+
+Evaluate all dimensions: craftsmanship (using calibration anchors above), engagement, SEO, AEO, structure, pacing, trust, simplification fraud, AI artifacts, optimization smell (instance-level per protocol above), visual placement, educational layering, prose cadence.
+
+Required critique structure:
+```
+# Severity 1 — Critical
+# Severity 2 — High Leverage
+# Severity 3 — Optional
+# Preserve At All Costs
+# Scorecard [per-metric scores with one-line evidence statements]
+```
+
+**Restraint rule:** Only recommend changes where expected improvement is material AND risk of craftsmanship degradation is low. Do not generate critique to fill the audit. An audit with few findings is a good outcome, not a failure.
+
+### Stage 4 — V2 Revision → `DRAFT_V2.md` + `REVISION_LOG_V2.md`
+
+**Posture: selective author.**
+
+- Assess each audit recommendation on its merits — reject weak or harmful recommendations explicitly
+- Accept or reject with documented rationale
+- Apply revision scope limit (below)
+- Update `LOCK_REGISTRY.md` for sections meeting locking criteria (all six conditions must be satisfied)
+
+`REVISION_LOG_V2.md` must include:
+- Accepted recommendations with rationale
+- Rejected recommendations with rationale
+- Unresolved concerns
+- Current lock state summary (which sections locked at this stage and why)
+
+**Revision Scope Limit:** No more than 40% of paragraphs may be substantially rewritten between major draft stages without explicit justification. Justification must cite at least one of: structural failure, engagement collapse, factual weakness, authenticity concern, or severe metric deficiency. The pipeline favors controlled convergence, increasing lock density, and preservation over rewrite churn.
+
+### Stage 5 — Hybrid Audit → `AUDIT_V2.md`
+
+**Posture: adversarial auditor, targeted scope.**
+
+`AUDIT_V2.md` must open with three required declarations:
+
+1. **Locked sections** — list every locked section by name and state explicitly: "These sections are not being evaluated."
+2. **Active audit scope** — list which sections are being audited and why each is in scope
+3. **Reopened locked sections** (if any) — name the section, state the specific dependency effect justifying reopening, confirm it meets reopening criteria
+
+**Audit scope:** revised sections, adjacent transitions, global pacing, dependency impacts on unlocked sections.
+
+**Voice Seam Analysis (required):** When revised prose sits adjacent to locked prose, explicitly evaluate: does the revised material sound like the same writer as the locked material? Voice mismatches at seam points are a Severity 2 issue minimum.
+
+**Audit Creep Prevention:** Do not invent critique to justify the audit's existence. If no material issues exist within the active scope, state that clearly. That is a good outcome.
+
+Locked sections may only be reopened for: dependency impacts from adjacent revisions, structural conflicts introduced elsewhere, factual corrections, or severe coherence breaks.
+
+### Stage 6 — Source/Citation Pass → `SOURCE_NOTES.md`
+
+Authoritative references, CRA/government sources where relevant, methodological citations, supporting references. Sources must support trust, educational accuracy, and SEO/AEO signal without padding or overclaiming.
+
+### Stage 7 — Final AI V3 → `FINAL_AI_V3.md`
+
+**Posture: author, minimal intervention.**
+
+- Locked sections reproduced exactly — do not re-edit
+- Minimally rewritten outside affected areas
+- Article is fully coherent and ready for human editor
+- Do not introduce new optimization passes — V3 is synthesis and assembly, not a new refinement cycle
+
+### Stage 8 — Convergence Validation → `LATEST_SCORECARD.md` + `UNRESOLVED_EDITORIAL_DEBATES.md`
+
+**Posture: neutral evaluator.**
+
+Confirm: all metrics meet thresholds, article has stabilized, remaining edits are marginal, authenticity is intact, no unresolved structural issues.
+
+**`UNRESOLVED_EDITORIAL_DEBATES.md` — required entry format:**
+
+```markdown
+## Issue: [specific editorial question]
+
+**What both models agree on:** [shared assessment, if any; "nothing" is a valid answer]
+
+**Point of genuine uncertainty:** [what the pipeline cannot determine — distinguish from model disagreement]
+
+**What's at stake:** [what is gained or lost by each possible resolution]
+
+**Recommended human decision:** [the specific question for the editor to answer]
+```
+
+Many authenticity questions are uncertainty problems, not disagreement problems. If the pipeline cannot determine whether a phrasing is authentic or synthetic, that is an uncertainty entry. Surface it — do not resolve it.
+
+Then stop. Wait for human review.
+
+---
+
+## Locking Rule
+
+A section is **LOCKED** only when all six conditions are simultaneously satisfied:
+- Craftsmanship ≥ 9.5
+- Engagement ≥ 9.3
+- No AI artifact concerns
+- No structural concerns
+- Educational clarity strong
+- Voice authenticity strong
+- No simplification fraud concerns
+
+Lock state **must be recorded in `LOCK_REGISTRY.md`** at the time of locking. Without a file record, the lock does not persist across sessions.
+
+**Locked sections may only be reopened for:**
+- Dependency impacts from adjacent revisions
+- Structural conflicts introduced elsewhere in the article
+- Factual corrections
+- Severe coherence breaks
+
+---
+
+## LOCK_REGISTRY.md Format
+
+```markdown
+<!-- TLM Lock Registry — [Article Title] -->
+
+## Locked Sections
+
+| Section | Locked at Stage | Craftsmanship | Engagement | Rationale |
+|---|---|---|---|---|
+| [Section heading] | Stage [#] | [score] | [score] | [one-line reason] |
+
+## Reopened Sections
+
+| Section | Reopened at Stage | Justification |
+|---|---|---|
+| [Section heading] | Stage [#] | [specific dependency or structural reason] |
+```
+
+---
+
+## Human Asymmetry
+
+The human editor holds final authority over:
+- Authenticity
+- Emotional realism
+- Prose texture
+- Philosophical integrity
+- Final publication judgment
+
+The pipeline's job is to produce maximally authentic, educationally honest prose and then stop. Any uncertainty about whether a passage is authentic or synthetic — rather than clearly strong or clearly weak — must be surfaced in `UNRESOLVED_EDITORIAL_DEBATES.md` and left for human resolution.
+
+---
+
+## File Output Summary
+
+Pipeline deliverables at completion:
+- `FINAL_AI_V3.md`
+- `LATEST_SCORECARD.md`
+- `UNRESOLVED_EDITORIAL_DEBATES.md`
+- `SOURCE_NOTES.md`
+- `LOCK_REGISTRY.md`
+
+Then stop. Do not auto-publish or treat V3 as final. Human review is mandatory quality control.

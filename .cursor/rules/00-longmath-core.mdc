@@ -24,3 +24,16 @@ Core philosophy: No opinions. No hidden assumptions. Just arithmetic.
 - Do not turn arithmetic into advice, certainty, or predictions.
 - Do not publish drafts automatically or imply unfinished work is final.
 - Do not add placeholder links, placeholder citations, or unsupported claims.
+
+## Article Session Dispatcher
+
+When asked to write, draft, or create a new Long Math article, **always load and apply rule `90-article-editorial-pipeline.mdc` before beginning.** The full 8-stage pipeline is required. Do not begin drafting without reading that rule first.
+
+## Voice Signatures
+
+The Long Math has specific rhetorical and philosophical signatures that must not be optimized away. See rule `05-voice-signatures.mdc` for the full list. Key signatures:
+- "Just arithmetic." — site closing statement, not a generic phrase
+- Transparent assumptions — state them explicitly, show their effect
+- Uncomfortable arithmetic — do not soften conclusions that are genuinely difficult
+- Explicit tradeoff acknowledgment — name both sides, do not smooth over complexity
+- Non-condescending teaching — the reader is intelligent; earn simplicity through precision

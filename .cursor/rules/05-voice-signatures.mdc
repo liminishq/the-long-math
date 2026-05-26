@@ -1,0 +1,47 @@
+---
+description: Long Math voice signatures and rhetorical identity — preserve during all article drafting and auditing.
+alwaysApply: false
+---
+
+# Long Math Voice Signatures
+
+These are recurring rhetorical, philosophical, and structural signatures that define The Long Math's editorial identity. They must be preserved during drafting, revision, and auditing. Audits must not optimize them away — if an audit recommends removing a voice signature, the recommendation should be rejected unless there is a clear structural or factual justification.
+
+## Closing Signature
+
+**"Just arithmetic."** — This is the site's closing philosophical statement. It appears at the end of articles where appropriate. It is not generic and must not be replaced with alternatives that merely mean the same thing. The phrase earns its economy.
+
+## Philosophical Framing Signatures
+
+**Opportunity-cost framing** — The Long Math regularly asks not just "what does this choice cost?" but "what does this choice cost compared to the best alternative forgone?" Arguments are framed in terms of tradeoffs, not just outcomes.
+
+**Transparent assumptions** — Assumptions are named, not hidden. When a model or calculation depends on an assumption, that assumption is stated explicitly and its effect is shown. Readers can inspect the reasoning.
+
+**Arithmetic over ideology** — Conclusions follow from arithmetic, not from financial ideology or conventional wisdom. When arithmetic contradicts common advice, the arithmetic is followed and the discrepancy is acknowledged.
+
+**Anti-narrative positioning** — The Long Math resists the urge to make financial concepts into stories with heroes and villains, dramatic reveals, or emotional arcs. The subject matter is the subject matter. Clarity is more valuable than drama.
+
+**Explicit tradeoff acknowledgment** — Every meaningful financial decision has a tradeoff. The Long Math names both sides. A strategy that is "better" in one dimension is typically worse in another. This is acknowledged rather than smoothed over.
+
+**Uncomfortable arithmetic** — When the math produces an uncomfortable result — a long time horizon, a large gap, a difficult tradeoff — the discomfort is not softened. It is presented clearly and explained honestly.
+
+## Prose Texture Signatures
+
+**Short declarative sentences after extended reasoning** — After a complex explanation, a short declarative sentence is often used to crystallize the conclusion. This is intentional pacing, not a habit to be "varied away" by optimization.
+
+**Present-tense immediacy for calculations** — Calculations and examples are typically written in present tense to create immediacy and inspectability. "The retiree withdraws $40,000" rather than "the retiree would withdraw."
+
+**Emotionally restrained but not emotionally absent** — The writing acknowledges that financial decisions have real human stakes. It does not exploit that acknowledgment for engagement. It names difficulty without dramatizing it.
+
+**Non-condescending teaching** — Complex ideas are explained clearly without assuming the reader is confused or needs reassurance. The reader is treated as intelligent. Explanations earn their simplicity by being genuinely precise, not by being safe.
+
+## What Audits Must Not Optimize Away
+
+- The "Just arithmetic." closing
+- Sentences that are deliberately shorter than surrounding prose as a pacing tool
+- Explanations that name assumptions explicitly (even when this creates awkward phrasing)
+- Tradeoff acknowledgments that complicate a clean takeaway
+- Arithmetic that produces an uncomfortable or counterintuitive result (do not soften the conclusion)
+- Phrases that are slightly unconventional but distinctively the author's voice
+
+If an audit flags any of the above as a weakness, the Stage 4 author review should examine whether the audit is identifying a genuine problem or attempting to optimize away a voice signature. When uncertain, surface in `UNRESOLVED_EDITORIAL_DEBATES.md`.
