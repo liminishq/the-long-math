@@ -6,7 +6,10 @@
 
     <header>
       <h1>{{ essaysHub.h1 }}</h1>
+
+      {% if essaysHub.scopeIntro %}
       <p class="essays-hub-scope">{{ essaysHub.scopeIntro }}</p>
+      {% endif %}
 
       <p class="hero-lede">
         {{ essaysHub.heroLede }}
@@ -19,6 +22,12 @@
       <p>
         {{ essaysHub.introP2 }}
       </p>
+
+      {% if essaysHub.introP3 %}
+      <p>
+        {{ essaysHub.introP3 }}
+      </p>
+      {% endif %}
     </header>
 
     <section class="card featured-essay">
