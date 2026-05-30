@@ -455,9 +455,9 @@ function buildSharePayload() {
     : 'Selected province';
   return {
     calculatorName: 'ccpc-tax',
-    title: 'CCPC Tax Calculator | The Long Math',
+    title: 'CCPC Income Tax Calculator | The Long Math',
     brand: 'The Long Math',
-    headline: 'CCPC Tax Estimate',
+    headline: 'CCPC Income Tax Estimate',
     mainValue: formatCurrency(combined.totalTaxBurden || 0),
     subline: 'Combined corporate + personal tax burden',
     contextLines: [
@@ -477,7 +477,7 @@ function exportCsv() {
   if (!latestResult || !latestInputs) return;
   const { corporate, combined, personal, personal1, personal2, incomeSplitting } = latestResult;
   const rows = [
-    'CCPC Tax Calculator (export)',
+    'CCPC Income Tax Calculator (export)',
     'Generated,' + new Date().toISOString(),
     'Income splitting mode,' + (incomeSplitting ? 'Yes' : 'No'),
     'Gross corporate revenue,' + (latestInputs.grossRevenue || 0),

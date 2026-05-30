@@ -304,6 +304,30 @@
   },
   {
     "type": "article",
+    "title": "Safe Withdrawal Rate",
+    "url": "/articles/investing-and-financial-literacy/safe-withdrawal-rate/",
+    "desc": "Learn what a safe withdrawal rate is, how the 4% rule works, why sequence-of-returns risk matters in retirement, and how Canadian accounts, taxes, CPP, and OAS affect withdrawal planning.",
+    "keywords": [
+      "Safe Withdrawal Rate",
+      "safe withdrawal rate",
+      "safe",
+      "withdrawal",
+      "rate",
+      "rule",
+      "works",
+      "sequence",
+      "returns",
+      "risk",
+      "matters",
+      "retirement",
+      "canadian",
+      "accounts",
+      "taxes",
+      "cpp"
+    ]
+  },
+  {
+    "type": "article",
     "title": "Sequence of Returns Risk: Why the Order of Returns Matters in Retirement",
     "url": "/articles/investing-and-financial-literacy/sequence-of-returns-risk/",
     "desc": "Sequence of returns risk explains why poor returns early in retirement can damage a portfolio more than the same returns later. See the mechanism, the math, and the retirement levers that change your exposure.",
@@ -822,29 +846,30 @@
   },
   {
     "type": "calculator",
-    "title": "CCPC Tax Calculator",
+    "title": "CCPC Income Tax Calculator",
     "url": "/calculators/ccpc-tax/",
     "desc": "",
     "keywords": [
-      "CCPC Tax Calculator (2025 &amp; 2026)",
-      "CCPC Tax Calculator",
+      "CCPC Income Tax Calculator (2025 &amp; 2026)",
+      "CCPC Income Tax Calculator",
       "ccpc tax"
     ]
   },
   {
     "type": "calculator",
-    "title": "Inspect the Arithmetic — CCPC Tax Calculator",
+    "title": "Inspect the Arithmetic — CCPC Income Tax Calculator",
     "url": "/calculators/ccpc-tax/methodology/",
-    "desc": "Formulae, computational structure, and assumptions for the CCPC Tax Calculator (2025).",
+    "desc": "Formulae, computational structure, and assumptions for the CCPC Income Tax Calculator (2025).",
     "keywords": [
-      "Inspect the Arithmetic – CCPC Tax Calculator",
-      "Inspect the Arithmetic — CCPC Tax Calculator",
+      "Inspect the Arithmetic – CCPC Income Tax Calculator",
+      "Inspect the Arithmetic — CCPC Income Tax Calculator",
       "methodology",
       "formulae",
       "computational",
       "structure",
       "assumptions",
       "ccpc",
+      "income",
       "tax",
       "calculator",
       "2025"
@@ -1597,23 +1622,24 @@
     "type": "essay",
     "title": "Beyond the Numbers",
     "url": "/essays/",
-    "desc": "Essays examining a life and career in medicine through a financial and business lens—training, income, incentives, opportunity cost, and long-term trade-offs.",
+    "desc": "Beyond the Numbers applies The Long Math&#39;s arithmetic-first lens to careers, training pipelines, medicine, professional life, and other long-horizon decisions where opportunity cost, delayed earnings, taxation, and cash-flow timing matter.",
     "keywords": [
       "Beyond the Numbers",
       "essays",
-      "examining",
-      "life",
-      "career",
-      "medicine",
-      "financial",
-      "business",
+      "beyond",
+      "numbers",
+      "applies",
+      "math",
+      "arithmetic",
       "lens",
+      "careers",
       "training",
-      "income",
-      "incentives",
-      "opportunity",
-      "cost",
-      "term"
+      "pipelines",
+      "medicine",
+      "professional",
+      "life",
+      "horizon",
+      "decisions"
     ]
   }
 ]
