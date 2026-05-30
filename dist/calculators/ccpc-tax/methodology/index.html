@@ -162,7 +162,7 @@
 
       <h2>Personal Tax Arithmetic</h2>
       <p>
-        Personal tax for each shareholder is computed by the shared personal tax engine <code>computePersonalTax()</code> in <code>tax.engine.js</code>,
+        Personal tax for each shareholder is computed by the shared personal tax engine <code>computePersonalTax()</code> in <code>/calculators/canada-income-tax/js/tax.engine.js</code>,
         using the same brackets, credits, CPP/EI logic, and dividend rules as the standalone <a href="/calculators/canada-income-tax/" target="_blank" rel="noopener">Canada Personal Income Tax Calculator</a>.
       </p>
 
@@ -255,8 +255,8 @@
       </ul>
 
       <p style="margin-top: 2em; font-weight: 600;">
-        If any discrepancy is identified between this documentation and the live CCPC calculator, the engine modules
-        (<code>corporate.engine.js</code>, <code>tax.engine.js</code>, and <code>ccpc.bridge.js</code>) are the source of truth. This page will be updated to match them.
+        If any discrepancy is identified between this documentation and the live CCPC calculator, the corporate engine, canonical personal tax engine,
+        and CCPC bridge (<code>corporate.engine.js</code>, <code>/calculators/canada-income-tax/js/tax.engine.js</code>, and <code>ccpc.bridge.js</code>) are the source of truth. This page will be updated to match them.
       </p>
 
       <h2>What This Calculator Does Not Include</h2>

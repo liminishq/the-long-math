@@ -543,6 +543,16 @@ function calculateCPP(employmentIncome, payroll) {
 }
 
 /**
+ * Employer CPP for standard T4 employment: matched to employee CPP (same rates/caps).
+ * Reused by calculators that need to model owner salary as a corporate deduction.
+ */
+export function employerCppForT4Employment(employmentIncome, opts = {}) {
+  const dataCtx = buildDataContext(opts);
+  const income = Math.max(0, Number(employmentIncome) || 0);
+  return calculateCPP(income, dataCtx.payroll).cpp;
+}
+
+/**
  * Calculate EI premium
  * @param {number} employmentIncome - Employment income
  * @param {Object} payroll - Payroll data (ei)

@@ -5,13 +5,19 @@
 
 import { computeCCPCTax } from './ccpc.bridge.js';
 import { loadCorporateTaxData } from './corporate.data.js';
-import { loadTaxData } from './tax.data.js';
+import { loadTaxData } from '../../canada-income-tax/js/tax.data.js';
 import { formatCurrency, formatPercent, parseInput } from './format.js';
 
 let corporateDataLoaded = false;
 let personalDataLoaded = false;
 let latestInputs = null;
 let latestResult = null;
+
+const PERSONAL_TAX_DATA_BASE = '/calculators/canada-income-tax/data';
+
+function loadPersonalTaxData(year) {
+  return loadTaxData(year, { basePath: PERSONAL_TAX_DATA_BASE });
+}
 
 // Province codes in alphabetical order
 const PROVINCES = [
@@ -50,7 +56,7 @@ export async function initUI() {
   try {
     await Promise.all([
       loadCorporateTaxData(2026),
-      loadTaxData(2026)
+      loadPersonalTaxData(2026)
     ]);
     corporateDataLoaded = true;
     personalDataLoaded = true;
@@ -79,7 +85,7 @@ function attachEventListeners() {
       try {
         corporateDataLoaded = false;
         personalDataLoaded = false;
-        await Promise.all([loadCorporateTaxData(y), loadTaxData(y)]);
+        await Promise.all([loadCorporateTaxData(y), loadPersonalTaxData(y)]);
         corporateDataLoaded = true;
         personalDataLoaded = true;
         calculate();

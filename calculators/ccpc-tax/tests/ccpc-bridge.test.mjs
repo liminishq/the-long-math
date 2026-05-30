@@ -9,24 +9,27 @@ import { fileURLToPath } from 'node:url';
 import assert from 'node:assert/strict';
 import { test, before } from 'node:test';
 
-import { applyTaxDataSnapshot } from '../js/tax.data.js';
+import { loadTaxData } from '../../canada-income-tax/js/tax.data.js';
+import { computePersonalTax } from '../../canada-income-tax/js/tax.engine.js';
 import { applyCorporateTaxDataSnapshot } from '../js/corporate.data.js';
 import { computeCCPCTax } from '../js/ccpc.bridge.js';
 import { employerCppForT4Employment } from '../js/tax.engine.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA = join(__dirname, '..', 'data', '2025');
+const CCPC_DATA_ROOT = join(__dirname, '..', 'data');
+const PERSONAL_DATA_ROOT = join(__dirname, '..', '..', 'canada-income-tax', 'data');
 
-before(() => {
-  const federal = JSON.parse(readFileSync(join(DATA, 'federal.json'), 'utf8'));
-  const provinces = JSON.parse(readFileSync(join(DATA, 'provinces.json'), 'utf8'));
-  const payroll = JSON.parse(readFileSync(join(DATA, 'payroll.json'), 'utf8'));
-  const dividends = JSON.parse(readFileSync(join(DATA, 'dividends.json'), 'utf8'));
-  applyTaxDataSnapshot({ federal, provinces, payroll, dividends });
+async function loadYear(year) {
+  await loadTaxData(year, { fsDataRoot: PERSONAL_DATA_ROOT });
 
-  const federalCorp = JSON.parse(readFileSync(join(DATA, 'federal-corporate.json'), 'utf8'));
-  const provincesCorp = JSON.parse(readFileSync(join(DATA, 'provinces-corporate.json'), 'utf8'));
+  const data = join(CCPC_DATA_ROOT, String(year));
+  const federalCorp = JSON.parse(readFileSync(join(data, 'federal-corporate.json'), 'utf8'));
+  const provincesCorp = JSON.parse(readFileSync(join(data, 'provinces-corporate.json'), 'utf8'));
   applyCorporateTaxDataSnapshot({ federal: federalCorp, provinces: provincesCorp });
+}
+
+before(async () => {
+  await loadYear(2025);
 });
 
 const ON = 'ON';
@@ -185,4 +188,49 @@ test('Income splitting: combined salaries and per-shareholder employer CPP reduc
   assert.equal(split.corporate.employerCppExpense, expectedEmployerCpp);
   assert.equal(split.corporate.taxableIncome, Math.max(0, pre - s1 - s2 - expectedEmployerCpp));
   assert.equal(split.personal1.cpp + split.personal2.cpp, expectedEmployerCpp);
+});
+
+test('Income splitting: shareholder personal tax matches canonical personal engine', async () => {
+  await loadYear(2026);
+
+  const shareholderInput = {
+    year: 2026,
+    province: ON,
+    employmentIncome: 0,
+    selfEmploymentIncome: 0,
+    otherIncome: 0,
+    eligibleDividends: 0,
+    nonEligibleDividends: 240_000,
+    capitalGains: 0,
+    rrspDeduction: 0,
+    fhsaDeduction: 0,
+    estimatedDeductions: 0,
+    taxPaid: 0
+  };
+
+  const canonical = computePersonalTax(shareholderInput);
+  const ccpc = computeCCPCTax({
+    year: 2026,
+    province: ON,
+    grossRevenue: 700_000,
+    expenses: 0,
+    incomeSplitting: true,
+    shareholder1: {
+      salary: 0,
+      eligibleDividends: 0,
+      nonEligibleDividends: 240_000,
+      otherIncome: 0,
+      deductions: 0
+    },
+    shareholder2: {
+      salary: 0,
+      eligibleDividends: 0,
+      nonEligibleDividends: 0,
+      otherIncome: 0,
+      deductions: 0
+    }
+  });
+
+  assert.equal(ccpc.personal1.totalIncomeTax, canonical.totals.totalIncomeTax);
+  assert.equal(Math.round(ccpc.personal1.totalIncomeTax), 69_679);
 });
