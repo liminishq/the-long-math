@@ -40,6 +40,7 @@ const SLUGS = [
   "what-is-an-fhsa",
   "what-is-an-resp",
   "what-is-an-rrsp",
+  "what-is-a-rrif",
   "what-is-investing",
   "what-is-the-stock-market",
   "xeqt-and-chill-low-cost-etf-investing",
