@@ -1,6 +1,6 @@
 /**
  * Run after `node build/build.js` (see npm `build` script).
- * (1) Every slug in build/build.js ARTICLE_SLUGS must appear as a hub link in EN and FR hub JSON.
+ * (1) Every slug in build/build.js ARTICLE_SLUGS must appear as a featured-card or journey-item-link in EN and FR hub JSON.
  * (2) Every /assets/css or /assets/js file referenced from dist HTML must exist under dist/assets/.
  */
 const fs = require("fs");
@@ -53,8 +53,20 @@ function main() {
 
   for (const slug of slugs) {
     const needle = `/articles/investing-and-financial-literacy/${slug}/`;
-    if (!enHub.includes(needle)) errors.push(`EN hub missing link for slug "${slug}" (${path.relative(ROOT, HUB_EN)})`);
-    if (!frHub.includes(needle)) errors.push(`FR hub missing link for slug "${slug}" (${path.relative(ROOT, HUB_FR)})`);
+    const featuredCard = `class="featured-card" href="${needle}"`;
+    const journeyItem = `href="${needle}" class="journey-item-link"`;
+    const enHasCard = enHub.includes(featuredCard) || enHub.includes(journeyItem);
+    const frHasCard = frHub.includes(featuredCard) || frHub.includes(journeyItem);
+    if (!enHasCard) {
+      errors.push(
+        `EN hub missing featured-card or journey-item-link for slug "${slug}" (${path.relative(ROOT, HUB_EN)})`
+      );
+    }
+    if (!frHasCard) {
+      errors.push(
+        `FR hub missing featured-card or journey-item-link for slug "${slug}" (${path.relative(ROOT, HUB_FR)})`
+      );
+    }
   }
 
   if (!fs.existsSync(DIST)) {
@@ -80,7 +92,7 @@ function main() {
     console.error("verify-article-hub-and-dist-assets:\n");
     for (const e of errors) console.error("  - " + e);
     console.error(
-      "\nFix hub: add a card/link in hubMainHtml for each slug in both EN and FR investing-and-financial-literacy-index.json."
+      "\nFix hub: add a featured-card or journey-item-link in hubMainHtml for each slug in both EN and FR investing-and-financial-literacy-index.json."
     );
     console.error(
       "Fix dist assets: run npm run build, then git add -f the new files under dist/assets/css/ and dist/assets/js/ if you publish prebuilt dist/ from git.\n"

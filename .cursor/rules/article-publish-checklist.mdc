@@ -9,7 +9,7 @@ alwaysApply: false
 When adding a slug to `ARTICLE_SLUGS` in `build/build.js`:
 
 1. Add EN and FR article JSON under `assets/i18n/{en,fr}/articles/{slug}.json`.
-2. Add a visible hub card in **`hubMainHtml`** in **both** `assets/i18n/en/articles/investing-and-financial-literacy-index.json` and `assets/i18n/fr/articles/investing-and-financial-literacy-index.json` — link must include `/articles/investing-and-financial-literacy/{slug}/`.
+2. Add a visible hub card in **`hubMainHtml`** in **both** `assets/i18n/en/articles/investing-and-financial-literacy-index.json` and `assets/i18n/fr/articles/investing-and-financial-literacy-index.json` — each slug needs a `featured-card` or `journey-item-link` whose `href` is `/articles/investing-and-financial-literacy/{slug}/` (not only a cross-link elsewhere in the HTML).
 3. Run **`npm run build`**. It runs `tools/verify-article-hub-and-dist-assets.cjs` and **fails** if any slug is missing from either hub or if `dist/**/*.html` references a missing file under `dist/assets/`.
 4. If the build emits new hashed files under `dist/assets/css/` or `dist/assets/js/` that are not yet tracked, commit them with **`git add -f …`** (most of `dist/` is gitignored).
 

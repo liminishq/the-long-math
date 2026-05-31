@@ -252,7 +252,7 @@ Taxable income: $50,000
 
 Left until later, the same dollars may come out on top of CPP, OAS, pensions, and RRIF minimums — potentially at a higher rate.
 
-No single approach wins on arithmetic alone. The choice depends on income across the full retirement timeline, not on any single year.
+The arithmetic cannot be optimized one year at a time. The choice depends on all income sources across the full retirement timeline, not on any single account or any single year.
 
 ---
 

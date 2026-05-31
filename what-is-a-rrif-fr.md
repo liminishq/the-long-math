@@ -252,7 +252,7 @@ Revenu imposable : 50 000 $
 
 Reportés à plus tard, les mêmes dollars peuvent sortir par-dessus le RPC, la PSV, les pensions et les minimums du FERR — potentiellement à un taux plus élevé.
 
-Aucune approche ne l'emporte sur l'arithmétique seule. Le choix dépend du revenu sur toute la trajectoire de retraite, pas d'une seule année.
+L'arithmétique ne peut pas être optimisée année par année. Le choix dépend de l'ensemble des sources de revenu sur toute la trajectoire de retraite, et non d'un seul compte ni d'une seule année.
 
 ---
 
