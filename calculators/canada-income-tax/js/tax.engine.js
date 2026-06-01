@@ -574,7 +574,8 @@ function calculateEI(employmentIncome, payroll) {
   };
 }
 
-const MARGINAL_DELTA = 1;
+/** Income bump for marginal-rate estimation (avoids $0 delta when net tax is rounded to dollars). */
+const MARGINAL_DELTA = 100;
 
 /** Normalize numeric input from form (may be string). */
 function num(input, field) {
@@ -608,7 +609,7 @@ function cloneInput(input) {
 /**
  * Marginal tax rate = exact definition: delta tax per $1 of income type X.
  * baseline = fullTax(inputs); clone = inputs, clone.X += 1; newTax = fullTax(clone);
- * marginalRate = newTax.totalIncomeTax - baseline.totalIncomeTax. No division.
+ * marginalRate = (newTax.totalIncomeTax - baseline.totalIncomeTax) / MARGINAL_DELTA.
  * Perturbation uses the exact field: employmentIncome, eligibleDividends, otherIncome, capitalGains (cash).
  * If multiple income types exist, "combined" uses employment first, then eligible dividends, then other income, etc.
  */
@@ -622,7 +623,7 @@ function computeMarginalRatesByType(input, dataCtx) {
     const clone = cloneInput(input);
     clone[field] = (currentValue ?? 0) + MARGINAL_DELTA;
     const newResult = runFullCalculation(clone, dataCtx, roundOpts);
-    const marginalRate = newResult.totalIncomeTax - baseTax;
+    const marginalRate = (newResult.totalIncomeTax - baseTax) / MARGINAL_DELTA;
     if (marginalRate < 0 || marginalRate > 1) {
       console.warn('Marginal rate out of expected bounds:', marginalRate, `(field: ${field})`);
     }

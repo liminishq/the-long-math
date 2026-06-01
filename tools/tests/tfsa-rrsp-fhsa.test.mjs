@@ -278,3 +278,31 @@ test("monthly contributions, t_now < t_ret, reinvest – TFSA optimal with no ye
     "Optimal strategy should have no year-1 RRSP contributions when TFSA has ample room"
   );
 });
+
+// 10) Default-like scenario: $2k/mo, limited TFSA room, reinvest refund, t_now > t_ret → RRSP first wins.
+//    (Requires realistic marginal rates; broken $1-delta tax rounding used to yield t_now ≈ 0% and wrongly favour TFSA.)
+test("monthly 2k, 7k TFSA room, reinvest, t_now > t_ret – RRSP beats TFSA", () => {
+  const result = runAccountStrategySimulation({
+    contributionMode: "monthly",
+    contributionAmount: 2000,
+    horizonYears: 25,
+    annualReturn: 7,
+    annualFees: 0.5,
+    useRealDollars: false,
+    t_now: 43,
+    t_ret: 28,
+    refundMode: "reinvest",
+    fhsaEligible: false,
+    tfsaRemainingRoom: 7000,
+    rrspRemainingRoom: 21600,
+    tfsaNewAnnualRoom: 7000,
+    currentTaxableIncome: 120000,
+    rrspAnnualNewRoomCap: 32490
+  });
+
+  assert.equal(result.optimalStrategyKey, "ALL_RRSP");
+  assert.ok(
+    result.strategies.ALL_RRSP.finalAfterTax > result.strategies.ALL_TFSA.finalAfterTax,
+    "RRSP-first should beat TFSA-first when current rate exceeds retirement rate and refunds are reinvested"
+  );
+});
