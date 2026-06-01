@@ -1,21 +1,13 @@
 // RRSP Contribution Room & Tax Refund Calculator - arithmetic engine
 // Keeps pure calculation logic separate from the UI.
 
-const RRSP_LIMITS = {
-  2025: 32490,
-  2026: 33810
-};
+import {
+  RRSP_LIMITS,
+  parseRrspNumber as parseNumber,
+  computeRrspContributionRoom as computeContributionRoom
+} from "../canada-income-tax/js/rrsp-room.js";
 
 const TAX_DATA_CACHE = {};
-
-function parseNumber(value) {
-  if (value == null) return 0;
-  if (typeof value === "number") return Number.isFinite(value) ? value : 0;
-  const cleaned = String(value).replace(/,/g, "").trim();
-  if (cleaned === "") return 0;
-  const n = Number(cleaned);
-  return Number.isFinite(n) ? n : 0;
-}
 
 async function loadTaxDataForYear(year) {
   const key = year === 2026 ? 2025 : year; // reuse 2025 brackets for 2026 until separate data exists
@@ -23,8 +15,8 @@ async function loadTaxDataForYear(year) {
 
   const basePath = "/calculators/canada-income-tax/data";
   const [federal, provinces] = await Promise.all([
-    fetch(`${basePath}/${key}/federal.json`).then(r => r.json()),
-    fetch(`${basePath}/${key}/provinces.json`).then(r => r.json())
+    fetch(`${basePath}/${key}/federal.json`).then((r) => r.json()),
+    fetch(`${basePath}/${key}/provinces.json`).then((r) => r.json())
   ]);
 
   TAX_DATA_CACHE[key] = { federal, provinces };
@@ -79,36 +71,6 @@ async function computeProgressiveTax(year, provinceCode, taxableIncome) {
   };
 }
 
-function computeContributionRoom(inputs) {
-  const year = typeof inputs.taxYear === "string" ? parseInt(inputs.taxYear, 10) || 2025 : inputs.taxYear;
-  const priorEarnedIncome = parseNumber(inputs.priorEarnedIncome);
-  const unusedRoom = parseNumber(inputs.unusedRoom);
-  const pa = parseNumber(inputs.pa);
-  const par = parseNumber(inputs.par);
-  const pspa = parseNumber(inputs.pspa);
-  const craOverrideEnabled = !!inputs.craOverrideEnabled;
-  const craLimitOverride = parseNumber(inputs.craLimitOverride);
-
-  const cap = RRSP_LIMITS[year] || RRSP_LIMITS[2025];
-  const newRoom = Math.min(0.18 * Math.max(0, priorEarnedIncome), cap);
-
-  const estimatedAvailableRoom =
-    unusedRoom +
-    newRoom -
-    pa +
-    par -
-    pspa;
-
-  const availableRoomForDeduction = craOverrideEnabled ? craLimitOverride : estimatedAvailableRoom;
-
-  return {
-    year,
-    newRoom,
-    estimatedAvailableRoom,
-    availableRoomForDeduction
-  };
-}
-
 async function computeScenario(rawInputs) {
   const taxYear = rawInputs.taxYear || 2025;
   const province = rawInputs.province || "";
@@ -128,10 +90,7 @@ async function computeScenario(rawInputs) {
   });
 
   const availableRoom = room.availableRoomForDeduction;
-  const deductibleContribution = Math.max(
-    0,
-    Math.min(plannedContribution, availableRoom)
-  );
+  const deductibleContribution = Math.max(0, Math.min(plannedContribution, availableRoom));
 
   const newTaxable = Math.max(0, taxableBefore - deductibleContribution);
 
@@ -148,8 +107,7 @@ async function computeScenario(rawInputs) {
   const remainingRoom = Math.max(0, availableRoom - deductibleContribution);
   const excessContribution = Math.max(0, plannedContribution - availableRoom);
 
-  const effectiveRefundRate =
-    plannedContribution > 0 ? chosenRefund / plannedContribution : 0;
+  const effectiveRefundRate = plannedContribution > 0 ? chosenRefund / plannedContribution : 0;
 
   return {
     taxYear: room.year,
@@ -184,10 +142,4 @@ async function computeScenario(rawInputs) {
   };
 }
 
-window.RRSPCalculatorEngine = {
-  RRSP_LIMITS,
-  parseNumber,
-  computeContributionRoom,
-  computeScenario
-};
-
+export { RRSP_LIMITS, parseNumber, computeContributionRoom, computeScenario };

@@ -18,22 +18,12 @@ function clamp(n, min, max, fallback = min) {
  *
  * r, f, i are PERCENT values (e.g. 7 for 7%).
  */
-/**
- * Indexed CRA dollar cap on *new* RRSP deduction room earned each year (18% rule).
- * Update periodically to match canada.ca; used only for modeled January top-ups after year 1.
- */
-export const RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP = 33810;
+import {
+  RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP,
+  computeRrspNewAnnualRoom
+} from "../canada-income-tax/js/rrsp-room.js";
 
-/**
- * New RRSP deduction room for one calendar year: min(18% of earned income, dollar cap).
- */
-export function computeRrspNewAnnualRoom(earnedIncome, dollarCap = RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP) {
-  const inc = Math.max(0, Number(earnedIncome) || 0);
-  const eighteen = inc * 0.18;
-  const cap = Number(dollarCap);
-  if (!Number.isFinite(cap) || cap <= 0) return eighteen;
-  return Math.min(eighteen, cap);
-}
+export { RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP, computeRrspNewAnnualRoom };
 
 /**
  * When FHSA is eligible, these are the six distinct permutations of

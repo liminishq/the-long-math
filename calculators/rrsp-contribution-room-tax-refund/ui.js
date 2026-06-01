@@ -1,12 +1,8 @@
 // UI controller for RRSP Contribution Room & Tax Refund Calculator
 
-(function () {
-  const { computeScenario, parseNumber } = window.RRSPCalculatorEngine || {};
+import { computeScenario, parseNumber } from "./engine.js";
 
-  if (!computeScenario) {
-    console.error("RRSPCalculatorEngine not found");
-    return;
-  }
+(function () {
 
   const PROVINCES = [
     { code: "AB", name: "Alberta" },

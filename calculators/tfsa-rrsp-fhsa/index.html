@@ -680,8 +680,24 @@
           <h2 class="section-title">Available room constraints</h2>
 
           <p class="help-inline" style="margin-bottom: 8px;">
-            Enter the <strong>total</strong> TFSA and RRSP room you have available now (including carry-forward). The model uses that space first, then each January from simulation year 2 onward adds new TFSA room (below) and new RRSP room from the 18% rule using your current taxable income (capped).
+            Enter the <strong>total</strong> TFSA and RRSP room you have available now (including carry-forward). RRSP room defaults from 18% of current taxable income (prior-year earned-income proxy) plus any unused carry-forward you enter; edit the total directly to override. Each January from simulation year 2 onward adds new TFSA room (below) and new RRSP room from the 18% rule using your current taxable income (capped).
           </p>
+
+          <div class="field">
+            <label for="rrspUnusedCarryforward">Unused RRSP room carried forward (optional)</label>
+            <div class="input-with-unit numeric-combo">
+              <span class="unit-prefix" aria-hidden="true">$</span>
+              <input id="rrspUnusedCarryforward" type="number" inputmode="decimal" min="0" step="500" value="0" />
+              <div class="num-stepper" role="group" aria-label="Adjust amount">
+                <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
+                <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
+              </div>
+            </div>
+            <p class="help-inline">
+              Room from prior years you have not used. Same field as the
+              <a href="/calculators/rrsp-contribution-room-tax-refund/" class="inline-link">RRSP Contribution Room calculator</a>.
+            </p>
+          </div>
 
           <div class="field">
             <label for="tfsaRemainingRoom">TFSA remaining contribution room (today)</label>
@@ -699,12 +715,13 @@
             <label for="rrspRemainingRoom">RRSP remaining deduction room (today)</label>
             <div class="input-with-unit numeric-combo">
               <span class="unit-prefix" aria-hidden="true">$</span>
-              <input id="rrspRemainingRoom" type="number" inputmode="decimal" min="0" step="500" value="33810" />
+              <input id="rrspRemainingRoom" type="number" inputmode="decimal" min="0" step="500" value="21600" />
               <div class="num-stepper" role="group" aria-label="Adjust amount">
                 <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
                 <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
               </div>
             </div>
+            <p id="rrspRoomHint" class="help-inline"></p>
           </div>
 
           <div class="field">
@@ -898,7 +915,7 @@
       <div class="assumptions">
         <ul>
           <li><span class="muted">Refund default:</span> RRSP/FHSA refund is modeled as spent unless you toggle reinvestment.</li>
-          <li><span class="muted">Room constraints:</span> Opening TFSA/RRSP room is user-entered (carry-forward allowed). From simulation year 2, each January adds your specified new TFSA amount and RRSP room equal to min(18% of current taxable income, indexed dollar cap). Unused room carries forward until used; overflow goes to non-registered.</li>
+          <li><span class="muted">Room constraints:</span> Opening TFSA room is user-entered. Opening RRSP room defaults to 18% of current taxable income (prior-year earned-income proxy) plus optional carry-forward, using the same formula as the RRSP Contribution Room calculator; edit the total to override. From simulation year 2, each January adds your specified new TFSA amount and RRSP room equal to min(18% of current taxable income, indexed dollar cap from tax data). Unused room carries forward until used; overflow goes to non-registered.</li>
           <li><span class="muted">Returns:</span> same net return and fee structure for all accounts; no asset-location modeling.</li>
           <li><span class="muted">Tax rates:</span> t_now and t_ret are constant over the horizon.</li>
           <li><span class="muted">FHSA:</span> annual room (user input; default $8,000) and a $40,000 lifetime contribution cap are enforced; growth does not count toward the lifetime cap. Contribution carry-forward is not modeled.</li>

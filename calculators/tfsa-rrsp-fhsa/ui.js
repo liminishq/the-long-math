@@ -6,7 +6,11 @@ import {
   RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP,
   describeStrategyAccountOrder
 } from "./engine.js";
-import { loadTaxData } from "../canada-income-tax/js/tax.data.js";
+import {
+  computeRrspContributionRoom,
+  getRrspDollarCap
+} from "../canada-income-tax/js/rrsp-room.js";
+import { loadTaxData, getFederalData } from "../canada-income-tax/js/tax.data.js";
 import { computePersonalTax } from "../canada-income-tax/js/tax.engine.js";
 
 function $(id) {
@@ -83,6 +87,66 @@ function clamp(n, lo, hi) {
 }
 
 let taxDataReady = false;
+/** When true, RRSP total room is not overwritten by income/carry-forward changes. */
+let rrspRoomManualOverride = false;
+
+function getFederalRrspParams() {
+  const fed = getFederalData();
+  return {
+    taxYear: fed?.year,
+    rrspDollarMax: fed?.rrspDollarMax,
+    roomRate: fed?.rrspRoomRate ?? 0.18
+  };
+}
+
+function estimateRrspOpeningRoom(income, carryforward) {
+  const params = getFederalRrspParams();
+  const room = computeRrspContributionRoom({
+    taxYear: params.taxYear,
+    priorEarnedIncome: income,
+    unusedRoom: Math.max(0, carryforward),
+    rrspDollarMax: params.rrspDollarMax,
+    roomRate: params.roomRate
+  });
+  return {
+    total: Math.max(0, room.estimatedAvailableRoom),
+    newRoom: room.newRoom,
+    carryforward: Math.max(0, carryforward),
+    dollarCap: room.dollarCap ?? getRrspDollarCap({ rrspDollarMax: params.rrspDollarMax, taxYear: params.taxYear })
+  };
+}
+
+function syncRrspRemainingRoom() {
+  if (rrspRoomManualOverride) return;
+  const income = numFromInput("currentTaxableIncome");
+  const carry = numFromInput("rrspUnusedCarryforward");
+  const safeIncome = Number.isFinite(income) && income >= 0 ? income : 0;
+  const safeCarry = Number.isFinite(carry) && carry >= 0 ? carry : 0;
+  const est = estimateRrspOpeningRoom(safeIncome, safeCarry);
+  $("rrspRemainingRoom").value = Math.round(est.total);
+}
+
+function updateRrspRoomHint() {
+  const hint = document.getElementById("rrspRoomHint");
+  if (!hint) return;
+  if (!taxDataReady) {
+    hint.textContent = "";
+    return;
+  }
+  const income = numFromInput("currentTaxableIncome");
+  const carry = numFromInput("rrspUnusedCarryforward");
+  const safeIncome = Number.isFinite(income) && income >= 0 ? income : 0;
+  const safeCarry = Number.isFinite(carry) && carry >= 0 ? carry : 0;
+  const est = estimateRrspOpeningRoom(safeIncome, safeCarry);
+  const pct = Math.round(getFederalRrspParams().roomRate * 100);
+  const base =
+    `Estimated: ${fmtMoney(est.newRoom)} new room (${pct}% of ${fmtMoney(safeIncome)}, capped at ${fmtMoney(est.dollarCap)})` +
+    (safeCarry > 0 ? ` + ${fmtMoney(safeCarry)} carry-forward` : "") +
+    ` = ${fmtMoney(est.total)} total.`;
+  hint.textContent = rrspRoomManualOverride
+    ? `${base} You edited the total directly; change income or carry-forward to revert to the estimate.`
+    : `${base} Uses the same formula as the RRSP Contribution Room calculator.`;
+}
 
 function deriveMarginalRateFromIncome(province, employmentIncome) {
   const result = computePersonalTax({
@@ -142,6 +206,17 @@ function readInputs() {
   let rrspRemainingRoom = numFromInput("rrspRemainingRoom");
   if (!Number.isFinite(rrspRemainingRoom) || rrspRemainingRoom < 0) rrspRemainingRoom = 0;
 
+  let rrspUnusedCarryforward = numFromInput("rrspUnusedCarryforward");
+  if (!Number.isFinite(rrspUnusedCarryforward) || rrspUnusedCarryforward < 0) {
+    rrspUnusedCarryforward = 0;
+  }
+
+  const rrspParams = getFederalRrspParams();
+  const rrspAnnualNewRoomCap = getRrspDollarCap({
+    taxYear: rrspParams.taxYear,
+    rrspDollarMax: rrspParams.rrspDollarMax
+  });
+
   const fhsaEligible = $("fhsaEligible").checked;
   const fhsaHomeQualified = fhsaEligible;
   let fhsaAnnualRoom = numFromInput("fhsaAnnualRoom");
@@ -168,6 +243,8 @@ function readInputs() {
     refundDest: "tfsa",
     tfsaRemainingRoom,
     rrspRemainingRoom,
+    rrspUnusedCarryforward,
+    rrspAnnualNewRoomCap,
     fhsaEligible,
     fhsaHomeQualified,
     fhsaAnnualRoom,
@@ -185,12 +262,14 @@ function render() {
     return;
   }
 
-  const rrspJanuaryBump = computeRrspNewAnnualRoom(
-    inputs.currentTaxableIncome,
-    RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP
-  );
+  const rrspJanuaryBump = computeRrspNewAnnualRoom(inputs.currentTaxableIncome, {
+    dollarCap: inputs.rrspAnnualNewRoomCap ?? RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP,
+    roomRate: getFederalRrspParams().roomRate,
+    taxYear: getFederalRrspParams().taxYear
+  });
   $("roomAccrualHint").textContent =
-    `Starting in simulation year 2, each January adds ${fmtMoney(inputs.tfsaNewAnnualRoom)} to TFSA room and ${fmtMoney(rrspJanuaryBump)} to RRSP room (18% of current taxable income, capped at ${fmtMoney(RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP)}), in addition to any carry-forward you have not used.`;
+    `Starting in simulation year 2, each January adds ${fmtMoney(inputs.tfsaNewAnnualRoom)} to TFSA room and ${fmtMoney(rrspJanuaryBump)} to RRSP room (18% of current taxable income, capped at ${fmtMoney(inputs.rrspAnnualNewRoomCap ?? RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP)}), in addition to any carry-forward you have not used.`;
+  updateRrspRoomHint();
 
   try {
     window.localStorage.setItem("tlm_tfsa_rrsp_fhsa_lastInputs", JSON.stringify(inputs));
@@ -423,6 +502,12 @@ function wireNumericSteppers() {
 }
 
 function wireEvents() {
+  const onIncomeOrCarryforwardChange = () => {
+    rrspRoomManualOverride = false;
+    syncRrspRemainingRoom();
+    render();
+  };
+
   [
     "contributionAmount",
     "horizonYears",
@@ -434,13 +519,22 @@ function wireEvents() {
     "tNow",
     "tRet",
     "tfsaRemainingRoom",
-    "rrspRemainingRoom",
+    "rrspUnusedCarryforward",
     "fhsaAnnualRoom",
     "tfsaNewAnnualRoom"
   ].forEach((id) => {
     $(id).addEventListener("input", () => {
+      if (id === "currentTaxableIncome" || id === "rrspUnusedCarryforward") {
+        onIncomeOrCarryforwardChange();
+        return;
+      }
       render();
     });
+  });
+
+  $("rrspRemainingRoom").addEventListener("input", () => {
+    rrspRoomManualOverride = true;
+    render();
   });
 
   $("contributionMode").addEventListener("change", () => {
@@ -510,6 +604,7 @@ function wireTfsaShare() {
       refund_mode: inputs.refundMode,
       tfsa_remaining_room: String(Math.round(inputs.tfsaRemainingRoom)),
       rrsp_remaining_room: String(Math.round(inputs.rrspRemainingRoom)),
+      rrsp_unused_carryforward: String(Math.round(inputs.rrspUnusedCarryforward)),
       fhsa_eligible: inputs.fhsaEligible ? "1" : "0",
       fhsa_annual_room: String(Math.round(inputs.fhsaAnnualRoom)),
       fhsa_lifetime_cap: String(inputs.fhsaLifetimeCap ?? 40000),
@@ -537,12 +632,14 @@ function wireTfsaShare() {
 
 export function initTfsaRrspFhsaUI() {
   $("manualRateOverride").checked = false;
+  rrspRoomManualOverride = false;
   syncRateModeVisibility();
   syncRealToggle();
   syncFhsaVisibility();
   syncRefundLabels();
   wireNumericSteppers();
   wireEvents();
+  syncRrspRemainingRoom();
   render();
   wireTfsaShare();
 }
