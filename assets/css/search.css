@@ -289,14 +289,15 @@ body.tlm-search-open > #footerMount {
   user-select: none;
 }
 
-/* Nav search trigger (injected header) — sits in .sitehead-search-row below primary nav */
+/* Nav search trigger (injected header) — upper-right in .sitehead-search-row */
 .nav-search-btn {
   position: relative;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
-  border-radius: 999px;
+  min-width: 200px;
+  padding: 8px 14px;
+  border-radius: 12px;
   border: 1px solid var(--border);
   background: var(--surface2);
   color: var(--muted);
@@ -305,6 +306,8 @@ body.tlm-search-open > #footerMount {
   cursor: pointer;
   line-height: 1.2;
   font-family: inherit;
+  justify-content: flex-start;
+  box-sizing: border-box;
 }
 
 .nav-search-btn:hover {
@@ -340,15 +343,28 @@ body.tlm-search-open > #footerMount {
   flex-shrink: 0;
 }
 
-/* Mobile / narrow header: full-width search bar (nav hidden below 768px) */
+.sitehead-search-row {
+  justify-content: flex-end;
+}
+
+/* Tablet/desktop: wide search field in upper-right */
+@media (min-width: 768px) {
+  .sitehead-search-row .nav-search-btn {
+    min-width: 240px;
+  }
+}
+
+/* Mobile (hamburger nav): search above controls, fills upper-right column */
 @media (max-width: 767px) {
   .sitehead-search-row {
     width: 100%;
     margin-bottom: 6px;
+    justify-content: flex-end;
   }
 
   .sitehead-search-row .nav-search-btn {
     width: 100%;
+    min-width: 0;
     min-height: 44px;
     justify-content: flex-start;
     padding: 10px 14px;
