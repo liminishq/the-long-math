@@ -6,6 +6,7 @@ import {
   parseRrspNumber as parseNumber,
   computeRrspContributionRoom as computeContributionRoom
 } from "../canada-income-tax/js/rrsp-room.js";
+import { computeTaxFromBrackets } from "../canada-income-tax/js/marginal-tax.js";
 
 const TAX_DATA_CACHE = {};
 
@@ -21,33 +22,6 @@ async function loadTaxDataForYear(year) {
 
   TAX_DATA_CACHE[key] = { federal, provinces };
   return TAX_DATA_CACHE[key];
-}
-
-function computeTaxFromBrackets(taxableIncome, brackets) {
-  const income = Math.max(0, taxableIncome || 0);
-  let tax = 0;
-  let marginalRate = 0;
-
-  for (let i = 0; i < brackets.length; i++) {
-    const current = brackets[i];
-    const next = brackets[i + 1];
-    const lower = current.threshold;
-    const upper = next ? next.threshold : Infinity;
-
-    if (income <= lower) {
-      break;
-    }
-
-    const taxableInBracket = Math.min(income, upper) - lower;
-    if (taxableInBracket > 0) {
-      tax += taxableInBracket * current.rate;
-      if (income > lower) {
-        marginalRate = current.rate;
-      }
-    }
-  }
-
-  return { tax, marginalRate };
 }
 
 async function computeProgressiveTax(year, provinceCode, taxableIncome) {

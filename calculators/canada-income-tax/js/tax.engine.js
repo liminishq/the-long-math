@@ -5,6 +5,13 @@
  */
 
 import { getFederalData, getProvincesData, getProvincialData, getPayrollData, getDividendsData, normalizeProvince } from './tax.data.js';
+import {
+  MARGINAL_DELTA,
+  combinedBracketMarginalRate,
+  isMarginalRateInBounds
+} from './marginal-tax.js';
+
+export { MARGINAL_DELTA } from './marginal-tax.js';
 
 const DEFAULT_PROVINCIAL_STEPS = ['brackets', 'credits', 'surtax', 'minTax', 'dividendCredit', 'reduction', 'premiums'];
 
@@ -574,9 +581,6 @@ function calculateEI(employmentIncome, payroll) {
   };
 }
 
-/** Income bump for marginal-rate estimation (avoids $0 delta when net tax is rounded to dollars). */
-const MARGINAL_DELTA = 100;
-
 /** Normalize numeric input from form (may be string). */
 function num(input, field) {
   const v = input[field];
@@ -606,29 +610,46 @@ function cloneInput(input) {
   };
 }
 
+/** Income types where bracket lookup is a valid fallback when finite-difference fails. */
+const BRACKET_FALLBACK_FIELDS = new Set(['employmentIncome', 'selfEmploymentIncome', 'otherIncome']);
+
 /**
- * Marginal tax rate = exact definition: delta tax per $1 of income type X.
- * baseline = fullTax(inputs); clone = inputs, clone.X += 1; newTax = fullTax(clone);
- * marginalRate = (newTax.totalIncomeTax - baseline.totalIncomeTax) / MARGINAL_DELTA.
- * Perturbation uses the exact field: employmentIncome, eligibleDividends, otherIncome, capitalGains (cash).
- * If multiple income types exist, "combined" uses employment first, then eligible dividends, then other income, etc.
+ * Marginal tax rate = delta tax per dollar of income type X.
+ * Uses a $100 income bump (MARGINAL_DELTA) because net tax is rounded to whole dollars.
+ * Inactive income types (zero dollars) are not perturbed — returns null for those fields.
  */
 function computeMarginalRatesByType(input, dataCtx) {
-  // Use unrounded bracket tax so $1 perturbation gives true marginal rate (not 0 when rounding hides the change)
   const roundOpts = { roundToDollar: false };
   const baseline = runFullCalculation(input, dataCtx, roundOpts);
   const baseTax = baseline.totalIncomeTax;
+  const provinceCode = normalizeProvince(input.province);
 
-  const marginalFor = (field, currentValue) => {
+  function bracketFallback() {
+    if (!provinceCode) return null;
+    const prov = dataCtx.getProvince(input.province);
+    const rate = combinedBracketMarginalRate(
+      baseline.taxableIncome,
+      dataCtx.federal?.brackets,
+      prov?.brackets
+    );
+    return isMarginalRateInBounds(rate) ? rate : null;
+  }
+
+  function marginalFor(field, currentValue) {
+    const base = Math.max(0, Number(currentValue) || 0);
+    if (base <= 0) return null;
+
     const clone = cloneInput(input);
-    clone[field] = (currentValue ?? 0) + MARGINAL_DELTA;
+    clone[field] = base + MARGINAL_DELTA;
     const newResult = runFullCalculation(clone, dataCtx, roundOpts);
-    const marginalRate = (newResult.totalIncomeTax - baseTax) / MARGINAL_DELTA;
-    if (marginalRate < 0 || marginalRate > 1) {
-      console.warn('Marginal rate out of expected bounds:', marginalRate, `(field: ${field})`);
+    let rate = (newResult.totalIncomeTax - baseTax) / MARGINAL_DELTA;
+
+    if (!isMarginalRateInBounds(rate) && BRACKET_FALLBACK_FIELDS.has(field)) {
+      rate = bracketFallback();
     }
-    return marginalRate;
-  };
+
+    return isMarginalRateInBounds(rate) ? rate : null;
+  }
 
   const employment = marginalFor('employmentIncome', num(input, 'employmentIncome'));
   const eligibleDividendsMarg = marginalFor('eligibleDividends', num(input, 'eligibleDividends'));
@@ -636,38 +657,32 @@ function computeMarginalRatesByType(input, dataCtx) {
   const otherIncomeMarg = marginalFor('otherIncome', num(input, 'otherIncome'));
   const capitalGainsMarg = marginalFor('capitalGains', num(input, 'capitalGains'));
 
-  // Which income type is "active" (priority order: employment, eligible div, other, non-eligible div, capital gains).
-  // Use num() so form string "160000" is treated as 160000.
   const hasEmployment = num(input, 'employmentIncome') > 0;
   const hasEligibleDiv = num(input, 'eligibleDividends') > 0;
   const hasOtherIncome = num(input, 'otherIncome') > 0;
   const hasNonEligibleDiv = num(input, 'nonEligibleDividends') > 0;
   const hasCapitalGains = num(input, 'capitalGains') > 0;
 
-  let combined =
-    hasEmployment ? employment
-    : hasEligibleDiv ? eligibleDividendsMarg
-    : hasOtherIncome ? otherIncomeMarg
-    : hasNonEligibleDiv ? nonEligibleDividendsMarg
-    : hasCapitalGains ? capitalGainsMarg
-    : employment;
+  const pick = (...candidates) => candidates.find(isMarginalRateInBounds) ?? null;
 
-  // Never show an impossible marginal to the user (CRA-style marginals are 0–100%).
-  // If the chosen marginal is out of bounds, use the first in-bounds marginal for an active type.
-  const inBounds = (r) => typeof r === 'number' && !isNaN(r) && r >= 0 && r <= 1;
-  if (!inBounds(combined)) {
-    console.warn('Marginal rate out of expected bounds:', combined, '(combined); using first in-bounds active type.');
-    if (hasEmployment && inBounds(employment)) combined = employment;
-    else if (hasEligibleDiv && inBounds(eligibleDividendsMarg)) combined = eligibleDividendsMarg;
-    else if (hasOtherIncome && inBounds(otherIncomeMarg)) combined = otherIncomeMarg;
-    else if (hasNonEligibleDiv && inBounds(nonEligibleDividendsMarg)) combined = nonEligibleDividendsMarg;
-    else if (hasCapitalGains && inBounds(capitalGainsMarg)) combined = capitalGainsMarg;
-    else if (inBounds(employment)) combined = employment;
-    else if (inBounds(eligibleDividendsMarg)) combined = eligibleDividendsMarg;
-    else if (inBounds(otherIncomeMarg)) combined = otherIncomeMarg;
-    else if (inBounds(nonEligibleDividendsMarg)) combined = nonEligibleDividendsMarg;
-    else if (inBounds(capitalGainsMarg)) combined = capitalGainsMarg;
-    else combined = 0; // fallback to 0% rather than show -22455%
+  let combined = pick(
+    hasEmployment ? employment : null,
+    hasEligibleDiv ? eligibleDividendsMarg : null,
+    hasOtherIncome ? otherIncomeMarg : null,
+    hasNonEligibleDiv ? nonEligibleDividendsMarg : null,
+    hasCapitalGains ? capitalGainsMarg : null,
+    employment,
+    eligibleDividendsMarg,
+    otherIncomeMarg,
+    nonEligibleDividendsMarg,
+    capitalGainsMarg
+  );
+
+  if (!isMarginalRateInBounds(combined)) {
+    combined = bracketFallback();
+  }
+  if (!isMarginalRateInBounds(combined)) {
+    combined = 0;
   }
 
   return {
@@ -676,7 +691,7 @@ function computeMarginalRatesByType(input, dataCtx) {
     nonEligibleDividends: nonEligibleDividendsMarg,
     otherIncome: otherIncomeMarg,
     capitalGains: capitalGainsMarg,
-    combined,
+    combined
   };
 }
 

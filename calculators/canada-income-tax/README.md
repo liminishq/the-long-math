@@ -234,7 +234,7 @@ Run tests by opening `tests/test.html` in a browser. The test suite includes:
 
 - Taxable income floor at 0
 - Basic tax calculations
-- Marginal rate finite difference verification
+- Marginal rate finite-difference verification ($100 bump; shared with dependent calculators)
 - Dividend gross-up calculations
 - Capital gains inclusion
 - Refund/owing sign convention

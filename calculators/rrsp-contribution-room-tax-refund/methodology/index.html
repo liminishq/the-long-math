@@ -95,7 +95,7 @@
         <p>In progressive mode, the calculator estimates income tax before and after the deduction using federal and provincial brackets, then takes the difference:</p>
         <pre><code>Estimated Refund = Tax Before RRSP Deduction − Tax After RRSP Deduction</code></pre>
 
-        <p>In simple marginal-rate mode, the calculator multiplies the deductible contribution by the combined marginal rate at the starting taxable income:</p>
+        <p>In simple marginal-rate mode, the calculator multiplies the deductible contribution by the combined federal + provincial bracket rate at the starting taxable income (statutory stacks, before non-refundable credits). This uses the same bracket lookup as <code>calculators/canada-income-tax/js/marginal-tax.js</code>, shared with the personal tax engine’s fallback when finite-difference estimation is unavailable:</p>
         <pre><code>Estimated Refund = Deductible Contribution × Marginal Tax Rate</code></pre>
 
         <p>The after-tax cost of the contribution is:</p>

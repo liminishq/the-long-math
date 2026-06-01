@@ -78,8 +78,8 @@ export async function runTests(options = {}) {
   assert(test2.totals.totalIncomeTax > 0, 'Total income tax should be positive');
   console.log('');
 
-  // Test 3: Marginal rate finite difference check
-  console.log('Test 3: Marginal rate finite difference check');
+  // Test 3: Marginal rate finite-difference check ($100 bump, shared MARGINAL_DELTA)
+  console.log('Test 3: Marginal rate finite-difference check');
   const baseIncome = 75000;
   const test3a = computePersonalTax({
     province: 'ON',
@@ -87,13 +87,12 @@ export async function runTests(options = {}) {
   });
   const test3b = computePersonalTax({
     province: 'ON',
-    employmentIncome: baseIncome + 1
+    employmentIncome: baseIncome + 100
   });
-  const actualMarginal = test3b.totals.totalIncomeTax - test3a.totals.totalIncomeTax;
+  const actualMarginal = (test3b.totals.totalIncomeTax - test3a.totals.totalIncomeTax) / 100;
   const reportedMarginal = test3a.breakdown.marginalRates.employment;
-  // Rounded bracket totals vs unrounded marginal perturbation can diverge by ~0.7 pp at some incomes.
-  assertApprox(actualMarginal, reportedMarginal, 0.75,
-    `Marginal rate should match finite difference (reported: ${reportedMarginal}, actual: ${actualMarginal})`);
+  assertApprox(actualMarginal, reportedMarginal, 0.02,
+    `Marginal rate should match $100 finite difference (reported: ${reportedMarginal}, actual: ${actualMarginal})`);
   console.log('');
 
   // Test 4: Dividend gross-up

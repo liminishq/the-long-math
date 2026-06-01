@@ -260,18 +260,17 @@
         Income<sub>gross</sub> reflects cash income (including the full capital gain amount before inclusion), not taxable income TI, so the displayed
         average rate may differ from CRA-style average rates that use taxable income as the denominator.
       </p>
-      <p>Marginal tax rate is computed using a $1 perturbation:</p>
+      <p>Marginal tax rate is computed using a finite-difference estimate with a <strong>$100</strong> income bump (not $1), because federal and provincial net tax are each rounded to the nearest dollar for display:</p>
       <ol>
         <li>Compute baseline: Tax<sub>baseline</sub> = Tax<sub>total</sub>(inputs).</li>
-        <li>Choose an active income type (employment, then dividends, other income, or capital gains) based on which fields are non-zero.</li>
-        <li>Add $1 to that income type and recompute tax.</li>
+        <li>Choose an active income type (employment, then dividends, other income, or capital gains) based on which fields are non-zero. Zero-dollar types are not perturbed.</li>
+        <li>Add $100 to that income type and recompute tax.</li>
       </ol>
       <div class="formula-block">
-        MarginalRate = Tax<sub>total</sub>(inputs with +$1 of chosen income) − Tax<sub>baseline</sub>
+        MarginalRate ≈ (Tax<sub>total</sub>(inputs with +$100 of chosen income) − Tax<sub>baseline</sub>) ÷ 100
       </div>
       <p class="formula-meta">
-        The engine uses unrounded bracket tax (no per-bracket rounding) for the marginal-rate perturbation, so the $1 change is not lost to rounding.
-        If the combined marginal rate falls outside 0–100%, the calculator falls back to the first in-bounds marginal rate for an active income type.
+        Bracket tax uses unrounded per-bracket amounts for the perturbation step. If the finite-difference result is out of range for employment or other ordinary income, the calculator falls back to the combined federal + provincial bracket rate at your taxable income (same bracket lookup used in the RRSP Contribution Room calculator’s simple marginal mode). If no valid rate is found, combined marginal defaults to 0%.
       </p>
 
       <h2>Assumptions and Limitations</h2>

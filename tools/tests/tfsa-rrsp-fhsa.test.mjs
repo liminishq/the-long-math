@@ -280,7 +280,7 @@ test("monthly contributions, t_now < t_ret, reinvest – TFSA optimal with no ye
 });
 
 // 10) Default-like scenario: $2k/mo, limited TFSA room, reinvest refund, t_now > t_ret → RRSP first wins.
-//    (Requires realistic marginal rates; broken $1-delta tax rounding used to yield t_now ≈ 0% and wrongly favour TFSA.)
+//    (Requires realistic marginal rates; a $1-delta on dollar-rounded tax used to yield t_now ≈ 0% and wrongly favour TFSA.)
 test("monthly 2k, 7k TFSA room, reinvest, t_now > t_ret – RRSP beats TFSA", () => {
   const result = runAccountStrategySimulation({
     contributionMode: "monthly",

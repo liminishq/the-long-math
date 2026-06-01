@@ -64,6 +64,14 @@
         <li>B<sub>refund,t</sub> = refund bucket balance at month t (when refunds are reinvested)</li>
       </ul>
 
+      <h3 id="marginal-rates">Marginal rates (t<sub>now</sub> and t<sub>ret</sub>)</h3>
+      <p>
+        Unless manual override is enabled, t<sub>now</sub> and t<sub>ret</sub> come from the shared
+        <a href="/calculators/canada-income-tax/methodology/">Canada Personal Income Tax</a> engine:
+        province plus current and retirement taxable income, using the same $100 finite-difference marginal estimate
+        (not a $1 bump on dollar-rounded tax). Those rates feed RRSP/FHSA refund math and therefore account-priority ranking when reinvest is enabled.
+      </p>
+
       <h2>Core Equations</h2>
 
       <h3 id="net-return">1. Net return and monthly rate</h3>

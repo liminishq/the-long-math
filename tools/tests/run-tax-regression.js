@@ -143,8 +143,19 @@ function run() {
         }
       }
       // When scenario has employment income, marginal employment should be > 0
-      if ((def.employmentIncome ?? 0) > 0 && (mr.employment ?? 0) <= 0) {
-        failures.push({ province, scenario: scenarioId, error: `marginalEmployment must be > 0 when employmentIncome > 0` });
+      if ((def.employmentIncome ?? 0) > 0) {
+        if ((mr.employment ?? 0) <= 0) {
+          failures.push({ province, scenario: scenarioId, error: `marginalEmployment must be > 0 when employmentIncome > 0` });
+        }
+      }
+      // No negative marginals on any computed field
+      for (const [key, val] of Object.entries(mr)) {
+        if (val != null && val < 0) {
+          failures.push({ province, scenario: scenarioId, error: `marginal ${key} must not be negative (got ${val})` });
+        }
+      }
+      if ((t.marginalRate ?? 0) < 0 || (t.marginalRate ?? 0) > 1) {
+        failures.push({ province, scenario: scenarioId, error: `combined marginalRate must be in [0,1] (got ${t.marginalRate})` });
       }
     }
   }
