@@ -27,7 +27,7 @@
   <div class="wrap">
     <div class="methodology-content">
       <h1>Inspectable Arithmetic for the TFSA vs RRSP vs FHSA Calculator (Canada)</h1>
-      <p class="methodology-meta">Version 1.1<br>Last verified: May 2026</p>
+      <p class="methodology-meta">Version 1.2<br>Last verified: June 2026</p>
 
       <p>
         Transparent arithmetic is the operating system of this calculator.
@@ -146,6 +146,17 @@
       <h2 id="tfsa-rrsp-room-heading">TFSA and RRSP contribution room (multi-year)</h2>
       <p>
         The calculator takes <strong>opening</strong> TFSA contribution room and RRSP <em>deduction</em> room (totals available “today,” including unused carry-forward from prior years). Each deposit reduces the corresponding remaining room. No top-up is applied in month 0: your opening inputs are treated as the starting caps for simulation year 1.
+      </p>
+      <p>
+        <strong>TFSA</strong> opening room is entered directly. <strong>RRSP</strong> opening room defaults to an estimate from current taxable income (used as a prior-year earned-income proxy) plus any unused RRSP room you enter as carry-forward:
+      </p>
+      <div class="formula-block">
+        RRSP opening room = min(0.18 × I, M) + U
+      </div>
+      <p>
+        where I is “current taxable income” from the tax section, M is the indexed dollar cap on new RRSP room from earned income (same source as the
+        <a href="/calculators/rrsp-contribution-room-tax-refund/">RRSP Contribution Room calculator</a>), and U is unused RRSP room carried forward.
+        The total updates when income or carry-forward changes. Edit “RRSP remaining deduction room (today)” directly to override; after a manual edit, that total is held until you change current taxable income or unused carry-forward, which restores the automatic estimate.
       </p>
       <p>
         At the beginning of simulation years 2, 3, … (i.e. at months 12, 24, …, before that month’s contribution is allocated), the model adds:
@@ -301,7 +312,7 @@
       <h2>Assumptions and Limitations</h2>
       <ol>
         <li>All simulations use monthly time steps with deterministic compounding and fixed contribution schedules.</li>
-        <li>TFSA and RRSP room use opening user-entered balances plus January top-ups from simulation year 2 onward (new TFSA dollars and 18%-of-income RRSP room capped by a modeled dollar limit); unused room carries forward until used.</li>
+        <li>TFSA opening room is user-entered. RRSP opening room defaults to min(18% of current taxable income, indexed dollar cap) plus optional unused carry-forward (same formula as the RRSP Contribution Room calculator); edit the total to override. From simulation year 2, each January adds your specified new TFSA amount and RRSP room equal to min(18% of current taxable income, indexed dollar cap); unused room carries forward until used.</li>
         <li>Investment returns, fees, and (optionally) inflation are modeled as constant over the full horizon.</li>
         <li>RRSP and FHSA refunds are either treated as immediately spent (default) or reinvested in a TFSA-like bucket; actual tax timing and withholding are more complex in practice.</li>
         <li>Tax rates t<sub>now</sub> and t<sub>ret</sub> are either estimated from modeled employment income and province using the same tax engine as the <a href="/calculators/canada-income-tax/" target="_blank" rel="noopener">Canada Personal Income Tax Calculator</a>, or set directly via manual override; they are held constant over the horizon.</li>
