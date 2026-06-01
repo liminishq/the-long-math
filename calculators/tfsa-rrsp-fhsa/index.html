@@ -16,14 +16,29 @@
   <style>
     .account-grid {
       display: grid;
-      grid-template-columns: 9fr 11fr;
+      grid-template-columns: 3fr 3fr 4fr;
       gap: 16px;
       margin-top: 18px;
+      align-items: start;
     }
-    @media (max-width: 980px) {
+    @media (max-width: 1199px) {
+      .account-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .account-grid-col--results {
+        grid-column: 1 / -1;
+      }
+    }
+    @media (max-width: 720px) {
       .account-grid {
         grid-template-columns: 1fr;
       }
+      .account-grid-col--results {
+        grid-column: auto;
+      }
+    }
+    .account-grid-col {
+      min-width: 0;
     }
     .section-title {
       margin-bottom: 12px;
@@ -266,6 +281,31 @@
       max-width: 170px;
       justify-self: end;
     }
+    /* In the 3-column layout, stack labels above controls in each narrow panel */
+    .account-grid .inputs-compact .field:not(.checkbox) {
+      grid-template-columns: 1fr;
+    }
+    .account-grid .inputs-compact .field:not(.checkbox) > input,
+    .account-grid .inputs-compact .field:not(.checkbox) > select,
+    .account-grid .inputs-compact .field:not(.checkbox) > .inline,
+    .account-grid .inputs-compact .field:not(.checkbox) > .input-with-unit {
+      grid-column: 1;
+      max-width: 100%;
+      width: 100%;
+      justify-self: stretch;
+    }
+    .account-grid .inputs-compact .field:not(.checkbox) > .help-inline,
+    .account-grid .inputs-compact .field:not(.checkbox) > .help {
+      grid-column: 1;
+    }
+    .account-grid .inputs-compact .inline {
+      flex-wrap: wrap;
+      justify-content: flex-start;
+    }
+    .account-grid .inputs-compact .inline input {
+      width: auto;
+      flex: 1 1 80px;
+    }
     /* Primary result — accent treatment aligned with other calculators */
     .results-hero {
       margin: 0 0 14px;
@@ -397,11 +437,7 @@
        MOBILE OVERRIDES (max-width: 640px)
        ------------------------------------------------------- */
     @media (max-width: 640px) {
-      /* 1. Flatten nested panel borders inside the outer card.
-            The .account-grid collapses to 1 col at 980px; on
-            phones the two panels sit stacked. Remove their
-            individual borders so the outer .card border is the
-            only visible container. Use a top-border as divider. */
+      /* 1. Flatten nested panel borders inside the outer card when stacked on phones. */
       .account-grid .panel {
         border-left: none;
         border-right: none;
@@ -505,8 +541,8 @@
       </div>
 
       <div class="account-grid">
-        <!-- Inputs -->
-        <section class="panel inputs-compact">
+        <!-- Column 1: core inputs + tax rate source -->
+        <section class="panel account-grid-col account-grid-col--inputs inputs-compact">
           <h2 class="section-title">Inputs</h2>
 
           <div class="field">
@@ -675,7 +711,10 @@
             </p>
           </div>
 
-          <hr class="sep" />
+        </section>
+
+        <!-- Column 2: room constraints, refund handling, FHSA -->
+        <section class="panel account-grid-col account-grid-col--constraints inputs-compact">
 
           <h2 class="section-title">Available room constraints</h2>
 
@@ -781,8 +820,8 @@
 
         </section>
 
-        <!-- Results -->
-        <section class="panel">
+        <!-- Column 3: results -->
+        <section class="panel account-grid-col account-grid-col--results">
           <h2 class="section-title">Results</h2>
 
           <div class="results-hero">
