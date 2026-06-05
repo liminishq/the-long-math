@@ -143,8 +143,8 @@
 
     function showValidationStatus(count) {
       statusEl.textContent = count === 1
-        ? 'Fix the highlighted field below.'
-        : 'Fix the ' + count + ' highlighted fields below.';
+        ? 'Fix the highlighted field above.'
+        : 'Fix the ' + count + ' highlighted fields above.';
       statusEl.className = 'contact-status contact-status-error';
     }
 
