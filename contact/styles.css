@@ -18,28 +18,41 @@
 .contact-form {
   max-width: 480px;
   margin-bottom: 24px;
+  --contact-error: #c62828;
+  --contact-error-focus: rgba(198, 40, 40, 0.35);
 }
 
 .form-field {
   margin-bottom: 16px;
 }
 .form-field--error label {
-  color: var(--accent2);
+  color: var(--contact-error);
+  font-weight: 600;
 }
 .form-field--error input,
 .form-field--error select,
 .form-field--error textarea {
-  border-color: var(--accent2);
+  border-color: var(--contact-error);
+  box-shadow: 0 0 0 1px var(--contact-error);
+}
+.form-field--error input:focus,
+.form-field--error select:focus,
+.form-field--error textarea:focus {
+  outline: 2px solid var(--contact-error);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px var(--contact-error);
 }
 .form-field--error.turnstile-wrap {
   padding: 8px;
   border-radius: 10px;
-  border: 1px solid var(--accent2);
+  border: 2px solid var(--contact-error);
+  box-shadow: 0 0 0 1px var(--contact-error-focus);
 }
 .field-error {
   margin: 6px 0 0;
   font-size: 13px;
-  color: var(--accent2);
+  font-weight: 600;
+  color: var(--contact-error);
   line-height: 1.4;
 }
 .field-error[hidden] {
@@ -98,7 +111,7 @@
   font-size: 13px;
 }
 .contact-status-success { color: var(--accent2); }
-.contact-status-error { color: var(--accent2); }
+.contact-status-error { color: var(--contact-error, #c62828); font-weight: 600; }
 
 .contact-privacy {
   font-size: 12px;
