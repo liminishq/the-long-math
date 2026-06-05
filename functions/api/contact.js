@@ -12,7 +12,7 @@
 const ALLOWED_CATEGORIES = ['general', 'bug', 'correction', 'media', 'partnership'];
 const EMAIL_MAX = 254;
 const NAME_MIN = 2;
-const MESSAGE_MIN = 10;
+const MESSAGE_MIN = 5;
 const MESSAGE_MAX = 4000;
 
 const json = (obj, status = 200) =>

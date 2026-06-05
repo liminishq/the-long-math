@@ -23,6 +23,28 @@
 .form-field {
   margin-bottom: 16px;
 }
+.form-field--error label {
+  color: var(--accent2);
+}
+.form-field--error input,
+.form-field--error select,
+.form-field--error textarea {
+  border-color: var(--accent2);
+}
+.form-field--error.turnstile-wrap {
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid var(--accent2);
+}
+.field-error {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--accent2);
+  line-height: 1.4;
+}
+.field-error[hidden] {
+  display: none;
+}
 .form-field label {
   display: block;
   font-size: 14px;
