@@ -795,11 +795,11 @@
   },
   {
     "type": "calculator",
-    "title": "Canada Personal Income Tax Calculator (2025 &amp; 2026)",
+    "title": "Canada Personal Income Tax Calculator",
     "url": "/calculators/canada-income-tax/",
     "desc": "",
     "keywords": [
-      "Canada Personal Income Tax Calculator (2025 &amp; 2026)",
+      "Canada Personal Income Tax Calculator",
       "canada income tax"
     ]
   },
@@ -807,7 +807,7 @@
     "type": "calculator",
     "title": "Inspectable Arithmetic for the Canada Personal Income Tax Calculator",
     "url": "/calculators/canada-income-tax/methodology/",
-    "desc": "Formulae, computational structure, and assumptions for the Canada Personal Income Tax Calculator (2025).",
+    "desc": "Formulae, computational structure, and assumptions for the Canada Personal Income Tax Calculator.",
     "keywords": [
       "Inspectable Arithmetic – Canada Personal Income Tax Calculator",
       "Inspectable Arithmetic for the Canada Personal Income Tax Calculator",
@@ -820,8 +820,7 @@
       "personal",
       "income",
       "tax",
-      "calculator",
-      "2025"
+      "calculator"
     ]
   },
   {
@@ -875,7 +874,6 @@
     "url": "/calculators/ccpc-tax/",
     "desc": "",
     "keywords": [
-      "CCPC Income Tax Calculator (2025 &amp; 2026)",
       "CCPC Income Tax Calculator",
       "ccpc tax"
     ]
@@ -884,7 +882,7 @@
     "type": "calculator",
     "title": "Inspect the Arithmetic — CCPC Income Tax Calculator",
     "url": "/calculators/ccpc-tax/methodology/",
-    "desc": "Formulae, computational structure, and assumptions for the CCPC Income Tax Calculator (2025).",
+    "desc": "Formulae, computational structure, and assumptions for the CCPC Income Tax Calculator.",
     "keywords": [
       "Inspect the Arithmetic – CCPC Income Tax Calculator",
       "Inspect the Arithmetic — CCPC Income Tax Calculator",
@@ -896,8 +894,7 @@
       "ccpc",
       "income",
       "tax",
-      "calculator",
-      "2025"
+      "calculator"
     ]
   },
   {

@@ -16,7 +16,7 @@
       "items": [
         {
           "path": "/calculators/canada-income-tax/",
-          "title": "Calculateur d’impôt sur le revenu des particuliers au Canada 2025",
+          "title": "Calculateur d’impôt sur le revenu des particuliers au Canada",
           "desc": "Estime l’impôt sur le revenu des particuliers au Canada avec des ventilations transparentes. Affiche le calcul fédéral et provincial, les cotisations RPC/AE, les majorations de dividendes, l’inclusion des gains en capital et des sections « montrer le calcul » détaillées."
         },
         {
@@ -31,8 +31,8 @@
         },
         {
           "path": "/tools/income-tax-brackets-canada/",
-          "title": "Tranches d’impôt sur le revenu au Canada — fédéral et provincial (2025)",
-          "desc": "Tableaux de référence pour 2025 : tranches d’impôt sur le revenu des particuliers au fédéral et par province ou territoire, utilisées par le calculateur d’impôt canadien."
+          "title": "Tranches d’impôt sur le revenu au Canada — fédéral et provincial",
+          "desc": "Tableaux de référence des tranches d’impôt sur le revenu des particuliers au fédéral et par province ou territoire, par année d’imposition, utilisés par le calculateur d’impôt canadien."
         },
         {
           "path": "/tools/inflation-tables/",

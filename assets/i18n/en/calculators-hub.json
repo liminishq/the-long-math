@@ -16,7 +16,7 @@
       "items": [
         {
           "path": "/calculators/canada-income-tax/",
-          "title": "Canada Personal Income Tax Calculator 2025",
+          "title": "Canada Personal Income Tax Calculator",
           "desc": "Estimates Canadian personal income tax with transparent breakdowns. Shows federal and provincial tax calculations, CPP/EI contributions, dividend gross-ups, capital gains inclusion, and detailed \"show the math\" sections."
         },
         {
@@ -31,8 +31,8 @@
         },
         {
           "path": "/tools/income-tax-brackets-canada/",
-          "title": "Canada Income Tax Brackets — Federal and Provincial (2025)",
-          "desc": "Reference tables for 2025 federal and provincial/territorial personal income tax brackets used by the Canada income tax calculator."
+          "title": "Canada Income Tax Brackets — Federal and Provincial",
+          "desc": "Reference tables for federal and provincial/territorial personal income tax brackets by tax year, used by the Canada income tax calculator."
         },
         {
           "path": "/tools/inflation-tables/",
