@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Real Returns vs. Nominal Returns | The Long Math</title>
+  <meta name="description" content="Learn the difference between nominal and real returns, how to calculate real rate of return after inflation, and why purchasing power matters for long-term financial planning." />
+  <link rel="canonical" href="https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/" />
+  
+  <link rel="alternate" hreflang="en" href="https://www.thelongmath.com/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/" />
+  
+  <link rel="alternate" hreflang="fr" href="https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/" />
+  
+  <link rel="alternate" hreflang="x-default" href="https://www.thelongmath.com/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/" />
+  
+
+  <script src="/assets/js/theme-init.40fc21015f.js"></script>
+  <script src="/assets/js/i18n.e9994b5f88.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.4bb62c4d1c.css">
+  <script defer src="/assets/js/site.4fbf708cdd.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+  
+<style>
+    .article-content { max-width: 980px; margin: 0 auto; line-height: 1.7; font-size: 1.05rem; }
+    .article-content h2 { margin: 0 0 0.75em; }
+    .article-content h3 { margin: 1.25em 0 0.5em; }
+    .article-content ul, .article-content ol { margin: 1em 0; padding-left: 2em; }
+    .article-content li { margin: 0.5em 0; }
+    .article-content p { margin: 0.9em 0; }
+    .article-content table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.95em; min-width: 420px; }
+    .article-content th, .article-content td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; }
+    .article-content th { background: var(--card-bg, rgba(0, 0, 0, 0.03)); font-weight: 600; }
+    .article-content td.num, .article-content th.num { text-align: right; }
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1em 0; }
+    .section-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      margin: 18px 0;
+      background: var(--card-bg, var(--surface, #fff));
+      box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+    }
+    .section-card.intro-card { margin-top: 14px; }
+    .lm-formula {
+      display: inline-block;
+      padding: 10px 14px;
+      border: 1px solid var(--accent, #d6b36a);
+      border-radius: 12px;
+      background: rgba(0,0,0,0.12);
+      color: var(--text, #ffffff);
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      margin: 0.4em 0;
+    }
+    .rr-math-block {
+      background: var(--card-bg, rgba(0,0,0,0.03));
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 1em 0;
+      font-size: 0.95em;
+      line-height: 1.9;
+    }
+    .rr-math-block p { margin: 0; }
+    .related-articles h2 { font-size: 18px; margin: 0 0 10px; }
+    .related-articles h3 { font-size: 16px; margin: 1.25em 0 0.5em; }
+    .related-articles ul { list-style: none; padding-left: 0; margin: 0; }
+    .related-articles li { margin: 12px 0; }
+    .related-articles a { color: var(--accent); text-decoration: none; }
+    .related-articles a:hover { text-decoration: underline; }
+    .faq-accordion { margin: 0; }
+    .faq-accordion details {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+    .faq-accordion details[open] { border-color: var(--accent, #d6b36a); }
+    .faq-accordion summary {
+      padding: 14px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .faq-accordion summary::-webkit-details-marker { display: none; }
+    .faq-accordion summary::after {
+      content: "+";
+      font-size: 1.2em;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .faq-accordion details[open] summary::after { content: "\2212"; }
+    .faq-accordion .faq-answer { padding: 0 18px 16px; }
+    .faq-accordion .faq-answer p { margin: 0 0 0.9em 0; }
+    .faq-accordion .faq-answer p:last-child { margin-bottom: 0; }
+  </style>
+
+  <meta name="article:modified" content="June 2026" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Real Returns vs. Nominal Returns | The Long Math" />
+  <meta property="og:description" content="Learn the difference between nominal and real returns, how to calculate real rate of return after inflation, and why purchasing power matters for long-term financial planning." />
+  <meta property="og:url" content="https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Real Returns vs. Nominal Returns | The Long Math" />
+  <meta name="twitter:description" content="Learn the difference between nominal and real returns, how to calculate real rate of return after inflation, and why purchasing power matters for long-term financial planning." />
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.thelongmath.com/fr/"},{"@type":"ListItem","position":2,"name":"Investment and Financial Literacy","item":"https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/"},{"@type":"ListItem","position":3,"name":"Real Returns vs. Nominal Returns","item":"https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/"}]}</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Real Returns vs. Nominal Returns","description":"Learn the difference between nominal and real returns, how to calculate real rate of return after inflation, and why purchasing power matters for long-term financial planning.","author":{"@type":"Person","name":"Phil Evans"},"publisher":{"@type":"Organization","name":"The Long Math","logo":{"@type":"ImageObject","url":"https://www.thelongmath.com/assets/logo.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/"},"datePublished":"2026-06-09","dateModified":"2026-06-09"}</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between a nominal return and a real return?","acceptedAnswer":{"@type":"Answer","text":"A nominal return measures the change in dollars. A real return (real rate of return) measures the change in purchasing power after adjusting for inflation."}},{"@type":"Question","name":"How do you calculate a real rate of return?","acceptedAnswer":{"@type":"Answer","text":"Use the formula: r_real = (1 + r_nominal) ÷ (1 + i) − 1 where i is the inflation rate. Divide one plus the nominal return by one plus the inflation rate, then subtract one."}},{"@type":"Question","name":"Can a nominal return be positive while a real return is negative?","acceptedAnswer":{"@type":"Answer","text":"Yes. If an investment earns less than the inflation rate, purchasing power falls even though the account balance increases."}},{"@type":"Question","name":"Is subtracting inflation from a return accurate?","acceptedAnswer":{"@type":"Answer","text":"It is a useful approximation for quick mental math. The exact calculation uses the real-return formula because both investment returns and inflation compound."}},{"@type":"Question","name":"Why does inflation matter for retirement planning?","acceptedAnswer":{"@type":"Answer","text":"Retirement spending is paid with purchasing power, not account balances. A future portfolio value must be interpreted in the context of future prices, not today's prices."}},{"@type":"Question","name":"Should retirement projections use nominal or real returns?","acceptedAnswer":{"@type":"Answer","text":"Both are valid. The requirement is internal consistency: nominal returns require future spending estimates stated in future dollars; real returns allow spending needs to remain expressed in today's dollars."}},{"@type":"Question","name":"What is a good real rate of return?","acceptedAnswer":{"@type":"Answer","text":"A good real rate of return depends on the asset class , time period, fees, taxes, and inflation environment. Broad stock-market investments have historically aimed for positive real returns over long periods, while cash and very low-risk holdings may produce smaller real returns and can lose purchasing power when inflation is higher than the yield. The important point is not just the nominal return, but what remains after inflation, fees, and taxes."}}]}</script>
+
+
+</head>
+<body>
+  
+  <div id="site-header"></div>
+  <div class="wrap">
+    
+<article class="article-content">
+      <header>
+        <h1>Real Returns vs. Nominal Returns</h1>
+        <p class="reading-time">14-minute read</p>
+        <p class="last-updated">Last updated June 2026</p>
+      </header>
+
+      <section class="section-card intro-card" id="quick-answer">
+        <h2>Quick Answer</h2>
+        <p>A nominal return measures how many more dollars an investment produced.</p>
+        <p>A real return (also called a real rate of return) measures how much more purchasing power those dollars represent after adjusting for <a href="/fr/articles/investing-and-financial-literacy/inflation/">inflation</a>.</p>
+        <p>The exact relationship is:</p>
+        <p><span class="lm-formula">r_real = (1 + r_nominal) ÷ (1 + i) − 1</span></p>
+        <p>Where <em>r_real</em> is the real return, <em>r_nominal</em> is the nominal return, and <em>i</em> is the inflation rate.</p>
+        <p>If an investment earns 6% while inflation runs at 3%, the real return is approximately 2.91% — not 3%. The difference exists because both the investment return and the price level <a href="/fr/articles/investing-and-financial-literacy/compound-interest/">compound over time</a>.</p>
+        <p>That distinction matters because all future spending — groceries, housing, healthcare, retirement income — is paid with purchasing power, not with the balance on your brokerage statements.</p>
+      </section>
+
+      <section class="section-card">
+        <p>Most people think in dollars. That is a natural and mostly harmless habit for everyday life.</p>
+        <p>For long-term financial planning, it becomes a source of silent yet substantial distortion.</p>
+        <p>When an account rises from $10,000 to $10,600, the balance increased. The statement says so. That is true and worth knowing. But future spending does not happen inside a brokerage account. It happens in an economy where the same number of dollars may buy less next year than they buy today.</p>
+        <p>That is the distinction between a nominal return and a real return.</p>
+        <p>A nominal return measures how the number of dollars changed. A real return measures how purchasing power changed. The two can move in opposite directions — an account can grow in dollar terms while its owner falls behind economically.</p>
+        <p>Over one year, the gap may be small enough to ignore. Over a working and saving lifetime, it becomes one of the most consequential numbers in the analysis.</p>
+      </section>
+
+      <section class="section-card" id="what-is-nominal-return">
+        <h2>What Is a Nominal Return?</h2>
+        <p>A nominal return is the investment return stated in dollar terms, before adjusting for inflation.</p>
+        <p>If you invest $10,000 and it grows to $10,600 after one year, with no deposits or withdrawals, the nominal return is:</p>
+        <div class="rr-math-block">
+          <p>Nominal return = (Ending value − Starting value) / Starting value</p>
+          <p>Nominal return = ($10,600 − $10,000) / $10,000</p>
+          <p>Nominal return = $600 / $10,000</p>
+          <p>Nominal return = 6%</p>
+        </div>
+        <p>Any interest, dividends, or capital gains distributions received during the period are included in that calculation.</p>
+        <p>Nominal returns answer a specific, narrow question: how much did the number of dollars change (as a raw number or a percentage)? They do not answer how much more those dollars can buy. Those are different questions, and conflating them is the source of most confusion in this area.</p>
+      </section>
+
+      <section class="section-card" id="what-is-real-return">
+        <h2>What Is a Real Return (Real Rate of Return)?</h2>
+        <p>A real return adjusts the nominal return for the effect of inflation over the same period of time.</p>
+        <p>The formula is:</p>
+        <p><span class="lm-formula">r_real = (1 + r_nominal) ÷ (1 + i) − 1</span></p>
+        <p>Suppose an investment earns 6% in a year when inflation runs at 3%. No taxes. No fees.</p>
+        <p>The account grows to:</p>
+        <div class="rr-math-block">
+          <p>$10,000 × 1.06 = $10,600</p>
+        </div>
+        <p>But if prices also rose by 3% during that year, then $10,600 at year-end does not buy what $10,600 would have bought at the start of the year. To express the future balance in today's purchasing power:</p>
+        <div class="rr-math-block">
+          <p>Inflation-adjusted value = $10,600 / 1.03 = $10,291.26</p>
+          <p>Real gain = $10,291.26 − $10,000 = $291.26</p>
+          <p>Real return = $291.26 / $10,000 = 2.91%</p>
+        </div>
+        <p>Using the formula directly:</p>
+        <div class="rr-math-block">
+          <p>Real return = 1.06 / 1.03 − 1 = 2.91%</p>
+        </div>
+        <p>For rough estimation, many people subtract inflation from the nominal return:</p>
+        <div class="rr-math-block">
+          <p>6% − 3% ≈ 3%</p>
+        </div>
+        <p>That approximation is close, and often good enough for mental math. It slightly overstates the real return because it ignores the compounding interaction between the two rates. The exact formula is more precise; the approximation is more convenient.</p>
+      </section>
+
+      <section class="section-card" id="positive-nominal-negative-real">
+        <h2>A Positive Nominal Return Does Not Guarantee a Positive Real Return</h2>
+        <p>This is the part that can be surprising for many people.</p>
+        <p>Suppose:</p>
+        <ul>
+          <li>Starting value: $10,000</li>
+          <li>Nominal return: 4%</li>
+          <li>Inflation rate: 5%</li>
+          <li>No taxes or fees</li>
+        </ul>
+        <p>The account grows:</p>
+        <div class="rr-math-block">
+          <p>$10,000 × 1.04 = $10,400</p>
+        </div>
+        <p>The statement shows a gain. But adjusted for inflation:</p>
+        <div class="rr-math-block">
+          <p>Inflation-adjusted value = $10,400 / 1.05 = $9,904.76</p>
+          <p>Real return = 1.04 / 1.05 − 1 = −0.95%</p>
+        </div>
+        <p>The investor has more dollars and less purchasing power. Both statements are simultaneously true.</p>
+        <p>This is not a theoretical edge case. During periods of elevated inflation, even returns that look reasonable in nominal terms can represent negative real outcomes. Investors who evaluated their portfolios only in dollar terms would have seen a gain; investors tracking purchasing power would have seen a loss.</p>
+        <p>When people say a portfolio "made money," they usually mean the statement balance increased. Real returns ask the more precise question: did the investor become economically stronger? Did their purchasing power increase?</p>
+      </section>
+
+      <section class="section-card" id="same-nominal-different-real">
+        <h2>The Same Nominal Return Produces Different Real Outcomes</h2>
+        <p>A 6% nominal return is not a fixed result. Its real meaning depends entirely on inflation.</p>
+        <p>Assume $10,000, a 6% nominal return, no taxes, and no fees:</p>
+        <div class="table-wrap" role="region" aria-label="Real return at different inflation rates">
+          <table>
+            <thead>
+              <tr>
+                <th>Inflation Rate</th>
+                <th class="num">Real Return</th>
+                <th class="num">Inflation-Adjusted Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>1%</td><td class="num">4.95%</td><td class="num">≈ $10,495</td></tr>
+              <tr><td>3%</td><td class="num">2.91%</td><td class="num">≈ $10,291</td></tr>
+              <tr><td>7%</td><td class="num">−0.93%</td><td class="num">≈ $9,907</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The nominal return is identical in all three cases. The real outcome is not.</p>
+        <p>This is why return figures stated without an inflation assumption are incomplete. They describe account growth. They do not describe economic progress.</p>
+      </section>
+
+      <section class="section-card" id="compounding-gap">
+        <h2>Compounding Makes the Gap Larger Over Time</h2>
+        <p>Over one year, the difference between nominal and real values may seem manageable. Across decades, it becomes the dominant feature of the arithmetic.</p>
+        <p>Suppose:</p>
+        <ul>
+          <li>Starting value: $100,000</li>
+          <li>Nominal return: 6% annually</li>
+          <li>Inflation rate: 3% annually</li>
+          <li>No taxes, no fees, no deposits or withdrawals</li>
+          <li>30-year period</li>
+        </ul>
+        <p>Nominal future value:</p>
+        <p><span class="lm-formula">A = P(1 + r)<sup>t</sup></span></p>
+        <div class="rr-math-block">
+          <p>$100,000 × 1.06<sup>30</sup> ≈ $574,350</p>
+        </div>
+        <p>Inflation compounds over the same period:</p>
+        <div class="rr-math-block">
+          <p>Inflation factor = 1.03<sup>30</sup> ≈ 2.4273</p>
+        </div>
+        <p>Expressing the nominal balance in today's purchasing power:</p>
+        <div class="rr-math-block">
+          <p>Real value = $574,350 / 2.4273 ≈ $236,620</p>
+        </div>
+        <p>The nominal balance grew to more than five times the original. The purchasing power grew to about 2.4 times the original. That is still meaningful, compounded real growth — but it is not the same as $574,350 in today's dollars. The gap between those two numbers is the cost of inflation over three decades.</p>
+        <p>When a <a href="/fr/articles/investing-and-financial-literacy/safe-withdrawal-rate/">retirement projection</a> shows a future balance, the relevant question is not just whether the account will reach that number. It is what that number will actually buy.</p>
+      </section>
+
+      <section class="section-card" id="inflation-measured-canada">
+        <h2>How Inflation Is Measured in Canada</h2>
+        <p>In Canada, inflation is most commonly measured using the Consumer Price Index (CPI), published monthly by Statistics Canada.</p>
+        <p>The CPI measures price change by tracking the cost of a fixed basket of goods and services over time. Because the basket holds quantities constant, movements in the index reflect changes in price rather than changes in what Canadians are buying. Statistics Canada's primary source for constructing basket weights is Household Final Consumption Expenditure (HFCE) data, supplemented by the Survey of Household Spending (SHS). Basket weights are updated annually to reflect shifts in consumer spending patterns; as of May 2025, the basket reference period is 2024.</p>
+        <p>The Bank of Canada also monitors several "core" inflation measures — CPI-median, CPI-trim, and CPIX — that are designed to filter out unusually volatile price movements and give a cleaner read on the underlying trend.</p>
+        <p>CPI is a useful, consistent, and publicly available inflation benchmark. It is not identical to every household's experience of inflation.</p>
+        <p>Different households have different spending patterns. A renter's experience of price change differs from a homeowner's. A household with young children faces different cost pressures than a household in retirement. CPI tracks an average basket for an average Canadian consumer, which means it is an approximation for any specific household.</p>
+        <p>That does not make CPI unreliable. It makes it a benchmark — one that is useful for analysis precisely because it is consistent and publicly sourced. The appropriate response is not to distrust it, but to treat any inflation assumption used in a projection as exactly that: an assumption worth stating explicitly.</p>
+      </section>
+
+      <section class="section-card" id="taxes-reduce-real-returns">
+        <h2>How Taxes Reduce Real Returns Further</h2>
+        <p>Inflation erodes purchasing power. Taxes reduce the portion of a return the investor keeps. Both operate simultaneously.</p>
+        <p>A simplified example, in dollars, before any account-type or provincial considerations:</p>
+        <ul>
+          <li>Starting value: $10,000</li>
+          <li>Interest rate: 5%</li>
+          <li>Interest earned: $500</li>
+          <li>Marginal tax rate: 30%</li>
+          <li>Inflation rate: 3%</li>
+        </ul>
+        <p>Tax on interest:</p>
+        <div class="rr-math-block">
+          <p>$500 × 30% = $150</p>
+        </div>
+        <p>After-tax interest:</p>
+        <div class="rr-math-block">
+          <p>$500 − $150 = $350</p>
+        </div>
+        <p>After-tax ending value:</p>
+        <div class="rr-math-block">
+          <p>$10,350</p>
+        </div>
+        <p>Inflation-adjusted value:</p>
+        <div class="rr-math-block">
+          <p>$10,350 / 1.03 = $10,048.54</p>
+          <p>Real after-tax gain: $48.54</p>
+          <p>Real after-tax return: approximately 0.49%</p>
+        </div>
+        <p>The investment earned 5% before tax and inflation. After both, purchasing power grew by roughly half a percent.</p>
+        <p>This example is intentionally simplified. Canadian taxation of investment income depends on account type (RRSP, TFSA, FHSA, non-registered, corporate), income type (interest, eligible dividends, capital gains), province or territory, income level, and other factors. Interest income, eligible dividends, capital gains, and return of capital are not taxed identically. A proper after-tax return calculation requires inputs specific to the investor.</p>
+        <p>The arithmetic point stands regardless of those details: nominal return, after-tax return, and real after-tax return are three different numbers. They should not be treated as interchangeable.</p>
+      </section>
+
+      <section class="section-card" id="cash-illusion">
+        <h2>Cash and the Illusion of Stability</h2>
+        <p>Cash provides many investors with a sense of stability because the balance usually looks constant. That stability is an illusion. The balance only remains constant in nominal dollars, while the real value is eroded by inflation.</p>
+        <p>If $20,000 sits in a chequing account for a year and the statement still reads $20,000, it can feel as though nothing happened.</p>
+        <p>But if inflation runs at 4% during that year:</p>
+        <div class="rr-math-block">
+          <p>Real value = $20,000 / 1.04 = $19,230.77</p>
+          <p>Real loss ≈ −$769.23</p>
+          <p>Real return ≈ −3.85%</p>
+        </div>
+        <p>The nominal balance is unchanged. The purchasing power is not.</p>
+        <p>This does not mean cash is the wrong choice. Cash plays a legitimate and necessary role: emergency reserves, near-term spending needs, tax obligations, and short-term liabilities all warrant cash holdings. The point is narrower than that. Nominal stability is not the same thing as purchasing-power stability, and treating them as equivalent is where the error enters.</p>
+      </section>
+
+      <section class="section-card" id="real-wage-growth">
+        <h2>Real Wage Growth Uses the Same Arithmetic</h2>
+        <p>The same framework applies to earned income.</p>
+        <p>Suppose a salary increases from $60,000 to $63,000:</p>
+        <div class="rr-math-block">
+          <p>Nominal wage increase = ($63,000 − $60,000) / $60,000 = 5%</p>
+        </div>
+        <p>If inflation over the same period is 3%:</p>
+        <div class="rr-math-block">
+          <p>Real wage growth = 1.05 / 1.03 − 1 ≈ 1.94%</p>
+        </div>
+        <p>The worker earned more and has more purchasing power — but by less than the headline number suggests.</p>
+        <p>If the salary increases 3% while inflation runs at 5%:</p>
+        <div class="rr-math-block">
+          <p>Real wage growth = 1.03 / 1.05 − 1 ≈ −1.90%</p>
+        </div>
+        <p>The paycheque is larger. The purchasing power it represents is smaller.</p>
+        <p>This matters for financial planning because savings typically come from wages during working years. A nominal raise that does not keep pace with inflation quietly reduces saving capacity, even as the dollar amounts on each paycheque increase.</p>
+      </section>
+
+      <section class="section-card" id="what-subtracted">
+        <h2>What Has Already Been Subtracted</h2>
+        <p>Investment returns quoted in the media, fund reports, and marketing materials are usually nominal unless explicitly stated otherwise.</p>
+        <p>Whenever a return figure appears, it is worth asking what has and has not been accounted for.</p>
+        <ul>
+          <li><strong>Nominal return:</strong> inflation not yet subtracted</li>
+          <li><strong>Real return:</strong> inflation has been adjusted for</li>
+          <li><strong>Pre-tax return:</strong> taxes not yet subtracted</li>
+          <li><strong>After-tax return:</strong> taxes have been subtracted</li>
+          <li><strong>Before-fee return:</strong> management expenses not yet subtracted</li>
+          <li><strong>After-fee return:</strong> fees have been subtracted</li>
+        </ul>
+        <p>A single investment can carry several different return figures, all technically accurate, all measuring something different:</p>
+        <ul>
+          <li>8.0%: nominal, pre-tax, before fees</li>
+          <li>6.5%: nominal, pre-tax, after fees</li>
+          <li>4.5%: nominal, after-tax, after fees</li>
+          <li>1.9%: real, after-tax, after fees</li>
+        </ul>
+        <p>None of those figures is fabricated. None is interchangeable with the others. The first is the figure most likely to appear in marketing materials. The last is closest to what the investor actually kept in terms of purchasing power.</p>
+        <p>Understanding which number is being shown — and what has been left out — is most of the analytical work.</p>
+      </section>
+
+      <section class="newsletter-signup card" aria-labelledby="newsletter-article-heading">
+<h2 id="newsletter-article-heading" class="newsletter-signup-heading">Get the new work without checking back</h2>
+<p class="newsletter-signup-copy">One concise monthly email with new calculators, articles, and essays from The Long Math, plus a short note on why each one matters.</p>
+<p class="newsletter-signup-meta">Free. Unsubscribe anytime.</p>
+<div class="newsletter-embed-wrap">
+<iframe
+  src="https://subscribe-forms.beehiiv.com/bfdc64a5-2697-4bb0-bec5-5a557c9f274b"
+  class="beehiiv-embed"
+  data-test-id="beehiiv-embed"
+  frameborder="0"
+  scrolling="no"
+  style="width: 330px; height: 53px; margin: 0; border-radius: 0; background-color: transparent; box-shadow: 0 0 #0000; max-width: 100%;"
+  title="Newsletter signup"
+></iframe>
+
+</div>
+
+</section>
+
+<section class="section-card" id="faq">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-accordion">
+          <details>
+            <summary>What is the difference between a nominal return and a real return?</summary>
+            <div class="faq-answer">
+              <p>A nominal return measures the change in dollars. A real return (real rate of return) measures the change in purchasing power after adjusting for inflation.</p>
+            </div>
+          </details>
+          <details>
+            <summary>How do you calculate a real rate of return?</summary>
+            <div class="faq-answer">
+              <p>Use the formula:</p>
+              <p><span class="lm-formula">r_real = (1 + r_nominal) ÷ (1 + i) − 1</span></p>
+              <p>where <em>i</em> is the inflation rate. Divide one plus the nominal return by one plus the inflation rate, then subtract one.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Can a nominal return be positive while a real return is negative?</summary>
+            <div class="faq-answer">
+              <p>Yes. If an investment earns less than the inflation rate, purchasing power falls even though the account balance increases.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Is subtracting inflation from a return accurate?</summary>
+            <div class="faq-answer">
+              <p>It is a useful approximation for quick mental math. The exact calculation uses the real-return formula because both investment returns and inflation compound.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Why does inflation matter for retirement planning?</summary>
+            <div class="faq-answer">
+              <p>Retirement spending is paid with purchasing power, not account balances. A future portfolio value must be interpreted in the context of future prices, not today's prices.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Should retirement projections use nominal or real returns?</summary>
+            <div class="faq-answer">
+              <p>Both are valid. The requirement is internal consistency: nominal returns require future spending estimates stated in future dollars; real returns allow spending needs to remain expressed in today's dollars.</p>
+            </div>
+          </details>
+          <details>
+            <summary>What is a good real rate of return?</summary>
+            <div class="faq-answer">
+              <p>A good real rate of return depends on the <a href="/fr/articles/investing-and-financial-literacy/asset-classes-for-investing/">asset class</a>, time period, fees, taxes, and inflation environment. Broad stock-market investments have historically aimed for positive real returns over long periods, while cash and very low-risk holdings may produce smaller real returns and can lose purchasing power when inflation is higher than the yield. The important point is not just the nominal return, but what remains after inflation, fees, and taxes.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="section-card">
+        <h2>The Arithmetic Is Simple. The Habit Takes Practice.</h2>
+        <p>The harder part is applying it consistently — treating every future dollar amount as a figure that requires context before it can be interpreted.</p>
+        <p>A projected retirement balance stated in nominal terms is not the same as that balance in today's purchasing power. A quoted return is not automatically real, after-tax, or after-fee. A stable account balance is not automatically stable purchasing power.</p>
+        <p>The habit is simply this: whenever a future dollar amount appears, ask what year's dollars it represents and what has already been removed from the headline figure.</p>
+        <p>Nominal returns measure the growth of dollars. Real returns (real rates of return) measure the growth of what those dollars can buy. Both are legitimate and useful — as long as the units are visible.</p>
+        <p>No opinions. No hidden assumptions. Just arithmetic.</p>
+      </section>
+
+      <section class="section-card related-articles">
+        <h2>Related Articles</h2>
+        <ul>
+          <li><a href="/fr/articles/investing-and-financial-literacy/what-is-investing/">What Is Investing?</a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/compound-interest/">Compound Interest: The Ultimate Wealth Builder</a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/inflation/">Inflation: The Math That Makes Future Money Smaller</a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/asset-classes-for-investing/">Asset Classes for Investing</a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/safe-withdrawal-rate/">Safe Withdrawal Rate</a></li>
+        </ul>
+        <h3>Related Calculators</h3>
+        <ul>
+          <li><a href="/calculators/investment-simple/">Simple Investment Calculator</a></li>
+          <li><a href="/calculators/inflation-time-machine/">Inflation Time Machine</a></li>
+          <li><a href="/calculators/investment-calculator-inflation-adjusted/">Inflation-Adjusted Investment Calculator</a></li>
+          <li><a href="/fr/calculators/advisor-fee/">Financial Advisor Cost Calculator</a></li>
+          <li><a href="/calculators/required-return-to-offset-fee/">Required Return to Offset a Fee Calculator</a></li>
+          <li><a href="/calculators/pay-off-mortgage-vs-invest/">Mortgage vs. Invest Calculator</a></li>
+        </ul>
+      </section>
+    </article>
+<div class="disclaimer"><p><strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.</p></div>
+
+  </div>
+  
+  <div id="footerMount"></div>
+</body>
+</html>

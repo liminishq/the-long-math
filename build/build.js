@@ -66,6 +66,7 @@ const ARTICLE_SLUGS = [
   "leveraged-investing",
   "norberts-gambit",
   "pay-off-your-mortgage-faster-or-invest",
+  "real-returns-vs-nominal-returns",
   "what-is-a-non-registered-account",
   "rrsp-meltdown",
   "rrsp-vs-tfsa-vs-fhsa",
