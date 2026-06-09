@@ -1,32 +1,20 @@
-<!doctype html>
-<html lang="fr-CA">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rendements réels vs rendements nominaux | The Long Math</title>
-  <meta name="description" content="Comprenez la différence entre rendement nominal et rendement réel, comment calculer le taux de rendement réel après inflation, et pourquoi le pouvoir d&#39;achat compte pour la planification financière à long terme." />
-  <link rel="canonical" href="https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/" />
-  
-  <link rel="alternate" hreflang="en" href="https://www.thelongmath.com/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/" />
-  
-  <link rel="alternate" hreflang="fr" href="https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/" />
-  
-  <link rel="alternate" hreflang="x-default" href="https://www.thelongmath.com/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/" />
-  
+#!/usr/bin/env node
+"use strict";
 
-  <script src="/assets/js/theme-init.40fc21015f.js"></script>
-  <script src="/assets/js/i18n.e9994b5f88.js"></script>
-  <link rel="stylesheet" href="/assets/css/styles.4bb62c4d1c.css">
-  <script defer src="/assets/js/site.4fbf708cdd.js"></script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
-  <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
-  </script>
-  
-<style>
+const fs = require("fs");
+const path = require("path");
+
+const OUT = path.join(
+  __dirname,
+  "..",
+  "assets",
+  "i18n",
+  "fr",
+  "articles",
+  "real-returns-vs-nominal-returns.json"
+);
+
+const pageStyles = `<style>
     .article-content { max-width: 980px; margin: 0 auto; line-height: 1.7; font-size: 1.05rem; }
     .article-content h2 { margin: 0 0 0.75em; }
     .article-content h3 { margin: 1.25em 0 0.5em; }
@@ -99,36 +87,13 @@
       color: var(--accent);
       flex-shrink: 0;
     }
-    .faq-accordion details[open] summary::after { content: "\2212"; }
+    .faq-accordion details[open] summary::after { content: "\\2212"; }
     .faq-accordion .faq-answer { padding: 0 18px 16px; }
     .faq-accordion .faq-answer p { margin: 0 0 0.9em 0; }
     .faq-accordion .faq-answer p:last-child { margin-bottom: 0; }
-  </style>
+  </style>`;
 
-  <meta name="article:modified" content="juin 2026" />
-
-  <meta property="og:type" content="article" />
-  <meta property="og:title" content="Rendements réels vs rendements nominaux | The Long Math" />
-  <meta property="og:description" content="Comprenez la différence entre rendement nominal et rendement réel, comment calculer le taux de rendement réel après inflation, et pourquoi le pouvoir d&#39;achat compte pour la planification financière à long terme." />
-  <meta property="og:url" content="https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Rendements réels vs rendements nominaux | The Long Math" />
-  <meta name="twitter:description" content="Comprenez la différence entre rendement nominal et rendement réel, comment calculer le taux de rendement réel après inflation, et pourquoi le pouvoir d&#39;achat compte pour la planification financière à long terme." />
-
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Accueil","item":"https://www.thelongmath.com/fr/"},{"@type":"ListItem","position":2,"name":"Investissement et culture financière","item":"https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/"},{"@type":"ListItem","position":3,"name":"Rendements réels vs rendements nominaux","item":"https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/"}]}</script>
-
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Rendements réels vs rendements nominaux","description":"Comprenez la différence entre rendement nominal et rendement réel, comment calculer le taux de rendement réel après inflation, et pourquoi le pouvoir d'achat compte pour la planification financière à long terme.","author":{"@type":"Person","name":"Phil Evans"},"publisher":{"@type":"Organization","name":"The Long Math","logo":{"@type":"ImageObject","url":"https://www.thelongmath.com/assets/logo.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/"},"datePublished":"2026-06-09","dateModified":"2026-06-09"}</script>
-
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Quelle est la différence entre un rendement nominal et un rendement réel?","acceptedAnswer":{"@type":"Answer","text":"Un rendement nominal mesure le changement en dollars. Un rendement réel (taux de rendement réel) mesure le changement de pouvoir d'achat après correction pour l'inflation."}},{"@type":"Question","name":"Comment calcule-t-on un taux de rendement réel?","acceptedAnswer":{"@type":"Answer","text":"Utilisez la formule : r_réel = (1 + r_nominal) ÷ (1 + i) − 1 où i est le taux d'inflation. Divisez un plus le rendement nominal par un plus le taux d'inflation, puis soustrayez un."}},{"@type":"Question","name":"Un rendement nominal peut-il être positif pendant qu'un rendement réel est négatif?","acceptedAnswer":{"@type":"Answer","text":"Oui. Si un placement rapporte moins que le taux d'inflation, le pouvoir d'achat baisse même si le solde du compte augmente."}},{"@type":"Question","name":"Soustraire l'inflation d'un rendement est-il exact?","acceptedAnswer":{"@type":"Answer","text":"C'est une approximation utile pour un calcul mental rapide. Le calcul exact utilise la formule du rendement réel parce que les rendements de placement et l'inflation se capitalisent tous deux."}},{"@type":"Question","name":"Pourquoi l'inflation compte-t-elle pour la planification de la retraite?","acceptedAnswer":{"@type":"Answer","text":"Les dépenses de retraite se paient en pouvoir d'achat, pas en soldes de compte. Une valeur future de portefeuille doit être interprétée dans le contexte des prix futurs, et non des prix d'aujourd'hui."}},{"@type":"Question","name":"Les projections de retraite doivent-elles utiliser des rendements nominaux ou réels?","acceptedAnswer":{"@type":"Answer","text":"Les deux sont valides. L'exigence est la cohérence interne : les rendements nominaux exigent des estimations de dépenses futures exprimées en dollars futurs; les rendements réels permettent d'exprimer les besoins de dépenses en dollars d'aujourd'hui."}},{"@type":"Question","name":"Qu'est-ce qu'un bon taux de rendement réel?","acceptedAnswer":{"@type":"Answer","text":"Un bon taux de rendement réel dépend de la classe d'actifs , de la période, des frais, des impôts et du contexte d'inflation. Les placements largement exposés au marché boursier ont historiquement visé des rendements réels positifs sur de longues périodes, tandis que les liquidités et les placements à très faible risque peuvent produire des rendements réels plus faibles et perdre du pouvoir d'achat quand l'inflation dépasse le rendement. Le point important n'est pas seulement le rendement nominal, mais ce qui reste après inflation, frais et impôts."}}]}</script>
-
-
-</head>
-<body>
-  
-  <div id="site-header"></div>
-  <div class="wrap">
-    
-<article class="article-content">
+const wrapMainHtml = `<article class="article-content">
       <header>
         <h1>Rendements réels vs rendements nominaux</h1>
         <p class="reading-time">Lecture de 14 minutes</p>
@@ -138,11 +103,11 @@
       <section class="section-card intro-card" id="quick-answer">
         <h2>Réponse rapide</h2>
         <p>Un rendement nominal mesure combien de dollars supplémentaires un placement a produit.</p>
-        <p>Un rendement réel (aussi appelé taux de rendement réel) mesure combien de pouvoir d'achat supplémentaire ces dollars représentent après correction pour <a href="/fr/articles/investing-and-financial-literacy/inflation/">l'inflation</a>.</p>
+        <p>Un rendement réel (aussi appelé taux de rendement réel) mesure combien de pouvoir d'achat supplémentaire ces dollars représentent après correction pour <a href="/articles/investing-and-financial-literacy/inflation/">l'inflation</a>.</p>
         <p>La relation exacte est :</p>
         <p><span class="lm-formula">r_réel = (1 + r_nominal) ÷ (1 + i) − 1</span></p>
         <p>Où <em>r_réel</em> est le rendement réel, <em>r_nominal</em> le rendement nominal et <em>i</em> le taux d'inflation.</p>
-        <p>Si un placement rapporte 6 % pendant que l'inflation est de 3 %, le rendement réel est d'environ 2,91 % — et non 3 %. L'écart existe parce que le rendement du placement et le niveau des prix <a href="/fr/articles/investing-and-financial-literacy/compound-interest/">se capitalisent tous deux dans le temps</a>.</p>
+        <p>Si un placement rapporte 6 % pendant que l'inflation est de 3 %, le rendement réel est d'environ 2,91 % — et non 3 %. L'écart existe parce que le rendement du placement et le niveau des prix <a href="/articles/investing-and-financial-literacy/compound-interest/">se capitalisent tous deux dans le temps</a>.</p>
         <p>Cette distinction compte, parce que toutes les dépenses futures — épicerie, logement, soins de santé, revenu de retraite — se paient en pouvoir d'achat, et non avec le solde de votre relevé de courtage.</p>
       </section>
 
@@ -269,7 +234,7 @@
           <p>Valeur réelle = 574 350 $ / 2,4273 ≈ 236 620 $</p>
         </div>
         <p>Le solde nominal a plus que quintuplé. Le pouvoir d'achat a environ quadruplé en termes réels capitalisés — mais ce n'est pas la même chose que 574 350 $ en dollars d'aujourd'hui. L'écart entre ces deux nombres est le coût de l'inflation sur trois décennies.</p>
-        <p>Quand une <a href="/fr/articles/investing-and-financial-literacy/safe-withdrawal-rate/">projection de retraite</a> affiche un solde futur, la question pertinente n'est pas seulement de savoir si le compte atteindra ce montant. C'est de savoir ce que ce montant achètera réellement.</p>
+        <p>Quand une <a href="/articles/investing-and-financial-literacy/safe-withdrawal-rate/">projection de retraite</a> affiche un solde futur, la question pertinente n'est pas seulement de savoir si le compte atteindra ce montant. C'est de savoir ce que ce montant achètera réellement.</p>
       </section>
 
       <section class="section-card" id="inflation-measured-canada">
@@ -373,26 +338,7 @@
         <p>Comprendre quel nombre est affiché — et ce qui a été omis — constitue l'essentiel du travail analytique.</p>
       </section>
 
-      <section class="newsletter-signup card" aria-labelledby="newsletter-article-heading">
-<h2 id="newsletter-article-heading" class="newsletter-signup-heading">Get the new work without checking back</h2>
-<p class="newsletter-signup-copy">One concise monthly email with new calculators, articles, and essays from The Long Math, plus a short note on why each one matters.</p>
-<p class="newsletter-signup-meta">Free. Unsubscribe anytime.</p>
-<div class="newsletter-embed-wrap">
-<iframe
-  src="https://subscribe-forms.beehiiv.com/bfdc64a5-2697-4bb0-bec5-5a557c9f274b"
-  class="beehiiv-embed"
-  data-test-id="beehiiv-embed"
-  frameborder="0"
-  scrolling="no"
-  style="width: 330px; height: 53px; margin: 0; border-radius: 0; background-color: transparent; box-shadow: 0 0 #0000; max-width: 100%;"
-  title="Newsletter signup"
-></iframe>
-
-</div>
-
-</section>
-
-<section class="section-card" id="faq">
+      <section class="section-card" id="faq">
         <h2>Questions fréquentes</h2>
         <div class="faq-accordion">
           <details>
@@ -436,7 +382,7 @@
           <details>
             <summary>Qu'est-ce qu'un bon taux de rendement réel?</summary>
             <div class="faq-answer">
-              <p>Un bon taux de rendement réel dépend de la <a href="/fr/articles/investing-and-financial-literacy/asset-classes-for-investing/">classe d'actifs</a>, de la période, des frais, des impôts et du contexte d'inflation. Les placements largement exposés au marché boursier ont historiquement visé des rendements réels positifs sur de longues périodes, tandis que les liquidités et les placements à très faible risque peuvent produire des rendements réels plus faibles et perdre du pouvoir d'achat quand l'inflation dépasse le rendement. Le point important n'est pas seulement le rendement nominal, mais ce qui reste après inflation, frais et impôts.</p>
+              <p>Un bon taux de rendement réel dépend de la <a href="/articles/investing-and-financial-literacy/asset-classes-for-investing/">classe d'actifs</a>, de la période, des frais, des impôts et du contexte d'inflation. Les placements largement exposés au marché boursier ont historiquement visé des rendements réels positifs sur de longues périodes, tandis que les liquidités et les placements à très faible risque peuvent produire des rendements réels plus faibles et perdre du pouvoir d'achat quand l'inflation dépasse le rendement. Le point important n'est pas seulement le rendement nominal, mais ce qui reste après inflation, frais et impôts.</p>
             </div>
           </details>
         </div>
@@ -454,27 +400,95 @@
       <section class="section-card related-articles">
         <h2>Articles connexes</h2>
         <ul>
-          <li><a href="/fr/articles/investing-and-financial-literacy/what-is-investing/">Qu'est-ce que l'investissement?</a></li>
-          <li><a href="/fr/articles/investing-and-financial-literacy/compound-interest/">L'intérêt composé : le levier ultime du patrimoine</a></li>
-          <li><a href="/fr/articles/investing-and-financial-literacy/inflation/">L'inflation : les mathématiques qui rétrécissent l'argent de demain</a></li>
-          <li><a href="/fr/articles/investing-and-financial-literacy/asset-classes-for-investing/">Classes d'actifs pour l'investissement</a></li>
-          <li><a href="/fr/articles/investing-and-financial-literacy/safe-withdrawal-rate/">Taux de retrait sécuritaire</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/what-is-investing/">Qu'est-ce que l'investissement?</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/compound-interest/">L'intérêt composé : le levier ultime du patrimoine</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/inflation/">L'inflation : les mathématiques qui rétrécissent l'argent de demain</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/asset-classes-for-investing/">Classes d'actifs pour l'investissement</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/safe-withdrawal-rate/">Taux de retrait sécuritaire</a></li>
         </ul>
         <h3>Calculateurs connexes</h3>
         <ul>
           <li><a href="/calculators/investment-simple/">Calculateur d'investissement simple</a></li>
           <li><a href="/calculators/inflation-time-machine/">Machine à remonter l'inflation</a></li>
           <li><a href="/calculators/investment-calculator-inflation-adjusted/">Calculateur d'investissement corrigé de l'inflation</a></li>
-          <li><a href="/fr/calculators/advisor-fee/">Calculateur du coût d'un conseiller financier</a></li>
+          <li><a href="/calculators/advisor-fee/">Calculateur du coût d'un conseiller financier</a></li>
           <li><a href="/calculators/required-return-to-offset-fee/">Rendement requis pour compenser des frais</a></li>
           <li><a href="/calculators/pay-off-mortgage-vs-invest/">Rembourser l'hypothèque ou investir</a></li>
         </ul>
       </section>
-    </article>
-<div class="disclaimer"><p><strong>Avis de non-responsabilité :</strong> L'ensemble du contenu de The Long Math — articles, textes, calculateurs, outils ou tout autre matériel — est fourni à des fins éducatives et d'information uniquement et ne constitue pas un conseil financier, fiscal, juridique ou en placement. Les résultats ou projections reposent sur des modèles simplifiés, des hypothèses et des données fournies par l'utilisateur et peuvent ne pas refléter la réalité. Il vous appartient d'évaluer l'exactitude et la pertinence des renseignements et de faire votre propre diligence raisonnable. Avant de prendre des décisions financières, consultez un professionnel qualifié.</p></div>
+    </article>`;
 
-  </div>
-  
-  <div id="footerMount"></div>
-</body>
-</html>
+const faq = [
+  {
+    question: "Quelle est la différence entre un rendement nominal et un rendement réel?",
+    answerHtml:
+      "<p>Un rendement nominal mesure le changement en dollars. Un rendement réel (taux de rendement réel) mesure le changement de pouvoir d'achat après correction pour l'inflation.</p>",
+  },
+  {
+    question: "Comment calcule-t-on un taux de rendement réel?",
+    answerHtml:
+      '<p>Utilisez la formule :</p><p><span class="lm-formula">r_réel = (1 + r_nominal) ÷ (1 + i) − 1</span></p><p>où <em>i</em> est le taux d\'inflation. Divisez un plus le rendement nominal par un plus le taux d\'inflation, puis soustrayez un.</p>',
+  },
+  {
+    question: "Un rendement nominal peut-il être positif pendant qu'un rendement réel est négatif?",
+    answerHtml:
+      "<p>Oui. Si un placement rapporte moins que le taux d'inflation, le pouvoir d'achat baisse même si le solde du compte augmente.</p>",
+  },
+  {
+    question: "Soustraire l'inflation d'un rendement est-il exact?",
+    answerHtml:
+      "<p>C'est une approximation utile pour un calcul mental rapide. Le calcul exact utilise la formule du rendement réel parce que les rendements de placement et l'inflation se capitalisent tous deux.</p>",
+  },
+  {
+    question: "Pourquoi l'inflation compte-t-elle pour la planification de la retraite?",
+    answerHtml:
+      "<p>Les dépenses de retraite se paient en pouvoir d'achat, pas en soldes de compte. Une valeur future de portefeuille doit être interprétée dans le contexte des prix futurs, et non des prix d'aujourd'hui.</p>",
+  },
+  {
+    question: "Les projections de retraite doivent-elles utiliser des rendements nominaux ou réels?",
+    answerHtml:
+      "<p>Les deux sont valides. L'exigence est la cohérence interne : les rendements nominaux exigent des estimations de dépenses futures exprimées en dollars futurs; les rendements réels permettent d'exprimer les besoins de dépenses en dollars d'aujourd'hui.</p>",
+  },
+  {
+    question: "Qu'est-ce qu'un bon taux de rendement réel?",
+    answerHtml:
+      '<p>Un bon taux de rendement réel dépend de la <a href="/articles/investing-and-financial-literacy/asset-classes-for-investing/">classe d\'actifs</a>, de la période, des frais, des impôts et du contexte d\'inflation. Les placements largement exposés au marché boursier ont historiquement visé des rendements réels positifs sur de longues périodes, tandis que les liquidités et les placements à très faible risque peuvent produire des rendements réels plus faibles et perdre du pouvoir d\'achat quand l\'inflation dépasse le rendement. Le point important n\'est pas seulement le rendement nominal, mais ce qui reste après inflation, frais et impôts.</p>',
+  },
+];
+
+const payload = {
+  meta: {
+    title: "Rendements réels vs rendements nominaux | The Long Math",
+    description:
+      "Comprenez la différence entre rendement nominal et rendement réel, comment calculer le taux de rendement réel après inflation, et pourquoi le pouvoir d'achat compte pour la planification financière à long terme.",
+    articleModified: "juin 2026",
+    datePublished: "2026-06-09",
+    dateModified: "2026-06-09",
+    ogTitle: "Rendements réels vs rendements nominaux | The Long Math",
+    ogDescription:
+      "Comprenez la différence entre rendement nominal et rendement réel, comment calculer le taux de rendement réel après inflation, et pourquoi le pouvoir d'achat compte pour la planification financière à long terme.",
+    twitterTitle: "Rendements réels vs rendements nominaux | The Long Math",
+    twitterDescription:
+      "Comprenez la différence entre rendement nominal et rendement réel, comment calculer le taux de rendement réel après inflation, et pourquoi le pouvoir d'achat compte pour la planification financière à long terme.",
+    headline: "Rendements réels vs rendements nominaux",
+  },
+  breadcrumbItems: [
+    { name: "Accueil", path: "/" },
+    {
+      name: "Investissement et culture financière",
+      path: "/articles/investing-and-financial-literacy/",
+    },
+    {
+      name: "Rendements réels vs rendements nominaux",
+      path: "/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/",
+    },
+  ],
+  pageStyles,
+  wrapMainHtml,
+  disclaimerHtml:
+    "<p><strong>Avis de non-responsabilité :</strong> L'ensemble du contenu de The Long Math — articles, textes, calculateurs, outils ou tout autre matériel — est fourni à des fins éducatives et d'information uniquement et ne constitue pas un conseil financier, fiscal, juridique ou en placement. Les résultats ou projections reposent sur des modèles simplifiés, des hypothèses et des données fournies par l'utilisateur et peuvent ne pas refléter la réalité. Il vous appartient d'évaluer l'exactitude et la pertinence des renseignements et de faire votre propre diligence raisonnable. Avant de prendre des décisions financières, consultez un professionnel qualifié.</p>",
+  faq,
+};
+
+fs.writeFileSync(OUT, JSON.stringify(payload, null, 2) + "\n", "utf8");
+console.log("Wrote", OUT);
