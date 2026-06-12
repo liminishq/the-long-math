@@ -374,34 +374,12 @@ function syncFingerprintedAssetsToSource() {
 }
 
 /**
- * Newsletter signup block before FAQ section, or before related-articles,
- * or before closing </article> if neither marker exists.
+ * Newsletter signup block at the end of the article body, immediately before </article>.
  */
-function injectNewsletterBeforeFaq(html, env) {
+function injectNewsletterAtArticleEnd(html, env) {
   const block = env.render("partials/newsletter-article-block.njk", {
     newsletterHeadingId: "newsletter-article-heading",
   });
-
-  const faqMarkers = [
-    '<h2 id="faq">',
-    "Frequently Asked Questions",
-    "Frequently asked questions",
-    'class="faq-accordion"',
-  ];
-
-  for (const marker of faqMarkers) {
-    const markerIdx = html.indexOf(marker);
-    if (markerIdx === -1) continue;
-    const sectionStart = html.lastIndexOf("<section", markerIdx);
-    if (sectionStart !== -1) {
-      return html.slice(0, sectionStart) + block + "\n" + html.slice(sectionStart);
-    }
-  }
-
-  const relatedNeedle = '<section class="section-card related-articles">';
-  if (html.includes(relatedNeedle)) {
-    return html.replace(relatedNeedle, block + "\n" + relatedNeedle);
-  }
 
   const close = "</article>";
   const idx = html.lastIndexOf(close);
@@ -613,7 +591,7 @@ function build() {
         t: tFn,
         pageId: "article-" + slug,
         article,
-        wrapMainHtml: injectNewsletterBeforeFaq(
+        wrapMainHtml: injectNewsletterAtArticleEnd(
           prefixRootRelativeLinks(article.wrapMainHtml || "", pathPrefix),
           env
         ),
