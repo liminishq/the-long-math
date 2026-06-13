@@ -374,12 +374,22 @@ function syncFingerprintedAssetsToSource() {
 }
 
 /**
- * Newsletter signup block at the end of the article body, immediately before </article>.
+ * Newsletter signup block in the article body: before the FAQ section when present,
+ * otherwise immediately before </article>.
  */
 function injectNewsletterAtArticleEnd(html, env) {
   const block = env.render("partials/newsletter-article-block.njk", {
     newsletterHeadingId: "newsletter-article-heading",
   });
+
+  const faqMarker = '<h2 id="faq">';
+  const faqIdx = html.indexOf(faqMarker);
+  if (faqIdx !== -1) {
+    const sectionStart = html.lastIndexOf("<section", faqIdx);
+    if (sectionStart !== -1) {
+      return html.slice(0, sectionStart) + block + "\n\n      " + html.slice(sectionStart);
+    }
+  }
 
   const close = "</article>";
   const idx = html.lastIndexOf(close);
