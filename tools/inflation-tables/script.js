@@ -1,28 +1,66 @@
 (function() {
   'use strict';
 
+  const CPI_PATHS = {
+    canada: '/tools/inflation-tables/data/CPI/CAN.json',
+    us: '/tools/inflation-tables/data/CPI/USA.json'
+  };
+
   // Data storage
   let canadaData = [];
   let usData = [];
 
+  /**
+   * Compute year-over-year inflation (%) from annual CPI index values.
+   * Formula: ((CPI[currentYear] / CPI[previousYear]) - 1) * 100, rounded to 1 dp.
+   */
+  function inflationFromCpi(cpiObject) {
+    const years = Object.keys(cpiObject)
+      .map(Number)
+      .filter(Number.isFinite)
+      .sort((a, b) => a - b);
+
+    const results = [];
+
+    for (let i = 1; i < years.length; i++) {
+      const year = years[i];
+      const prevYear = years[i - 1];
+      if (prevYear !== year - 1) {
+        continue;
+      }
+
+      const prev = cpiObject[String(prevYear)];
+      const curr = cpiObject[String(year)];
+      if (typeof prev !== 'number' || typeof curr !== 'number' || !isFinite(prev) || !isFinite(curr) || prev <= 0) {
+        continue;
+      }
+
+      const inflation = Math.round(((curr / prev) - 1) * 1000) / 10;
+      results.push({ year, inflation });
+    }
+
+    return results.sort((a, b) => b.year - a.year);
+  }
+
+  async function loadCpiInflation(url) {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Failed to load CPI data: ' + url);
+    }
+    const payload = await response.json();
+    return inflationFromCpi(payload.cpi || {});
+  }
+
   // Load and process data
   async function loadData() {
     try {
-      const [canadaResponse, usResponse] = await Promise.all([
-        fetch('/tools/inflation-tables/data/inflation_canada.json'),
-        fetch('/tools/inflation-tables/data/inflation_us.json')
+      const [canadaInflation, usInflation] = await Promise.all([
+        loadCpiInflation(CPI_PATHS.canada),
+        loadCpiInflation(CPI_PATHS.us)
       ]);
 
-      if (!canadaResponse.ok || !usResponse.ok) {
-        throw new Error('Failed to load data');
-      }
-
-      canadaData = await canadaResponse.json();
-      usData = await usResponse.json();
-
-      // Sort by year descending (most recent first)
-      canadaData.sort((a, b) => b.year - a.year);
-      usData.sort((a, b) => b.year - a.year);
+      canadaData = canadaInflation;
+      usData = usInflation;
 
       populateTables();
       computeAverages();
