@@ -1,0 +1,250 @@
+/* Future Buying Power Calculator — local styles */
+
+.lead-subtitle {
+  margin: 0 0 12px;
+  font-size: 1.05rem;
+  color: var(--muted);
+}
+
+.intro-copy p {
+  margin: 0.75em 0;
+  line-height: 1.65;
+}
+
+.intro-copy ol {
+  margin: 0.75em 0;
+  padding-left: 1.4em;
+}
+
+.panel {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.calc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+@media (max-width: 900px) {
+  .calc-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field {
+  margin: 12px 0;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.field input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface, rgba(255, 255, 255, 0.04));
+  color: var(--text);
+}
+
+.inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inline input {
+  flex: 1;
+}
+
+.unit {
+  opacity: 0.75;
+}
+
+.help {
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.sep {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+.result-card {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  margin-bottom: 12px;
+}
+
+.result-card.primary {
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.result-card h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent2, var(--accent));
+}
+
+.result-card p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.metrics-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.metrics-table th,
+.metrics-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  text-align: left;
+}
+
+.metrics-table th {
+  width: 58%;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.metrics-table td {
+  font-weight: 700;
+  text-align: right;
+}
+
+.metrics-table tr:last-child th,
+.metrics-table tr:last-child td {
+  border-bottom: none;
+}
+
+.reference-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.reference-table th,
+.reference-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  text-align: left;
+}
+
+.reference-table th {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.reference-table td:not(:first-child) {
+  text-align: right;
+  font-weight: 600;
+}
+
+.reference-note {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.methodology-section p,
+.methodology-section li {
+  line-height: 1.65;
+}
+
+.lm-formula {
+  display: inline-block;
+  padding: 10px 14px;
+  border: 1px solid var(--accent, #d6b36a);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.12);
+  font-weight: 600;
+  margin: 0.4em 0;
+}
+
+.faq-section {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.faq-section h2 {
+  margin: 0 0 20px;
+  font-size: 20px;
+}
+
+.faq-accordion-item {
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.faq-accordion-item summary {
+  cursor: pointer;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.03);
+  font-weight: 700;
+  font-size: 15px;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.faq-accordion-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-accordion-item summary::after {
+  content: "+";
+  font-size: 1.2em;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.faq-accordion-item[open] summary::after {
+  content: "−";
+}
+
+.faq-accordion-body {
+  padding: 0 18px 16px;
+}
+
+.faq-accordion-body p {
+  margin: 0 0 0.9em;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.faq-accordion-body p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+  .metrics-table,
+  .reference-table {
+    font-size: 13px;
+  }
+}

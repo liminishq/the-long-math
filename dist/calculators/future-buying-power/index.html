@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>What Will My Money Be Worth in the Future? Inflation Calculator | The Long Math</title>
+  <meta name="description" content="Calculate how inflation affects purchasing power over time. See how many future dollars are needed to match today's buying power and what future money is worth in today's dollars." />
+  <link rel="canonical" href="https://thelongmath.com/calculators/future-buying-power/" />
+
+  <script src="/assets/js/theme-init.40fc21015f.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.4bb62c4d1c.css" />
+  <link rel="stylesheet" href="/calculators/future-buying-power/future-buying-power.css" />
+  <script defer src="/assets/js/site.4fbf708cdd.js"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <header>
+      <h1>What Will My Money Be Worth in the Future?</h1>
+      <p class="lead-subtitle">Future Buying Power Calculator</p>
+      <div class="intro-copy">
+        <p>Inflation reduces purchasing power over time. A dollar today usually buys more than a dollar will buy years from now.</p>
+        <p>This calculator shows both sides of the arithmetic:</p>
+        <ol>
+          <li>How many future dollars would be needed to match the buying power of an amount today.</li>
+          <li>What a future dollar amount would be worth in today's dollars.</li>
+        </ol>
+        <p>Enter a dollar amount, an assumed annual inflation rate, and a time period to see how inflation changes purchasing power over time.</p>
+      </div>
+    </header>
+
+    <div class="card">
+      <div class="calc-grid">
+        <article class="panel">
+          <h2 class="section-title">Inputs</h2>
+
+          <div class="field">
+            <label for="amountToday">Amount today</label>
+            <input id="amountToday" type="number" inputmode="decimal" min="0" step="1000" value="1000000" />
+          </div>
+
+          <div class="field">
+            <label for="inflationRate">Assumed annual inflation rate</label>
+            <div class="inline">
+              <input id="inflationRate" type="number" inputmode="decimal" min="0" step="0.1" value="3" />
+              <span class="unit">%</span>
+            </div>
+            <p class="help muted">Annual compounding. See historical CPI reference points below for context — not forecasts.</p>
+          </div>
+
+          <div class="field">
+            <label for="years">Years into the future</label>
+            <input id="years" type="number" inputmode="decimal" min="0" step="0.1" value="20" />
+          </div>
+        </article>
+
+        <article class="panel">
+          <h2 class="section-title">Results</h2>
+
+          <div class="result-card primary">
+            <h3>Future dollars needed</h3>
+            <p id="primarySentence">Enter valid inputs to see results.</p>
+          </div>
+
+          <div class="result-card">
+            <h3>Future buying power</h3>
+            <p id="secondarySentence"></p>
+          </div>
+
+          <hr class="sep" />
+
+          <h3 style="margin: 0 0 10px; font-size: 14px;">Summary</h3>
+          <table class="metrics-table" aria-label="Summary metrics">
+            <tbody>
+              <tr>
+                <th scope="row">Amount today</th>
+                <td id="metricAmountToday">$—</td>
+              </tr>
+              <tr>
+                <th scope="row">Assumed inflation rate</th>
+                <td id="metricInflationRate">—</td>
+              </tr>
+              <tr>
+                <th scope="row">Years</th>
+                <td id="metricYears">—</td>
+              </tr>
+              <tr>
+                <th scope="row">Future dollars required</th>
+                <td id="metricFutureDollars">$—</td>
+              </tr>
+              <tr>
+                <th scope="row">Inflation multiplier</th>
+                <td id="metricMultiplier">—</td>
+              </tr>
+              <tr>
+                <th scope="row">Purchasing power retained</th>
+                <td id="metricPowerRetained">—</td>
+              </tr>
+              <tr>
+                <th scope="row">Purchasing power lost</th>
+                <td id="metricPowerLost">—</td>
+              </tr>
+              <tr>
+                <th scope="row">Additional dollars needed</th>
+                <td id="metricAdditionalDollars">$—</td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+      </div>
+    </div>
+
+    <section class="card" style="margin-top: 16px;">
+      <h2 class="section-title">Historical inflation reference points</h2>
+      <p class="help muted">Geometric average annual CPI inflation over trailing periods, derived from published CPI index values.</p>
+      <div class="table-container">
+        <table class="reference-table" aria-label="Historical CPI average inflation by period">
+          <thead>
+            <tr>
+              <th>Period</th>
+              <th>Canada</th>
+              <th>United States</th>
+            </tr>
+          </thead>
+          <tbody id="cpiReferenceBody">
+            <tr><td colspan="3">Loading CPI data…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="reference-note">These are historical CPI averages. They are not forecasts.</p>
+      <p class="help muted" style="margin-top: 8px;">Year-by-year rates: <a href="/tools/inflation-tables/">Historical Inflation Rates (CPI)</a>.</p>
+    </section>
+
+    <section class="card methodology-section" style="margin-top: 16px;">
+      <h2 class="section-title">Methodology</h2>
+      <p>This calculator uses annual compounding. It does not forecast inflation. It shows the arithmetic result of a user-selected inflation assumption.</p>
+      <p>The <strong>future dollars needed</strong> calculation increases today's amount by the assumed inflation rate for each year:</p>
+      <p><span class="lm-formula">Future dollars = Amount today × (1 + inflation)<sup>years</sup></span></p>
+      <p>The <strong>future buying power</strong> calculation discounts a future nominal dollar amount back into today's dollars using the same inflation assumption:</p>
+      <p><span class="lm-formula">Today's buying power = Future amount ÷ (1 + inflation)<sup>years</sup></span></p>
+      <p>Purchasing power retained = 1 ÷ inflation multiplier. Purchasing power lost = 1 − purchasing power retained.</p>
+    </section>
+
+    <div class="report-issue-wrap">
+      <a href="/contact/" class="report-issue-link">Report an Issue</a>
+    </div>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-accordion">
+        <details class="faq-accordion-item">
+          <summary>What will my money be worth in the future?</summary>
+          <div class="faq-accordion-body">
+            <p>That depends on the inflation rate and the time horizon. This calculator shows two related answers: how many future dollars would match today's buying power, and what a future nominal amount would be worth in today's dollars. Both use the same inflation multiplier — one multiplies forward, the other divides back.</p>
+            <p>For historical CPI-based conversions between specific years, see the <a href="/calculators/inflation-time-machine/">Inflation Time Machine</a>.</p>
+          </div>
+        </details>
+
+        <details class="faq-accordion-item">
+          <summary>How much will $1 million be worth in 20 years?</summary>
+          <div class="faq-accordion-body">
+            <p>At the default inputs ($1,000,000, 3% inflation, 20 years), $1,000,000 today would need to grow to about $1,806,111 in nominal dollars to maintain the same buying power. Conversely, $1,000,000 received in 20 years would buy roughly what $553,676 buys today — about 55.4% of today's purchasing power retained.</p>
+            <p>Change the inflation assumption to see how sensitive the result is. The <a href="/articles/investing-and-financial-literacy/inflation/">inflation article</a> walks through why small annual rates compound into large long-run effects.</p>
+          </div>
+        </details>
+
+        <details class="faq-accordion-item">
+          <summary>What inflation rate should I use?</summary>
+          <div class="faq-accordion-body">
+            <p>This calculator does not choose a rate for you. You enter an assumption. The historical CPI reference table shows trailing geometric averages for Canada and the United States over 5, 10, 20, and 50 years — derived from published CPI data, not from forecasts.</p>
+            <p>For year-by-year historical rates, see <a href="/tools/inflation-tables/">Historical Inflation Rates (CPI)</a>. For investment growth with inflation adjustment, see the <a href="/calculators/investment-simple/">Simple Investment Calculator</a>.</p>
+          </div>
+        </details>
+
+        <details class="faq-accordion-item">
+          <summary>Why does inflation matter for retirement planning?</summary>
+          <div class="faq-accordion-body">
+            <p>Retirement targets are often stated in today's dollars, but future expenses arrive in future dollars. A lifestyle that costs $10,000 per month today requires more nominal dollars later if prices rise. Plans built only in nominal terms can understate what future spending requires.</p>
+            <p>This calculator isolates the inflation arithmetic. Portfolio growth, withdrawals, and account rules are modeled separately in tools like the <a href="/calculators/retirement-withdrawal-calculator/">Retirement Withdrawal Calculator</a>.</p>
+          </div>
+        </details>
+
+        <details class="faq-accordion-item">
+          <summary>Is this calculator a forecast?</summary>
+          <div class="faq-accordion-body">
+            <p>No. It applies a constant user-entered inflation rate with annual compounding. It shows what the arithmetic produces — not a prediction of future CPI, wages, or personal cost of living.</p>
+            <p>Historical CPI averages shown on this page describe the past. They are included as reference points only.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="card calc-related-bottom" aria-labelledby="calc-related-heading">
+      <h2 id="calc-related-heading" class="section-title">Related calculators and articles</h2>
+      <ul>
+        <li><a href="/tools/inflation-tables/">Historical Inflation Rates (CPI)</a></li>
+        <li><a href="/articles/investing-and-financial-literacy/inflation/">Inflation: the math that makes future money smaller</a></li>
+        <li><a href="/calculators/investment-simple/">Simple investment calculator</a></li>
+        <li><a href="/calculators/inflation-time-machine/">Inflation Time Machine</a></li>
+        <li><a href="/calculators/investment-calculator-inflation-adjusted/">Inflation-adjusted investment calculator</a></li>
+        <li><a href="/calculators/retirement-withdrawal-calculator/">Retirement withdrawal calculator</a></li>
+      </ul>
+    </section>
+
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
+      </p>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+
+  <script src="/assets/js/cpi-inflation.c4b0341afc.js"></script>
+  <script src="/calculators/future-buying-power/engine.js"></script>
+  <script src="/calculators/future-buying-power/ui.js"></script>
+</body>
+</html>

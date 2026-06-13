@@ -61,6 +61,11 @@
           "desc": "Convertit un montant entre deux années à l’aide des ratios d’indice IPC annuels. Plusieurs pays : Canada, États-Unis, Australie, Royaume-Uni. Dollars entiers seulement."
         },
         {
+          "path": "/calculators/future-buying-power/",
+          "title": "Calculateur de pouvoir d’achat futur",
+          "desc": "Voir comment l’inflation modifie le pouvoir d’achat : dollars futurs requis pour égaler le pouvoir d’achat d’aujourd’hui, et valeur en dollars d’aujourd’hui d’un montant futur."
+        },
+        {
           "path": "/calculators/compound-multipliers/",
           "title": "Table des multiplicateurs d’intérêts composés",
           "desc": "Grille statique de (1+r)^t pour des taux annuels de 1 % à 15 % sur 0 à 50 ans. Pas d’entrées — uniquement le tableau arithmétique pour une capitalisation transparente et vérifiable."

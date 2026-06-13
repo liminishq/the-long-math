@@ -61,6 +61,11 @@
           "desc": "Convert a dollar amount between two years using annual CPI index ratios. Multi-country: Canada, United States, Australia, United Kingdom. Whole dollars only."
         },
         {
+          "path": "/calculators/future-buying-power/",
+          "title": "Future Buying Power Calculator",
+          "desc": "See how inflation changes purchasing power over time: future dollars needed to match today's buying power, and what future money is worth in today's dollars."
+        },
+        {
           "path": "/calculators/compound-multipliers/",
           "title": "Compound Interest Multipliers Table",
           "desc": "Static grid of (1+r)^t for annual rates 1%–15% over 0–50 years. No inputs—just the arithmetic table for transparent, inspectable compounding."
