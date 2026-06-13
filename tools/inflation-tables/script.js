@@ -1,8 +1,14 @@
 (function() {
   'use strict';
 
+  const CPI = window.CpiInflation;
+  if (!CPI) {
+    console.error('CpiInflation module is required');
+    return;
+  }
+
   const CPI_PATHS = {
-    canada: '/tools/inflation-tables/data/CPI/CAN.json',
+    canada: CPI.CANADA_CPI_URL,
     us: '/tools/inflation-tables/data/CPI/USA.json'
   };
 
@@ -10,45 +16,13 @@
   let canadaData = [];
   let usData = [];
 
-  /**
-   * Compute year-over-year inflation (%) from annual CPI index values.
-   * Formula: ((CPI[currentYear] / CPI[previousYear]) - 1) * 100, rounded to 1 dp.
-   */
-  function inflationFromCpi(cpiObject) {
-    const years = Object.keys(cpiObject)
-      .map(Number)
-      .filter(Number.isFinite)
-      .sort((a, b) => a - b);
-
-    const results = [];
-
-    for (let i = 1; i < years.length; i++) {
-      const year = years[i];
-      const prevYear = years[i - 1];
-      if (prevYear !== year - 1) {
-        continue;
-      }
-
-      const prev = cpiObject[String(prevYear)];
-      const curr = cpiObject[String(year)];
-      if (typeof prev !== 'number' || typeof curr !== 'number' || !isFinite(prev) || !isFinite(curr) || prev <= 0) {
-        continue;
-      }
-
-      const inflation = Math.round(((curr / prev) - 1) * 1000) / 10;
-      results.push({ year, inflation });
-    }
-
-    return results.sort((a, b) => b.year - a.year);
-  }
-
   async function loadCpiInflation(url) {
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error('Failed to load CPI data: ' + url);
     }
     const payload = await response.json();
-    return inflationFromCpi(payload.cpi || {});
+    return CPI.inflationRatesFromCpi(payload.cpi || {});
   }
 
   // Load and process data

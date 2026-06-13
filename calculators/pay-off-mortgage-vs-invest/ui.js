@@ -46,8 +46,42 @@
     return Math.pow(1 + annualRateDecimal / 2, 2 / periodsPerYear) - 1;
   }
 
-  // Canadian CPI long-term average (default when custom not set)
-  const DEFAULT_INFLATION_PCT = 3.73;
+  // Canadian CPI long-term average since 1960 (loaded from CPI JSON; fallback if fetch fails)
+  let defaultInflationPct = 3.7;
+
+  function getDefaultInflationPct() {
+    return defaultInflationPct;
+  }
+
+  function formatDefaultInflationPct() {
+    return defaultInflationPct.toFixed(2);
+  }
+
+  function applyDefaultInflationToUi() {
+    const customInflationEl = document.getElementById("custom_inflation_rate");
+    if (customInflationEl && !customInflationEl.dataset.userEdited) {
+      customInflationEl.value = formatDefaultInflationPct();
+    }
+
+    document.querySelectorAll("[data-cpi-canada-avg]").forEach((el) => {
+      el.textContent = formatDefaultInflationPct();
+    });
+  }
+
+  async function loadDefaultInflationFromCpi() {
+    if (!window.CpiInflation) {
+      return;
+    }
+    try {
+      const avg = await window.CpiInflation.canadaLongRunAverageSince1960();
+      if (avg != null && Number.isFinite(avg)) {
+        defaultInflationPct = avg;
+        applyDefaultInflationToUi();
+      }
+    } catch (error) {
+      console.warn("Could not load Canada CPI default inflation:", error);
+    }
+  }
 
   // -----------------------------
   // Chart rendering
@@ -256,10 +290,10 @@
       : clamp(num(homeGrowthInput), -10, 20);
     const isReal = $("display_basis_real").checked;
     const customInflationEl = document.getElementById("custom_inflation_rate");
-    const rawInflation = customInflationEl ? num(customInflationEl.value) : DEFAULT_INFLATION_PCT;
+    const rawInflation = customInflationEl ? num(customInflationEl.value) : getDefaultInflationPct();
     const customInflationPct = Number.isFinite(rawInflation) && rawInflation >= 0
       ? Math.round(clamp(rawInflation, 0, 100) * 100) / 100
-      : DEFAULT_INFLATION_PCT;
+      : getDefaultInflationPct();
     const currentBalance = clamp(num($("current_balance").value), 0, 10000000);
     const currentRate = clamp(num($("current_rate").value), 0, 20);
     const currentHomePrice = clamp(num($("current_home_price").value), 0, 10000000);
@@ -702,11 +736,16 @@
 
   const customInflationEl = document.getElementById("custom_inflation_rate");
   if (customInflationEl) {
+    customInflationEl.addEventListener("input", () => {
+      customInflationEl.dataset.userEdited = "1";
+    });
     customInflationEl.addEventListener("blur", () => {
       const v = num(customInflationEl.value);
       if (!Number.isFinite(v) || v < 0) {
-        customInflationEl.value = DEFAULT_INFLATION_PCT;
+        delete customInflationEl.dataset.userEdited;
+        customInflationEl.value = formatDefaultInflationPct();
       } else {
+        customInflationEl.dataset.userEdited = "1";
         const clamped = Math.round(clamp(v, 0, 100) * 100) / 100;
         customInflationEl.value = clamped;
       }
@@ -737,7 +776,10 @@
   syncSlider();
   updateCalculatedPayment();
   syncMonthlyBudgetAndExtraCash("calculator");
+  applyDefaultInflationToUi();
 
-  // Initial render
-  render();
+  // Load CPI default, then initial render
+  loadDefaultInflationFromCpi().finally(() => {
+    render();
+  });
 })();

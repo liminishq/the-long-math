@@ -253,16 +253,16 @@
           <div id="real_explainer" class="callout hidden">
             <h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 700;">Inflation-adjusted results</h3>
             <p style="margin: 0; font-size: 13px; line-height: 1.5;">
-              Inflation-adjusted results express future values in today's dollars using 3.73% (the long-term average from Canadian CPI data from our <a href="/tools/inflation-tables/" target="_blank" rel="noopener noreferrer" style="color:var(--accent2);">Historical Inflation Rates (CPI)</a> tool).<br>
+              Inflation-adjusted results express future values in today's dollars using <span data-cpi-canada-avg>—</span>% (the simple average of Canadian CPI inflation since 1960, from our <a href="/tools/inflation-tables/" target="_blank" rel="noopener noreferrer" style="color:var(--accent2);">Historical Inflation Rates (CPI)</a> tool).<br>
               This does not change the math — only how results are displayed.
             </p>
             <div id="custom_inflation_wrap" class="field" style="margin-top: 12px;">
               <label for="custom_inflation_rate">Custom inflation rate (%)</label>
               <div class="inline">
-                <input id="custom_inflation_rate" type="number" inputmode="decimal" min="0" step="0.01" value="3.73" />
+                <input id="custom_inflation_rate" type="number" inputmode="decimal" min="0" step="0.01" />
                 <span class="unit">%</span>
               </div>
-              <p class="help muted">Default 3.73%. Positive numbers only, up to 2 decimal places. Use 0 for no inflation adjustment.</p>
+              <p class="help muted">Default <span data-cpi-canada-avg>—</span>% (Canada, 1960–present, from CPI data). Positive numbers only, up to 2 decimal places. Use 0 for no inflation adjustment.</p>
             </div>
           </div>
         </article>
@@ -594,6 +594,7 @@
   <div id="footerMount"></div>
 
   <!-- Scripts -->
+  <script src="/assets/js/cpi-inflation.js"></script>
   <script src="/calculators/pay-off-mortgage-vs-invest/engine.js"></script>
   <script src="/calculators/pay-off-mortgage-vs-invest/ui.js"></script>
 </body>

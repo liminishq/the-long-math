@@ -62,18 +62,18 @@
       <p>The inflation rate used in this calculator is the simple arithmetic mean of annual CPI inflation rates:</p>
       <div class="formula-block">i = (1/N) Σ<sub>t=1960 to latest</sub> π<sub>t</sub></div>
       <p>Using the current dataset, this produces:</p>
-      <div class="formula-block">i = 3.73% per year</div>
+      <div class="formula-block">i = <span data-cpi-canada-avg>—</span> per year</div>
       <p>This value represents the long-term historical average of Canadian CPI inflation since 1960.</p>
 
       <h2>Default Inflation Rate</h2>
       <p>The calculator’s default inflation assumption is:</p>
-      <p><strong>3.73% per year</strong></p>
-      <p>This value is defined in the calculator’s display layer and is used unless the user overrides it with a custom inflation rate.</p>
+      <p><strong><span data-cpi-canada-avg>—</span> per year</strong></p>
+      <p>This value is loaded from the CPI dataset when the calculator opens and is used unless the user overrides it with a custom inflation rate.</p>
 
       <h2>Custom Inflation Rate Override</h2>
       <p>The calculator allows users to enter their own inflation rate.</p>
       <ul>
-        <li>If a custom rate is entered, the custom rate replaces the 3.73% default.</li>
+        <li>If a custom rate is entered, the custom rate replaces the CPI-derived default.</li>
         <li>Only the display conversion changes.</li>
         <li>Mortgage amortization, investment growth, and home price compounding remain unchanged.</li>
       </ul>
@@ -83,7 +83,7 @@
       <ul>
         <li>V = nominal dollar value (net worth, investment value, home value, mortgage balance, or interest totals)</li>
         <li>T = selected time horizon in years</li>
-        <li>i = inflation rate (default 3.73%, or user-entered value)</li>
+        <li>i = inflation rate (CPI-derived default since 1960, or user-entered value)</li>
       </ul>
       <p>When real mode is enabled, the calculator displays:</p>
       <div class="formula-block">V<sub>real</sub> = V / (1 + i)<sup>T</sup></div>
@@ -100,7 +100,7 @@
 
       <h2>Interpretation</h2>
       <p>
-        The inflation-adjusted view answers: “What would this future value be worth in today’s dollars, assuming a long-run Canadian inflation rate of 3.73% (or the rate I choose)?”
+        The inflation-adjusted view answers: “What would this future value be worth in today’s dollars, assuming a long-run Canadian inflation rate of <span data-cpi-canada-avg>—</span> (or the rate I choose)?”
       </p>
       <p>
         This is not a forecast of future inflation. It is a contextual long-term adjustment based on historical CPI behavior.
@@ -108,7 +108,7 @@
 
       <h2>Important Distinctions</h2>
       <ul>
-        <li>The 3.73% figure is a simple average of annual CPI inflation rates.</li>
+        <li>The default rate is a simple average of annual CPI inflation rates since 1960, loaded from the CPI dataset at runtime.</li>
         <li>It is not a CPI index CAGR.</li>
         <li>It is not a weighted average.</li>
         <li>It is not a forecast.</li>
@@ -130,5 +130,20 @@
 
     <div id="footerMount"></div>
   </div>
+  <script src="/assets/js/cpi-inflation.js"></script>
+  <script>
+    (function () {
+      if (!window.CpiInflation) return;
+      window.CpiInflation.canadaLongRunAverageSince1960()
+        .then(function (avg) {
+          if (avg == null || !Number.isFinite(avg)) return;
+          var text = avg.toFixed(2) + '%';
+          document.querySelectorAll('[data-cpi-canada-avg]').forEach(function (el) {
+            el.textContent = text;
+          });
+        })
+        .catch(function () {});
+    })();
+  </script>
 </body>
 </html>
