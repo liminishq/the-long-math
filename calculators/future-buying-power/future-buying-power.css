@@ -25,9 +25,10 @@
 
 .calc-grid {
   display: grid;
-  grid-template-columns: 1fr 1.1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
   gap: 16px;
   margin-top: 16px;
+  align-items: start;
 }
 
 @media (max-width: 900px) {
@@ -76,15 +77,15 @@
 .sep {
   border: none;
   border-top: 1px solid var(--border);
-  margin: 16px 0;
+  margin: 12px 0;
 }
 
 .result-card {
-  padding: 14px 16px;
+  padding: 12px 14px;
   border: 1px solid var(--border);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.03);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .result-card.primary {
@@ -113,7 +114,7 @@
 
 .metrics-table th,
 .metrics-table td {
-  padding: 10px 8px;
+  padding: 8px 6px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   text-align: left;
 }
@@ -134,11 +135,35 @@
   border-bottom: none;
 }
 
+.cpi-reference {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.cpi-reference-title {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent2, var(--accent));
+  letter-spacing: 0.02em;
+}
+
+.cpi-reference-lead {
+  margin: 0 0 8px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .reference-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
-  margin-top: 8px;
+  margin-top: 0;
+}
+
+.reference-table-compact {
+  font-size: 12px;
 }
 
 .reference-table th,
@@ -146,6 +171,11 @@
   padding: 10px 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   text-align: left;
+}
+
+.reference-table-compact th,
+.reference-table-compact td {
+  padding: 5px 4px;
 }
 
 .reference-table th {
@@ -156,15 +186,25 @@
   letter-spacing: 0.04em;
 }
 
+.reference-table-compact th {
+  font-size: 10px;
+  letter-spacing: 0.03em;
+}
+
 .reference-table td:not(:first-child) {
   text-align: right;
   font-weight: 600;
 }
 
 .reference-note {
-  margin-top: 10px;
-  font-size: 13px;
+  margin: 8px 0 0;
+  font-size: 11px;
+  line-height: 1.45;
   color: var(--muted);
+}
+
+.reference-note a {
+  color: var(--accent);
 }
 
 .methodology-section p,
