@@ -69,6 +69,7 @@ const ARTICLE_SLUGS = [
   "real-returns-vs-nominal-returns",
   "what-is-a-non-registered-account",
   "rrsp-meltdown",
+  "rrsp-deduction-timing",
   "rrsp-vs-tfsa-vs-fhsa",
   "safe-withdrawal-rate",
   "sequence-of-returns-risk",

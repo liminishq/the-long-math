@@ -31,6 +31,7 @@ const SLUGS = [
   "real-returns-vs-nominal-returns",
   "what-is-a-non-registered-account",
   "rrsp-meltdown",
+  "rrsp-deduction-timing",
   "rrsp-vs-tfsa-vs-fhsa",
   "sequence-of-returns-risk",
   "should-you-break-your-mortgage-for-a-lower-rate",
