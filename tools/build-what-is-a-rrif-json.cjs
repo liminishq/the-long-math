@@ -244,7 +244,7 @@ const enArticle = {
   meta: {
     title: `${enHeadline} – The Long Math`,
     description: enDescription,
-    canonicalSiteOrigin: "https://thelongmath.com",
+    canonicalSiteOrigin: "https://www.thelongmath.com",
     articleModified: "May 2026",
     datePublished: "2026-05-31",
     dateModified: "2026-05-31",
@@ -275,7 +275,7 @@ const frArticle = {
   meta: {
     title: `${frHeadline} | The Long Math`,
     description: frDescription,
-    canonicalSiteOrigin: "https://thelongmath.com",
+    canonicalSiteOrigin: "https://www.thelongmath.com",
     articleModified: "mai 2026",
     datePublished: "2026-05-31",
     dateModified: "2026-05-31",

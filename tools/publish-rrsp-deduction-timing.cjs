@@ -299,7 +299,7 @@ function buildArticleJson(lang, mdPath, options) {
     meta: {
       title: meta.title,
       description: meta.description,
-      canonicalSiteOrigin: "https://thelongmath.com",
+      canonicalSiteOrigin: "https://www.thelongmath.com",
       articleModified: meta.articleModified,
       datePublished: "2026-06-18",
       dateModified: "2026-06-18",

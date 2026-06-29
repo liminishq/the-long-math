@@ -17,7 +17,7 @@
  *   node tools/test-calculators.cjs
  *   node tools/test-calculators.cjs --scenarios-per-calculator 200
  *   node tools/test-calculators.cjs --headless false
- *   node tools/test-calculators.cjs --base-url "https://thelongmath.com"
+ *   node tools/test-calculators.cjs --base-url "https://www.thelongmath.com"
  *
  * Notes
  * - This is heuristic-driven for "human realism". Tune thresholds as needed.
