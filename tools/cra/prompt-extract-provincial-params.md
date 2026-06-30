@@ -1,6 +1,6 @@
 # Prompt: Extract provincial/territorial tax parameters for our calculator
 
-**Use this when:** You have the current TaxTips.ca (or CRA) provincial/territorial rate page for a given year and want to produce or update that province’s entry in `provinces.json`.
+**Use this when:** You have the current official CRA, provincial, territorial, finance, tax-package, or open-data source for a given year and want to produce or update that province’s entry in `provinces.json`.
 
 ---
 
@@ -28,7 +28,7 @@ You are helping maintain a Canadian provincial/territorial income tax calculator
 - **surtaxes:** If the province has a surtax (e.g. Ontario), array of `{ name, threshold, rate }` and optionally `threshold2`, `rate2` for a second tier. Otherwise `[]`.
 - **premiums:** If the province has a health or other premium (e.g. Ontario Health Premium), include `{ name, formula: "ontarioHealthPremium" }` or similar. Otherwise `[]`.
 
-Below I will paste the official TaxTips.ca (or CRA) content for **[PROVINCE]** for **[YEAR]** (tax brackets and basic personal amount table). From that content:
+Below I will paste the official source content for **[PROVINCE]** for **[YEAR]** (tax brackets and basic personal amount table). From that content:
 
 1. Output a single JSON object that matches the shape above for that province/territory.
 2. Use only values explicitly stated or unambiguously derived from the source. Use the **province’s** bracket thresholds and BPA (not federal).
@@ -38,4 +38,4 @@ Below I will paste the official TaxTips.ca (or CRA) content for **[PROVINCE]** f
 
 **Paste source content below (or attach):**
 
-[PASTE HERE: TaxTips.ca or CRA provincial rate table for the province and year]
+[PASTE HERE: official provincial/territorial or CRA rate table for the province and year]

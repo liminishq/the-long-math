@@ -44,6 +44,45 @@
   },
   {
     "type": "article",
+    "title": "Capital Gains vs Dividends vs Interest: Which Is Taxed Best in Canada?",
+    "url": "/articles/investing-and-financial-literacy/capital-gains-vs-dividends-vs-interest-tax-canada/",
+    "desc": "Compare how Canada taxes interest income, capital gains, eligible dividends, non-eligible dividends, and foreign dividends — with an Ontario example showing the after-tax math.",
+    "keywords": [
+      "Capital Gains vs Dividends vs Interest: Which Is Taxed Best in Canada?",
+      "capital gains dividends interest tax canada",
+      "capital gains",
+      "dividends",
+      "interest income",
+      "eligible dividends",
+      "non-eligible dividends",
+      "foreign dividends",
+      "dividend tax credit",
+      "gross-up",
+      "Ontario",
+      "taxable account",
+      "non-registered account"
+    ]
+  },
+  {
+    "type": "article",
+    "title": "Gains en capital, dividendes ou intérêts : lequel est le moins imposé au Canada?",
+    "url": "/fr/articles/investing-and-financial-literacy/gains-en-capital-dividendes-interets-impot-canada/",
+    "desc": "Comparez l’imposition des intérêts, gains en capital, dividendes déterminés, dividendes autres que déterminés et dividendes étrangers au Canada, avec un exemple ontarien chiffré.",
+    "keywords": [
+      "Gains en capital, dividendes ou intérêts : lequel est le moins imposé au Canada?",
+      "gains en capital dividendes intérêts impôt Canada",
+      "gains en capital",
+      "dividendes déterminés",
+      "dividendes autres que déterminés",
+      "dividendes étrangers",
+      "crédit d’impôt pour dividendes",
+      "majoration",
+      "Ontario",
+      "compte non enregistré imposable"
+    ]
+  },
+  {
+    "type": "article",
     "title": "Dollar Cost Averaging: What It Is, How It Works, and When It Makes Sense",
     "url": "/articles/investing-and-financial-literacy/dollar-cost-averaging/",
     "desc": "Learn what dollar cost averaging (DCA) is, how it works, and when it makes sense. Includes a clear lump sum vs. DCA comparison, the behavioral case for automatic investing, and common misunderstandings explained.",
@@ -1717,6 +1756,66 @@
       "rrsp refund",
       "canada",
       "reer"
+    ]
+  },
+  {
+    "type": "calculator",
+    "title": "RRSP Deduction Timing Calculator",
+    "url": "/calculators/rrsp-deduction-timing/",
+    "desc": "Compare claiming an RRSP deduction now with saving it for a higher-income year using Canadian tax math and the opportunity cost of today's refund.",
+    "keywords": [
+      "RRSP deduction timing calculator",
+      "rrsp deduction",
+      "claim rrsp deduction",
+      "defer rrsp deduction",
+      "rrsp refund",
+      "canada",
+      "tax calculator",
+      "reer"
+    ]
+  },
+  {
+    "type": "calculator",
+    "title": "Inspect the Arithmetic — RRSP Deduction Timing Calculator",
+    "url": "/calculators/rrsp-deduction-timing/methodology/",
+    "desc": "Formulae, assumptions, and shared tax and investment engines behind the RRSP Deduction Timing Calculator.",
+    "keywords": [
+      "Inspect the Arithmetic",
+      "RRSP deduction timing calculator",
+      "methodology",
+      "formulae",
+      "assumptions",
+      "canadian tax",
+      "investment engine"
+    ]
+  },
+  {
+    "type": "calculator",
+    "title": "Calculateur de calendrier de déduction REER",
+    "url": "/fr/calculators/rrsp-deduction-timing/",
+    "desc": "Compare la réclamation d'une déduction REER maintenant avec son report à une année à revenu plus élevé, à partir de l'impôt canadien et du coût d'opportunité du remboursement.",
+    "keywords": [
+      "calculateur calendrier déduction REER",
+      "déduction REER",
+      "réclamer déduction REER",
+      "reporter déduction REER",
+      "remboursement REER",
+      "canada",
+      "impôt"
+    ]
+  },
+  {
+    "type": "calculator",
+    "title": "Inspecter l'arithmétique — Calculateur de calendrier de déduction REER",
+    "url": "/fr/calculators/rrsp-deduction-timing/methodology/",
+    "desc": "Formules, hypothèses et moteurs partagés derrière le calculateur de calendrier de déduction REER.",
+    "keywords": [
+      "inspecter l'arithmétique",
+      "calculateur calendrier déduction REER",
+      "méthodologie",
+      "formules",
+      "hypothèses",
+      "impôt canadien"
     ]
   }
 ]

@@ -169,7 +169,7 @@ export function test_AB_2025_eligible_dividends_only() {
 
 /**
  * Ontario Health Premium: statutory ramp between $200,000 and $200,600 of taxable income
- * (Ontario Taxation Act schedule; see TaxTips Ontario Health Premium table).
+ * (Ontario Taxation Act schedule; verify against Ontario Ministry of Finance sources).
  * At $200,300: $750 + 25% × ($200,300 − $200,000) = $825.
  */
 export function test_ON_OHP_ramp_at_taxable_income_200300() {

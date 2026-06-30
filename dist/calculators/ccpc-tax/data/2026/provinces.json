@@ -1,5 +1,5 @@
 {
-  "_source": "Federal/provincial brackets: CRA https://www.canada.ca/en/revenue-agency/services/tax/individuals/frequently-asked-questions-individuals/canadian-income-tax-rates-individuals-current-previous-years.html (2026). Quebec brackets: Revenu Québec indexed parameters for 2026. Basic personal amounts: CRA/TaxTips indexation cross-check. Ontario surtax and OHP: Ontario rules; surtax thresholds indexed ~2% from 2025; OHP piecewise bands indexed ~2% from 2025 statutory schedule (verify line-by-line on filing).",
+  "_source": "Federal/provincial brackets: CRA https://www.canada.ca/en/revenue-agency/services/tax/individuals/frequently-asked-questions-individuals/canadian-income-tax-rates-individuals-current-previous-years.html (2026). Quebec brackets: Revenu Québec indexed parameters for 2026. Basic personal amounts: verify against CRA and official provincial/territorial indexation sources. Ontario surtax and OHP: Ontario rules; surtax thresholds indexed ~2% from 2025; OHP piecewise bands indexed ~2% from 2025 statutory schedule (verify line-by-line on filing).",
   "AB": {
     "name": "Alberta",
     "brackets": [

@@ -92,7 +92,7 @@ function calculateBracketTax(taxableIncome, brackets, opts = {}) {
 /**
  * Ontario Health Premium (Ontario Taxation Act, 2007, Division C).
  * Piecewise schedule for 2005 and later tax years — band dollar amounts are not annual CPI indexation
- * (see TaxTips Ontario Health Premium table; Ontario Ministry of Finance / ontario.ca).
+ * (verify against Ontario Ministry of Finance / ontario.ca).
  * Premium is added after Ontario tax, credits, surtax, and dividend credits in this engine.
  *
  * @param {number} taxableIncome - Provincial taxable income

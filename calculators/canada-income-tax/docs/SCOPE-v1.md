@@ -34,7 +34,7 @@ For in-scope inputs, unrounded arithmetic matches **hand-traced CRA federal and 
 ## Verification
 
 - Primary: form trace sheets under `docs/form-traces/`
-- Secondary: external calculators (e.g. TaxTips) for curiosity only, never as authority
+- Secondary: none for tax data; use official CRA and provincial/territorial government sources only
 
 ## Provincial rollout
 

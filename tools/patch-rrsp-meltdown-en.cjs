@@ -49,7 +49,7 @@ function patchWrapMainHtml(html) {
   }
 
   out = out.replace(
-    /Note: These are simplified approximations using combined marginal rates from TaxTips\.ca \(Ontario, 2026\)\./,
+    /Note: These are simplified approximations using combined marginal rates from a third-party Ontario 2026 table\./,
     `Note: These are simplified approximations using combined federal and provincial marginal rates for Ontario in 2026, based on <a href="${CRA_RATES}">CRA &mdash; Canadian income tax rates for individuals (current and previous years)</a>.`,
   );
 

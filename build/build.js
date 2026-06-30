@@ -57,6 +57,7 @@ const PAGES = [
 /** Slugs under /articles/investing-and-financial-literacy/{slug}/ (kebab-case). */
 const ARTICLE_SLUGS = [
   "asset-classes-for-investing",
+  "capital-gains-vs-dividends-vs-interest-tax-canada",
   "compound-interest",
   "dollar-cost-averaging",
   "fixed-vs-variable-mortgage-in-canada",
@@ -86,6 +87,12 @@ const ARTICLE_SLUGS = [
   "what-is-the-stock-market",
   "xeqt-and-chill-low-cost-etf-investing",
 ];
+
+const ARTICLE_LANG_SLUGS = {
+  "capital-gains-vs-dividends-vs-interest-tax-canada": {
+    fr: "gains-en-capital-dividendes-interets-impot-canada",
+  },
+};
 
 const HUB_KEY = "investingAndFinancialLiteracyIndex";
 const HUB_LOGICAL_PATH = "/articles/investing-and-financial-literacy/";
@@ -120,6 +127,36 @@ function canonicalSiteOriginForArticle(meta) {
   const raw = meta && meta.canonicalSiteOrigin && String(meta.canonicalSiteOrigin).trim();
   const origin = raw ? raw.replace(/\/+$/, "") : BASE_URL.replace(/\/+$/, "");
   return origin;
+}
+
+function articleSlugForLang(sourceSlug, code) {
+  const localized = ARTICLE_LANG_SLUGS[sourceSlug];
+  return (localized && localized[code]) || sourceSlug;
+}
+
+function articleLogicalPathForLang(sourceSlug, code) {
+  return `/articles/investing-and-financial-literacy/${articleSlugForLang(sourceSlug, code)}/`;
+}
+
+function articleHreflangsForSlug(sourceSlug, siteOrigin) {
+  const o = siteOrigin.replace(/\/+$/, "");
+  const enPath = articleLogicalPathForLang(sourceSlug, "en");
+  const frPath = articleLogicalPathForLang(sourceSlug, "fr");
+  return [
+    { hreflang: "en", url: `${o}${enPath}` },
+    { hreflang: "fr", url: `${o}/fr${frPath}` },
+    { hreflang: "x-default", url: `${o}${enPath}` },
+  ];
+}
+
+function normalizeArticlePayload(article) {
+  if (!article || typeof article !== "object") return article || {};
+  for (const field of ["pageStyles", "wrapMainHtml", "disclaimerHtml"]) {
+    if (Array.isArray(article[field])) {
+      article[field] = article[field].join("\n");
+    }
+  }
+  return article;
 }
 
 /**
@@ -567,29 +604,17 @@ function build() {
         continue;
       }
       const locArt = merged.articles[articleKey];
-      const article = mergeArticlePayload(enArt, locArt);
-      const logicalPath = `/articles/investing-and-financial-literacy/${slug}/`;
+      const article = normalizeArticlePayload(mergeArticlePayload(enArt, locArt));
+      const logicalPath = articleLogicalPathForLang(slug, code);
       const currentPath = pathPrefix === "" ? logicalPath : pathPrefix + logicalPath;
       const siteOrigin = canonicalSiteOriginForArticle(article.meta);
       const trimmedOrigin = siteOrigin.replace(/\/+$/, "");
       const canonicalPathSeg = currentPath.startsWith("/") ? currentPath : `/${currentPath}`;
       let canonicalFinal = trimmedOrigin + canonicalPathSeg.replace(/\/+$/, "") + "/";
 
-      const hasExplicitCanonicalOrigin =
-        article.meta &&
-        article.meta.canonicalSiteOrigin &&
-        String(article.meta.canonicalSiteOrigin).trim();
-      const hreflangLinks = hasExplicitCanonicalOrigin
-        ? articleHreflangsForOrigin(logicalPath, trimmedOrigin)
-        : (() => {
-            const ah = getHreflangUrls(logicalPath);
-            return [
-              { hreflang: "en", url: ah.en },
-              { hreflang: "fr", url: ah.fr },
-              { hreflang: "x-default", url: ah.xDefault },
-            ];
-          })();
+      const hreflangLinks = articleHreflangsForSlug(slug, trimmedOrigin);
       const ldJsonBlocks = buildLdJsonBlocks(article, canonicalFinal, pathPrefix);
+      const outputSlug = articleSlugForLang(slug, code);
       const artCtx = {
         lang: code,
         htmlLang: htmlLang(code),
@@ -600,7 +625,7 @@ function build() {
         title: article.meta.title,
         description: article.meta.description,
         t: tFn,
-        pageId: "article-" + slug,
+        pageId: "article-" + outputSlug,
         article,
         wrapMainHtml: injectNewsletterAtArticleEnd(
           prefixRootRelativeLinks(article.wrapMainHtml || "", pathPrefix),
@@ -615,7 +640,7 @@ function build() {
         pathPrefix === "" ? "." : pathPrefix.slice(1),
         "articles",
         "investing-and-financial-literacy",
-        slug,
+        outputSlug,
         "index.html"
       );
       ensureDir(path.dirname(artOut));
@@ -625,6 +650,7 @@ function build() {
   }
 
   emitFrenchStaticMirrors();
+  emitFrenchCalculatorStaticPages();
   fingerprintAssetsAndRewriteHtml();
   emitCacheHeaders();
   syncFingerprintedAssetsToSource();
@@ -690,6 +716,19 @@ function emitFrenchStaticMirrors() {
   }
 }
 
+function emitFrenchCalculatorStaticPages() {
+  const rels = [
+    path.join("fr", "calculators", "rrsp-deduction-timing"),
+  ];
+  for (const rel of rels) {
+    const src = path.join(ROOT, rel);
+    if (!fs.existsSync(src)) continue;
+    const out = path.join(DIST, rel);
+    copyRecursive(src, out, () => true);
+    console.log("  " + out);
+  }
+}
+
 /**
  * Mirror generated French landing + static pages into fr/ so a static server at repo root
  * serves /fr/, /fr/about/, etc. (same idea as article mirrors).
@@ -702,6 +741,8 @@ function syncFrenchStaticHtmlToSource() {
     path.join("fr", "contact", "index.html"),
     path.join("fr", "calculators", "index.html"),
     path.join("fr", "calculators", "advisor-fee", "index.html"),
+    path.join("fr", "calculators", "rrsp-deduction-timing", "index.html"),
+    path.join("fr", "calculators", "rrsp-deduction-timing", "methodology", "index.html"),
   ];
   for (const rel of files) {
     const src = path.join(DIST, rel);
@@ -778,9 +819,10 @@ function syncEnglishArticlesHtmlToSource() {
   }
 
   for (const slug of ARTICLE_SLUGS) {
-    const from = path.join(srcBase, slug, "index.html");
+    const outputSlug = articleSlugForLang(slug, "en");
+    const from = path.join(srcBase, outputSlug, "index.html");
     if (!fs.existsSync(from)) continue;
-    const toDir = path.join(destBase, slug);
+    const toDir = path.join(destBase, outputSlug);
     ensureDir(toDir);
     fs.copyFileSync(from, path.join(toDir, "index.html"));
   }
@@ -804,9 +846,10 @@ function syncFrenchArticlesHtmlToSource() {
   }
 
   for (const slug of ARTICLE_SLUGS) {
-    const from = path.join(srcBase, slug, "index.html");
+    const outputSlug = articleSlugForLang(slug, "fr");
+    const from = path.join(srcBase, outputSlug, "index.html");
     if (!fs.existsSync(from)) continue;
-    const toDir = path.join(destBase, slug);
+    const toDir = path.join(destBase, outputSlug);
     ensureDir(toDir);
     fs.copyFileSync(from, path.join(toDir, "index.html"));
   }

@@ -28,6 +28,25 @@ function parseArticleSlugs() {
   return slugs;
 }
 
+function parseArticleLangSlugs() {
+  const src = fs.readFileSync(BUILD_JS, "utf8");
+  const start = src.indexOf("const ARTICLE_LANG_SLUGS = {");
+  if (start === -1) return {};
+  const end = src.indexOf("};", start);
+  if (end === -1) return {};
+  const slice = src.slice(start, end);
+  const map = {};
+  const re = /"([^"]+)"\s*:\s*\{([^}]+)\}/g;
+  let m;
+  while ((m = re.exec(slice)) !== null) {
+    const slug = m[1];
+    const body = m[2];
+    const fr = body.match(/fr\s*:\s*"([^"]+)"/);
+    if (fr) map[slug] = { fr: fr[1] };
+  }
+  return map;
+}
+
 function hubMainHtml(p) {
   const j = JSON.parse(fs.readFileSync(p, "utf8"));
   return j.hubMainHtml || "";
@@ -48,15 +67,20 @@ function main() {
   const errors = [];
 
   const slugs = parseArticleSlugs();
+  const langSlugs = parseArticleLangSlugs();
   const enHub = hubMainHtml(HUB_EN);
   const frHub = hubMainHtml(HUB_FR);
 
   for (const slug of slugs) {
-    const needle = `/articles/investing-and-financial-literacy/${slug}/`;
-    const featuredCard = `class="featured-card" href="${needle}"`;
-    const journeyItem = `href="${needle}" class="journey-item-link"`;
-    const enHasCard = enHub.includes(featuredCard) || enHub.includes(journeyItem);
-    const frHasCard = frHub.includes(featuredCard) || frHub.includes(journeyItem);
+    const enNeedle = `/articles/investing-and-financial-literacy/${slug}/`;
+    const frSlug = (langSlugs[slug] && langSlugs[slug].fr) || slug;
+    const frNeedle = `/articles/investing-and-financial-literacy/${frSlug}/`;
+    const enFeaturedCard = `class="featured-card" href="${enNeedle}"`;
+    const enJourneyItem = `href="${enNeedle}" class="journey-item-link"`;
+    const frFeaturedCard = `class="featured-card" href="${frNeedle}"`;
+    const frJourneyItem = `href="${frNeedle}" class="journey-item-link"`;
+    const enHasCard = enHub.includes(enFeaturedCard) || enHub.includes(enJourneyItem);
+    const frHasCard = frHub.includes(frFeaturedCard) || frHub.includes(frJourneyItem);
     if (!enHasCard) {
       errors.push(
         `EN hub missing featured-card or journey-item-link for slug "${slug}" (${path.relative(ROOT, HUB_EN)})`

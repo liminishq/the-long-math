@@ -187,6 +187,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.thelongmath.com/articles/investing-and-financial-literacy/capital-gains-vs-dividends-vs-interest-tax-canada/</loc>
+    <lastmod>2026-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.thelongmath.com/articles/investing-and-financial-literacy/what-is-an-rrsp/</loc>
     <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
@@ -277,6 +283,18 @@
   <url>
     <loc>https://www.thelongmath.com/calculators/rrsp-contribution-room-tax-refund/methodology/</loc>
     <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelongmath.com/calculators/rrsp-deduction-timing/</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.thelongmath.com/calculators/rrsp-deduction-timing/methodology/</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -509,6 +527,18 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://www.thelongmath.com/fr/calculators/rrsp-deduction-timing/</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.thelongmath.com/fr/calculators/rrsp-deduction-timing/methodology/</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/</loc>
     <lastmod>2026-06-13</lastmod>
     <changefreq>monthly</changefreq>
@@ -617,6 +647,12 @@
   </url>
   <url>
     <loc>https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/what-is-a-non-registered-account/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/gains-en-capital-dividendes-interets-impot-canada/</loc>
+    <lastmod>2026-06-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

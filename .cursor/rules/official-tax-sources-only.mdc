@@ -1,0 +1,15 @@
+---
+description: Require official government sources for tax data and tax-content verification.
+alwaysApply: true
+---
+
+# Official Tax Sources Only
+
+For The Long Math, do not use third-party tax-table sites, private calculator sites, blogs, or unofficial summaries as a source, citation, cross-check, or verification reference for tax data or tax explanations unless the user explicitly requests that source for a specific task.
+
+Use official sources instead:
+- CRA and Government of Canada pages, guides, forms, worksheets, and tax packages
+- Provincial and territorial government, finance ministry, tax-package, and open-data sources
+- Official legislation or regulations when needed for statutory details
+
+This applies to article content, calculator methodology, calculator data files, tests, docs, prompts, comments, source notes, and generated/public pages.

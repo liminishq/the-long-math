@@ -56,7 +56,7 @@ Adding a short comment like `// Schedule 1 line 13` next to the corresponding li
   - Brackets and BPA from CRA indexation page and tax-rates page (see URLs above).  
   - First bracket 14.5% for 2025 (blended 15% / 14% after July 1).  
   - Canada employment amount: CRA indexation table 2025 = **$1,471** (max).  
-- **Provincial/Territorial 2025:** `provinces.json` — brackets and basic personal amounts from **TaxTips.ca** 2024 & 2025 rates (taxtips.ca/priortaxrates/tax-rates-2024-2025/), CRA-confirmed where noted. Use **tools/cra/prompt-extract-provincial-params.md** to refresh a province from a new TaxTips or CRA page.
+- **Provincial/Territorial 2025:** `provinces.json` — brackets and basic personal amounts should be verified against CRA and official provincial/territorial government sources. Use **tools/cra/prompt-extract-provincial-params.md** to refresh a province from an official source page.
 - **Dividends:** `dividends.json` — gross-up and credit rates from CRA (federal) and provincial tax guides; provincial dividend credit logic can differ from our simple “rate × grossed-up amount” and may need form-specific rules.
 
 ---
