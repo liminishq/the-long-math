@@ -141,6 +141,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.thelongmath.com/articles/investing-and-financial-literacy/when-paying-for-financial-advice-makes-sense/</loc>
+    <lastmod>2026-07-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.thelongmath.com/articles/investing-and-financial-literacy/tfsa-withdrawal-rules-over-contribution-penalties/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -637,6 +643,12 @@
   </url>
   <url>
     <loc>https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/the-true-cost-of-financial-advisor-fees/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/quand-payer-pour-des-conseils-financiers-a-du-sens/</loc>
+    <lastmod>2026-07-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

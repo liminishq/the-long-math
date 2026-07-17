@@ -76,6 +76,7 @@ const ARTICLE_SLUGS = [
   "sequence-of-returns-risk",
   "should-you-break-your-mortgage-for-a-lower-rate",
   "the-true-cost-of-financial-advisor-fees",
+  "when-paying-for-financial-advice-makes-sense",
   "tfsa-withdrawal-rules-over-contribution-penalties",
   "what-is-a-stock",
   "what-is-a-tfsa",
@@ -89,6 +90,9 @@ const ARTICLE_SLUGS = [
 ];
 
 const ARTICLE_LANG_SLUGS = {
+  "when-paying-for-financial-advice-makes-sense": {
+    fr: "quand-payer-pour-des-conseils-financiers-a-du-sens",
+  },
   "capital-gains-vs-dividends-vs-interest-tax-canada": {
     fr: "gains-en-capital-dividendes-interets-impot-canada",
   },

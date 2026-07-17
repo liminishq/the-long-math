@@ -1,6 +1,26 @@
 [
   {
     "type": "article",
+    "title": "Investment and Financial Literacy",
+    "url": "/articles/investing-and-financial-literacy/",
+    "desc": "Beginner-friendly articles that make finance and investing understandable with plain language and explicit assumptions.",
+    "keywords": [
+      "Investment and Financial Literacy",
+      "investing and financial literacy",
+      "beginner",
+      "friendly",
+      "articles",
+      "finance",
+      "investing",
+      "understandable",
+      "plain",
+      "language",
+      "explicit",
+      "assumptions"
+    ]
+  },
+  {
+    "type": "article",
     "title": "What Are Asset Classes? (Types, Examples, and Why They Matter)",
     "url": "/articles/investing-and-financial-literacy/asset-classes-for-investing/",
     "desc": "Learn the major asset classes—stocks, bonds, cash, and real assets—plus examples, historical return ranges, and why asset allocation matters.",
@@ -21,25 +41,6 @@
       "return",
       "ranges",
       "allocation"
-    ]
-  },
-  {
-    "type": "article",
-    "title": "Compound Interest: The Ultimate Wealth Builder",
-    "url": "/articles/investing-and-financial-literacy/compound-interest/",
-    "desc": "Learn what compound interest is, how it works, the compound interest formula, and why compounding accelerates over time with simple examples.",
-    "keywords": [
-      "Compound Interest: The Ultimate Wealth Builder",
-      "compound interest",
-      "compound",
-      "interest",
-      "works",
-      "formula",
-      "compounding",
-      "accelerates",
-      "time",
-      "simple",
-      "examples"
     ]
   },
   {
@@ -65,20 +66,21 @@
   },
   {
     "type": "article",
-    "title": "Gains en capital, dividendes ou intérêts : lequel est le moins imposé au Canada?",
-    "url": "/fr/articles/investing-and-financial-literacy/gains-en-capital-dividendes-interets-impot-canada/",
-    "desc": "Comparez l’imposition des intérêts, gains en capital, dividendes déterminés, dividendes autres que déterminés et dividendes étrangers au Canada, avec un exemple ontarien chiffré.",
+    "title": "Compound Interest: The Ultimate Wealth Builder",
+    "url": "/articles/investing-and-financial-literacy/compound-interest/",
+    "desc": "Learn what compound interest is, how it works, the compound interest formula, and why compounding accelerates over time with simple examples.",
     "keywords": [
-      "Gains en capital, dividendes ou intérêts : lequel est le moins imposé au Canada?",
-      "gains en capital dividendes intérêts impôt Canada",
-      "gains en capital",
-      "dividendes déterminés",
-      "dividendes autres que déterminés",
-      "dividendes étrangers",
-      "crédit d’impôt pour dividendes",
-      "majoration",
-      "Ontario",
-      "compte non enregistré imposable"
+      "Compound Interest: The Ultimate Wealth Builder",
+      "compound interest",
+      "compound",
+      "interest",
+      "works",
+      "formula",
+      "compounding",
+      "accelerates",
+      "time",
+      "simple",
+      "examples"
     ]
   },
   {
@@ -151,26 +153,6 @@
       "insurance",
       "stress",
       "tests"
-    ]
-  },
-  {
-    "type": "article",
-    "title": "Investment and Financial Literacy",
-    "url": "/articles/investing-and-financial-literacy/",
-    "desc": "Beginner-friendly articles that make finance and investing understandable with plain language and explicit assumptions.",
-    "keywords": [
-      "Investment and Financial Literacy",
-      "investing and financial literacy",
-      "beginner",
-      "friendly",
-      "articles",
-      "finance",
-      "investing",
-      "understandable",
-      "plain",
-      "language",
-      "explicit",
-      "assumptions"
     ]
   },
   {
@@ -295,6 +277,43 @@
   },
   {
     "type": "article",
+    "title": "Real Returns vs. Nominal Returns",
+    "url": "/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/",
+    "desc": "Learn the difference between nominal and real returns, how to calculate real rate of return after inflation, and why purchasing power matters for long-term financial planning.",
+    "keywords": [
+      "Real Returns vs. Nominal Returns",
+      "real returns vs nominal returns",
+      "real rate of return",
+      "nominal return",
+      "real return",
+      "inflation",
+      "purchasing power",
+      "inflation-adjusted",
+      "compound",
+      "retirement",
+      "planning",
+      "canada",
+      "cpi"
+    ]
+  },
+  {
+    "type": "article",
+    "title": "RRSP Deduction Timing: Claim Now or Save It for Later?",
+    "url": "/articles/investing-and-financial-literacy/rrsp-deduction-timing/",
+    "desc": "Should you claim your RRSP deduction now or save it for a future year? See how marginal tax rates, refund use, debt, inflation, and future income affect the math.",
+    "keywords": [
+      "RRSP deduction timing",
+      "rrsp deduction",
+      "claim rrsp deduction",
+      "defer rrsp deduction",
+      "undeducted rrsp contribution",
+      "rrsp refund",
+      "canada",
+      "reer"
+    ]
+  },
+  {
+    "type": "article",
     "title": "RRSP Meltdown: The Tax Problem Inside a Successful Retirement Plan",
     "url": "/articles/investing-and-financial-literacy/rrsp-meltdown/",
     "desc": "RRSP meltdown explained in Canada: how early RRSP or RRIF withdrawals can reduce future forced withdrawals, OAS clawback, and estate tax concentration.",
@@ -339,27 +358,6 @@
       "see",
       "account",
       "wins"
-    ]
-  },
-  {
-    "type": "article",
-    "title": "Real Returns vs. Nominal Returns",
-    "url": "/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/",
-    "desc": "Learn the difference between nominal and real returns, how to calculate real rate of return after inflation, and why purchasing power matters for long-term financial planning.",
-    "keywords": [
-      "Real Returns vs. Nominal Returns",
-      "real returns vs nominal returns",
-      "real rate of return",
-      "nominal return",
-      "real return",
-      "inflation",
-      "purchasing power",
-      "inflation-adjusted",
-      "compound",
-      "retirement",
-      "planning",
-      "canada",
-      "cpi"
     ]
   },
   {
@@ -509,6 +507,31 @@
   },
   {
     "type": "article",
+    "title": "What Is a RRIF? Registered Retirement Income Fund Explained",
+    "url": "/articles/investing-and-financial-literacy/what-is-a-rrif/",
+    "desc": "What is a RRIF in Canada? How Registered Retirement Income Funds work: minimum withdrawals, tax treatment, spouse age election, OAS clawback, and withdrawal strategy — with explicit arithmetic.",
+    "keywords": [
+      "What Is a RRIF? Registered Retirement Income Fund Explained",
+      "what is a rrif",
+      "registered retirement income fund",
+      "rrif",
+      "canada",
+      "minimum",
+      "withdrawals",
+      "tax",
+      "spouse",
+      "age",
+      "election",
+      "oas",
+      "clawback",
+      "pension",
+      "splitting",
+      "rrsp",
+      "retirement"
+    ]
+  },
+  {
+    "type": "article",
     "title": "What Is a Stock? (In Simple Terms)",
     "url": "/articles/investing-and-financial-literacy/what-is-a-stock/",
     "desc": "What is a stock? Learn how stocks work, what a share represents, how stocks make money, and why stock prices move — explained with simple arithmetic.",
@@ -628,31 +651,6 @@
   },
   {
     "type": "article",
-    "title": "What Is a RRIF? Registered Retirement Income Fund Explained",
-    "url": "/articles/investing-and-financial-literacy/what-is-a-rrif/",
-    "desc": "What is a RRIF in Canada? How Registered Retirement Income Funds work: minimum withdrawals, tax treatment, spouse age election, OAS clawback, and withdrawal strategy — with explicit arithmetic.",
-    "keywords": [
-      "What Is a RRIF? Registered Retirement Income Fund Explained",
-      "what is a rrif",
-      "registered retirement income fund",
-      "rrif",
-      "canada",
-      "minimum",
-      "withdrawals",
-      "tax",
-      "spouse",
-      "age",
-      "election",
-      "oas",
-      "clawback",
-      "pension",
-      "splitting",
-      "rrsp",
-      "retirement"
-    ]
-  },
-  {
-    "type": "article",
     "title": "What Is Investing? A Simple Beginner's Guide",
     "url": "/articles/investing-and-financial-literacy/what-is-investing/",
     "desc": "What is investing? Learn how investing differs from saving, why people invest, and how time and compound interest work in your favor. A beginner-friendly guide.",
@@ -693,6 +691,25 @@
       "move",
       "grow",
       "time"
+    ]
+  },
+  {
+    "type": "article",
+    "title": "When Paying for Financial Advice Makes Sense",
+    "url": "/articles/investing-and-financial-literacy/when-paying-for-financial-advice-makes-sense/",
+    "desc": "Paying for financial advice can make sense when the value exceeds the fee. See how AUM fees, flat fees, hourly advice, behaviour, taxes, and retirement planning change the math.",
+    "keywords": [
+      "When Paying for Financial Advice Makes Sense",
+      "paying for financial advice",
+      "financial advisor fees",
+      "AUM fees",
+      "flat fee advice",
+      "hourly financial advice",
+      "behaviour",
+      "tax planning",
+      "retirement withdrawals",
+      "fee drag",
+      "advice value"
     ]
   },
   {
@@ -765,6 +782,29 @@
       "residency",
       "related",
       "independent"
+    ]
+  },
+  {
+    "type": "calculator",
+    "title": "Tools and Calculators",
+    "url": "/calculators/",
+    "desc": "Browse interactive financial calculators on The Long Math — income tax, investing, inflation, mortgages, advisory fees, and long-term comparisons with explicit assumptions.",
+    "keywords": [
+      "Tools and Calculators",
+      "calculators",
+      "browse",
+      "interactive",
+      "financial",
+      "math",
+      "income",
+      "tax",
+      "investing",
+      "inflation",
+      "mortgages",
+      "advisory",
+      "fees",
+      "term",
+      "comparisons"
     ]
   },
   {
@@ -1092,29 +1132,6 @@
       "advisor",
       "cost",
       "calculator"
-    ]
-  },
-  {
-    "type": "calculator",
-    "title": "Tools and Calculators",
-    "url": "/calculators/",
-    "desc": "Browse interactive financial calculators on The Long Math — income tax, investing, inflation, mortgages, advisory fees, and long-term comparisons with explicit assumptions.",
-    "keywords": [
-      "Tools and Calculators",
-      "calculators",
-      "browse",
-      "interactive",
-      "financial",
-      "math",
-      "income",
-      "tax",
-      "investing",
-      "inflation",
-      "mortgages",
-      "advisory",
-      "fees",
-      "term",
-      "comparisons"
     ]
   },
   {
@@ -1525,6 +1542,37 @@
   },
   {
     "type": "calculator",
+    "title": "RRSP Deduction Timing Calculator",
+    "url": "/calculators/rrsp-deduction-timing/",
+    "desc": "Compare claiming an RRSP deduction now with saving it for a higher-income year using Canadian tax math and the opportunity cost of today's refund.",
+    "keywords": [
+      "RRSP deduction timing calculator",
+      "rrsp deduction",
+      "claim rrsp deduction",
+      "defer rrsp deduction",
+      "rrsp refund",
+      "canada",
+      "tax calculator",
+      "reer"
+    ]
+  },
+  {
+    "type": "calculator",
+    "title": "Inspect the Arithmetic — RRSP Deduction Timing Calculator",
+    "url": "/calculators/rrsp-deduction-timing/methodology/",
+    "desc": "Formulae, assumptions, and shared tax and investment engines behind the RRSP Deduction Timing Calculator.",
+    "keywords": [
+      "Inspect the Arithmetic",
+      "RRSP deduction timing calculator",
+      "methodology",
+      "formulae",
+      "assumptions",
+      "canadian tax",
+      "investment engine"
+    ]
+  },
+  {
+    "type": "calculator",
     "title": "Sole Proprietor vs Corporation Calculator",
     "url": "/calculators/sole-proprietor-vs-corporation/",
     "desc": "Compare earning income personally versus through a corporation. See how much after-tax capital is available to invest after RRSP deductions, personal spending, and retained corporate earnings.",
@@ -1744,49 +1792,39 @@
   },
   {
     "type": "article",
-    "title": "RRSP Deduction Timing: Claim Now or Save It for Later?",
-    "url": "/articles/investing-and-financial-literacy/rrsp-deduction-timing/",
-    "desc": "Should you claim your RRSP deduction now or save it for a future year? See how marginal tax rates, refund use, debt, inflation, and future income affect the math.",
+    "title": "Gains en capital, dividendes ou intérêts : lequel est le moins imposé au Canada?",
+    "url": "/fr/articles/investing-and-financial-literacy/gains-en-capital-dividendes-interets-impot-canada/",
+    "desc": "Comparez l’imposition des intérêts, gains en capital, dividendes déterminés, dividendes autres que déterminés et dividendes étrangers au Canada, avec un exemple ontarien chiffré.",
     "keywords": [
-      "RRSP deduction timing",
-      "rrsp deduction",
-      "claim rrsp deduction",
-      "defer rrsp deduction",
-      "undeducted rrsp contribution",
-      "rrsp refund",
-      "canada",
-      "reer"
+      "Gains en capital, dividendes ou intérêts : lequel est le moins imposé au Canada?",
+      "gains en capital dividendes intérêts impôt Canada",
+      "gains en capital",
+      "dividendes déterminés",
+      "dividendes autres que déterminés",
+      "dividendes étrangers",
+      "crédit d’impôt pour dividendes",
+      "majoration",
+      "Ontario",
+      "compte non enregistré imposable"
     ]
   },
   {
-    "type": "calculator",
-    "title": "RRSP Deduction Timing Calculator",
-    "url": "/calculators/rrsp-deduction-timing/",
-    "desc": "Compare claiming an RRSP deduction now with saving it for a higher-income year using Canadian tax math and the opportunity cost of today's refund.",
+    "type": "article",
+    "title": "Quand payer pour des conseils financiers a du sens",
+    "url": "/fr/articles/investing-and-financial-literacy/quand-payer-pour-des-conseils-financiers-a-du-sens/",
+    "desc": "Payer pour des conseils financiers peut avoir du sens lorsque la valeur reçue dépasse le coût des frais. Voyez comment les frais ASG, les honoraires fixes, les conseils horaires, le comportement, la fiscalité et la planification de la retraite changent le calcul.",
     "keywords": [
-      "RRSP deduction timing calculator",
-      "rrsp deduction",
-      "claim rrsp deduction",
-      "defer rrsp deduction",
-      "rrsp refund",
-      "canada",
-      "tax calculator",
-      "reer"
-    ]
-  },
-  {
-    "type": "calculator",
-    "title": "Inspect the Arithmetic — RRSP Deduction Timing Calculator",
-    "url": "/calculators/rrsp-deduction-timing/methodology/",
-    "desc": "Formulae, assumptions, and shared tax and investment engines behind the RRSP Deduction Timing Calculator.",
-    "keywords": [
-      "Inspect the Arithmetic",
-      "RRSP deduction timing calculator",
-      "methodology",
-      "formulae",
-      "assumptions",
-      "canadian tax",
-      "investment engine"
+      "Quand payer pour des conseils financiers a du sens",
+      "payer pour des conseils financiers",
+      "frais de conseiller financier",
+      "frais ASG",
+      "conseils à forfait",
+      "conseils horaires",
+      "comportement",
+      "fiscalité",
+      "retraits de retraite",
+      "traînée des frais",
+      "valeur des conseils"
     ]
   },
   {
