@@ -12,18 +12,24 @@ const TAX_BASE = "/calculators/canada-income-tax/data";
 const CORP_BASE = "/calculators/ccpc-tax/data";
 
 const CORP_CACHE = {};
+const LATEST_TAX_DATA_YEAR = 2026;
+const EARLIEST_TAX_DATA_YEAR = 2025;
 
 /** Map future tax years to latest available bracket data. */
 export function resolvePersonalTaxYear(year) {
   const y = Number(year);
-  if (!Number.isFinite(y)) return 2025;
-  return y >= 2026 ? 2025 : y;
+  if (!Number.isFinite(y)) return LATEST_TAX_DATA_YEAR;
+  if (y >= LATEST_TAX_DATA_YEAR) return LATEST_TAX_DATA_YEAR;
+  if (y <= EARLIEST_TAX_DATA_YEAR) return EARLIEST_TAX_DATA_YEAR;
+  return y;
 }
 
 export function resolveCorporateDataYear(year) {
   const y = Number(year);
-  if (!Number.isFinite(y)) return 2025;
-  return y >= 2026 ? 2025 : y;
+  if (!Number.isFinite(y)) return LATEST_TAX_DATA_YEAR;
+  if (y >= LATEST_TAX_DATA_YEAR) return LATEST_TAX_DATA_YEAR;
+  if (y <= EARLIEST_TAX_DATA_YEAR) return EARLIEST_TAX_DATA_YEAR;
+  return y;
 }
 
 export async function loadCorporateTaxTables(year) {

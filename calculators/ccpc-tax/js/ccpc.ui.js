@@ -15,6 +15,13 @@ let latestResult = null;
 
 const PERSONAL_TAX_DATA_BASE = '/calculators/canada-income-tax/data';
 
+function setDefaultCorporateTaxYearStart(year) {
+  const startEl = document.getElementById('corporateTaxYearStart');
+  if (startEl) {
+    startEl.value = `${year}-01-01`;
+  }
+}
+
 function loadPersonalTaxData(year) {
   return loadTaxData(year, { basePath: PERSONAL_TAX_DATA_BASE });
 }
@@ -51,6 +58,7 @@ export async function initUI() {
 
   // Set default year
   document.getElementById('year').value = '2026';
+  setDefaultCorporateTaxYearStart(2026);
 
   // Load tax data
   try {
@@ -82,6 +90,7 @@ function attachEventListeners() {
   if (yearSelect) {
     yearSelect.addEventListener('change', async () => {
       const y = parseInt(yearSelect.value, 10) || 2026;
+      setDefaultCorporateTaxYearStart(y);
       try {
         corporateDataLoaded = false;
         personalDataLoaded = false;
@@ -96,7 +105,7 @@ function attachEventListeners() {
     });
   }
 
-  const inputs = document.querySelectorAll('input[type="text"], select:not(#year)');
+  const inputs = document.querySelectorAll('input[type="text"], input[type="date"], select:not(#year)');
   inputs.forEach(input => {
     input.addEventListener('input', () => {
       updateProvinceNote();
@@ -161,6 +170,7 @@ function updateProvinceNote() {
  */
 function resetAllInputs() {
   document.getElementById('year').value = '2026';
+  setDefaultCorporateTaxYearStart(2026);
   document.getElementById('province').value = '';
   document.getElementById('grossRevenue').value = '';
   document.getElementById('expenses').value = '';
@@ -203,6 +213,7 @@ function getInputs() {
   const incomeSplitting = document.getElementById('incomeSplitting').checked;
   const base = {
     year: parseInt(document.getElementById('year').value) || 2026,
+    corporateTaxYearStart: document.getElementById('corporateTaxYearStart').value,
     province: document.getElementById('province').value,
     grossRevenue: parseInput(document.getElementById('grossRevenue').value),
     expenses: parseInput(document.getElementById('expenses').value),
@@ -383,7 +394,8 @@ function renderCorporateBreakdown(corporate) {
       </tbody>
     </table>
     <p><strong>Total Corporate Tax:</strong> ${formatCurrency(corporate.totalCorporateTax)}</p>
-    <p><strong>SBD Limit:</strong> ${formatCurrency(corporate.breakdown.federal.sbdLimit)}</p>
+    <p><strong>Federal SBD Limit:</strong> ${formatCurrency(corporate.breakdown.federal.sbdLimit)}</p>
+    <p><strong>Provincial SBD Limit:</strong> ${formatCurrency(corporate.breakdown.provincial.sbdLimit)}</p>
   `;
 
   container.appendChild(div);
@@ -471,6 +483,7 @@ function buildSharePayload() {
       'Net personal take-home: ' + formatCurrency(combined.netPersonalTakeHome || 0),
       'Retained earnings: ' + formatCurrency(combined.retainedEarnings || 0),
       'Mode: ' + (incomeSplitting ? 'Two-shareholder split' : 'Single shareholder'),
+      'Corporate tax year start: ' + (latestInputs.corporateTaxYearStart || 'Not specified'),
       'Province/territory: ' + provinceLabel
     ],
     footer: 'Run your own numbers at TheLongMath.com',
@@ -486,6 +499,7 @@ function exportCsv() {
     'CCPC Income Tax Calculator (export)',
     'Generated,' + new Date().toISOString(),
     'Income splitting mode,' + (incomeSplitting ? 'Yes' : 'No'),
+    'Corporate tax year start,' + (latestInputs.corporateTaxYearStart || ''),
     'Gross corporate revenue,' + (latestInputs.grossRevenue || 0),
     'Business expenses,' + (latestInputs.expenses || 0),
     '',

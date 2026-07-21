@@ -62,7 +62,8 @@
         <li>P<sub>pre</sub> = max(0, R − X), corporate income before owner compensation (salary and employer CPP)</li>
         <li>CPP<sub>emp</sub> = employer CPP on T4 salary (matched to employee CPP in the payroll model, per employment)</li>
         <li>I<sub>corp</sub> = corporate taxable income after salary and employer CPP</li>
-        <li>SBDLimit = federal small business deduction limit (typically $500,000), applied for the chosen province using the corporate tax data files.</li>
+        <li>FedSBDLimit = federal small business deduction limit (typically $500,000)</li>
+        <li>ProvSBDLimit = provincial or territorial small business deduction limit from the corporate tax data files</li>
         <li>r<sub>fed,SBD</sub>, r<sub>fed,gen</sub> = federal SBD and general corporate tax rates</li>
         <li>r<sub>prov,SBD</sub>, r<sub>prov,gen</sub> = provincial SBD and general corporate tax rates</li>
         <li>Tax<sub>fed,corp</sub> = federal corporate tax</li>
@@ -111,25 +112,25 @@
 
       <h3 id="corp-brackets">2. Federal and Provincial Corporate Tax</h3>
       <p>
-        The engine applies a simple two‑tier structure based on the small business deduction limit SBDLimit:
+        The engine applies a simple two‑tier structure. Federal tax uses the federal small business deduction limit, while provincial or territorial tax uses that jurisdiction's own limit where it differs from the federal limit:
       </p>
       <div class="formula-block">
-        If I<sub>corp</sub> ≤ SBDLimit:<br>
+        If income is within the applicable SBD limit:<br>
         &nbsp;&nbsp;All income taxed at SBD rates.<br><br>
         Else:<br>
-        &nbsp;&nbsp;Income up to SBDLimit taxed at SBD rates.<br>
-        &nbsp;&nbsp;Income above SBDLimit taxed at general rates.
+        &nbsp;&nbsp;Income up to the applicable SBD limit taxed at SBD rates.<br>
+        &nbsp;&nbsp;Income above the applicable SBD limit taxed at general rates.
       </div>
       <p>Federal side:</p>
       <div class="formula-block">
-        FedSBDIncome = min(I<sub>corp</sub>, SBDLimit)<br>
-        FedGenIncome = max(0, I<sub>corp</sub> − SBDLimit)<br>
+        FedSBDIncome = min(I<sub>corp</sub>, FedSBDLimit)<br>
+        FedGenIncome = max(0, I<sub>corp</sub> − FedSBDLimit)<br>
         Tax<sub>fed,corp</sub> = FedSBDIncome × r<sub>fed,SBD</sub> + FedGenIncome × r<sub>fed,gen</sub>
       </div>
       <p>Provincial side (using province‑specific rates and SBD limit where applicable):</p>
       <div class="formula-block">
-        ProvSBDIncome = min(I<sub>corp</sub>, SBDLimit)<br>
-        ProvGenIncome = max(0, I<sub>corp</sub> − SBDLimit)<br>
+        ProvSBDIncome = min(I<sub>corp</sub>, ProvSBDLimit)<br>
+        ProvGenIncome = max(0, I<sub>corp</sub> − ProvSBDLimit)<br>
         Tax<sub>prov,corp</sub> = ProvSBDIncome × r<sub>prov,SBD</sub> + ProvGenIncome × r<sub>prov,gen</sub>
       </div>
       <p>Total corporate tax and after‑tax cash:</p>
@@ -235,7 +236,7 @@
 
       <h2>Assumptions and Limitations</h2>
       <ol>
-        <li>Tax year is fixed at 2025; corporate and personal parameters are loaded from JSON data files for that year only.</li>
+        <li>Tax year can be 2025 or 2026; corporate and personal parameters are loaded from year-specific JSON data files.</li>
         <li>The calculator models active business income only; investment income, passive income rules, and refundable taxes on investment income are not included.</li>
         <li>No associated‑corporation rules or grind‑downs of the SBD limit are modeled; the small business limit is applied as‑is from the data files.</li>
         <li>Loss carryforwards, loss carrybacks, and integration with previous or future years are out of scope.</li>
@@ -248,7 +249,7 @@
 
       <h2>Implementation Notes</h2>
       <ul>
-        <li>The corporate engine <code>calculateCorporateTax()</code> is pure and deterministic: given taxable income and province, it returns tax and a full breakdown, including SBD limit and per‑tier amounts.</li>
+        <li>The corporate engine <code>calculateCorporateTax()</code> is pure and deterministic: given taxable income, province, and corporate tax year start date, it returns tax and a full breakdown, including federal/provincial SBD limits and per‑tier amounts.</li>
         <li>The personal engine <code>computePersonalTax()</code> is shared with the <a href="/calculators/canada-income-tax/" target="_blank" rel="noopener">Canada Personal Income Tax Calculator</a> and is validated separately via known‑answer tests.</li>
         <li>The bridge <code>computeCCPCTax()</code> combines these outputs and is responsible only for mapping inputs, summing taxes, and computing combined metrics.</li>
         <li>The “Show the Math” section on the CCPC calculator page reads directly from these engine outputs to render bracket tables and summary lines; this methodology page describes the underlying steps.</li>

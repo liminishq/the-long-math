@@ -49,7 +49,7 @@
       <h2>Definitions</h2>
       <p>Let:</p>
       <ul>
-        <li>Y = tax year (currently 2025)</li>
+        <li>Y = selected tax year (currently 2025 or 2026)</li>
         <li>P = province or territory of residence for tax purposes</li>
         <li>E = employment income</li>
         <li>S = self-employment (business) income</li>
@@ -61,7 +61,7 @@
         <li>D<sub>elig,gross</sub> = grossed-up eligible dividends</li>
         <li>D<sub>ne,gross</sub> = grossed-up non-eligible dividends</li>
         <li>G = capital gains (cash amount)</li>
-        <li>r<sub>cg</sub> = capital gains inclusion rate (0.50 for 2025)</li>
+        <li>r<sub>cg</sub> = capital gains inclusion rate (0.50 in the current engine)</li>
         <li>G<sub>taxable</sub> = taxable capital gains</li>
         <li>R<sub>RRSP</sub> = RRSP deduction claimed this year</li>
         <li>R<sub>FHSA</sub> = FHSA contribution deduction claimed this year</li>
@@ -87,7 +87,7 @@
         <li>BPA<sub>fed</sub> = federal Basic Personal Amount</li>
         <li>CEA = federal Canada Employment Amount</li>
         <li>c<sub>fed</sub> = federal non-refundable credit rate (lowest federal bracket rate)</li>
-        <li>r<sub>CPP/EI,cred</sub> = CPP/EI credit rate (lowest federal tax bracket rate; 15% for 2025)</li>
+        <li>r<sub>CPP/EI,cred</sub> = CPP/EI credit rate (lowest federal tax bracket rate for the selected year)</li>
         <li>DTC<sub>elig,fed</sub>, DTC<sub>ne,fed</sub> = federal dividend tax credits for eligible and non-eligible dividends</li>
         <li>DTC<sub>fed</sub> = total federal dividend tax credit</li>
         <li>BPA<sub>prov</sub> = provincial/territorial Basic Personal Amount</li>
@@ -129,7 +129,7 @@
 
       <h3 id="federal-tax">2. Federal Tax</h3>
       <p>
-        Federal tax is computed using a standard bracket-and-credit structure derived from CRA parameters for 2025 (stored in <code>federal.json</code>).
+        Federal tax is computed using a standard bracket-and-credit structure derived from CRA parameters for the selected year (stored in <code>federal.json</code>).
       </p>
       <p>Step 1 — bracket tax on TI:</p>
       <div class="formula-block">
@@ -158,7 +158,7 @@
         DTC<sub>fed</sub> = DTC<sub>elig,fed</sub> + DTC<sub>ne,fed</sub><br>
         TaxAfterDTC<sub>fed</sub> = max(0, TaxAfterCredits<sub>fed</sub> − DTC<sub>fed</sub>)
       </div>
-      <p>Step 4 — minimum tax adjustments (not modeled in 2025 engine):</p>
+      <p>Step 4 — minimum tax adjustments (not modeled in the current engine):</p>
       <div class="formula-block">
         Tax<sub>fed</sub> = TaxAfterDTC<sub>fed</sub>
       </div>
@@ -275,13 +275,13 @@
 
       <h2>Assumptions and Limitations</h2>
       <ol>
-        <li>Tax year is fixed at 2025; only provinces and territories supported by the underlying data files are available.</li>
+        <li>Tax year can be 2025 or 2026; only provinces and territories supported by the underlying data files are available.</li>
         <li>RRSP and FHSA inputs are treated strictly as deductions; contribution room, over-contribution penalties, and carry-forward rules are out of scope.</li>
         <li>Only common non-refundable credits are modeled (federal BPA, Canada Employment Amount, base CPP and EI credits, provincial BPAs and provincial base CPP/EI where configured, selected credits in data files).</li>
         <li>Enhanced CPP (first additional + CPP2) is deducted from net income (line 22215); payroll withholding calculators that do not model the return split may disagree with this calculator.</li>
         <li>Additional credits and deductions (medical expenses, tuition, donations, prior-year loss carryforwards, etc.) are not modeled individually; they can be approximated via the “Estimated Additional Deductions” field.</li>
-        <li>Dividend gross-up and tax credit rates come from federal and provincial data tables for 2025; province-specific nuances beyond the encoded schema are not modeled.</li>
-        <li>Capital gains use a fixed 50% inclusion rate for 2025 across all provinces.</li>
+        <li>Dividend gross-up and tax credit rates come from federal and provincial data tables for the selected year; province-specific nuances beyond the encoded schema are not modeled.</li>
+        <li>Capital gains use a fixed 50% inclusion rate across all provinces in the current engine.</li>
         <li>CPP and EI are modeled from the <strong>employee</strong> perspective on <strong>employment income only</strong>, using official annual maximums and rates. <strong>Self-employment income</strong> is included in income for tax brackets but does <strong>not</strong> generate CPP or EI in v1 (no Schedule 8 self-employment path). Employer contributions are not included.</li>
         <li>Quebec (QPP/QPIP), multiple employers, and Schedule 8 overpayment are out of scope for v1; see <code>docs/SCOPE-v1.md</code>.</li>
         <li><strong>Display rounding:</strong> Federal and provincial net income tax are each rounded to the nearest dollar for display; total income tax shown is the sum of those two rounded amounts. Internal tests compare unrounded form-trace values.</li>

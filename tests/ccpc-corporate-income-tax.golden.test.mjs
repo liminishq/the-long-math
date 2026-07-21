@@ -13,12 +13,17 @@ import { applyCorporateTaxDataSnapshot } from "../calculators/ccpc-tax/js/corpor
 import { calculateCorporateTax } from "../calculators/ccpc-tax/js/corporate.engine.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA = join(__dirname, "..", "calculators", "ccpc-tax", "data", "2025");
+const DATA_ROOT = join(__dirname, "..", "calculators", "ccpc-tax", "data");
+
+function loadCorporateYear(year) {
+  const data = join(DATA_ROOT, String(year));
+  const federal = JSON.parse(readFileSync(join(data, "federal-corporate.json"), "utf8"));
+  const provinces = JSON.parse(readFileSync(join(data, "provinces-corporate.json"), "utf8"));
+  applyCorporateTaxDataSnapshot({ federal, provinces });
+}
 
 before(() => {
-  const federal = JSON.parse(readFileSync(join(DATA, "federal-corporate.json"), "utf8"));
-  const provinces = JSON.parse(readFileSync(join(DATA, "provinces-corporate.json"), "utf8"));
-  applyCorporateTaxDataSnapshot({ federal, provinces });
+  loadCorporateYear(2025);
 });
 
 test("ON: $100k taxable income — entirely within SBD (hand-checked from JSON rates)", () => {
@@ -36,4 +41,33 @@ test("ON: $600k taxable income — federal + ON split across SBD / general", () 
   assert.equal(r.federalTax, expectedFed);
   assert.equal(r.provincialTax, expectedProv);
   assert.equal(r.totalCorporateTax, expectedFed + expectedProv);
+});
+
+test("NS 2026: federal and provincial SBD limits are applied separately", () => {
+  loadCorporateYear(2026);
+
+  const r = calculateCorporateTax(600_000, "NS");
+  const expectedFed = 500_000 * 0.09 + 100_000 * 0.15;
+  const expectedProv = 600_000 * 0.015;
+
+  assert.equal(r.breakdown.federal.sbdLimit, 500_000);
+  assert.equal(r.breakdown.provincial.sbdLimit, 700_000);
+  assert.equal(r.federalTax, expectedFed);
+  assert.equal(r.provincialTax, expectedProv);
+  assert.equal(r.totalCorporateTax, expectedFed + expectedProv);
+});
+
+test("QC 2026: SBD rate follows the corporate taxation-year start date", () => {
+  loadCorporateYear(2026);
+
+  const beforeChange = calculateCorporateTax(100_000, "QC", {
+    taxationYearStartDate: "2026-04-29",
+  });
+  const afterChange = calculateCorporateTax(100_000, "QC", {
+    taxationYearStartDate: "2026-04-30",
+  });
+
+  assert.equal(beforeChange.provincialTax, 100_000 * 0.032);
+  assert.equal(afterChange.provincialTax, 100_000 * 0.022);
+  assert.equal(afterChange.federalTax, 100_000 * 0.09);
 });

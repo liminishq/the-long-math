@@ -380,8 +380,12 @@
         "rate": 0.1762
       },
       {
-        "threshold": 142250,
+        "threshold": 142520,
         "rate": 0.19
+      },
+      {
+        "threshold": 200000,
+        "rate": 0.2
       }
     ],
     "credits": {

@@ -38,10 +38,12 @@ export function computeCCPCTax(input) {
     province,
     grossRevenue = 0,
     expenses = 0,
+    corporateTaxYearStart = `${year}-01-01`,
     incomeSplitting = false
   } = input;
 
   const personalProv = input.personalProvince || province;
+  const corporateOpts = { taxationYearStartDate: corporateTaxYearStart };
 
   if (incomeSplitting && input.shareholder1 != null && input.shareholder2 != null) {
     const sh1 = input.shareholder1;
@@ -60,7 +62,7 @@ export function computeCCPCTax(input) {
       corporateIncomeBeforeCompensation - salaryExpense - employerCppExpense
     );
 
-    const corporate = calculateCorporateTax(corporateTaxableIncome, province);
+    const corporate = calculateCorporateTax(corporateTaxableIncome, province, corporateOpts);
     const afterTaxCorporateCash = corporate.afterTaxCash;
 
     const dividendDistributions = elig1 + nonElig1 + elig2 + nonElig2;
@@ -141,7 +143,7 @@ export function computeCCPCTax(input) {
     corporateIncomeBeforeCompensation - salaryExpense - employerCppExpense
   );
 
-  const corporate = calculateCorporateTax(corporateTaxableIncome, province);
+    const corporate = calculateCorporateTax(corporateTaxableIncome, province, corporateOpts);
   const afterTaxCorporateCash = corporate.afterTaxCash;
 
   const personal = computePersonalTax({
