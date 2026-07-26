@@ -112,6 +112,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.thelongmath.com/articles/investing-and-financial-literacy/asset-location-canada/</loc>
+    <lastmod>2026-07-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.thelongmath.com/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/</loc>
     <lastmod>2026-06-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -615,6 +621,12 @@
   </url>
   <url>
     <loc>https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/localisation-des-actifs-canada/</loc>
+    <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

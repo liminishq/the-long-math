@@ -56,6 +56,7 @@ const PAGES = [
 
 /** Slugs under /articles/investing-and-financial-literacy/{slug}/ (kebab-case). */
 const ARTICLE_SLUGS = [
+  "asset-location-canada",
   "asset-classes-for-investing",
   "capital-gains-vs-dividends-vs-interest-tax-canada",
   "compound-interest",
@@ -90,6 +91,9 @@ const ARTICLE_SLUGS = [
 ];
 
 const ARTICLE_LANG_SLUGS = {
+  "asset-location-canada": {
+    fr: "localisation-des-actifs-canada",
+  },
   "when-paying-for-financial-advice-makes-sense": {
     fr: "quand-payer-pour-des-conseils-financiers-a-du-sens",
   },

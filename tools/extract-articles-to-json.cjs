@@ -19,6 +19,7 @@ const HUB_PATH = "/articles/investing-and-financial-literacy/";
 
 const SLUGS = [
   "asset-classes-for-investing",
+  "asset-location-canada",
   "compound-interest",
   "dollar-cost-averaging",
   "fixed-vs-variable-mortgage-in-canada",

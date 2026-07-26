@@ -45,6 +45,25 @@
   },
   {
     "type": "article",
+    "title": "Asset Location in Canada: What to Hold in Your TFSA, RRSP, FHSA, and Non-Registered Account",
+    "url": "/articles/investing-and-financial-literacy/asset-location-canada/",
+    "desc": "Which investments fit best in a TFSA, RRSP, FHSA, or non-registered account? Learn what usually goes where, why it matters, and when the common asset-location rules fail.",
+    "keywords": [
+      "Asset Location Canada: What to Hold in Each Account",
+      "Asset Location in Canada",
+      "asset location canada",
+      "TFSA",
+      "RRSP",
+      "FHSA",
+      "non-registered account",
+      "bonds",
+      "eligible dividends",
+      "capital gains",
+      "foreign withholding tax"
+    ]
+  },
+  {
+    "type": "article",
     "title": "Capital Gains vs Dividends vs Interest: Which Is Taxed Best in Canada?",
     "url": "/articles/investing-and-financial-literacy/capital-gains-vs-dividends-vs-interest-tax-canada/",
     "desc": "Compare how Canada taxes interest income, capital gains, eligible dividends, non-eligible dividends, and foreign dividends — with an Ontario example showing the after-tax math.",
@@ -1788,6 +1807,24 @@
       "life",
       "horizon",
       "decisions"
+    ]
+  },
+  {
+    "type": "article",
+    "title": "Localisation des actifs au Canada : quoi détenir dans un CELI, un REER, un CELIAPP et un compte non enregistré",
+    "url": "/fr/articles/investing-and-financial-literacy/localisation-des-actifs-canada/",
+    "desc": "Quels placements conviennent le mieux à un CELI, un REER, un CELIAPP ou un compte non enregistré? Voyez quoi placer où, pourquoi, et quand les règles habituelles échouent.",
+    "keywords": [
+      "Localisation des actifs au Canada",
+      "localisation des actifs",
+      "CELI",
+      "REER",
+      "CELIAPP",
+      "compte non enregistré",
+      "obligations",
+      "dividendes déterminés",
+      "gains en capital",
+      "retenue d'impôt étrangère"
     ]
   },
   {
