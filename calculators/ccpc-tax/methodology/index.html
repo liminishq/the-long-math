@@ -76,6 +76,9 @@
           <li>D<sub>elig</sub> = eligible dividends paid</li>
           <li>D<sub>ne</sub> = non‑eligible dividends paid</li>
           <li>O<sub>pers</sub> = other personal income</li>
+          <li>G = capital gains (cash amount; 50% inclusion applied by the personal engine)</li>
+          <li>R<sub>RRSP</sub> = RRSP deduction claimed this year</li>
+          <li>R<sub>FHSA</sub> = FHSA contribution deduction claimed this year</li>
           <li>D<sub>pers</sub> = personal deductions (user‑entered estimate)</li>
         </ul>
         <li>For two shareholders (income splitting):</li>
@@ -84,6 +87,9 @@
           <li>D<sub>elig,1</sub>, D<sub>elig,2</sub> = eligible dividends to each shareholder</li>
           <li>D<sub>ne,1</sub>, D<sub>ne,2</sub> = non‑eligible dividends to each shareholder</li>
           <li>O<sub>pers,1</sub>, O<sub>pers,2</sub> = other personal income</li>
+          <li>G<sub>1</sub>, G<sub>2</sub> = capital gains for each shareholder</li>
+          <li>R<sub>RRSP,1</sub>, R<sub>RRSP,2</sub> = RRSP deduction claimed this year for each shareholder</li>
+          <li>R<sub>FHSA,1</sub>, R<sub>FHSA,2</sub> = FHSA deduction claimed this year for each shareholder</li>
           <li>D<sub>pers,1</sub>, D<sub>pers,2</sub> = personal deductions</li>
         </ul>
         <li>CPP, EI = employee CPP contributions and EI premiums on salary (per shareholder)</li>
@@ -173,7 +179,9 @@
         <li>Employment income = salary from the corporation (S, S<sub>1</sub>, or S<sub>2</sub>).</li>
         <li>Eligible and non‑eligible dividends = dividends from the corporation.</li>
         <li>Other income = O<sub>pers</sub>, O<sub>pers,1</sub>, or O<sub>pers,2</sub>.</li>
-        <li>RRSP and FHSA deductions = 0 in this CCPC calculator.</li>
+        <li>Capital gains = G, G<sub>1</sub>, or G<sub>2</sub> (cash amount; taxable capital gains use the personal engine’s 50% inclusion rate).</li>
+        <li>RRSP deduction = R<sub>RRSP</sub>, R<sub>RRSP,1</sub>, or R<sub>RRSP,2</sub> (user‑entered amount claimed this year).</li>
+        <li>FHSA deduction = R<sub>FHSA</sub>, R<sub>FHSA,1</sub>, or R<sub>FHSA,2</sub> (user‑entered amount claimed this year).</li>
         <li>Estimated deductions = D<sub>pers</sub>, D<sub>pers,1</sub>, or D<sub>pers,2</sub>.</li>
         <li>Tax already paid = 0 (no modeled source deductions in this tool).</li>
       </ul>
@@ -240,7 +248,7 @@
         <li>The calculator models active business income only; investment income, passive income rules, and refundable taxes on investment income are not included.</li>
         <li>No associated‑corporation rules or grind‑downs of the SBD limit are modeled; the small business limit is applied as‑is from the data files.</li>
         <li>Loss carryforwards, loss carrybacks, and integration with previous or future years are out of scope.</li>
-        <li>RRSP, FHSA, and other registered‑account interactions for shareholders are not modeled; the CCPC calculator passes zero for those fields into the personal engine.</li>
+        <li>RRSP and FHSA deductions are user‑entered and passed into the personal engine as current‑year deductions; contribution room, over‑contribution penalties, and carry‑forwards are not modeled. Capital gains are entered as the cash amount; the personal engine applies the 50% inclusion rate.</li>
         <li>Source deductions (withholding at source) and installments are not modeled; tax paid is treated as 0 and the focus is on the structural burden rather than balances owing or refunds.</li>
         <li>Shareholder province of residence is assumed to match the corporate province for personal tax purposes in this version.</li>
         <li>All amounts are in Canadian dollars, and bracket thresholds and rates are taken directly from the data files; any corrections to those data sources will flow through to this calculator.</li>

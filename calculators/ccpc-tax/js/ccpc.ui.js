@@ -181,17 +181,26 @@ function resetAllInputs() {
   document.getElementById('eligibleDividends').value = '';
   document.getElementById('nonEligibleDividends').value = '';
   document.getElementById('personalOtherIncome').value = '';
+  document.getElementById('capitalGains').value = '';
+  document.getElementById('rrspDeduction').value = '';
+  document.getElementById('fhsaDeduction').value = '';
   document.getElementById('personalDeductions').value = '';
 
   document.getElementById('sh1Salary').value = '';
   document.getElementById('sh1EligibleDividends').value = '';
   document.getElementById('sh1NonEligibleDividends').value = '';
   document.getElementById('sh1OtherIncome').value = '';
+  document.getElementById('sh1CapitalGains').value = '';
+  document.getElementById('sh1RrspDeduction').value = '';
+  document.getElementById('sh1FhsaDeduction').value = '';
   document.getElementById('sh1Deductions').value = '';
   document.getElementById('sh2Salary').value = '';
   document.getElementById('sh2EligibleDividends').value = '';
   document.getElementById('sh2NonEligibleDividends').value = '';
   document.getElementById('sh2OtherIncome').value = '';
+  document.getElementById('sh2CapitalGains').value = '';
+  document.getElementById('sh2RrspDeduction').value = '';
+  document.getElementById('sh2FhsaDeduction').value = '';
   document.getElementById('sh2Deductions').value = '';
 
   clearResults();
@@ -226,6 +235,9 @@ function getInputs() {
       eligibleDividends: parseInput(document.getElementById('sh1EligibleDividends').value),
       nonEligibleDividends: parseInput(document.getElementById('sh1NonEligibleDividends').value),
       otherIncome: parseInput(document.getElementById('sh1OtherIncome').value),
+      capitalGains: parseInput(document.getElementById('sh1CapitalGains').value),
+      rrspDeduction: parseInput(document.getElementById('sh1RrspDeduction').value),
+      fhsaDeduction: parseInput(document.getElementById('sh1FhsaDeduction').value),
       deductions: parseInput(document.getElementById('sh1Deductions').value)
     };
     base.shareholder2 = {
@@ -233,6 +245,9 @@ function getInputs() {
       eligibleDividends: parseInput(document.getElementById('sh2EligibleDividends').value),
       nonEligibleDividends: parseInput(document.getElementById('sh2NonEligibleDividends').value),
       otherIncome: parseInput(document.getElementById('sh2OtherIncome').value),
+      capitalGains: parseInput(document.getElementById('sh2CapitalGains').value),
+      rrspDeduction: parseInput(document.getElementById('sh2RrspDeduction').value),
+      fhsaDeduction: parseInput(document.getElementById('sh2FhsaDeduction').value),
       deductions: parseInput(document.getElementById('sh2Deductions').value)
     };
   } else {
@@ -240,6 +255,9 @@ function getInputs() {
     base.eligibleDividends = parseInput(document.getElementById('eligibleDividends').value);
     base.nonEligibleDividends = parseInput(document.getElementById('nonEligibleDividends').value);
     base.personalOtherIncome = parseInput(document.getElementById('personalOtherIncome').value);
+    base.capitalGains = parseInput(document.getElementById('capitalGains').value);
+    base.rrspDeduction = parseInput(document.getElementById('rrspDeduction').value);
+    base.fhsaDeduction = parseInput(document.getElementById('fhsaDeduction').value);
     base.personalDeductions = parseInput(document.getElementById('personalDeductions').value);
   }
 

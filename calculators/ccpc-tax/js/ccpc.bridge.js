@@ -28,8 +28,8 @@ function sumCompensationCorporateDeductions(salaries) {
  * @param {Object} input - Input object with:
  *   - year, province, grossRevenue, expenses
  *   - incomeSplitting: boolean
- *   - If single: salary, eligibleDividends, nonEligibleDividends, personalOtherIncome, personalDeductions
- *   - If splitting: shareholder1: { salary, eligibleDividends, nonEligibleDividends, otherIncome, deductions }, shareholder2: same
+ *   - If single: salary, eligibleDividends, nonEligibleDividends, personalOtherIncome, capitalGains, rrspDeduction, fhsaDeduction, personalDeductions
+ *   - If splitting: shareholder1/2: { salary, eligibleDividends, nonEligibleDividends, otherIncome, capitalGains, rrspDeduction, fhsaDeduction, deductions }
  * @returns {Object} Complete CCPC tax calculation result
  */
 export function computeCCPCTax(input) {
@@ -75,8 +75,9 @@ export function computeCCPCTax(input) {
       eligibleDividends: elig1,
       nonEligibleDividends: nonElig1,
       otherIncome: sh1.otherIncome || 0,
-      rrspDeduction: 0,
-      fhsaDeduction: 0,
+      capitalGains: sh1.capitalGains || 0,
+      rrspDeduction: sh1.rrspDeduction || 0,
+      fhsaDeduction: sh1.fhsaDeduction || 0,
       estimatedDeductions: sh1.deductions || 0,
       taxPaid: 0
     });
@@ -88,8 +89,9 @@ export function computeCCPCTax(input) {
       eligibleDividends: elig2,
       nonEligibleDividends: nonElig2,
       otherIncome: sh2.otherIncome || 0,
-      rrspDeduction: 0,
-      fhsaDeduction: 0,
+      capitalGains: sh2.capitalGains || 0,
+      rrspDeduction: sh2.rrspDeduction || 0,
+      fhsaDeduction: sh2.fhsaDeduction || 0,
       estimatedDeductions: sh2.deductions || 0,
       taxPaid: 0
     });
@@ -134,6 +136,9 @@ export function computeCCPCTax(input) {
   const eligibleDividends = input.eligibleDividends || 0;
   const nonEligibleDividends = input.nonEligibleDividends || 0;
   const personalOtherIncome = input.personalOtherIncome || 0;
+  const capitalGains = input.capitalGains || 0;
+  const rrspDeduction = input.rrspDeduction || 0;
+  const fhsaDeduction = input.fhsaDeduction || 0;
   const personalDeductions = input.personalDeductions || 0;
 
   const { salaryExpense, employerCppExpense } = sumCompensationCorporateDeductions([salary]);
@@ -143,7 +148,7 @@ export function computeCCPCTax(input) {
     corporateIncomeBeforeCompensation - salaryExpense - employerCppExpense
   );
 
-    const corporate = calculateCorporateTax(corporateTaxableIncome, province, corporateOpts);
+  const corporate = calculateCorporateTax(corporateTaxableIncome, province, corporateOpts);
   const afterTaxCorporateCash = corporate.afterTaxCash;
 
   const personal = computePersonalTax({
@@ -153,8 +158,9 @@ export function computeCCPCTax(input) {
     eligibleDividends,
     nonEligibleDividends,
     otherIncome: personalOtherIncome,
-    rrspDeduction: 0,
-    fhsaDeduction: 0,
+    capitalGains,
+    rrspDeduction,
+    fhsaDeduction,
     estimatedDeductions: personalDeductions,
     taxPaid: 0
   });

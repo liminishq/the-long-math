@@ -234,3 +234,60 @@ test('Income splitting: shareholder personal tax matches canonical personal engi
   assert.equal(ccpc.personal1.totalIncomeTax, canonical.totals.totalIncomeTax);
   assert.equal(Math.round(ccpc.personal1.totalIncomeTax), 69_679);
 });
+
+test('RRSP deduction reduces personal taxable income and personal tax', () => {
+  const base = {
+    province: ON,
+    grossRevenue: 400_000,
+    expenses: 100_000,
+    salary: 120_000,
+    eligibleDividends: 0,
+    nonEligibleDividends: 0,
+    personalOtherIncome: 0,
+    personalDeductions: 0
+  };
+  const withoutRrsp = computeCCPCTax({ ...base, rrspDeduction: 0 });
+  const withRrsp = computeCCPCTax({ ...base, rrspDeduction: 20_000 });
+
+  assert.equal(withRrsp.personal.taxableIncome, withoutRrsp.personal.taxableIncome - 20_000);
+  assert.ok(withRrsp.personal.totalIncomeTax < withoutRrsp.personal.totalIncomeTax);
+  assert.equal(withRrsp.corporate.taxableIncome, withoutRrsp.corporate.taxableIncome);
+});
+
+test('FHSA deduction reduces personal taxable income and personal tax', () => {
+  const base = {
+    province: ON,
+    grossRevenue: 400_000,
+    expenses: 100_000,
+    salary: 120_000,
+    eligibleDividends: 0,
+    nonEligibleDividends: 0,
+    personalOtherIncome: 0,
+    personalDeductions: 0
+  };
+  const withoutFhsa = computeCCPCTax({ ...base, fhsaDeduction: 0 });
+  const withFhsa = computeCCPCTax({ ...base, fhsaDeduction: 8_000 });
+
+  assert.equal(withFhsa.personal.taxableIncome, withoutFhsa.personal.taxableIncome - 8_000);
+  assert.ok(withFhsa.personal.totalIncomeTax < withoutFhsa.personal.totalIncomeTax);
+  assert.equal(withFhsa.corporate.taxableIncome, withoutFhsa.corporate.taxableIncome);
+});
+
+test('Capital gains increase personal taxable income by the 50% inclusion amount', () => {
+  const base = {
+    province: ON,
+    grossRevenue: 400_000,
+    expenses: 100_000,
+    salary: 80_000,
+    eligibleDividends: 0,
+    nonEligibleDividends: 0,
+    personalOtherIncome: 0,
+    personalDeductions: 0
+  };
+  const withoutGains = computeCCPCTax({ ...base, capitalGains: 0 });
+  const withGains = computeCCPCTax({ ...base, capitalGains: 40_000 });
+
+  assert.equal(withGains.personal.taxableIncome, withoutGains.personal.taxableIncome + 20_000);
+  assert.ok(withGains.personal.totalIncomeTax > withoutGains.personal.totalIncomeTax);
+  assert.equal(withGains.corporate.taxableIncome, withoutGains.corporate.taxableIncome);
+});
