@@ -24,12 +24,28 @@ function sumCompensationCorporateDeductions(salaries) {
 }
 
 /**
+ * Map user-entered RRSP contribution to the personal engine's RRSP deduction.
+ * Assumption: the full contribution is claimed as a deduction in the current tax year
+ * (unused contribution carry-forward and contribution room are not modeled).
+ * Accepts legacy `rrspDeduction` when `rrspContribution` is absent.
+ * @param {{ rrspContribution?: number, rrspDeduction?: number }} source
+ * @returns {number}
+ */
+function rrspContributionAsCurrentYearDeduction(source) {
+  if (!source || typeof source !== 'object') return 0;
+  if (Object.prototype.hasOwnProperty.call(source, 'rrspContribution')) {
+    return Math.max(0, Number(source.rrspContribution) || 0);
+  }
+  return Math.max(0, Number(source.rrspDeduction) || 0);
+}
+
+/**
  * Calculate complete CCPC tax scenario (single or income-splitting)
  * @param {Object} input - Input object with:
  *   - year, province, grossRevenue, expenses
  *   - incomeSplitting: boolean
- *   - If single: salary, eligibleDividends, nonEligibleDividends, personalOtherIncome, capitalGains, rrspDeduction, fhsaDeduction, personalDeductions
- *   - If splitting: shareholder1/2: { salary, eligibleDividends, nonEligibleDividends, otherIncome, capitalGains, rrspDeduction, fhsaDeduction, deductions }
+ *   - If single: salary, eligibleDividends, nonEligibleDividends, personalOtherIncome, capitalGains, rrspContribution, fhsaDeduction, personalDeductions
+ *   - If splitting: shareholder1/2: { salary, eligibleDividends, nonEligibleDividends, otherIncome, capitalGains, rrspContribution, fhsaDeduction, deductions }
  * @returns {Object} Complete CCPC tax calculation result
  */
 export function computeCCPCTax(input) {
@@ -76,7 +92,7 @@ export function computeCCPCTax(input) {
       nonEligibleDividends: nonElig1,
       otherIncome: sh1.otherIncome || 0,
       capitalGains: sh1.capitalGains || 0,
-      rrspDeduction: sh1.rrspDeduction || 0,
+      rrspDeduction: rrspContributionAsCurrentYearDeduction(sh1),
       fhsaDeduction: sh1.fhsaDeduction || 0,
       estimatedDeductions: sh1.deductions || 0,
       taxPaid: 0
@@ -90,7 +106,7 @@ export function computeCCPCTax(input) {
       nonEligibleDividends: nonElig2,
       otherIncome: sh2.otherIncome || 0,
       capitalGains: sh2.capitalGains || 0,
-      rrspDeduction: sh2.rrspDeduction || 0,
+      rrspDeduction: rrspContributionAsCurrentYearDeduction(sh2),
       fhsaDeduction: sh2.fhsaDeduction || 0,
       estimatedDeductions: sh2.deductions || 0,
       taxPaid: 0
@@ -137,7 +153,7 @@ export function computeCCPCTax(input) {
   const nonEligibleDividends = input.nonEligibleDividends || 0;
   const personalOtherIncome = input.personalOtherIncome || 0;
   const capitalGains = input.capitalGains || 0;
-  const rrspDeduction = input.rrspDeduction || 0;
+  const rrspDeduction = rrspContributionAsCurrentYearDeduction(input);
   const fhsaDeduction = input.fhsaDeduction || 0;
   const personalDeductions = input.personalDeductions || 0;
 

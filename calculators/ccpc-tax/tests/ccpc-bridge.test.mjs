@@ -235,7 +235,7 @@ test('Income splitting: shareholder personal tax matches canonical personal engi
   assert.equal(Math.round(ccpc.personal1.totalIncomeTax), 69_679);
 });
 
-test('RRSP deduction reduces personal taxable income and personal tax', () => {
+test('RRSP contribution reduces personal taxable income and personal tax', () => {
   const base = {
     province: ON,
     grossRevenue: 400_000,
@@ -246,12 +246,31 @@ test('RRSP deduction reduces personal taxable income and personal tax', () => {
     personalOtherIncome: 0,
     personalDeductions: 0
   };
-  const withoutRrsp = computeCCPCTax({ ...base, rrspDeduction: 0 });
-  const withRrsp = computeCCPCTax({ ...base, rrspDeduction: 20_000 });
+  const withoutRrsp = computeCCPCTax({ ...base, rrspContribution: 0 });
+  const withRrsp = computeCCPCTax({ ...base, rrspContribution: 20_000 });
 
   assert.equal(withRrsp.personal.taxableIncome, withoutRrsp.personal.taxableIncome - 20_000);
   assert.ok(withRrsp.personal.totalIncomeTax < withoutRrsp.personal.totalIncomeTax);
   assert.equal(withRrsp.corporate.taxableIncome, withoutRrsp.corporate.taxableIncome);
+});
+
+test('Legacy rrspDeduction input still maps to current-year personal deduction', () => {
+  const viaContribution = computeCCPCTax({
+    province: ON,
+    grossRevenue: 300_000,
+    expenses: 50_000,
+    salary: 100_000,
+    rrspContribution: 15_000
+  });
+  const viaLegacy = computeCCPCTax({
+    province: ON,
+    grossRevenue: 300_000,
+    expenses: 50_000,
+    salary: 100_000,
+    rrspDeduction: 15_000
+  });
+  assert.equal(viaContribution.personal.taxableIncome, viaLegacy.personal.taxableIncome);
+  assert.equal(viaContribution.personal.totalIncomeTax, viaLegacy.personal.totalIncomeTax);
 });
 
 test('FHSA deduction reduces personal taxable income and personal tax', () => {
