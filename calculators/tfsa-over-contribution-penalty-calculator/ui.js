@@ -123,7 +123,7 @@
       (type === "room_adjustment" ? " selected" : "") +
       ">Room adjustment</option>" +
       "</select></td>" +
-      '<td><input type="number" inputmode="decimal" min="0" step="1" value="' +
+      '<td><input type="number" inputmode="decimal" min="0" step="any" value="' +
       amount +
       '" placeholder="0" aria-label="Amount" /></td>' +
       '<td><button type="button" class="txn-remove" aria-label="Remove row">Remove</button></td>';

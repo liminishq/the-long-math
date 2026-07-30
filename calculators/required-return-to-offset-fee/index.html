@@ -150,15 +150,15 @@
           </div>
           <div class="fee-cost-field">
             <label for="horizon_years">Time horizon (years)</label>
-            <input id="horizon_years" type="text" inputmode="numeric" />
+            <input id="horizon_years" type="text" inputmode="decimal" />
           </div>
           <div class="fee-cost-field">
             <label for="annual_return">Gross return baseline (annual %)</label>
-            <input id="annual_return" type="text" placeholder="e.g. 7 or 4.5" />
+            <input id="annual_return" type="text" inputmode="decimal" placeholder="e.g. 7 or 4.5" />
           </div>
           <div class="fee-cost-field">
             <label for="fee_pct">Annual fee (%)</label>
-            <input id="fee_pct" type="text" placeholder="e.g. 1.0" />
+            <input id="fee_pct" type="text" inputmode="decimal" placeholder="e.g. 1.0" />
           </div>
           <div class="fee-cost-field">
             <label for="annual_contribution">Annual contribution (CAD)</label>
@@ -359,15 +359,20 @@
         return n.toLocaleString("en-CA", { maximumFractionDigits: 2 }) + "%";
       }
 
+      function fmtYears(n) {
+        if (!Number.isFinite(n)) return "–";
+        const rounded = Math.round(n * 100) / 100;
+        return String(rounded).replace(/\.0+$/, "").replace(/(\.\d*[1-9])0+$/, "$1");
+      }
+
       // Annual compounding, end-of-year contribution.
       function endingValue(start, annualContrib, years, grossRate, feeRate) {
-        let v = start;
         const r = grossRate - feeRate;
-        for (let i = 0; i < years; i++) {
-          v = v * (1 + r);
-          v += annualContrib;
-        }
-        return v;
+        const t = Math.max(0, years);
+        if (t === 0) return start;
+        if (r === 0) return start + annualContrib * t;
+        const g = Math.pow(1 + r, t);
+        return start * g + annualContrib * ((g - 1) / r);
       }
 
       // Find x such that end(with fee, contrib + x) == end(no fee, contrib)
@@ -395,7 +400,7 @@
         const start = cleanNum(els.starting.value);
         const contrib = cleanNum(els.contrib.value);
         const yearsRaw = cleanNum(els.years.value);
-        const years = Number.isFinite(yearsRaw) ? Math.max(0, Math.floor(yearsRaw)) : NaN;
+        const years = Number.isFinite(yearsRaw) ? Math.max(0, yearsRaw) : NaN;
 
         const grossPct = cleanNum(els.gross.value);
         const feePct = cleanNum(els.fee.value);
@@ -449,7 +454,7 @@
 
         // Format horizon
         if (Number.isFinite(years) && years > 0) {
-          els.calloutHorizon.textContent = Math.floor(years).toString();
+          els.calloutHorizon.textContent = fmtYears(years);
         } else {
           els.calloutHorizon.textContent = "–";
         }

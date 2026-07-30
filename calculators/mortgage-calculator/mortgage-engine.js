@@ -116,11 +116,12 @@
 
     const paymentsPerYear = getPaymentsPerYear(frequency);
     const periodicRate = calculatePeriodicRate(annualRate, paymentsPerYear);
-    const totalPayments = Math.floor(years * paymentsPerYear);
+    const totalPayments = Math.max(1, Math.round(years * paymentsPerYear));
+    const effectiveYears = totalPayments / paymentsPerYear;
 
     let paymentAmount;
     try {
-      paymentAmount = calculatePaymentAmount(principal, annualRate, years, frequency);
+      paymentAmount = calculatePaymentAmount(principal, annualRate, effectiveYears, frequency);
       if (!isFinite(paymentAmount) || paymentAmount <= 0) {
         return {
           isValid: false,

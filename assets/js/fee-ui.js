@@ -39,6 +39,12 @@
     return (nDec * 100).toFixed(digits) + "%";
   }
 
+  function fmtYears(n) {
+    if (!Number.isFinite(n)) return "—";
+    const rounded = Math.round(n * 100) / 100;
+    return String(rounded).replace(/\.0+$/, "").replace(/(\.\d*[1-9])0+$/, "$1");
+  }
+
   function setText(id, txt) {
     const el = $(id);
     if (el) el.textContent = txt;
@@ -93,7 +99,7 @@
 
     function render() {
       const P = numFromInput("P");
-      const years = Math.round(numFromInput("years"));
+      const years = numFromInput("years");
       const rGross = pctToDec(numFromInput("rGrossPct"));
       const fee = pctToDec(numFromInput("feePct"));
       const contrib = numFromInput("contrib");
@@ -127,7 +133,7 @@
     if (window.TLM && window.TLM.shareCard && window.TLM.shareCard.wireCalculatorShare && document.getElementById("share_result_btn")) {
       window.TLM.shareCard.wireCalculatorShare(calculatorSlugFromPath(), function () {
         const P = numFromInput("P");
-        const years = Math.round(numFromInput("years"));
+        const years = numFromInput("years");
         const rGross = pctToDec(numFromInput("rGrossPct"));
         const fee = pctToDec(numFromInput("feePct"));
         const contrib = numFromInput("contrib");
@@ -148,7 +154,7 @@
           card: {
             headline: "Estimated ending value gap from fees",
             mainValue: fmtMoney(diff),
-            subline: "Over a " + years + "-year investing horizon",
+            subline: "Over a " + fmtYears(years) + "-year investing horizon",
             contextLines: [
               "Starting amount: " + fmtMoney(P),
               "Contribution: " + fmtMoney(contrib) + " per year",
@@ -157,7 +163,7 @@
             ],
             shareText:
               "Estimated fee impact over " +
-              years +
+              fmtYears(years) +
               " years: " +
               fmtMoney(diff) +
               ". Run your own numbers:",
@@ -178,7 +184,7 @@
 
     function render() {
       const P = numFromInput("P");
-      const years = Math.round(numFromInput("years"));
+      const years = numFromInput("years");
       const rGross = pctToDec(numFromInput("rGrossPct"));
       const fee = pctToDec(numFromInput("feePct"));
       const contrib = numFromInput("contrib");
@@ -222,7 +228,7 @@
       const sentenceEl = document.getElementById("seoSentence");
       if (sentenceEl) {
         const feePct = (fee * 100).toFixed(2).replace(/\.00$/, "");
-        const yearsTxt = String(Math.round(years));
+        const yearsTxt = fmtYears(years);
         const alphaPct = (alphaRequired * 100).toFixed(2).replace(/\.00$/, "");
         sentenceEl.textContent =
           `With a ${feePct}% annual fee, the ending value is ${fmtMoney(endDiff)} lower over ${yearsTxt} years under the current assumptions. ` +
@@ -338,7 +344,7 @@
 
     function render() {
       const P = numFromInput("P");
-      const years = Math.round(numFromInput("years"));
+      const years = numFromInput("years");
       const rPassivePortfolio = pctToDec(numFromInput("rPassivePortfolioPct"));
       const rActivePortfolio = pctToDec(numFromInput("rActivePortfolioPct"));
       const feePassive = pctToDec(numFromInput("feePassivePct"));
@@ -413,7 +419,7 @@
     if (window.TLM && window.TLM.shareCard && window.TLM.shareCard.wireCalculatorShare && document.getElementById("share_result_btn")) {
       window.TLM.shareCard.wireCalculatorShare(calculatorSlugFromPath(), function () {
         const P = numFromInput("P");
-        const years = Math.round(numFromInput("years"));
+        const years = numFromInput("years");
         const rPassivePortfolio = pctToDec(numFromInput("rPassivePortfolioPct"));
         const rActivePortfolio = pctToDec(numFromInput("rActivePortfolioPct"));
         const feePassive = pctToDec(numFromInput("feePassivePct"));
@@ -445,8 +451,8 @@
             : fmtMoney(Math.abs(diff)) + (diff > 0 ? " ahead" : " behind");
         const shareSentence =
           Math.abs(diff) < tieEps
-            ? "Ending balances match after " + years + " years (this model, after fees)."
-            : fmtMoney(Math.abs(diff)) + (diff > 0 ? " ahead of" : " behind") + " passive after " + years + " years.";
+            ? "Ending balances match after " + fmtYears(years) + " years (this model, after fees)."
+            : fmtMoney(Math.abs(diff)) + (diff > 0 ? " ahead of" : " behind") + " passive after " + fmtYears(years) + " years.";
         const rp = numFromInput("rPassivePortfolioPct");
         const ra = numFromInput("rActivePortfolioPct");
         const fp = numFromInput("feePassivePct");
@@ -465,7 +471,7 @@
           card: {
             headline: "Active vs passive ending balance",
             mainValue: shareMain,
-            subline: "Over " + years + " years, after fees in this model",
+            subline: "Over " + fmtYears(years) + " years, after fees in this model",
             contextLines: [
               "Starting amount: " + fmtMoney(P),
               "Contribution: " + fmtMoney(contrib) + " per " + contribFreq,

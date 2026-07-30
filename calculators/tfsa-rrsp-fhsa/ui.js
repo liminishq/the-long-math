@@ -41,9 +41,15 @@ function fmtPct(n) {
   return n.toFixed(1) + "%";
 }
 
+function fmtYears(n) {
+  if (!Number.isFinite(n)) return "—";
+  const rounded = Math.round(n * 100) / 100;
+  return String(rounded).replace(/\.0+$/, "").replace(/(\.\d*[1-9])0+$/, "$1");
+}
+
 function futureValueCaption(horizonYears, useRealDollars) {
-  const y = Math.round(horizonYears);
-  const yrWord = y === 1 ? "year" : "years";
+  const y = fmtYears(horizonYears);
+  const yrWord = y === "1" ? "year" : "years";
   const realBit = useRealDollars ? "; real (inflation-adjusted) dollars" : "";
   return `After-tax future value (${y}-${yrWord} horizon${realBit})`;
 }
@@ -480,6 +486,23 @@ function syncRateModeVisibility() {
   wrap.style.display = manual ? "" : "none";
 }
 
+const STEPPER_STEPS = {
+  contributionAmount: 50,
+  horizonYears: 1,
+  annualReturn: 0.1,
+  annualFees: 0.05,
+  inflationRate: 0.1,
+  currentTaxableIncome: 1000,
+  retirementTaxableIncome: 1000,
+  tNow: 0.5,
+  tRet: 0.5,
+  rrspUnusedCarryforward: 500,
+  tfsaRemainingRoom: 500,
+  rrspRemainingRoom: 500,
+  tfsaNewAnnualRoom: 500,
+  fhsaAnnualRoom: 1000
+};
+
 function wireNumericSteppers() {
   document.querySelectorAll(".input-with-unit.numeric-combo").forEach((wrap) => {
     const input = wrap.querySelector('input[type="number"]');
@@ -488,15 +511,22 @@ function wireNumericSteppers() {
     const fire = () => {
       input.dispatchEvent(new Event("input", { bubbles: true }));
     };
+    const adjust = (direction) => {
+      const step = STEPPER_STEPS[input.id] || 1;
+      const current = Number.isFinite(Number(input.value)) ? Number(input.value) : 0;
+      const min = Number.isFinite(Number(input.min)) ? Number(input.min) : -Infinity;
+      const max = Number.isFinite(Number(input.max)) ? Number(input.max) : Infinity;
+      const next = Math.min(max, Math.max(min, current + direction * step));
+      input.value = String(Math.round(next * 1000000) / 1000000);
+      fire();
+    };
     wrap.querySelector(".step-up")?.addEventListener("click", (e) => {
       e.preventDefault();
-      input.stepUp();
-      fire();
+      adjust(1);
     });
     wrap.querySelector(".step-down")?.addEventListener("click", (e) => {
       e.preventDefault();
-      input.stepDown();
-      fire();
+      adjust(-1);
     });
   });
 }
@@ -586,11 +616,11 @@ function wireTfsaShare() {
     if (!opt) return null;
     const winnerKey = result.optimalStrategyKey || "ALL_TFSA";
     const winnerLabel = describeStrategyAccountOrder(winnerKey, inputs.fhsaEligible);
-    const y = Math.round(inputs.horizonYears);
+    const y = fmtYears(inputs.horizonYears);
     const scenario = {
       contribution_mode: inputs.contributionMode,
       contribution_amount: String(inputs.contributionAmount),
-      horizon_years: String(y),
+      horizon_years: String(inputs.horizonYears),
       annual_return: String(inputs.annualReturn),
       annual_fees: String(inputs.annualFees),
       inflation: String(inputs.inflation),

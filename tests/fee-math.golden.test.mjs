@@ -43,6 +43,11 @@ test("fvAnnual: compound growth without contributions (hand-checked)", () => {
   approx(v, 1210);
 });
 
+test("fvAnnual: fractional years are preserved", () => {
+  const v = fvAnnual({ P: 1000, r: 0.1, years: 2.5, contrib: 0 });
+  approx(v, 1000 * Math.pow(1.1, 2.5));
+});
+
 test("fvAnnual: negative years → NaN", () => {
   assert.ok(Number.isNaN(fvAnnual({ P: 1, r: 0.05, years: -1, contrib: 0 })));
 });
@@ -90,6 +95,25 @@ test("endingValueWithFee: monthly contributions match period-compounded FV", () 
   });
   const i = Math.pow(1 + gross, 1 / 12) - 1;
   const n = 12;
+  const g = Math.pow(1 + i, n);
+  const expect = contrib * ((g - 1) / i);
+  approx(v, expect);
+});
+
+test("endingValueWithFee: monthly fractional years use nearest contribution period", () => {
+  const gross = 0.06;
+  const years = 1.5;
+  const contrib = 100;
+  const v = endingValueWithFee({
+    P: 0,
+    gross,
+    fee: 0,
+    years,
+    contrib,
+    contribFreq: "monthly"
+  });
+  const i = Math.pow(1 + gross, 1 / 12) - 1;
+  const n = 18;
   const g = Math.pow(1 + i, n);
   const expect = contrib * ((g - 1) / i);
   approx(v, expect);

@@ -3,7 +3,7 @@
    ============================================================
    Pure math + data plumbing. No DOM.
    - ratio = CPI[endYear] / CPI[startYear]
-   - converted = amount * ratio (whole dollars)
+   - converted = amount * ratio (display rounds to whole dollars)
    - Annualized rate: ratio^(1/n) - 1, n = |endYear - startYear|
 */
 
@@ -29,7 +29,7 @@
 
   function computeConverted(amount, ratio) {
     if (!Number.isFinite(amount) || ratio == null || !Number.isFinite(ratio)) return null;
-    return Math.round(amount * ratio);
+    return amount * ratio;
   }
 
   function computeAnnualizedRate(ratio, startYear, endYear) {

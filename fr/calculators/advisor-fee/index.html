@@ -58,19 +58,19 @@
     <div class="fee-cost-input-fields">
       <div class="fee-cost-field">
         <label for="starting_balance">Solde initial ($)</label>
-        <input id="starting_balance" type="number" value="1000000" />
+        <input id="starting_balance" type="number" inputmode="decimal" step="any" value="1000000" />
       </div>
       <div class="fee-cost-field">
         <label for="monthly_contribution">Cotisation mensuelle ($/mois)</label>
-        <input id="monthly_contribution" type="number" value="5000" />
+        <input id="monthly_contribution" type="number" inputmode="decimal" step="any" value="5000" />
       </div>
       <div class="fee-cost-field">
         <label for="horizon_years">Horizon (années)</label>
-        <input id="horizon_years" type="number" value="15" />
+        <input id="horizon_years" type="number" inputmode="decimal" step="any" value="15" />
       </div>
       <div class="fee-cost-field">
         <label for="annual_return">Rendement annuel attendu (%)</label>
-        <input id="annual_return" type="text" value="7" placeholder="p. ex. 7 ou 4,5" />
+        <input id="annual_return" type="text" inputmode="decimal" value="7" placeholder="p. ex. 7 ou 4,5" />
       </div>
       <div class="slider-block">
         <div class="slider-top">
@@ -86,7 +86,7 @@
       <p class="helper">Si décoché, un pourcentage annuel forfaitaire saisi ci-dessous est appliqué.</p>
       <div class="fee-cost-field">
         <label for="custom_advisor_fee">Frais conseiller (%/an)</label>
-        <input id="custom_advisor_fee" type="text" placeholder="p. ex. 1,0" />
+        <input id="custom_advisor_fee" type="text" inputmode="decimal" placeholder="p. ex. 1,0" />
       </div>
       <div class="toggle">
         <input id="include_mer" type="checkbox" checked />
@@ -95,7 +95,7 @@
       <p class="helper">Fonds communs typiques ~2 % et plus. FNB indiciels souvent ≤ 0,30 %.</p>
       <div class="fee-cost-field">
         <label for="mer_pct">FGR (%/an)</label>
-        <input id="mer_pct" type="text" placeholder="p. ex. 2,0" />
+        <input id="mer_pct" type="text" inputmode="decimal" placeholder="p. ex. 2,0" />
       </div>
     </div>
   </section>

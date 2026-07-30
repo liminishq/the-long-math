@@ -558,7 +558,7 @@
             <label for="contributionAmount">Contribution amount</label>
             <div class="input-with-unit numeric-combo">
               <span class="unit-prefix" aria-hidden="true">$</span>
-              <input id="contributionAmount" type="number" inputmode="decimal" min="0" step="50" value="1000" />
+              <input id="contributionAmount" type="number" inputmode="decimal" min="0" step="any" value="1000" />
               <div class="num-stepper" role="group" aria-label="Adjust amount">
                 <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
                 <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
@@ -572,7 +572,7 @@
           <div class="field">
             <label for="horizonYears">Time horizon (years)</label>
             <div class="input-with-unit numeric-combo">
-              <input id="horizonYears" type="number" inputmode="decimal" min="1" step="1" value="25" />
+              <input id="horizonYears" type="number" inputmode="decimal" min="1" step="any" value="25" />
               <div class="num-stepper" role="group" aria-label="Adjust years">
                 <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
                 <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
@@ -583,7 +583,7 @@
           <div class="field">
             <label for="annualReturn">Expected annual return (before fees)</label>
             <div class="input-with-unit numeric-combo">
-              <input id="annualReturn" type="number" inputmode="decimal" step="0.1" value="7" />
+              <input id="annualReturn" type="number" inputmode="decimal" step="any" value="7" />
               <span class="unit-suffix" aria-hidden="true">%</span>
               <div class="num-stepper" role="group" aria-label="Adjust percent">
                 <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
@@ -595,7 +595,7 @@
           <div class="field">
             <label for="annualFees">Annual fees (MER, advice, etc.)</label>
             <div class="input-with-unit numeric-combo">
-              <input id="annualFees" type="number" inputmode="decimal" step="0.05" value="0.5" />
+              <input id="annualFees" type="number" inputmode="decimal" step="any" value="0.5" />
               <span class="unit-suffix" aria-hidden="true">%</span>
               <div class="num-stepper" role="group" aria-label="Adjust percent">
                 <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
@@ -617,7 +617,7 @@
           <div id="inflationWrap" class="field hidden">
             <label for="inflationRate">Inflation rate</label>
             <div class="input-with-unit numeric-combo">
-              <input id="inflationRate" type="number" inputmode="decimal" step="0.1" value="3.0" />
+              <input id="inflationRate" type="number" inputmode="decimal" step="any" value="3.0" />
               <span class="unit-suffix" aria-hidden="true">%</span>
               <div class="num-stepper" role="group" aria-label="Adjust percent">
                 <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
@@ -653,7 +653,7 @@
             <label for="currentTaxableIncome">Current taxable income (for t_now estimate)</label>
             <div class="input-with-unit numeric-combo">
               <span class="unit-prefix" aria-hidden="true">$</span>
-              <input id="currentTaxableIncome" type="number" inputmode="decimal" min="0" step="1000" value="120000" />
+              <input id="currentTaxableIncome" type="number" inputmode="decimal" min="0" step="any" value="120000" />
               <div class="num-stepper" role="group" aria-label="Adjust amount">
                 <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
                 <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
@@ -665,7 +665,7 @@
             <label for="retirementTaxableIncome">Expected retirement taxable income</label>
             <div class="input-with-unit numeric-combo">
               <span class="unit-prefix" aria-hidden="true">$</span>
-              <input id="retirementTaxableIncome" type="number" inputmode="decimal" min="0" step="1000" value="70000" />
+              <input id="retirementTaxableIncome" type="number" inputmode="decimal" min="0" step="any" value="70000" />
               <div class="num-stepper" role="group" aria-label="Adjust amount">
                 <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
                 <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
@@ -686,7 +686,7 @@
             <div class="field">
               <label for="tNow">Current marginal tax rate (t_now)</label>
               <div class="input-with-unit numeric-combo">
-                <input id="tNow" type="number" inputmode="decimal" step="0.5" value="40" />
+                <input id="tNow" type="number" inputmode="decimal" step="any" value="40" />
                 <span class="unit-suffix" aria-hidden="true">%</span>
                 <div class="num-stepper" role="group" aria-label="Adjust percent">
                   <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
@@ -698,7 +698,7 @@
             <div class="field">
               <label for="tRet">Retirement marginal tax rate (t_ret)</label>
               <div class="input-with-unit numeric-combo">
-                <input id="tRet" type="number" inputmode="decimal" step="0.5" value="30" />
+                <input id="tRet" type="number" inputmode="decimal" step="any" value="30" />
                 <span class="unit-suffix" aria-hidden="true">%</span>
                 <div class="num-stepper" role="group" aria-label="Adjust percent">
                   <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
@@ -726,7 +726,7 @@
             <label for="rrspUnusedCarryforward">Unused RRSP room carried forward (optional)</label>
             <div class="input-with-unit numeric-combo">
               <span class="unit-prefix" aria-hidden="true">$</span>
-              <input id="rrspUnusedCarryforward" type="number" inputmode="decimal" min="0" step="500" value="0" />
+              <input id="rrspUnusedCarryforward" type="number" inputmode="decimal" min="0" step="any" value="0" />
               <div class="num-stepper" role="group" aria-label="Adjust amount">
                 <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
                 <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
@@ -742,7 +742,7 @@
             <label for="tfsaRemainingRoom">TFSA remaining contribution room (today)</label>
             <div class="input-with-unit numeric-combo">
               <span class="unit-prefix" aria-hidden="true">$</span>
-              <input id="tfsaRemainingRoom" type="number" inputmode="decimal" min="0" step="500" value="7000" />
+              <input id="tfsaRemainingRoom" type="number" inputmode="decimal" min="0" step="any" value="7000" />
               <div class="num-stepper" role="group" aria-label="Adjust amount">
                 <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
                 <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
@@ -754,7 +754,7 @@
             <label for="rrspRemainingRoom">RRSP remaining deduction room (today)</label>
             <div class="input-with-unit numeric-combo">
               <span class="unit-prefix" aria-hidden="true">$</span>
-              <input id="rrspRemainingRoom" type="number" inputmode="decimal" min="0" step="500" value="21600" />
+              <input id="rrspRemainingRoom" type="number" inputmode="decimal" min="0" step="any" value="21600" />
               <div class="num-stepper" role="group" aria-label="Adjust amount">
                 <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
                 <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
@@ -767,7 +767,7 @@
             <label for="tfsaNewAnnualRoom">New TFSA room each January (from simulation year 2)</label>
             <div class="input-with-unit numeric-combo">
               <span class="unit-prefix" aria-hidden="true">$</span>
-              <input id="tfsaNewAnnualRoom" type="number" inputmode="decimal" min="0" step="500" value="7000" />
+              <input id="tfsaNewAnnualRoom" type="number" inputmode="decimal" min="0" step="any" value="7000" />
               <div class="num-stepper" role="group" aria-label="Adjust amount">
                 <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
                 <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
@@ -801,7 +801,7 @@
               <label for="fhsaAnnualRoom">FHSA annual contribution room</label>
               <div class="input-with-unit numeric-combo">
                 <span class="unit-prefix" aria-hidden="true">$</span>
-                <input id="fhsaAnnualRoom" type="number" inputmode="decimal" min="0" step="1000" value="8000" />
+                <input id="fhsaAnnualRoom" type="number" inputmode="decimal" min="0" step="any" value="8000" />
                 <div class="num-stepper" role="group" aria-label="Adjust amount">
                   <button type="button" class="step-btn step-up" aria-label="Increase">▲</button>
                   <button type="button" class="step-btn step-down" aria-label="Decrease">▼</button>
