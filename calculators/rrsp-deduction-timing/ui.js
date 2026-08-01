@@ -3,6 +3,10 @@ import { SUPPORTED_TAX_YEARS, computeDeductionTiming, parseMoney } from "./engin
 (function () {
   "use strict";
 
+  if (window.TLM && window.TLM.calculatorInDevelopment) {
+    return;
+  }
+
   const PROVINCES = [
     ["AB", "Alberta"],
     ["BC", "British Columbia"],

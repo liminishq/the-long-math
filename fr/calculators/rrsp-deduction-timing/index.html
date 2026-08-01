@@ -22,6 +22,7 @@
   <link rel="stylesheet" href="/assets/css/styles.4bb62c4d1c.css" />
   <link rel="stylesheet" href="/assets/css/calc-mobile.b65b13bb36.css" />
   <link rel="stylesheet" href="/calculators/rrsp-deduction-timing/styles.css" />
+  <link rel="stylesheet" href="/assets/css/calculator-in-development.css" />
   <script src="/assets/js/i18n.e9994b5f88.js"></script>
   <script defer src="/assets/js/site.4fbf708cdd.js"></script>
 
@@ -90,6 +91,16 @@
       </div>
     </header>
 
+    <div class="calc-in-development">
+      <div class="calc-in-development-overlay" role="status" aria-live="polite" aria-labelledby="calc-in-dev-heading">
+        <div class="calc-in-development-card">
+          <p class="calc-in-development-kicker">En développement</p>
+          <h2 id="calc-in-dev-heading">Ce calculateur est presque terminé</h2>
+          <p>L'arithmétique est en grande partie en place. Les entrées sont verrouillées le temps de quelques raffinements avant l'ouverture au public.</p>
+          <p>Revenez bientôt.</p>
+        </div>
+      </div>
+      <div class="calc-in-development-body">
     <section class="calc-shell" aria-label="Calculateur de calendrier de déduction REER">
       <article class="calc-panel" aria-labelledby="inputs-heading">
         <h2 id="inputs-heading" class="panel-heading">Entrées</h2>
@@ -265,6 +276,8 @@
         </table>
       </div>
     </section>
+      </div>
+    </div>
 
     <section class="calc-panel detail-section" aria-labelledby="assumptions-heading">
       <h2 id="assumptions-heading" class="panel-heading">Portée et hypothèses</h2>
@@ -311,6 +324,7 @@
   </main>
 
   <div id="footerMount"></div>
+  <script src="/assets/js/calculator-in-development.js"></script>
   <script src="/assets/js/investment-growth.engine.3a4efb66b7.js"></script>
   <script type="module" src="/calculators/rrsp-deduction-timing/ui.js"></script>
 </body>

@@ -1,6 +1,10 @@
 (function () {
   "use strict";
 
+  if (window.TLM && window.TLM.calculatorInDevelopment) {
+    return;
+  }
+
   var Engine = window.InvestmentGrowthEngine;
   if (!Engine) {
     console.error("InvestmentGrowthEngine not loaded");
@@ -133,19 +137,25 @@
   function updateReturnWarning(solved) {
     if (!returnWarning) return;
     if (solved.exceedsHistoricalWarning) {
-      var histNominalPct = (Engine.SP500_NOMINAL_ANNUAL_RETURN_50Y * 100).toFixed(1);
-      var histRealPct = (Engine.SP500_REAL_ANNUAL_RETURN_50Y * 100).toFixed(1);
+      // Fallbacks keep the warning readable if an older engine bundle is still cached.
+      var histNominal = Number(Engine.SP500_NOMINAL_ANNUAL_RETURN_50Y);
+      var histReal = Number(Engine.SP500_REAL_ANNUAL_RETURN_50Y);
+      if (!Number.isFinite(histNominal)) histNominal = 0.1211;
+      if (!Number.isFinite(histReal)) histReal = 0.082;
+      var histNominalPct = (histNominal * 100).toFixed(1);
+      var histRealPct = (histReal * 100).toFixed(1);
+      var period = Engine.SP500_REFERENCE_PERIOD || "1975–2024";
       returnWarning.hidden = false;
       if (isFrench()) {
         returnWarning.textContent =
           "Un rendement nominal requis au-dessus de 7 % dépasse plusieurs hypothèses de planification à long terme. " +
-          "À titre de référence, sur la période " + Engine.SP500_REFERENCE_PERIOD + ", le rendement total annualisé du S&P 500 " +
+          "À titre de référence, sur la période " + period + ", le rendement total annualisé du S&P 500 " +
           "(dividendes réinvestis) était d'environ " + histNominalPct + " % en termes nominaux et " +
           histRealPct + " % après inflation. Les rendements passés ne préjugent pas des résultats futurs.";
       } else {
         returnWarning.textContent =
           "A required nominal return above 7% exceeds many long-run planning assumptions. " +
-          "For context, over " + Engine.SP500_REFERENCE_PERIOD + ", the S&P 500's annualized total return " +
+          "For context, over " + period + ", the S&P 500's annualized total return " +
           "(with dividends reinvested) was about " + histNominalPct + "% nominal and " +
           histRealPct + "% after inflation. Past performance is not a forecast.";
       }
@@ -264,7 +274,8 @@
     var sim = solved.simulation;
     var targetReal = readTargetReal();
     var inflation = readInputs().inflationAnnual;
-    var years = readInputs().years;
+    // Use the same effective horizon the simulation ran (fractional years preserved).
+    var years = sim && Number.isFinite(sim.years) ? sim.years : readInputs().years;
     var targetNominal = targetReal * Math.pow(1 + inflation, years);
 
     requiredReturnNominal.textContent = fmtPct(solved.nominalAnnualReturn);
