@@ -44,7 +44,7 @@
 
           <div class="field">
             <label for="startingAmount">Starting amount</label>
-            <input id="startingAmount" type="number" inputmode="decimal" min="0" step="100" value="10000" />
+            <input id="startingAmount" type="number" inputmode="decimal" min="0" step="any" value="10000" />
           </div>
 
           <div class="field">
@@ -59,19 +59,19 @@
 
           <div class="field">
             <label for="contribAmount">Contribution amount (per period)</label>
-            <input id="contribAmount" type="number" inputmode="decimal" step="10" value="500" />
+            <input id="contribAmount" type="number" inputmode="decimal" step="any" value="500" />
             <p class="help muted">Use a negative amount to model periodic withdrawals.</p>
           </div>
 
           <div class="field">
             <label for="years">Time horizon (years)</label>
-            <input id="years" type="number" inputmode="numeric" min="0" step="1" value="25" />
+            <input id="years" type="number" inputmode="decimal" min="0" step="any" value="25" />
           </div>
 
           <div class="field">
             <label for="annualReturn">Expected annual return (nominal)</label>
             <div class="inline">
-              <input id="annualReturn" type="number" inputmode="decimal" step="0.1" value="7" />
+              <input id="annualReturn" type="number" inputmode="decimal" step="any" value="7" />
               <span class="unit">%</span>
             </div>
             <p class="help muted">Enter the nominal (pre-inflation) rate.</p>
@@ -87,7 +87,7 @@
           <div id="inflationWrap" class="field hidden">
             <label for="inflationRate">Inflation rate</label>
             <div class="inline">
-              <input id="inflationRate" type="number" inputmode="decimal" step="0.1" value="2.5" />
+              <input id="inflationRate" type="number" inputmode="decimal" step="any" value="2.5" />
               <span class="unit">%</span>
             </div>
             <p class="help muted">
@@ -282,6 +282,7 @@
 
   <div id="footerMount"></div>
 
+  <script src="/assets/js/investment-growth.engine.409ee679c3.js"></script>
   <script src="/calculators/investment-simple/investment-simple.js"></script>
 </body>
 </html>

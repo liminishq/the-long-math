@@ -7,7 +7,7 @@
 
   <!-- Site-wide theme + styles (same stack as advisor calculator) -->
   <script src="/assets/js/theme-init.40fc21015f.js"></script>
-  <link rel="stylesheet" href="/assets/css/styles.a9bfe05385.css">
+  <link rel="stylesheet" href="/assets/css/styles.4bb62c4d1c.css">
   <script defer src="/assets/js/site.4fbf708cdd.js"></script>
 
   <!-- Page-local layout only (keeps your global colors/fonts untouched) -->
@@ -150,15 +150,15 @@
           </div>
           <div class="fee-cost-field">
             <label for="horizon_years">Time horizon (years)</label>
-            <input id="horizon_years" type="text" inputmode="numeric" />
+            <input id="horizon_years" type="text" inputmode="decimal" />
           </div>
           <div class="fee-cost-field">
             <label for="annual_return">Gross return baseline (annual %)</label>
-            <input id="annual_return" type="text" placeholder="e.g. 7 or 4.5" />
+            <input id="annual_return" type="text" inputmode="decimal" placeholder="e.g. 7 or 4.5" />
           </div>
           <div class="fee-cost-field">
             <label for="fee_pct">Annual fee (%)</label>
-            <input id="fee_pct" type="text" placeholder="e.g. 1.0" />
+            <input id="fee_pct" type="text" inputmode="decimal" placeholder="e.g. 1.0" />
           </div>
           <div class="fee-cost-field">
             <label for="annual_contribution">Annual contribution (CAD)</label>
@@ -311,10 +311,16 @@
 
   <div id="footerMount"></div>
 
-  <!-- Self-contained calculator logic (no slider) -->
+  <script src="/assets/js/fee-math.0738f6133a.js"></script>
+  <!-- Calculator UI; growth/fee math from TLM_FeeMath -->
   <script>
     (function () {
       "use strict";
+
+      const FeeMath = window.TLM_FeeMath;
+      if (!FeeMath) {
+        throw new Error("TLM_FeeMath failed to load");
+      }
 
       const els = {
         starting: document.getElementById("starting_balance"),
@@ -359,43 +365,17 @@
         return n.toLocaleString("en-CA", { maximumFractionDigits: 2 }) + "%";
       }
 
-      // Annual compounding, end-of-year contribution.
-      function endingValue(start, annualContrib, years, grossRate, feeRate) {
-        let v = start;
-        const r = grossRate - feeRate;
-        for (let i = 0; i < years; i++) {
-          v = v * (1 + r);
-          v += annualContrib;
-        }
-        return v;
-      }
-
-      // Find x such that end(with fee, contrib + x) == end(no fee, contrib)
-      function solveExtraContribution(start, contrib, years, gross, fee) {
-        const target = endingValue(start, contrib, years, gross, 0);
-        if (!(fee > 0)) return 0;
-
-        let lo = 0;
-        let hi = Math.max(100, contrib);
-
-        while (endingValue(start, contrib + hi, years, gross, fee) < target && hi < 1e9) {
-          hi *= 2;
-        }
-
-        for (let i = 0; i < 80; i++) {
-          const mid = (lo + hi) / 2;
-          const val = endingValue(start, contrib + mid, years, gross, fee);
-          if (val >= target) hi = mid;
-          else lo = mid;
-        }
-        return hi;
+      function fmtYears(n) {
+        if (!Number.isFinite(n)) return "–";
+        const rounded = Math.round(n * 100) / 100;
+        return String(rounded).replace(/\.0+$/, "").replace(/(\.\d*[1-9])0+$/, "$1");
       }
 
       function calculate() {
         const start = cleanNum(els.starting.value);
         const contrib = cleanNum(els.contrib.value);
         const yearsRaw = cleanNum(els.years.value);
-        const years = Number.isFinite(yearsRaw) ? Math.max(0, Math.floor(yearsRaw)) : NaN;
+        const years = Number.isFinite(yearsRaw) ? Math.max(0, yearsRaw) : NaN;
 
         const grossPct = cleanNum(els.gross.value);
         const feePct = cleanNum(els.fee.value);
@@ -416,15 +396,21 @@
         const gross = grossPct / 100;
         const fee = feePct / 100;
 
-        const end0 = endingValue(start, contrib, years, gross, 0);
-        const endF = endingValue(start, contrib, years, gross, fee);
+        const end0 = FeeMath.endingValueWithFee({ P: start, gross, fee: 0, years, contrib });
+        const endF = FeeMath.endingValueWithFee({ P: start, gross, fee, years, contrib });
 
         const lost = end0 - endF;
-        const extra = solveExtraContribution(start, contrib, years, gross, fee);
+        const extra = FeeMath.extraAnnualContributionToOffsetFee({
+          P: start,
+          years,
+          rGross: gross,
+          fee,
+          contrib,
+        });
 
         // Required excess return equals the fee in the net = gross - fee model
-        const requiredExcessPct = feePct;
-        const requiredGrossPct = grossPct + feePct;
+        const requiredExcessPct = FeeMath.requiredAlphaToOffsetFeeSimple({ fee }) * 100;
+        const requiredGrossPct = grossPct + requiredExcessPct;
 
         els.outReq.textContent = fmtPct(requiredExcessPct);
         els.outReqGross.textContent = fmtPct(requiredGrossPct);
@@ -449,7 +435,7 @@
 
         // Format horizon
         if (Number.isFinite(years) && years > 0) {
-          els.calloutHorizon.textContent = Math.floor(years).toString();
+          els.calloutHorizon.textContent = fmtYears(years);
         } else {
           els.calloutHorizon.textContent = "–";
         }

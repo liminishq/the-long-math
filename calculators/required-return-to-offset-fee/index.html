@@ -311,10 +311,16 @@
 
   <div id="footerMount"></div>
 
-  <!-- Self-contained calculator logic (no slider) -->
+  <script src="/assets/js/fee-math.js"></script>
+  <!-- Calculator UI; growth/fee math from TLM_FeeMath -->
   <script>
     (function () {
       "use strict";
+
+      const FeeMath = window.TLM_FeeMath;
+      if (!FeeMath) {
+        throw new Error("TLM_FeeMath failed to load");
+      }
 
       const els = {
         starting: document.getElementById("starting_balance"),
@@ -365,37 +371,6 @@
         return String(rounded).replace(/\.0+$/, "").replace(/(\.\d*[1-9])0+$/, "$1");
       }
 
-      // Annual compounding, end-of-year contribution.
-      function endingValue(start, annualContrib, years, grossRate, feeRate) {
-        const r = grossRate - feeRate;
-        const t = Math.max(0, years);
-        if (t === 0) return start;
-        if (r === 0) return start + annualContrib * t;
-        const g = Math.pow(1 + r, t);
-        return start * g + annualContrib * ((g - 1) / r);
-      }
-
-      // Find x such that end(with fee, contrib + x) == end(no fee, contrib)
-      function solveExtraContribution(start, contrib, years, gross, fee) {
-        const target = endingValue(start, contrib, years, gross, 0);
-        if (!(fee > 0)) return 0;
-
-        let lo = 0;
-        let hi = Math.max(100, contrib);
-
-        while (endingValue(start, contrib + hi, years, gross, fee) < target && hi < 1e9) {
-          hi *= 2;
-        }
-
-        for (let i = 0; i < 80; i++) {
-          const mid = (lo + hi) / 2;
-          const val = endingValue(start, contrib + mid, years, gross, fee);
-          if (val >= target) hi = mid;
-          else lo = mid;
-        }
-        return hi;
-      }
-
       function calculate() {
         const start = cleanNum(els.starting.value);
         const contrib = cleanNum(els.contrib.value);
@@ -421,15 +396,21 @@
         const gross = grossPct / 100;
         const fee = feePct / 100;
 
-        const end0 = endingValue(start, contrib, years, gross, 0);
-        const endF = endingValue(start, contrib, years, gross, fee);
+        const end0 = FeeMath.endingValueWithFee({ P: start, gross, fee: 0, years, contrib });
+        const endF = FeeMath.endingValueWithFee({ P: start, gross, fee, years, contrib });
 
         const lost = end0 - endF;
-        const extra = solveExtraContribution(start, contrib, years, gross, fee);
+        const extra = FeeMath.extraAnnualContributionToOffsetFee({
+          P: start,
+          years,
+          rGross: gross,
+          fee,
+          contrib,
+        });
 
         // Required excess return equals the fee in the net = gross - fee model
-        const requiredExcessPct = feePct;
-        const requiredGrossPct = grossPct + feePct;
+        const requiredExcessPct = FeeMath.requiredAlphaToOffsetFeeSimple({ fee }) * 100;
+        const requiredGrossPct = grossPct + requiredExcessPct;
 
         els.outReq.textContent = fmtPct(requiredExcessPct);
         els.outReqGross.textContent = fmtPct(requiredGrossPct);

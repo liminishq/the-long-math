@@ -8,7 +8,7 @@
   <link rel="canonical" href="https://www.thelongmath.com/calculators/investment-simple/methodology/" />
 
   <script src="/assets/js/theme-init.40fc21015f.js"></script>
-  <link rel="stylesheet" href="/assets/css/styles.a9bfe05385.css" />
+  <link rel="stylesheet" href="/assets/css/styles.4bb62c4d1c.css" />
   <script defer src="/assets/js/site.4fbf708cdd.js"></script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
@@ -65,14 +65,16 @@
       </p>
 
       <h3 id="compound-growth">1. Compound Growth with Periodic Contributions</h3>
-      <div class="formula-block">FV = P(1 + r/n)<sup>nt</sup> + PMT × ((1 + r/n)<sup>nt</sup> − 1) / (r/n)</div>
-      <p class="formula-meta"><strong>Rationale:</strong> This is the standard closed-form future value equation for periodic contributions under constant compounding.</p>
-      <p class="formula-meta">This form assumes contributions occur at the end of each contribution period (ordinary annuity).</p>
+      <div class="formula-block">i = (1 + r)<sup>1/n</sup> − 1</div>
+      <div class="formula-block">N = round(n × t)</div>
+      <div class="formula-block">FV = P(1 + i)<sup>N</sup> + PMT × ((1 + i)<sup>N</sup> − 1) / i</div>
+      <p class="formula-meta"><strong>Rationale:</strong> Effective period rate from the annual return, then ordinary-annuity future value (contributions at end of each period). Equivalent to period-by-period simulation in the shared investment growth engine.</p>
       <p class="formula-meta"><strong>Limitation:</strong> Assumes constant return and deterministic compounding; does not model volatility, sequence-of-returns risk, or varying contribution schedules.</p>
 
       <h3 id="inflation-adjustment">2. Inflation Adjustment (Real Value)</h3>
-      <div class="formula-block">FV<sub>real</sub> = FV<sub>nominal</sub> / (1 + i)<sup>t</sup></div>
-      <p class="formula-meta"><strong>Rationale:</strong> Converts nominal future value to present purchasing power using a constant annual inflation rate.</p>
+      <div class="formula-block">r<sub>real</sub> = (1 + r) / (1 + i) − 1</div>
+      <div class="formula-block">FV<sub>real</sub> = FV(P, PMT, n, t, r<sub>real</sub>)</div>
+      <p class="formula-meta"><strong>Rationale:</strong> When the real-dollars toggle is on, growth uses the Fisher real return and contributions stay constant in today’s dollars (inflation-indexed nominal contributions).</p>
       <p class="formula-meta"><strong>Limitation:</strong> Assumes steady inflation and does not model year-to-year CPI variability or regime changes.</p>
 
       <h3 id="irr">3. Internal Rate of Return (If Displayed)</h3>
@@ -92,9 +94,10 @@
 
       <h2>Implementation Notes</h2>
       <ul>
-        <li>The periodic rate is derived as r/n.</li>
-        <li>Nominal future value is calculated before any inflation adjustment is applied.</li>
-        <li>Inflation adjustment is applied after full nominal growth has been computed.</li>
+        <li>Growth uses shared <code>InvestmentGrowthEngine.simulateInvestment()</code> in <code>/assets/js/investment-growth.engine.409ee679c3.js</code>.</li>
+        <li>The periodic rate is the effective rate <code>i = (1 + r)<sup>1/n</sup> − 1</code> (not r/n).</li>
+        <li>Supported contribution frequencies include annual, monthly, biweekly (26), and weekly (52).</li>
+        <li>IRR (when displayed) is solved from the cash-flow series in the page script and annualized.</li>
         <li>All computations are performed using floating-point arithmetic; rounding occurs only at the display layer.</li>
       </ul>
 
