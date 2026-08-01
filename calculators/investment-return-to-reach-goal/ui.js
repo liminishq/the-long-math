@@ -133,18 +133,21 @@
   function updateReturnWarning(solved) {
     if (!returnWarning) return;
     if (solved.exceedsHistoricalWarning) {
-      var histPct = (Engine.SP500_NOMINAL_ANNUAL_RETURN_50Y * 100).toFixed(1);
+      var histNominalPct = (Engine.SP500_NOMINAL_ANNUAL_RETURN_50Y * 100).toFixed(1);
+      var histRealPct = (Engine.SP500_REAL_ANNUAL_RETURN_50Y * 100).toFixed(1);
       returnWarning.hidden = false;
       if (isFrench()) {
         returnWarning.textContent =
           "Un rendement nominal requis au-dessus de 7 % dépasse plusieurs hypothèses de planification à long terme. " +
-          "À titre de référence, le rendement total annualisé du S&P 500 (dividendes réinvestis) était d'environ " +
-          histPct + " % sur la période " + Engine.SP500_REFERENCE_PERIOD + ". Les rendements passés ne préjugent pas des résultats futurs.";
+          "À titre de référence, sur la période " + Engine.SP500_REFERENCE_PERIOD + ", le rendement total annualisé du S&P 500 " +
+          "(dividendes réinvestis) était d'environ " + histNominalPct + " % en termes nominaux et " +
+          histRealPct + " % après inflation. Les rendements passés ne préjugent pas des résultats futurs.";
       } else {
         returnWarning.textContent =
           "A required nominal return above 7% exceeds many long-run planning assumptions. " +
-          "For context, the S&P 500's annualized total return (with dividends reinvested) was about " +
-          histPct + "% over " + Engine.SP500_REFERENCE_PERIOD + ". Past performance is not a forecast.";
+          "For context, over " + Engine.SP500_REFERENCE_PERIOD + ", the S&P 500's annualized total return " +
+          "(with dividends reinvested) was about " + histNominalPct + "% nominal and " +
+          histRealPct + "% after inflation. Past performance is not a forecast.";
       }
     } else {
       returnWarning.hidden = true;
