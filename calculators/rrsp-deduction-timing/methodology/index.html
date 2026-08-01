@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspect the Arithmetic: RRSP Deduction Timing Calculator | The Long Math</title>
+  <meta name="description" content="Inspect the formulas, assumptions, and shared tax and investment engines behind the RRSP Deduction Timing Calculator." />
+  <link rel="canonical" href="https://www.thelongmath.com/calculators/rrsp-deduction-timing/methodology/" />
+  <link rel="alternate" hreflang="en" href="https://www.thelongmath.com/calculators/rrsp-deduction-timing/methodology/" />
+  <link rel="alternate" hreflang="fr" href="https://www.thelongmath.com/fr/calculators/rrsp-deduction-timing/methodology/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.thelongmath.com/calculators/rrsp-deduction-timing/methodology/" />
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="/calculators/rrsp-deduction-timing/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main class="wrap">
+    <header class="deduction-hero">
+      <p class="hero-kicker">Inspect the arithmetic</p>
+      <h1>RRSP Deduction Timing Calculator</h1>
+      <p class="lead">This page documents the formulas, assumptions, and shared engines used to compare claiming an RRSP deduction now with saving it for a future higher-income year.</p>
+      <p class="lead"><strong>No opinions. No hidden assumptions. Just arithmetic.</strong></p>
+      <p><a class="inspect-arithmetic-btn" href="/calculators/rrsp-deduction-timing/">Back to Calculator</a></p>
+    </header>
+
+    <article class="calc-panel methodology-content">
+      <section>
+        <h2>1. What the calculator answers</h2>
+        <p>The calculator compares two uses of the same RRSP deduction amount:</p>
+        <ul>
+          <li><strong>Claim now:</strong> claim the RRSP deduction against current employment income, receive the current-year tax saving, then compound that refund for the waiting period.</li>
+          <li><strong>Claim later:</strong> do not claim the deduction now, then claim the same deduction against expected future employment income.</li>
+        </ul>
+        <p>The output is the difference between those two values:</p>
+        <pre><code>Deferral Advantage = Future Tax Saving − Future Value of Current Refund</code></pre>
+        <p>A positive result means waiting is ahead in the model. A negative result means claiming now is ahead.</p>
+      </section>
+
+      <section>
+        <h2>2. Inputs</h2>
+        <ul>
+          <li><strong>Tax year:</strong> the Canadian federal and provincial or territorial tax data set used for both current and future comparisons.</li>
+          <li><strong>Province or territory:</strong> residence for provincial or territorial tax purposes.</li>
+          <li><strong>RRSP deduction amount:</strong> the contribution amount being compared for deduction timing.</li>
+          <li><strong>Current employment income:</strong> employment income before claiming the RRSP deduction now.</li>
+          <li><strong>Expected future employment income:</strong> employment income in the year when the deduction would be claimed later.</li>
+          <li><strong>Years until future income:</strong> the number of years the current refund could be invested or used against debt.</li>
+          <li><strong>Annual return or debt rate:</strong> the nominal annual rate applied to the current refund.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>3. Shared tax engine</h2>
+        <p>The calculator uses the existing Canadian personal income tax engine:</p>
+        <pre><code>calculators/canada-income-tax/js/tax.engine.js
+computePersonalTax(input)</code></pre>
+        <p>Before calculating, it loads the selected year’s tax data through:</p>
+        <pre><code>calculators/canada-income-tax/js/tax.data.js
+loadTaxData(year, { basePath: "/calculators/canada-income-tax/data" })</code></pre>
+        <p>The tax engine includes federal and provincial or territorial brackets, non-refundable credits, employment income, CPP, EI, RRSP deductions, FHSA deductions, dividends, capital gains, and other supported fields. This calculator intentionally uses the employment-income path only for the first draft.</p>
+      </section>
+
+      <section>
+        <h2>4. Current-year tax saving</h2>
+        <p>The current-year tax saving is calculated by running the tax engine twice:</p>
+        <pre><code>Current Tax Before = tax(current employment income, RRSP deduction = 0)
+Current Tax After  = tax(current employment income, RRSP deduction = deduction amount)
+
+Current Tax Saving = Current Tax Before − Current Tax After</code></pre>
+        <p>The calculator uses federal plus provincial or territorial <strong>income tax</strong>. CPP and EI are not part of the refund comparison because an RRSP deduction does not reduce payroll contributions.</p>
+      </section>
+
+      <section>
+        <h2>5. Future-year tax saving</h2>
+        <p>The future-year tax saving uses the same tax-year rules selected by the user:</p>
+        <pre><code>Future Tax Before = tax(future employment income, RRSP deduction = 0)
+Future Tax After  = tax(future employment income, RRSP deduction = deduction amount)
+
+Future Tax Saving = Future Tax Before − Future Tax After</code></pre>
+        <p>This means the calculator does not forecast future tax legislation. It asks: using today’s known tax data, how large would the income jump need to be for waiting to beat claiming now?</p>
+      </section>
+
+      <section>
+        <h2>6. Refund opportunity cost</h2>
+        <p>If the deduction is claimed now, the current tax saving is available immediately. The calculator compounds that amount for the waiting period using the shared investment growth engine:</p>
+        <pre><code>assets/js/investment-growth.engine.js
+InvestmentGrowthEngine.simulateInvestment({
+  startingAmount: Current Tax Saving,
+  contributionPerPeriod: 0,
+  years: Years To Wait,
+  nominalAnnualReturn: Annual Rate,
+  inflationAnnual: 0
+})</code></pre>
+        <p>The same formula is used for either investment return or debt payoff rate:</p>
+        <pre><code>Future Value of Current Refund = Current Tax Saving × (1 + annual rate)^years</code></pre>
+      </section>
+
+      <section>
+        <h2>7. Blended deduction rates</h2>
+        <p>The calculator reports blended deduction rates instead of relying only on the top marginal rate:</p>
+        <pre><code>Current Blended Rate = Current Tax Saving ÷ Deduction Amount
+Future Blended Rate  = Future Tax Saving ÷ Deduction Amount</code></pre>
+        <p>This matters because a large RRSP deduction can cross more than one federal or provincial bracket. The blended rate is the actual tax saved per dollar of the deduction under the model.</p>
+      </section>
+
+      <section>
+        <h2>8. Break-even formulas</h2>
+        <p>The future tax saving must at least equal the future value of the refund available today:</p>
+        <pre><code>Required Future Tax Saving = Future Value of Current Refund</code></pre>
+        <p>Converted to a blended deduction rate:</p>
+        <pre><code>Required Future Blended Rate =
+  Required Future Tax Saving ÷ Deduction Amount</code></pre>
+        <p>The break-even annual return on today’s refund is:</p>
+        <pre><code>Break-Even Annual Return =
+  (Future Tax Saving ÷ Current Tax Saving)^(1 ÷ years) − 1</code></pre>
+        <p>If the actual investment return or debt payoff rate is higher than this break-even rate, claiming now wins. If it is lower, waiting may win.</p>
+      </section>
+
+      <section>
+        <h2>9. Assumptions and limitations</h2>
+        <ul>
+          <li>Employment income only in the first draft.</li>
+          <li>No Canada Child Benefit, GST/HST credit, OAS recovery tax, GIS, tuition credits, medical credits, spousal credits, or other benefit interactions.</li>
+          <li>No alternative minimum tax modelling.</li>
+          <li>RRSP contribution room is not calculated here. Use the <a href="/calculators/rrsp-contribution-room-tax-refund/">RRSP contribution room and tax refund calculator</a> for room and deduction-limit estimates.</li>
+          <li>Future income is evaluated using the selected year’s tax data, not forecast legislation.</li>
+          <li>Inflation is not separately modelled in the first draft. The opportunity-cost rate is nominal.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>10. Sources and related implementation</h2>
+        <ul>
+          <li><a href="/calculators/canada-income-tax/">Canada Personal Income Tax Calculator</a> — shared tax engine and tax data.</li>
+          <li><a href="/calculators/investment-calculator-inflation-adjusted/">Inflation-Adjusted Investment Calculator</a> — shared investment growth engine.</li>
+          <li><a href="/articles/investing-and-financial-literacy/rrsp-deduction-timing/">RRSP Deduction Timing: Claim Now or Save It for Later?</a> — article explaining the decision framework.</li>
+          <li><a href="https://www.canada.ca/en/revenue-agency/services/forms-publications/tax-packages-years/general-income-tax-benefit-package/5000-s7.html" target="_blank" rel="noopener noreferrer">CRA Schedule 7</a> — RRSP contributions and unused contributions.</li>
+          <li><a href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/deductions-credits-expenses/line-20800-rrsp-deduction.html" target="_blank" rel="noopener noreferrer">CRA line 20800</a> — RRSP deduction.</li>
+        </ul>
+      </section>
+    </article>
+
+    <div class="disclaimer">
+      <p><strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.</p>
+    </div>
+  </main>
+
+  <div id="footerMount"></div>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RRSP Deduction Timing Calculator: Claim Now or Later? | The Long Math</title>
+  <meta name="description" content="Compare claiming an RRSP deduction now versus saving it for a higher-income year using Canadian income tax math and the compounded value of today's refund." />
+  <link rel="canonical" href="https://www.thelongmath.com/calculators/rrsp-deduction-timing/" />
+  <link rel="alternate" hreflang="en" href="https://www.thelongmath.com/calculators/rrsp-deduction-timing/" />
+  <link rel="alternate" hreflang="fr" href="https://www.thelongmath.com/fr/calculators/rrsp-deduction-timing/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.thelongmath.com/calculators/rrsp-deduction-timing/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="RRSP Deduction Timing Calculator: Claim Now or Later?" />
+  <meta property="og:description" content="Use Canadian tax brackets to compare an RRSP deduction claimed now with the same deduction saved for a future higher-income year." />
+  <meta property="og:url" content="https://www.thelongmath.com/calculators/rrsp-deduction-timing/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="RRSP Deduction Timing Calculator: Claim Now or Later?" />
+  <meta name="twitter:description" content="Compare current tax savings, future tax savings, and the opportunity cost of waiting." />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="/assets/css/calc-mobile.css" />
+  <link rel="stylesheet" href="/calculators/rrsp-deduction-timing/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "RRSP Deduction Timing Calculator",
+    "url": "https://www.thelongmath.com/calculators/rrsp-deduction-timing/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "description": "Compare claiming an RRSP deduction now versus saving it for a future higher-income year using Canadian personal income tax calculations and refund opportunity cost."
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Should I claim my RRSP deduction now or save it for later?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Claiming now is favoured when the compounded value of today's refund is greater than the future tax saving. Saving the deduction is favoured when the future tax saving is larger than the compounded value of using the refund now."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does an RRSP contribution have to be deducted in the same year?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. In Canada, making an RRSP contribution and claiming the RRSP deduction are separate decisions. A contribution uses RRSP room when made, while the deduction can be claimed in the current year or carried forward if properly reported."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What tax rate matters for RRSP deduction timing?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The useful rate is the blended tax saving on the whole deduction, not only the marginal rate on the last dollar. A large deduction can cross more than one federal or provincial bracket."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <main class="wrap">
+    <header class="deduction-hero">
+      <p class="hero-kicker">Canadian RRSP tax planning calculator</p>
+      <h1>RRSP Deduction Timing Calculator: Claim Now or Save It for Later?</h1>
+      <p class="lead">
+        Compare the arithmetic of claiming an RRSP deduction this year versus saving the deduction for a future higher-income year. The calculator uses The Long Math’s shared Canadian income tax engine and the shared investment growth engine.
+      </p>
+      <p class="lead">
+        The question is not “which year gives the biggest refund?” The question is whether the future refund beats what today’s refund could earn, pay down, or otherwise do during the waiting period.
+      </p>
+      <p class="lead"><strong>No opinions. No hidden assumptions. Just arithmetic.</strong></p>
+      <div class="hero-actions">
+        <a class="inspect-arithmetic-btn" href="/calculators/rrsp-deduction-timing/methodology/">Inspect the Arithmetic</a>
+        <a class="ghost-btn" href="/articles/investing-and-financial-literacy/rrsp-deduction-timing/">Read the RRSP deduction timing article</a>
+      </div>
+    </header>
+
+    <section class="calc-shell" aria-label="RRSP deduction timing calculator">
+      <article class="calc-panel" aria-labelledby="inputs-heading">
+        <h2 id="inputs-heading" class="panel-heading">Inputs</h2>
+        <div class="input-grid">
+          <div class="field">
+            <label for="tax_year">Tax year for Canadian tax brackets</label>
+            <select id="tax_year" aria-describedby="tax_year_help"></select>
+            <p id="tax_year_help" class="help-text">Latest supported year is selected by default. Future income is tested using the same tax-year rules, not guessed future legislation.</p>
+          </div>
+
+          <div class="field">
+            <label for="province">Province or territory</label>
+            <select id="province"></select>
+            <p class="help-text">Residence for provincial or territorial income tax purposes.</p>
+          </div>
+
+          <div class="field">
+            <label for="deduction_amount">RRSP deduction amount to compare</label>
+            <input id="deduction_amount" type="text" inputmode="decimal" value="15000" />
+            <p class="help-text">This assumes the contribution already exists and you are deciding when to claim the deduction.</p>
+          </div>
+
+          <div class="field">
+            <label for="current_income">Current employment income before RRSP deduction</label>
+            <input id="current_income" type="text" inputmode="decimal" value="80000" />
+            <p class="help-text">Employment income for the year you could claim the deduction now.</p>
+          </div>
+
+          <div class="field">
+            <label for="future_income">Expected future employment income</label>
+            <input id="future_income" type="text" inputmode="decimal" value="140000" />
+            <p class="help-text">The income in the year when you expect to claim the deduction if you wait.</p>
+          </div>
+
+          <div class="field">
+            <label for="years_to_wait">Years until the future income year</label>
+            <input id="years_to_wait" type="number" min="1" max="40" step="1" value="2" />
+            <p class="help-text">Waiting delays the refund. This is the opportunity-cost clock.</p>
+          </div>
+
+          <div class="field">
+            <label for="refund_use">If claimed now, the refund is used for</label>
+            <select id="refund_use">
+              <option value="invest">Investment return</option>
+              <option value="debt">Debt payoff rate</option>
+            </select>
+            <p class="help-text">Both options use the same compounding math. The label changes the interpretation.</p>
+          </div>
+
+          <div class="field">
+            <label for="annual_rate">Annual return or debt rate on today’s refund (%)</label>
+            <input id="annual_rate" type="number" inputmode="decimal" step="0.1" value="6" />
+            <p class="help-text">Nominal annual rate. A high-interest debt payoff rate raises the bar for waiting.</p>
+          </div>
+        </div>
+
+        <div class="example-row" aria-label="Example scenarios">
+          <button type="button" class="ghost-btn" data-example="default">80k → 140k</button>
+          <button type="button" class="ghost-btn" data-example="claim">75k → 105k</button>
+          <button type="button" class="ghost-btn" data-example="defer">60k → 170k</button>
+        </div>
+
+        <p style="margin-top: 14px;">
+          <button id="calculate_btn" type="button" class="primary-btn">Recalculate</button>
+        </p>
+      </article>
+
+      <article class="calc-panel" aria-labelledby="results-heading">
+        <h2 id="results-heading" class="panel-heading">Result</h2>
+
+        <section id="verdict_card" class="verdict-card neutral" aria-live="polite">
+          <h3 id="verdict_label" class="verdict-label">Calculating…</h3>
+          <p id="verdict_sentence" class="verdict-copy">Enter your assumptions to compare claiming now with saving the deduction.</p>
+        </section>
+
+        <div class="result-grid">
+          <div class="metric-card primary">
+            <p class="metric-label">Deferral advantage</p>
+            <p id="out_advantage" class="metric-value">$–</p>
+            <p class="metric-note">Positive means waiting is ahead. Negative means claiming now is ahead.</p>
+          </div>
+          <div class="metric-card">
+            <p class="metric-label">Claim now: tax saved</p>
+            <p id="out_claim_now_tax_saved" class="metric-value">$–</p>
+            <p class="metric-note">Current-year income tax reduction from the RRSP deduction.</p>
+          </div>
+          <div class="metric-card">
+            <p class="metric-label">Claim now: future value</p>
+            <p id="out_claim_now_future_value" class="metric-value">$–</p>
+            <p id="out_refund_use" class="metric-note">Today’s refund is compounded during the wait.</p>
+          </div>
+          <div class="metric-card">
+            <p class="metric-label">Claim later: tax saved</p>
+            <p id="out_defer_tax_saved" class="metric-value">$–</p>
+            <p class="metric-note">Future-year income tax reduction from the same deduction.</p>
+          </div>
+          <div class="metric-card">
+            <p class="metric-label">Current blended deduction rate</p>
+            <p id="out_current_blended_rate" class="metric-value">–</p>
+            <p class="metric-note">Current tax saved divided by the deduction.</p>
+          </div>
+          <div class="metric-card">
+            <p class="metric-label">Future blended deduction rate</p>
+            <p id="out_future_blended_rate" class="metric-value">–</p>
+            <p class="metric-note">Future tax saved divided by the deduction.</p>
+          </div>
+        </div>
+
+        <div class="bar-compare" aria-hidden="true">
+          <div class="bar-row">
+            <div class="bar-label"><span>Claim now, compounded</span><span id="out_wait">–</span></div>
+            <div class="bar-track"><div id="bar_claim_now" class="bar-fill"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label"><span>Claim later</span><span id="out_tax_year">–</span></div>
+            <div class="bar-track"><div id="bar_defer" class="bar-fill blue"></div></div>
+          </div>
+        </div>
+
+        <section id="warning_box" class="warning-box" hidden>
+          <h3>Check these assumptions</h3>
+          <ul id="warning_list"></ul>
+        </section>
+      </article>
+    </section>
+
+    <section class="calc-panel detail-section" aria-labelledby="break-even-heading">
+      <h2 id="break-even-heading" class="panel-heading">Break-Even Math</h2>
+      <div class="detail-grid">
+        <div class="metric-card">
+          <p class="metric-label">Raw extra tax saving from waiting</p>
+          <p id="out_raw_tax_difference" class="metric-value">$–</p>
+          <p class="metric-note">Future tax saved minus current tax saved, before opportunity cost.</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Future saving required to break even</p>
+          <p id="out_required_future_tax_saving" class="metric-value">$–</p>
+          <p class="metric-note">The future deduction must save at least this much tax to beat claiming now.</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Required future blended rate</p>
+          <p id="out_required_future_rate" class="metric-value">–</p>
+          <p class="metric-note">Break-even future tax saving divided by <span id="out_deduction">$–</span>.</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Break-even annual return on today’s refund</p>
+          <p id="out_break_even_return" class="metric-value">–</p>
+          <p class="metric-note">If your actual use of the refund beats this rate, claiming now wins.</p>
+        </div>
+      </div>
+
+      <p class="help-text" style="margin-top: 12px;">
+        The <span id="formula_use_label">investment return</span> is applied to the refund you could receive now. The future tax saving is not compounded because it is received only in the future year.
+      </p>
+      <pre id="formula_output" class="formula-box" aria-live="polite"></pre>
+    </section>
+
+    <section class="calc-panel detail-section" aria-labelledby="tax-detail-heading">
+      <h2 id="tax-detail-heading" class="panel-heading">Tax Calculation Detail</h2>
+      <p class="help-text">
+        Each tax saving is calculated by running the shared Canadian personal income tax engine twice: once with no RRSP deduction and once with the RRSP deduction. The calculator compares the income tax difference, excluding CPP and EI because RRSP deductions do not reduce payroll contributions.
+      </p>
+      <div class="table-wrap">
+        <table class="calc-table">
+          <thead>
+            <tr>
+              <th>Scenario</th>
+              <th>Taxable income</th>
+              <th>Income tax</th>
+            </tr>
+          </thead>
+          <tbody id="tax_table_body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="calc-panel detail-section" aria-labelledby="assumptions-heading">
+      <h2 id="assumptions-heading" class="panel-heading">Scope and Assumptions</h2>
+      <ul class="detail-list">
+        <li>Employment income only in this first draft. Other income, benefit clawbacks, family benefits, OAS, GIS, and alternative minimum tax are not modelled here.</li>
+        <li>Future income is evaluated using the selected tax year’s Canadian federal and provincial or territorial rules. The calculator does not forecast future tax legislation.</li>
+        <li>The RRSP contribution is assumed to have already been made or be otherwise available to deduct. This calculator compares deduction timing, not contribution room.</li>
+        <li>The tax saving is the change in federal plus provincial or territorial income tax. CPP and EI are shown inside the tax engine but excluded from the refund comparison.</li>
+        <li>The opportunity cost of claiming now is modeled as compound growth or avoided debt interest on the refund.</li>
+      </ul>
+    </section>
+
+    <section class="calc-panel detail-section" aria-labelledby="faq-heading">
+      <h2 id="faq-heading" class="panel-heading">FAQ</h2>
+      <details>
+        <summary>Should I claim my RRSP deduction now or save it for later?</summary>
+        <p>Claim now when the compounded value of today’s refund is larger than the future tax saving. Save the deduction only when the higher-income year is likely, close, and large enough to beat that opportunity cost.</p>
+      </details>
+      <details>
+        <summary>Is the marginal tax rate enough for this decision?</summary>
+        <p>No. The calculator uses the full tax difference before and after the deduction. That produces a blended deduction rate across the whole RRSP deduction, which matters when the deduction crosses more than one bracket.</p>
+      </details>
+      <details>
+        <summary>Does this calculate my official CRA refund?</summary>
+        <p>No. It estimates the tax difference created by the RRSP deduction under explicit assumptions. Your actual refund also depends on withholding, credits, other deductions, benefits, and other tax-return details.</p>
+      </details>
+    </section>
+
+    <section class="card calc-related-bottom" aria-labelledby="related-heading">
+      <h2 id="related-heading" class="section-title">Related calculators and articles</h2>
+      <ul>
+        <li><a href="/articles/investing-and-financial-literacy/rrsp-deduction-timing/">RRSP Deduction Timing: Claim Now or Save It for Later?</a></li>
+        <li><a href="/calculators/rrsp-contribution-room-tax-refund/">RRSP contribution room and tax refund calculator</a></li>
+        <li><a href="/calculators/canada-income-tax/">Canada personal income tax calculator</a></li>
+        <li><a href="/calculators/tfsa-rrsp-fhsa/">TFSA vs RRSP vs FHSA calculator</a></li>
+        <li><a href="/articles/investing-and-financial-literacy/what-is-an-rrsp/">What is an RRSP?</a></li>
+        <li><a href="/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/">RRSP vs TFSA vs FHSA: which account is best?</a></li>
+      </ul>
+    </section>
+
+    <div class="disclaimer">
+      <p><strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.</p>
+    </div>
+  </main>
+
+  <div id="footerMount"></div>
+  <script src="/assets/js/investment-growth.engine.js"></script>
+  <script type="module" src="/calculators/rrsp-deduction-timing/ui.js"></script>
+</body>
+</html>

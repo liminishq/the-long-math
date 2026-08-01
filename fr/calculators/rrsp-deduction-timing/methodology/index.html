@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspecter l'arithmétique : Calculateur de calendrier de déduction REER | The Long Math</title>
+  <meta name="description" content="Inspectez les formules, hypothèses et moteurs partagés d'impôt et de placement derrière le calculateur de calendrier de déduction REER." />
+  <link rel="canonical" href="https://www.thelongmath.com/fr/calculators/rrsp-deduction-timing/methodology/" />
+  <link rel="alternate" hreflang="en" href="https://www.thelongmath.com/calculators/rrsp-deduction-timing/methodology/" />
+  <link rel="alternate" hreflang="fr" href="https://www.thelongmath.com/fr/calculators/rrsp-deduction-timing/methodology/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.thelongmath.com/calculators/rrsp-deduction-timing/methodology/" />
+  <script src="/assets/js/theme-init.40fc21015f.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.4bb62c4d1c.css" />
+  <link rel="stylesheet" href="/calculators/rrsp-deduction-timing/styles.css" />
+  <script src="/assets/js/i18n.e9994b5f88.js"></script>
+  <script defer src="/assets/js/site.4fbf708cdd.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main class="wrap">
+    <header class="deduction-hero">
+      <p class="hero-kicker">Inspecter l'arithmétique</p>
+      <h1>Calculateur de calendrier de déduction REER</h1>
+      <p class="lead">Cette page documente les formules, hypothèses et moteurs partagés utilisés pour comparer une déduction REER réclamée maintenant avec la même déduction gardée pour une année future à revenu plus élevé.</p>
+      <p class="lead"><strong>Pas d'opinions. Pas d'hypothèses cachées. Juste de l'arithmétique.</strong></p>
+      <p><a class="inspect-arithmetic-btn" href="/fr/calculators/rrsp-deduction-timing/">Retour au calculateur</a></p>
+    </header>
+
+    <article class="calc-panel methodology-content">
+      <section>
+        <h2>1. Ce que le calculateur répond</h2>
+        <p>Le calculateur compare deux utilisations du même montant de déduction REER :</p>
+        <ul>
+          <li><strong>Réclamer maintenant :</strong> réclamer la déduction contre le revenu d'emploi actuel, recevoir l'économie d'impôt actuelle, puis capitaliser ce remboursement pendant la période d'attente.</li>
+          <li><strong>Réclamer plus tard :</strong> ne pas réclamer la déduction maintenant, puis réclamer la même déduction contre le revenu d'emploi futur prévu.</li>
+        </ul>
+        <pre><code>Avantage du report = Économie d'impôt future − Valeur future du remboursement actuel</code></pre>
+        <p>Un résultat positif signifie que le report est en avance dans le modèle. Un résultat négatif signifie que réclamer maintenant est en avance.</p>
+      </section>
+
+      <section>
+        <h2>2. Entrées</h2>
+        <ul>
+          <li><strong>Année d'imposition :</strong> ensemble de données fiscales canadiennes utilisé pour les deux comparaisons.</li>
+          <li><strong>Province ou territoire :</strong> résidence aux fins de l'impôt provincial ou territorial.</li>
+          <li><strong>Montant de déduction REER :</strong> montant comparé pour le calendrier de réclamation.</li>
+          <li><strong>Revenu d'emploi actuel :</strong> revenu avant la déduction si elle est réclamée maintenant.</li>
+          <li><strong>Revenu d'emploi futur prévu :</strong> revenu de l'année où la déduction serait réclamée plus tard.</li>
+          <li><strong>Années jusqu'au revenu futur :</strong> nombre d'années pendant lesquelles le remboursement actuel pourrait être investi ou appliqué à une dette.</li>
+          <li><strong>Rendement annuel ou taux de dette :</strong> taux nominal annuel appliqué au remboursement actuel.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>3. Moteur fiscal partagé</h2>
+        <p>Le calculateur utilise le moteur existant d'impôt canadien des particuliers :</p>
+        <pre><code>calculators/canada-income-tax/js/tax.engine.js
+computePersonalTax(input)</code></pre>
+        <p>Les données fiscales sont chargées avec :</p>
+        <pre><code>calculators/canada-income-tax/js/tax.data.js
+loadTaxData(year, { basePath: "/calculators/canada-income-tax/data" })</code></pre>
+        <p>Ce premier brouillon utilise seulement le chemin du revenu d'emploi, même si le moteur fiscal prend en charge plus de types de revenus.</p>
+      </section>
+
+      <section>
+        <h2>4. Économie d'impôt actuelle</h2>
+        <pre><code>Impôt actuel avant = impôt(revenu d'emploi actuel, déduction REER = 0)
+Impôt actuel après = impôt(revenu d'emploi actuel, déduction REER = montant)
+
+Économie d'impôt actuelle = Impôt actuel avant − Impôt actuel après</code></pre>
+        <p>La comparaison utilise l'impôt fédéral plus provincial ou territorial sur le revenu. Le RPC et l'AE ne font pas partie du remboursement comparé, car une déduction REER ne réduit pas les cotisations salariales.</p>
+      </section>
+
+      <section>
+        <h2>5. Économie d'impôt future</h2>
+        <pre><code>Impôt futur avant = impôt(revenu d'emploi futur, déduction REER = 0)
+Impôt futur après = impôt(revenu d'emploi futur, déduction REER = montant)
+
+Économie d'impôt future = Impôt futur avant − Impôt futur après</code></pre>
+        <p>Le revenu futur est évalué avec les mêmes règles fiscales que l'année sélectionnée. Le calculateur ne prévoit pas les futures lois fiscales.</p>
+      </section>
+
+      <section>
+        <h2>6. Coût d'opportunité du remboursement</h2>
+        <p>Le remboursement actuel est capitalisé avec le moteur partagé de croissance des placements :</p>
+        <pre><code>assets/js/investment-growth.engine.js
+InvestmentGrowthEngine.simulateInvestment({
+  startingAmount: Économie d'impôt actuelle,
+  contributionPerPeriod: 0,
+  years: Années d'attente,
+  nominalAnnualReturn: Taux annuel,
+  inflationAnnual: 0
+})</code></pre>
+        <pre><code>Valeur future du remboursement actuel =
+  Économie d'impôt actuelle × (1 + taux annuel)^années</code></pre>
+        <p>La même formule sert pour un rendement de placement ou pour des intérêts de dette évités.</p>
+      </section>
+
+      <section>
+        <h2>7. Taux mixtes de déduction</h2>
+        <pre><code>Taux mixte actuel = Économie d'impôt actuelle ÷ Montant de déduction
+Taux mixte futur  = Économie d'impôt future ÷ Montant de déduction</code></pre>
+        <p>Ce taux est plus utile qu'un seul taux marginal lorsque la déduction traverse plusieurs tranches d'impôt.</p>
+      </section>
+
+      <section>
+        <h2>8. Seuils de rentabilité</h2>
+        <pre><code>Économie future requise = Valeur future du remboursement actuel
+
+Taux mixte futur requis =
+  Économie future requise ÷ Montant de déduction
+
+Rendement annuel de seuil =
+  (Économie d'impôt future ÷ Économie d'impôt actuelle)^(1 ÷ années) − 1</code></pre>
+      </section>
+
+      <section>
+        <h2>9. Hypothèses et limites</h2>
+        <ul>
+          <li>Revenu d'emploi seulement dans cette première version.</li>
+          <li>Les prestations, récupérations, crédits particuliers, SV, SRG et impôt minimum de remplacement ne sont pas modélisés.</li>
+          <li>L'espace de cotisation REER n'est pas calculé ici. Utilisez le <a href="/calculators/rrsp-contribution-room-tax-refund/">calculateur d'espace de cotisation REER et de remboursement d'impôt</a> pour cette question.</li>
+          <li>Le revenu futur utilise les données fiscales sélectionnées, pas une prévision de loi future.</li>
+          <li>L'inflation n'est pas modélisée séparément dans cette première version. Le taux d'opportunité est nominal.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>10. Sources et pages connexes</h2>
+        <ul>
+          <li><a href="/calculators/canada-income-tax/">Calculateur d'impôt sur le revenu des particuliers au Canada</a> — moteur fiscal et données fiscales partagés.</li>
+          <li><a href="/calculators/investment-calculator-inflation-adjusted/">Calculateur de placement ajusté à l'inflation</a> — moteur de croissance des placements.</li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/rrsp-deduction-timing/">Calendrier de la déduction REER : réclamer maintenant ou plus tard?</a> — cadre de décision.</li>
+          <li><a href="https://www.canada.ca/en/revenue-agency/services/forms-publications/tax-packages-years/general-income-tax-benefit-package/5000-s7.html" target="_blank" rel="noopener noreferrer">Annexe 7 de l'ARC</a> — cotisations REER et cotisations inutilisées.</li>
+          <li><a href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/deductions-credits-expenses/line-20800-rrsp-deduction.html" target="_blank" rel="noopener noreferrer">Ligne 20800 de l'ARC</a> — déduction REER.</li>
+        </ul>
+      </section>
+    </article>
+
+    <div class="disclaimer">
+      <p><strong>Avis de non-responsabilité :</strong> L'ensemble du contenu de The Long Math — articles, textes, calculateurs, outils ou tout autre matériel — est fourni à des fins éducatives et d'information uniquement et ne constitue pas un conseil financier, fiscal, juridique ou en placement. Les résultats ou projections reposent sur des modèles simplifiés, des hypothèses et des données fournies par l'utilisateur et peuvent ne pas refléter la réalité. Il vous appartient d'évaluer l'exactitude et la pertinence des renseignements et de faire votre propre diligence raisonnable. Avant de prendre des décisions financières, consultez un professionnel qualifié.</p>
+    </div>
+  </main>
+
+  <div id="footerMount"></div>
+</body>
+</html>

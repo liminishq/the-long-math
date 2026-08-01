@@ -56,6 +56,11 @@
           "desc": "Estime la croissance du placement avec cotisations mensuelles et capitalisation, puis compare le pouvoir d’achat réel (après inflation) aux dollars nominaux."
         },
         {
+          "path": "/calculators/investment-return-to-reach-goal/",
+          "title": "Rendement requis pour atteindre un objectif de placement",
+          "desc": "Calcule le rendement annuel requis pour atteindre un objectif en dollars d'aujourd'hui, avec cotisations indexées à l'inflation."
+        },
+        {
           "path": "/calculators/inflation-time-machine/",
           "title": "Machine à remonter l’inflation (Alors ↔ Maintenant)",
           "desc": "Convertit un montant entre deux années à l’aide des ratios d’indice IPC annuels. Plusieurs pays : Canada, États-Unis, Australie, Royaume-Uni. Dollars entiers seulement."
@@ -152,6 +157,11 @@
           "path": "/calculators/rrsp-contribution-room-tax-refund/",
           "title": "Calculateur d’espace de cotisation REER et de remboursement d’impôt",
           "desc": "Estime l’espace REER disponible, la cotisation déductible, le remboursement, le coût après impôt de la cotisation et l’espace restant à partir d’hypothèses explicites."
+        },
+        {
+          "path": "/calculators/rrsp-deduction-timing/",
+          "title": "Calculateur de calendrier de déduction REER",
+          "desc": "Compare la réclamation d'une déduction REER maintenant avec son report à une année à revenu plus élevé, à partir de l'impôt canadien et du coût d'opportunité du remboursement."
         },
         {
           "path": "/calculators/tfsa-room/",

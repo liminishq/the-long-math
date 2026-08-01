@@ -155,8 +155,8 @@
           except that the time horizon is clamped between 1 and 60 years and rounded to the nearest whole year.
         </li>
         <li>
-          Contributions are interpreted in today's dollars. They are not explicitly inflated as separate nominal amounts; instead, the simulation
-          runs entirely in real terms via the real return r<sub>real,period</sub>.
+          Contributions are entered in today's dollars and inflation-indexed: real contribution per period stays at C; nominal contributions rise with π.
+          The simulation runs in real terms via r<sub>real,period</sub>.
         </li>
         <li>
           This simplified version does not subtract taxes, fees, or account-level frictions. It does not model contribution limits, withdrawals,
@@ -170,9 +170,9 @@
       <h2>Implementation Notes</h2>
       <ul>
         <li>
-          The arithmetic described above is implemented in the JavaScript function <code>simulateInvestment()</code> inside
-          <code>/calculators/investment-calculator-inflation-adjusted/script.js</code>. The on-page results (headline figures, breakdown, schedule,
-          CSV export) read values directly from that function's return object.
+          The arithmetic is implemented in <code>/assets/js/investment-growth.engine.js</code> as
+          <code>InvestmentGrowthEngine.simulateInvestment()</code>. The page script
+          <code>/calculators/investment-calculator-inflation-adjusted/script.js</code> reads inputs and displays results from that engine.
         </li>
         <li>
           Real and nominal balances are computed once per input change; the accumulation schedule is reconstructed from the same simulated path.
@@ -185,7 +185,7 @@
 
       <p style="margin-top: 2em; font-weight: 600;">
         If any discrepancy is identified between this documentation and the live calculator behavior, the JavaScript engine
-        (<code>simulateInvestment()</code> in <code>script.js</code>) is the source of truth. This page will be updated to match the engine.
+        (<code>InvestmentGrowthEngine.simulateInvestment()</code> in <code>/assets/js/investment-growth.engine.js</code>) is the source of truth. This page will be updated to match the engine.
       </p>
 
       <h2>Sources and References</h2>

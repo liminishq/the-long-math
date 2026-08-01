@@ -56,6 +56,11 @@
           "desc": "Estimate investment growth with monthly contributions and compounding, then compare inflation-adjusted (real) buying power to nominal dollars."
         },
         {
+          "path": "/calculators/investment-return-to-reach-goal/",
+          "title": "Investment Return Required to Reach a Goal",
+          "desc": "Find the annual return required to hit a portfolio target in today's dollars, with inflation-indexed contributions and a full accumulation schedule."
+        },
+        {
           "path": "/calculators/inflation-time-machine/",
           "title": "Inflation Time Machine (Then ↔ Now)",
           "desc": "Convert a dollar amount between two years using annual CPI index ratios. Multi-country: Canada, United States, Australia, United Kingdom. Whole dollars only."
@@ -152,6 +157,11 @@
           "path": "/calculators/rrsp-contribution-room-tax-refund/",
           "title": "RRSP Contribution Room & Tax Refund Calculator",
           "desc": "Estimate available RRSP room, deductible contribution amount, refund, after-tax contribution cost, and remaining room using explicit assumptions."
+        },
+        {
+          "path": "/calculators/rrsp-deduction-timing/",
+          "title": "RRSP Deduction Timing Calculator",
+          "desc": "Compare claiming an RRSP deduction now with saving it for a higher-income year using Canadian tax math and the opportunity cost of today's refund."
         },
         {
           "path": "/calculators/tfsa-room/",

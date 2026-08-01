@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspecter l'arithmétique – Rendement requis pour atteindre un objectif | The Long Math</title>
+  <meta name="description" content="Formules, structure de calcul et hypothèses du calculateur Rendement requis pour atteindre un objectif de placement." />
+  <link rel="canonical" href="https://www.thelongmath.com/fr/calculators/investment-return-to-reach-goal/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <a href="/fr/calculators/investment-return-to-reach-goal/" class="home-link">← Retour au calculateur</a>
+
+    <div class="methodology-content">
+      <h1>Inspecter l'arithmétique — Rendement requis pour atteindre un objectif</h1>
+      <p class="methodology-meta">Version 1.0<br>Dernière vérification : juin 2026</p>
+
+      <p>Ce calculateur résout le rendement annuel nominal requis pour atteindre un objectif en <strong>dollars d'aujourd'hui</strong>.</p>
+      <p>La simulation directe et le solveur sont dans <code>/assets/js/investment-growth.engine.js</code> (<code>InvestmentGrowthEngine</code>).</p>
+
+      <h2>Équations principales</h2>
+      <div class="formula-block">
+        r<sub>réel,annuel</sub> = (1 + r<sub>nom</sub>) / (1 + π) − 1
+      </div>
+      <p>Cotisations indexées à l'inflation : cotisation réelle constante C ; cotisation nominale croît avec π.</p>
+      <p>Solveur : recherche binaire sur r<sub>nom</sub> jusqu'à RealFinal ≥ T.</p>
+
+      <p><a href="/calculators/investment-return-to-reach-goal/methodology/">Documentation complète (anglais)</a></p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calculateur de calendrier de déduction REER : réclamer maintenant ou plus tard? | The Long Math</title>
+  <meta name="description" content="Comparez la réclamation d'une déduction REER maintenant avec son report à une année de revenu plus élevé, à partir de l'impôt canadien et du coût d'opportunité du remboursement." />
+  <link rel="canonical" href="https://www.thelongmath.com/fr/calculators/rrsp-deduction-timing/" />
+  <link rel="alternate" hreflang="en" href="https://www.thelongmath.com/calculators/rrsp-deduction-timing/" />
+  <link rel="alternate" hreflang="fr" href="https://www.thelongmath.com/fr/calculators/rrsp-deduction-timing/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.thelongmath.com/calculators/rrsp-deduction-timing/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Calculateur de calendrier de déduction REER" />
+  <meta property="og:description" content="Comparez une déduction REER réclamée maintenant avec la même déduction gardée pour une année future à revenu plus élevé." />
+  <meta property="og:url" content="https://www.thelongmath.com/fr/calculators/rrsp-deduction-timing/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Calculateur de calendrier de déduction REER" />
+  <meta name="twitter:description" content="Comparez l'économie d'impôt actuelle, l'économie future et le coût d'opportunité de l'attente." />
+
+  <script src="/assets/js/theme-init.40fc21015f.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.4bb62c4d1c.css" />
+  <link rel="stylesheet" href="/assets/css/calc-mobile.b65b13bb36.css" />
+  <link rel="stylesheet" href="/calculators/rrsp-deduction-timing/styles.css" />
+  <script src="/assets/js/i18n.e9994b5f88.js"></script>
+  <script defer src="/assets/js/site.4fbf708cdd.js"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Calculateur de calendrier de déduction REER",
+    "url": "https://www.thelongmath.com/fr/calculators/rrsp-deduction-timing/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "description": "Compare la réclamation d'une déduction REER maintenant avec son report à une année future à revenu plus élevé, à partir de l'impôt canadien et du coût d'opportunité du remboursement."
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Devrais-je réclamer ma déduction REER maintenant ou la garder pour plus tard?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Réclamer maintenant est favorisé lorsque la valeur capitalisée du remboursement d'aujourd'hui dépasse l'économie d'impôt future. Garder la déduction est favorisé lorsque l'économie d'impôt future dépasse cette valeur capitalisée."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Une cotisation REER doit-elle être déduite la même année?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Non. Au Canada, cotiser à un REER et réclamer la déduction sont deux décisions distinctes. La cotisation utilise le droit de cotisation lorsqu'elle est faite; la déduction peut être réclamée dans l'année courante ou reportée si elle est correctement déclarée."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quel taux d'impôt compte pour le calendrier de déduction REER?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Le taux utile est l'économie d'impôt mixte sur l'ensemble de la déduction, et non seulement le taux marginal du dernier dollar. Une grande déduction peut traverser plus d'une tranche fédérale ou provinciale."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <main class="wrap">
+    <header class="deduction-hero">
+      <p class="hero-kicker">Calculateur fiscal canadien REER</p>
+      <h1>Calculateur de calendrier de déduction REER : réclamer maintenant ou plus tard?</h1>
+      <p class="lead">
+        Comparez l'arithmétique d'une déduction REER réclamée cette année avec la même déduction gardée pour une année future à revenu plus élevé. Le calculateur utilise le moteur partagé d'impôt canadien de The Long Math et le moteur partagé de croissance des placements.
+      </p>
+      <p class="lead">
+        La question n'est pas « quelle année donne le plus gros remboursement? » La question est de savoir si le remboursement futur dépasse ce que le remboursement d'aujourd'hui pourrait rapporter, rembourser ou accomplir pendant l'attente.
+      </p>
+      <p class="lead"><strong>Pas d'opinions. Pas d'hypothèses cachées. Juste de l'arithmétique.</strong></p>
+      <div class="hero-actions">
+        <a class="inspect-arithmetic-btn" href="/fr/calculators/rrsp-deduction-timing/methodology/">Inspecter l'arithmétique</a>
+        <a class="ghost-btn" href="/fr/articles/investing-and-financial-literacy/rrsp-deduction-timing/">Lire l'article sur le calendrier de la déduction REER</a>
+      </div>
+    </header>
+
+    <section class="calc-shell" aria-label="Calculateur de calendrier de déduction REER">
+      <article class="calc-panel" aria-labelledby="inputs-heading">
+        <h2 id="inputs-heading" class="panel-heading">Entrées</h2>
+        <div class="input-grid">
+          <div class="field">
+            <label for="tax_year">Année d'imposition pour les tranches canadiennes</label>
+            <select id="tax_year" aria-describedby="tax_year_help"></select>
+            <p id="tax_year_help" class="help-text">La dernière année prise en charge est sélectionnée par défaut. Le revenu futur est testé avec les mêmes règles fiscales, sans deviner une future loi.</p>
+          </div>
+
+          <div class="field">
+            <label for="province">Province ou territoire</label>
+            <select id="province"></select>
+            <p class="help-text">Résidence aux fins de l'impôt provincial ou territorial.</p>
+          </div>
+
+          <div class="field">
+            <label for="deduction_amount">Montant de déduction REER à comparer</label>
+            <input id="deduction_amount" type="text" inputmode="decimal" value="15000" />
+            <p class="help-text">Suppose que la cotisation existe déjà et que la décision porte sur l'année de réclamation de la déduction.</p>
+          </div>
+
+          <div class="field">
+            <label for="current_income">Revenu d'emploi actuel avant déduction REER</label>
+            <input id="current_income" type="text" inputmode="decimal" value="80000" />
+            <p class="help-text">Revenu d'emploi pour l'année où la déduction pourrait être réclamée maintenant.</p>
+          </div>
+
+          <div class="field">
+            <label for="future_income">Revenu d'emploi futur prévu</label>
+            <input id="future_income" type="text" inputmode="decimal" value="140000" />
+            <p class="help-text">Revenu de l'année où la déduction serait réclamée si vous attendez.</p>
+          </div>
+
+          <div class="field">
+            <label for="years_to_wait">Années jusqu'à l'année de revenu futur</label>
+            <input id="years_to_wait" type="number" min="1" max="40" step="1" value="2" />
+            <p class="help-text">Attendre retarde le remboursement. C'est l'horloge du coût d'opportunité.</p>
+          </div>
+
+          <div class="field">
+            <label for="refund_use">Si réclamé maintenant, le remboursement sert à</label>
+            <select id="refund_use">
+              <option value="invest">Rendement de placement</option>
+              <option value="debt">Taux de remboursement de dette</option>
+            </select>
+            <p class="help-text">Les deux options utilisent la même capitalisation. L'étiquette change l'interprétation.</p>
+          </div>
+
+          <div class="field">
+            <label for="annual_rate">Rendement annuel ou taux de dette sur le remboursement d'aujourd'hui (%)</label>
+            <input id="annual_rate" type="number" inputmode="decimal" step="0.1" value="6" />
+            <p class="help-text">Taux annuel nominal. Une dette coûteuse augmente la barre que le report doit franchir.</p>
+          </div>
+        </div>
+
+        <div class="example-row" aria-label="Exemples">
+          <button type="button" class="ghost-btn" data-example="default">80 k → 140 k</button>
+          <button type="button" class="ghost-btn" data-example="claim">75 k → 105 k</button>
+          <button type="button" class="ghost-btn" data-example="defer">60 k → 170 k</button>
+        </div>
+
+        <p style="margin-top: 14px;">
+          <button id="calculate_btn" type="button" class="primary-btn">Recalculer</button>
+        </p>
+      </article>
+
+      <article class="calc-panel" aria-labelledby="results-heading">
+        <h2 id="results-heading" class="panel-heading">Résultat</h2>
+
+        <section id="verdict_card" class="verdict-card neutral" aria-live="polite">
+          <h3 id="verdict_label" class="verdict-label">Calcul…</h3>
+          <p id="verdict_sentence" class="verdict-copy">Entrez vos hypothèses pour comparer la réclamation maintenant avec le report de la déduction.</p>
+        </section>
+
+        <div class="result-grid">
+          <div class="metric-card primary">
+            <p class="metric-label">Avantage du report</p>
+            <p id="out_advantage" class="metric-value">$–</p>
+            <p class="metric-note">Positif signifie que le report est en avance. Négatif signifie que réclamer maintenant est en avance.</p>
+          </div>
+          <div class="metric-card">
+            <p class="metric-label">Réclamer maintenant : impôt économisé</p>
+            <p id="out_claim_now_tax_saved" class="metric-value">$–</p>
+            <p class="metric-note">Réduction d'impôt de l'année courante grâce à la déduction REER.</p>
+          </div>
+          <div class="metric-card">
+            <p class="metric-label">Réclamer maintenant : valeur future</p>
+            <p id="out_claim_now_future_value" class="metric-value">$–</p>
+            <p id="out_refund_use" class="metric-note">Le remboursement d'aujourd'hui est capitalisé pendant l'attente.</p>
+          </div>
+          <div class="metric-card">
+            <p class="metric-label">Réclamer plus tard : impôt économisé</p>
+            <p id="out_defer_tax_saved" class="metric-value">$–</p>
+            <p class="metric-note">Réduction d'impôt future grâce à la même déduction.</p>
+          </div>
+          <div class="metric-card">
+            <p class="metric-label">Taux mixte actuel de déduction</p>
+            <p id="out_current_blended_rate" class="metric-value">–</p>
+            <p class="metric-note">Impôt actuel économisé divisé par la déduction.</p>
+          </div>
+          <div class="metric-card">
+            <p class="metric-label">Taux mixte futur de déduction</p>
+            <p id="out_future_blended_rate" class="metric-value">–</p>
+            <p class="metric-note">Impôt futur économisé divisé par la déduction.</p>
+          </div>
+        </div>
+
+        <div class="bar-compare" aria-hidden="true">
+          <div class="bar-row">
+            <div class="bar-label"><span>Réclamer maintenant, capitalisé</span><span id="out_wait">–</span></div>
+            <div class="bar-track"><div id="bar_claim_now" class="bar-fill"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label"><span>Réclamer plus tard</span><span id="out_tax_year">–</span></div>
+            <div class="bar-track"><div id="bar_defer" class="bar-fill blue"></div></div>
+          </div>
+        </div>
+
+        <section id="warning_box" class="warning-box" hidden>
+          <h3>Vérifiez ces hypothèses</h3>
+          <ul id="warning_list"></ul>
+        </section>
+      </article>
+    </section>
+
+    <section class="calc-panel detail-section" aria-labelledby="break-even-heading">
+      <h2 id="break-even-heading" class="panel-heading">Seuil de rentabilité</h2>
+      <div class="detail-grid">
+        <div class="metric-card">
+          <p class="metric-label">Économie d'impôt brute supplémentaire du report</p>
+          <p id="out_raw_tax_difference" class="metric-value">$–</p>
+          <p class="metric-note">Impôt futur économisé moins impôt actuel économisé, avant coût d'opportunité.</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Économie future requise pour atteindre le seuil</p>
+          <p id="out_required_future_tax_saving" class="metric-value">$–</p>
+          <p class="metric-note">La déduction future doit économiser au moins ce montant pour battre la réclamation maintenant.</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Taux mixte futur requis</p>
+          <p id="out_required_future_rate" class="metric-value">–</p>
+          <p class="metric-note">Économie future de seuil divisée par <span id="out_deduction">$–</span>.</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Rendement annuel de seuil sur le remboursement actuel</p>
+          <p id="out_break_even_return" class="metric-value">–</p>
+          <p class="metric-note">Si l'utilisation réelle du remboursement dépasse ce taux, réclamer maintenant gagne.</p>
+        </div>
+      </div>
+
+      <p class="help-text" style="margin-top: 12px;">
+        Le <span id="formula_use_label">rendement du placement</span> est appliqué au remboursement qui pourrait être reçu aujourd'hui. L'économie d'impôt future n'est pas capitalisée puisqu'elle est reçue seulement dans l'année future.
+      </p>
+      <pre id="formula_output" class="formula-box" aria-live="polite"></pre>
+    </section>
+
+    <section class="calc-panel detail-section" aria-labelledby="tax-detail-heading">
+      <h2 id="tax-detail-heading" class="panel-heading">Détail du calcul fiscal</h2>
+      <p class="help-text">
+        Chaque économie d'impôt est calculée en exécutant deux fois le moteur partagé d'impôt canadien : une fois sans déduction REER et une fois avec la déduction REER. Le calculateur compare la différence d'impôt sur le revenu, sans inclure le RPC et l'AE, car une déduction REER ne réduit pas les cotisations salariales.
+      </p>
+      <div class="table-wrap">
+        <table class="calc-table">
+          <thead>
+            <tr>
+              <th>Scénario</th>
+              <th>Revenu imposable</th>
+              <th>Impôt sur le revenu</th>
+            </tr>
+          </thead>
+          <tbody id="tax_table_body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="calc-panel detail-section" aria-labelledby="assumptions-heading">
+      <h2 id="assumptions-heading" class="panel-heading">Portée et hypothèses</h2>
+      <ul class="detail-list">
+        <li>Revenu d'emploi seulement dans cette première version. Les autres revenus, prestations, récupérations, SV, SRG, crédits particuliers et impôt minimum de remplacement ne sont pas modélisés ici.</li>
+        <li>Le revenu futur est évalué avec les règles fiscales de l'année sélectionnée. Le calculateur ne prévoit pas les futures lois fiscales.</li>
+        <li>La cotisation REER est supposée déjà faite ou disponible à déduire. Ce calculateur compare le calendrier de déduction, pas l'espace de cotisation.</li>
+        <li>L'économie d'impôt est la variation de l'impôt fédéral plus provincial ou territorial. Le RPC et l'AE sont exclus de la comparaison du remboursement.</li>
+        <li>Le coût d'opportunité de la réclamation maintenant est modélisé comme croissance composée ou intérêts de dette évités sur le remboursement.</li>
+      </ul>
+    </section>
+
+    <section class="calc-panel detail-section" aria-labelledby="faq-heading">
+      <h2 id="faq-heading" class="panel-heading">FAQ</h2>
+      <details>
+        <summary>Devrais-je réclamer ma déduction REER maintenant ou la garder pour plus tard?</summary>
+        <p>Réclamez maintenant lorsque la valeur capitalisée du remboursement d'aujourd'hui dépasse l'économie d'impôt future. Gardez la déduction seulement lorsque l'année à revenu plus élevé est probable, proche et assez importante pour dépasser ce coût d'opportunité.</p>
+      </details>
+      <details>
+        <summary>Le taux marginal suffit-il pour cette décision?</summary>
+        <p>Non. Le calculateur utilise la différence complète d'impôt avant et après la déduction. Cela produit un taux de déduction mixte sur toute la déduction REER, ce qui compte lorsque la déduction traverse plusieurs tranches.</p>
+      </details>
+      <details>
+        <summary>Ce calculateur prédit-il mon remboursement officiel de l'ARC?</summary>
+        <p>Non. Il estime la différence d'impôt créée par la déduction REER selon des hypothèses explicites. Votre remboursement réel dépend aussi des retenues, crédits, autres déductions, prestations et détails de votre déclaration.</p>
+      </details>
+    </section>
+
+    <section class="card calc-related-bottom" aria-labelledby="related-heading">
+      <h2 id="related-heading" class="section-title">Calculateurs et articles connexes</h2>
+      <ul>
+        <li><a href="/fr/articles/investing-and-financial-literacy/rrsp-deduction-timing/">Calendrier de la déduction REER : réclamer maintenant ou plus tard?</a></li>
+        <li><a href="/calculators/rrsp-contribution-room-tax-refund/">Calculateur d'espace de cotisation REER et de remboursement d'impôt</a></li>
+        <li><a href="/calculators/canada-income-tax/">Calculateur d'impôt sur le revenu des particuliers au Canada</a></li>
+        <li><a href="/calculators/tfsa-rrsp-fhsa/">Calculateur CELI vs REER vs CELIAPP</a></li>
+        <li><a href="/fr/articles/investing-and-financial-literacy/what-is-an-rrsp/">Qu'est-ce qu'un REER?</a></li>
+        <li><a href="/fr/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/">REER, CELI et CELIAPP : quel compte est le meilleur?</a></li>
+      </ul>
+    </section>
+
+    <div class="disclaimer">
+      <p><strong>Avis de non-responsabilité :</strong> L'ensemble du contenu de The Long Math — articles, textes, calculateurs, outils ou tout autre matériel — est fourni à des fins éducatives et d'information uniquement et ne constitue pas un conseil financier, fiscal, juridique ou en placement. Les résultats ou projections reposent sur des modèles simplifiés, des hypothèses et des données fournies par l'utilisateur et peuvent ne pas refléter la réalité. Il vous appartient d'évaluer l'exactitude et la pertinence des renseignements et de faire votre propre diligence raisonnable. Avant de prendre des décisions financières, consultez un professionnel qualifié.</p>
+    </div>
+  </main>
+
+  <div id="footerMount"></div>
+  <script src="/assets/js/investment-growth.engine.3a4efb66b7.js"></script>
+  <script type="module" src="/calculators/rrsp-deduction-timing/ui.js"></script>
+</body>
+</html>

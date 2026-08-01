@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspect the Arithmetic – Investment Return Required to Reach a Goal | The Long Math</title>
+  <meta name="description" content="Formulae, computational structure, and assumptions for the Investment Return Required to Reach a Goal calculator." />
+  <link rel="canonical" href="https://www.thelongmath.com/calculators/investment-return-to-reach-goal/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <h1>Inspect the Arithmetic — Investment Return Required to Reach a Goal</h1>
+      <p class="methodology-meta">Version 1.0<br>Last verified: June 2026</p>
+
+      <p>Transparent arithmetic is the operating system of this calculator.</p>
+      <p>This document publishes the formulae, computational structure, and assumptions used to generate the outputs displayed on the calculator page.</p>
+      <p>No opinions. No hidden assumptions. Just arithmetic.</p>
+
+      <h2>Purpose</h2>
+      <p>
+        This calculator solves for the annual investment return required to reach a stated portfolio target in <strong>today's dollars</strong> (real purchasing power).
+        Inputs: starting balance, target balance (real), recurring contributions (real, inflation-indexed in nominal terms), time horizon, and assumed inflation.
+        Outputs: required nominal and real annual returns, nominal equivalent of the target, breakdown, and accumulation schedule at the solved return.
+      </p>
+      <p>
+        It is an educational tool only. It does not model taxes, fees, contribution limits, or account rules.
+      </p>
+
+      <h2>Shared engine</h2>
+      <p>
+        Forward simulation and the return solver live in <code>/assets/js/investment-growth.engine.js</code> as
+        <code>InvestmentGrowthEngine.simulateInvestment()</code> and <code>InvestmentGrowthEngine.solveRequiredNominalReturn()</code>.
+        The <a href="/calculators/investment-calculator-inflation-adjusted/">Inflation-Adjusted Investment Calculator</a> uses the same forward simulation.
+      </p>
+
+      <h2>Definitions</h2>
+      <ul>
+        <li>S = starting amount (today's dollars)</li>
+        <li>T = target ending balance (today's dollars)</li>
+        <li>C = contribution per period, entered in today's dollars</li>
+        <li>Y = time horizon in years (1–60)</li>
+        <li>π = assumed annual inflation rate (decimal)</li>
+        <li>r<sub>nom</sub> = required nominal annual return (unknown, solved)</li>
+        <li>r<sub>real,annual</sub> = real annual return derived from r<sub>nom</sub> and π</li>
+        <li>m = contribution periods per year (12 or 1)</li>
+        <li>B<sub>t</sub> = real balance at end of period t</li>
+      </ul>
+
+      <h2>Core equations</h2>
+
+      <h3>1. Real return</h3>
+      <div class="formula-block">
+        r<sub>real,annual</sub> = (1 + r<sub>nom</sub>) / (1 + π) − 1
+      </div>
+
+      <h3>2. Inflation-indexed contributions</h3>
+      <p>
+        Contributions are entered in today's dollars. With inflation indexing (default), the <strong>real</strong> contribution each period stays constant at C.
+        The corresponding <strong>nominal</strong> contribution in period t rises as C × (1 + π)<sup>t/m</sup>.
+      </p>
+
+      <h3>3. Forward simulation (real dollars)</h3>
+      <p>
+        For each period, apply contribution (beginning or end of period), then growth at r<sub>real,period</sub> derived from r<sub>real,annual</sub> and m.
+        RealFinal = B<sub>T</sub> after m × Y periods.
+      </p>
+
+      <h3>4. Solve for r<sub>nom</sub></h3>
+      <p>
+        Find the smallest r<sub>nom</sub> ≥ 0 such that RealFinal ≥ T (within $0.01 tolerance). Binary search on r<sub>nom</sub>.
+        If RealFinal &lt; T even at r<sub>nom</sub> = 1000%, the calculator still reports 1000% and shows a shortfall warning.
+      </p>
+
+      <h3>5. Nominal target equivalent</h3>
+      <div class="formula-block">
+        NominalTarget = T × (1 + π)<sup>Y</sup>
+      </div>
+
+      <h2>Historical context warning</h2>
+      <p>
+        When required r<sub>nom</sub> &gt; 7%, the UI shows a contextual note: S&P 500 annualized total return (with dividends reinvested)
+        over calendar years 1975–2024 was approximately 12.1%. This is historical context only — not a forecast or recommendation.
+      </p>
+
+      <h2>Implementation</h2>
+      <ul>
+        <li>Engine: <code>/assets/js/investment-growth.engine.js</code></li>
+        <li>UI: <code>/calculators/investment-return-to-reach-goal/ui.js</code></li>
+        <li>Shareable URLs encode inputs as query parameters (sa, tg, ca, th, inf, cf, ct).</li>
+      </ul>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between this documentation and the live calculator, the JavaScript engine is the source of truth.
+      </p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>

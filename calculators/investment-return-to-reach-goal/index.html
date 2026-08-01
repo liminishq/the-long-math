@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Investment Return Required to Reach a Goal | The Long Math</title>
+  <meta name="description" content="Find the annual return required to hit a portfolio target in today's dollars. Enter starting balance, inflation-indexed contributions, horizon, and inflation — get required nominal and real returns with a full schedule." />
+  <link rel="canonical" href="https://www.thelongmath.com/calculators/investment-return-to-reach-goal/" />
+  <link rel="alternate" hreflang="en" href="https://www.thelongmath.com/calculators/investment-return-to-reach-goal/" />
+  <link rel="alternate" hreflang="fr" href="https://www.thelongmath.com/fr/calculators/investment-return-to-reach-goal/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.thelongmath.com/calculators/investment-return-to-reach-goal/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  <link rel="stylesheet" href="/calculators/investment-calculator-inflation-adjusted/styles.css" />
+  <link rel="stylesheet" href="/calculators/investment-return-to-reach-goal/styles.css" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <header class="intro-section">
+      <h1>Investment Return Required to Reach a Goal</h1>
+      <p>Most people think about retirement or financial targets in <strong>today's dollars</strong> — real purchasing power, not a future nominal account balance. This calculator works backward: you enter a target in today's dollars, your starting balance, contributions (indexed to inflation), time horizon, and inflation assumption — and it shows the annual return required to get there.</p>
+      <p>Contributions are entered in today's dollars and increase with assumed inflation over time, so your real saving effort stays constant as income and prices rise. The required return is shown in both nominal (pre-inflation) and real (after-inflation) terms.</p>
+    </header>
+
+    <div class="card">
+      <div class="calc-grid">
+        <article class="panel">
+          <h2 class="section-title">Inputs</h2>
+
+          <div class="field">
+            <label for="startingAmount">Starting amount (today's dollars)</label>
+            <input id="startingAmount" type="number" inputmode="decimal" min="0" step="100" value="20000" />
+          </div>
+
+          <div class="field">
+            <label for="targetBalance">Target portfolio value (today's dollars)</label>
+            <input id="targetBalance" type="number" inputmode="decimal" min="0" step="1000" value="1000000" />
+            <p class="help muted">Real buying power at the end of the horizon — not a future nominal balance.</p>
+          </div>
+
+          <div class="field">
+            <label for="contributionAmount" id="contributionLabel">Monthly contribution (today's dollars)</label>
+            <input id="contributionAmount" type="number" inputmode="decimal" step="10" value="500" />
+            <p class="help muted">Use a negative amount to model recurring withdrawals. Nominal contributions rise with inflation; real effort stays constant.</p>
+            <details class="contribution-disclosure">
+              <summary style="cursor: pointer; margin-top: 8px; font-size: 12px; color: var(--muted);">How contributions are treated</summary>
+              <div style="margin-top: 8px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; font-size: 12px; line-height: 1.5;">
+                <p style="margin: 0;">You enter contributions in today's dollars. Over the horizon, nominal contributions increase at the assumed inflation rate — the same assumption as rising income and prices. In the schedule (real dollars), each period's contribution stays constant; in nominal terms it grows.</p>
+              </div>
+            </details>
+          </div>
+
+          <div class="field">
+            <label for="timeHorizon">Time horizon (years)</label>
+            <input id="timeHorizon" type="number" inputmode="numeric" min="1" max="60" step="1" value="25" />
+          </div>
+
+          <div class="field">
+            <label for="inflationRate">Assumed long-term inflation rate (%)</label>
+            <div class="inline">
+              <input id="inflationRate" type="number" inputmode="decimal" step="0.1" value="2.5" />
+              <span class="unit">%</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="contributionFrequency">Contribution frequency</label>
+            <select id="contributionFrequency">
+              <option value="monthly" selected>Monthly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="contributionTiming">Contribution timing</label>
+            <select id="contributionTiming">
+              <option value="beginning">Beginning of period</option>
+              <option value="end" selected>End of period</option>
+            </select>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="results-panel-header">
+            <h2 class="section-title">Results</h2>
+            <a href="/calculators/investment-return-to-reach-goal/methodology/" class="inspect-arithmetic-btn">Inspect the Arithmetic</a>
+          </div>
+
+          <div class="results">
+            <div class="result-row highlight primary">
+              <div>
+                <div class="label">Required annual return (nominal)</div>
+                <div class="sublabel">Pre-inflation rate that closes the gap</div>
+              </div>
+              <div class="value highlight-value rate-value" id="requiredReturnNominal">—</div>
+            </div>
+
+            <div class="result-row highlight secondary">
+              <div>
+                <div class="label">Required annual return (real)</div>
+                <div class="sublabel">After inflation — purchasing power growth</div>
+              </div>
+              <div class="value highlight-value" id="requiredReturnReal">—</div>
+            </div>
+
+            <div class="result-row">
+              <div>
+                <div class="label">Target in nominal dollars</div>
+                <div class="sublabel">Equivalent future account balance at assumed inflation</div>
+              </div>
+              <div class="value" id="targetNominalEquivalent">$—</div>
+            </div>
+          </div>
+
+          <p id="returnWarning" class="return-warning" hidden></p>
+          <p id="shortfallWarning" class="shortfall-warning" hidden></p>
+
+          <hr class="sep" />
+
+          <div class="breakdown">
+            <h3 style="margin: 0 0 12px; font-size: 14px; font-weight: 600;">Path at required return (today's dollars)</h3>
+            <div class="breakdown-item">
+              <div class="breakdown-label">Starting amount</div>
+              <div class="breakdown-value" id="breakdownStarting">$—</div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-label">Total contributions (real)</div>
+              <div class="breakdown-value" id="breakdownContributions">$—</div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-label">Investment growth (real)</div>
+              <div class="breakdown-value" id="breakdownGrowth">$—</div>
+            </div>
+            <div class="breakdown-bar">
+              <div class="breakdown-bar-segment" id="barStarting" style="background: var(--accent);"></div>
+              <div class="breakdown-bar-segment" id="barContributions" style="background: var(--accent2);"></div>
+              <div class="breakdown-bar-segment" id="barGrowth" style="background: var(--accentSoft);"></div>
+            </div>
+          </div>
+
+          <hr class="sep" />
+
+          <section class="result-share-block" aria-labelledby="share-heading">
+            <h3 id="share-heading" class="result-share-title">Share scenario</h3>
+            <p class="result-share-copy">Snapshot your estimate as a shareable image.</p>
+            <p class="result-share-helper">Shares an image plus a link to this calculator scenario.</p>
+            <div class="result-share-actions">
+              <button type="button" id="share_result_btn">Share scenario</button>
+              <button type="button" id="download_result_btn">Save this calculation</button>
+              <button type="button" id="copy_result_link_btn">Copy shareable link</button>
+            </div>
+            <p class="result-share-status" id="result_share_status" aria-live="polite"></p>
+          </section>
+
+          <div class="export-controls">
+            <button id="printButton" class="export-btn">Print results</button>
+            <button id="exportCSVButton" class="export-btn">Export CSV</button>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 24px;">
+      <article class="panel">
+        <div class="schedule">
+          <h2 class="section-title" style="margin-bottom: 8px;">Accumulation schedule at required return</h2>
+          <p class="muted" style="margin: 0 0 12px; font-size: 13px;">
+            Year-by-year path in real (today's) dollars if the required return is achieved. Contributions shown are real amounts per period; nominal contributions rise with inflation.
+          </p>
+          <div style="margin-bottom: 12px;">
+            <label style="font-size: 12px; color: var(--muted);">
+              <input type="radio" name="scheduleView" value="yearly" checked /> Yearly
+            </label>
+            <label style="font-size: 12px; color: var(--muted); margin-left: 16px;">
+              <input type="radio" name="scheduleView" value="monthly" /> Monthly
+            </label>
+          </div>
+          <table class="schedule-table" id="scheduleTable">
+            <thead>
+              <tr>
+                <th>Year</th>
+                <th>Contributions</th>
+                <th>Growth</th>
+                <th>Ending balance</th>
+              </tr>
+            </thead>
+            <tbody id="scheduleBody"></tbody>
+          </table>
+          <button id="scheduleToggleButton" class="export-btn" style="margin-top: 12px; width: 220px;">
+            Show full schedule
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <section class="newsletter-signup card" aria-labelledby="newsletter-calc-heading">
+      <h2 id="newsletter-calc-heading" class="newsletter-signup-heading">Want new calculators like this when they go live?</h2>
+      <p class="newsletter-signup-copy">Get one concise monthly email when The Long Math publishes new calculators, articles, and essays.</p>
+      <div class="newsletter-embed-wrap">
+        <iframe
+          src="https://subscribe-forms.beehiiv.com/bfdc64a5-2697-4bb0-bec5-5a557c9f274b"
+          class="beehiiv-embed"
+          data-test-id="beehiiv-embed"
+          frameborder="0"
+          scrolling="no"
+          style="width: 330px; height: 53px; margin: 0; border-radius: 0; background-color: transparent; box-shadow: 0 0 #0000; max-width: 100%;"
+          title="Newsletter signup"
+        ></iframe>
+      </div>
+    </section>
+
+    <div class="report-issue-wrap">
+      <a href="/contact/" class="report-issue-link">Report an Issue</a>
+    </div>
+
+    <details class="assumptions-block">
+      <summary style="cursor: pointer; padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; font-weight: 600; font-size: 15px; margin-top: 24px;">
+        Assumptions used in this calculator
+      </summary>
+      <div style="padding: 16px; margin-top: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px;">
+        <p style="margin: 0 0 12px; font-size: 14px; line-height: 1.6;">
+          The target is stated in today's dollars (real purchasing power). Starting balance and contributions are also in today's dollars. Nominal contributions increase at the assumed inflation rate; real contributions stay constant.
+        </p>
+        <p style="margin: 0 0 12px; font-size: 14px; line-height: 1.6;">
+          The solver finds the nominal annual return that produces the target real balance. Compounding is annual; the simulation timestep matches contribution frequency. No taxes, fees, or account rules are modeled.
+        </p>
+        <p style="margin: 0; font-size: 14px; line-height: 1.6;">
+          Historical S&P 500 context (shown when required return exceeds 7%) uses total return with dividends, calendar years 1975–2024. Past performance is not a forecast.
+        </p>
+      </div>
+    </details>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <h3>Why is the target in today's dollars?</h3>
+        <p>Most people planning a retirement number or portfolio goal think in purchasing power — what the money will buy — not in inflated future nominal dollars. This calculator takes a real target and solves for the return required to reach it after inflation.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Why do contributions increase with inflation?</h3>
+        <p>If wages and prices rise over a long horizon, the amount you can set aside often rises too — not always one-for-one, but a constant real contribution is a reasonable baseline. You enter today's dollar amount; the model inflates nominal contributions over time while keeping real effort constant.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What's the difference between the required nominal and real return?</h3>
+        <p>The nominal return is the pre-inflation rate the portfolio must earn. The real return is what remains after inflation: (1 + nominal) ÷ (1 + inflation) − 1. Both are shown so you can compare the result to historical market data or planning assumptions.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>How does this relate to the inflation-adjusted investment calculator?</h3>
+        <p>The <a href="/calculators/investment-calculator-inflation-adjusted/">Inflation-Adjusted Investment Calculator</a> goes forward: given a return, it projects ending balances. This calculator inverts that: given a target, it finds the required return. Both use the same shared simulation engine and assumptions.</p>
+      </div>
+    </section>
+
+    <section class="card calc-related-bottom" aria-labelledby="calc-related-heading">
+      <h2 id="calc-related-heading" class="section-title">Related calculators and articles</h2>
+      <ul>
+        <li><a href="/calculators/investment-calculator-inflation-adjusted/">Inflation-adjusted investment calculator</a></li>
+        <li><a href="/calculators/investment-simple/">Simple investment calculator</a></li>
+        <li><a href="/calculators/future-buying-power/">Future buying power calculator</a></li>
+        <li><a href="/calculators/retirement-withdrawal-calculator/">Retirement withdrawal calculator</a></li>
+        <li><a href="/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/">Real returns vs nominal returns</a></li>
+        <li><a href="/tools/inflation-tables/">Historical inflation rates (CPI)</a></li>
+      </ul>
+    </section>
+  </div>
+
+  <div id="footerMount"></div>
+
+  <script src="/assets/js/investment-growth.engine.js"></script>
+  <script src="/assets/js/calculator-share.js"></script>
+  <script src="/calculators/investment-return-to-reach-goal/ui.js"></script>
+</body>
+</html>
