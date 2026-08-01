@@ -16,7 +16,7 @@
     if (x == null) return NaN;
     const s = String(x).trim().replace(/,/g, "");
     if (s === "") return NaN;
-    const n = parseInt(s, 10);
+    const n = Number(s);
     return Number.isFinite(n) ? n : NaN;
   }
 

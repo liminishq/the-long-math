@@ -41,6 +41,12 @@
     return (dec * 100).toFixed(2) + "%";
   }
 
+  function fmtYears(n) {
+    if (!Number.isFinite(n)) return "–";
+    const rounded = Math.round(n * 100) / 100;
+    return String(rounded).replace(/\.0+$/, "").replace(/(\.\d*[1-9])0+$/, "$1");
+  }
+
   // -----------------------------
   // Defaults
   // -----------------------------
@@ -387,12 +393,12 @@
         if (typeof window.calculateFlatFeeOrHourlyCost !== "function") return null;
         const result = window.calculateFlatFeeOrHourlyCost(inp);
         if (result.error || !Number.isFinite(result.totalCost)) return null;
-        const years = Math.round(inp.horizonYears);
+        const years = fmtYears(inp.horizonYears);
         const scenario = {
           feeModel: inp.feeModel,
           starting_balance: Math.round(inp.startingBalance),
           monthly_contribution: Math.round(inp.monthlyContribution),
-          horizon_years: years,
+          horizon_years: Number(inp.horizonYears.toFixed(2)),
           annual_return: Number((inp.annualReturn * 100).toFixed(4)),
           flat_fee: Math.round(inp.flatFee),
           hourly_rate: Math.round(inp.hourlyRate),

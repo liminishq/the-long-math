@@ -49,7 +49,7 @@
 
           <div class="field">
             <label for="birth_year">Birth year</label>
-            <input id="birth_year" type="number" min="1900" max="2010" step="1" />
+            <input id="birth_year" type="number" inputmode="decimal" min="1900" max="2010" step="any" />
             <div class="help-text">Used to suggest eligibility start year (year you turned 18, or 2009 if later)</div>
           </div>
 
@@ -67,25 +67,25 @@
 
           <div class="field">
             <label for="lifetime_contributions_total">Total TFSA contributions made (lifetime) (CAD)</label>
-            <input id="lifetime_contributions_total" type="text" inputmode="numeric" placeholder="0" />
+            <input id="lifetime_contributions_total" type="text" inputmode="decimal" placeholder="0" />
             <div class="help-text">All contributions made since you became eligible</div>
           </div>
 
           <div class="field">
             <label for="withdrawals_prior_years_total">TFSA withdrawals made in prior years (up to Dec 31 last year) (CAD)</label>
-            <input id="withdrawals_prior_years_total" type="text" inputmode="numeric" placeholder="0" />
+            <input id="withdrawals_prior_years_total" type="text" inputmode="decimal" placeholder="0" />
             <div class="help-text">Withdrawals from previous years (already added back to room in their following years)</div>
           </div>
 
           <div class="field">
             <label for="contributions_this_year">TFSA contributions made this year (CAD)</label>
-            <input id="contributions_this_year" type="text" inputmode="numeric" placeholder="0" />
+            <input id="contributions_this_year" type="text" inputmode="decimal" placeholder="0" />
             <div class="help-text">Contributions made in the "as of year"</div>
           </div>
 
           <div class="field">
             <label for="withdrawals_this_year">TFSA withdrawals made this year (CAD)</label>
-            <input id="withdrawals_this_year" type="text" inputmode="numeric" placeholder="0" />
+            <input id="withdrawals_this_year" type="text" inputmode="decimal" placeholder="0" />
             <div class="help-text">Withdrawals made in the "as of year" (will add to room next year, not this year)</div>
           </div>
 

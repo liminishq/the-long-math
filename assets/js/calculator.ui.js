@@ -38,6 +38,12 @@
     return (dec * 100).toFixed(2) + "%";
   }
 
+  function fmtYears(n) {
+    if (!Number.isFinite(n)) return "–";
+    const rounded = Math.round(n * 100) / 100;
+    return String(rounded).replace(/\.0+$/, "").replace(/(\.\d*[1-9])0+$/, "$1");
+  }
+
   // -----------------------------
   // Defaults (UI-level)
   // -----------------------------
@@ -166,7 +172,7 @@
   function buildSharePayload(result, inputs) {
     if (!result || !window.TLM || !window.TLM.shareCard) return null;
 
-    var horizonYears = Math.round(clamp(num($("horizon_years").value), 1, 50));
+    var horizonYears = clamp(num($("horizon_years").value), 1, 50);
     var totalCost = Number(result.total_calculated_cost);
     if (!window.TLM.shareCard.isFiniteNumber(totalCost)) return null;
 
@@ -174,7 +180,7 @@
       initial: Math.round(inputs.starting_balance),
       monthly: Math.round(inputs.monthly_contribution),
       annual: Math.round(inputs.monthly_contribution * 12),
-      years: Math.round(inputs.horizon_years),
+      years: Number(inputs.horizon_years.toFixed(2)),
       return: Number((inputs.annual_return * 100).toFixed(2)),
       useDefaultFee: inputs.use_default_fee ? 1 : 0,
       fee: Number(inputs.custom_advisor_fee_pct.toFixed(2)),
@@ -189,7 +195,7 @@
       title: "The Long Math calculator result",
       headline: "Projected cost of fees and lost compounding",
       mainValue: fmtCAD(totalCost),
-      subline: "Over a " + horizonYears + "-year investing horizon",
+      subline: "Over a " + fmtYears(horizonYears) + "-year investing horizon",
       contextLines: [
         "Starting balance: " + fmtCAD(inputs.starting_balance),
         "Monthly contribution: " + fmtCAD(inputs.monthly_contribution),
@@ -198,7 +204,7 @@
         "MER included: " + (inputs.include_mer ? inputs.mer_pct.toFixed(2) + "%" : "no"),
       ],
       footer: "Run your own numbers at TheLongMath.com",
-      shareText: "Estimated fee drag over " + horizonYears + " years: " + fmtCAD(totalCost) + ". Run your own numbers:",
+      shareText: "Estimated fee drag over " + fmtYears(horizonYears) + " years: " + fmtCAD(totalCost) + ". Run your own numbers:",
       url: shareUrl,
     };
   }

@@ -145,22 +145,22 @@
           <div id="direct_payment_field">
             <div class="field">
               <label for="mortgage_payment">Mortgage payment amount</label>
-              <input id="mortgage_payment" type="number" inputmode="decimal" min="0" step="10" value="2806" />
+              <input id="mortgage_payment" type="number" inputmode="decimal" min="0" step="any" value="2806" />
             </div>
             <div class="field">
               <label for="current_balance">Current mortgage balance</label>
-              <input id="current_balance" type="number" inputmode="decimal" min="0" step="1000" value="480000" />
+              <input id="current_balance" type="number" inputmode="decimal" min="0" step="any" value="480000" />
             </div>
             <div class="field">
               <label for="current_rate">Interest rate (annual, %)</label>
               <div class="inline">
-                <input id="current_rate" type="number" inputmode="decimal" step="0.01" value="5" />
+                <input id="current_rate" type="number" inputmode="decimal" step="any" value="5" />
                 <span class="unit">%</span>
               </div>
             </div>
             <div class="field">
               <label for="current_home_price">Home value</label>
-              <input id="current_home_price" type="number" inputmode="decimal" min="0" step="1000" value="600000" />
+              <input id="current_home_price" type="number" inputmode="decimal" min="0" step="any" value="600000" />
               <p class="help muted">Current estimated value of your home.</p>
             </div>
           </div>
@@ -168,7 +168,7 @@
           <div id="mortgage_calculator_field" class="hidden">
             <div class="field">
               <label for="calc_home_price">Home purchase price</label>
-              <input id="calc_home_price" type="number" inputmode="decimal" min="0" step="1000" value="600000" />
+              <input id="calc_home_price" type="number" inputmode="decimal" min="0" step="any" value="600000" />
             </div>
 
             <div class="field">
@@ -180,13 +180,13 @@
 
             <div class="field" id="calc_down_amount_field">
               <label for="calc_down_amount">Down payment amount</label>
-              <input id="calc_down_amount" type="number" inputmode="decimal" min="0" step="1000" value="120000" />
+              <input id="calc_down_amount" type="number" inputmode="decimal" min="0" step="any" value="120000" />
             </div>
 
             <div class="field hidden" id="calc_down_pct_field">
               <label for="calc_down_pct">Down payment (%)</label>
               <div class="inline">
-                <input id="calc_down_pct" type="number" inputmode="decimal" min="0" max="100" step="0.1" value="20" />
+                <input id="calc_down_pct" type="number" inputmode="decimal" min="0" max="100" step="any" value="20" />
                 <span class="unit">%</span>
               </div>
             </div>
@@ -194,14 +194,14 @@
             <div class="field">
               <label for="calc_interest_rate">Interest rate (annual, %)</label>
               <div class="inline">
-                <input id="calc_interest_rate" type="number" inputmode="decimal" step="0.01" value="5" />
+                <input id="calc_interest_rate" type="number" inputmode="decimal" step="any" value="5" />
                 <span class="unit">%</span>
               </div>
             </div>
 
             <div class="field">
               <label for="calc_amortization">Amortization (years)</label>
-              <input id="calc_amortization" type="number" inputmode="numeric" min="1" step="1" value="25" />
+              <input id="calc_amortization" type="number" inputmode="decimal" min="1" step="any" value="25" />
             </div>
 
             <div class="field">
@@ -217,7 +217,7 @@
           <div class="field">
             <label for="home_growth">Home price growth (annual, %)</label>
             <div class="inline">
-              <input id="home_growth" type="number" inputmode="decimal" step="0.1" value="0" />
+              <input id="home_growth" type="number" inputmode="decimal" step="any" value="0" />
               <span class="unit">%</span>
             </div>
             <p class="help muted">
@@ -259,7 +259,7 @@
             <div id="custom_inflation_wrap" class="field" style="margin-top: 12px;">
               <label for="custom_inflation_rate">Custom inflation rate (%)</label>
               <div class="inline">
-                <input id="custom_inflation_rate" type="number" inputmode="decimal" min="0" step="0.01" />
+                <input id="custom_inflation_rate" type="number" inputmode="decimal" min="0" step="any" />
                 <span class="unit">%</span>
               </div>
               <p class="help muted">Default <span data-cpi-canada-avg>—</span>% (Canada, 1960–present, from CPI data). Positive numbers only, up to 2 decimal places. Use 0 for no inflation adjustment.</p>
@@ -310,7 +310,7 @@
             <h2 class="section-title">Monthly budget</h2>
             <div class="field">
               <label for="monthly_budget">Monthly budget ($)</label>
-              <input id="monthly_budget" type="number" inputmode="decimal" min="0" step="10" value="" />
+              <input id="monthly_budget" type="number" inputmode="decimal" min="0" step="any" value="" />
               <p class="help muted">
                 Your total monthly budget. This equals your mortgage payment plus extra cash available.
               </p>
@@ -321,7 +321,7 @@
             <h2 class="section-title">Extra cash available</h2>
             <div class="field">
               <label for="extra_cash">Extra cash available per month ($)</label>
-              <input id="extra_cash" type="number" inputmode="decimal" min="0" step="10" value="500" />
+              <input id="extra_cash" type="number" inputmode="decimal" min="0" step="any" value="500" />
               <p class="help muted">
                 This amount is allocated between mortgage paydown and investing based on the slider setting.
               </p>
@@ -332,7 +332,7 @@
             <h2 class="section-title">Lump sum</h2>
             <div class="field">
               <label for="lump_sum">Lump sum at start ($)</label>
-              <input id="lump_sum" type="number" inputmode="decimal" min="0" step="1000" value="60000" />
+              <input id="lump_sum" type="number" inputmode="decimal" min="0" step="any" value="60000" />
               <p class="help muted">
                 Applied at the very beginning of the analysis (start of month 1), before the first scheduled mortgage payment. The slider splits this amount between extra mortgage principal and the portfolio.
               </p>
@@ -346,7 +346,7 @@
           <div class="field">
             <label for="expected_return">Expected annual return (%, before fees)</label>
             <div class="inline">
-              <input id="expected_return" type="number" inputmode="decimal" step="0.1" value="7" />
+              <input id="expected_return" type="number" inputmode="decimal" step="any" value="7" />
               <span class="unit">%</span>
             </div>
           </div>
@@ -354,7 +354,7 @@
           <div class="field">
             <label for="fees">Investment fees (%, annual)</label>
             <div class="inline">
-              <input id="fees" type="number" inputmode="decimal" step="0.01" value="0" />
+              <input id="fees" type="number" inputmode="decimal" step="any" value="0" />
               <span class="unit">%</span>
             </div>
           </div>
@@ -363,7 +363,7 @@
 
           <div class="field">
             <label for="time_horizon">Time horizon (years)</label>
-            <input id="time_horizon" type="number" inputmode="decimal" min="1" max="75" step="0.1" value="30" />
+            <input id="time_horizon" type="number" inputmode="decimal" min="1" max="75" step="any" value="30" />
             <p class="help muted">Enter a value between 1 and 75 years.</p>
           </div>
 

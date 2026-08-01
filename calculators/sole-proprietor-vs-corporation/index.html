@@ -126,25 +126,25 @@
             </div>
             <div class="field">
               <label for="businessIncome">Annual business income (gross)</label>
-              <input id="businessIncome" type="number" inputmode="decimal" min="0" step="1000" value="460000" aria-describedby="h_income" />
+              <input id="businessIncome" type="number" inputmode="decimal" min="0" step="any" value="460000" aria-describedby="h_income" />
               <p id="h_income" class="help muted">Business or professional income before taxes — compare the same gross under both structures. With Ontario 2025 tables and the default RRSP slice, gross income needs to be roughly in the mid‑$450k range or higher to leave about $240k spendable after tax and RRSP.</p>
             </div>
             <div class="field">
               <label for="spendingNeed">Annual after-tax spending need</label>
-              <input id="spendingNeed" type="number" inputmode="decimal" min="0" step="1000" value="240000" />
+              <input id="spendingNeed" type="number" inputmode="decimal" min="0" step="any" value="240000" />
               <p class="help muted">Target lifestyle spending after personal income tax — both paths solve around this same after-tax need.</p>
             </div>
             <div class="field">
               <label for="annualReturn">Expected annual investment return (nominal)</label>
               <div class="inline">
-                <input id="annualReturn" type="number" inputmode="decimal" step="0.1" value="5" aria-describedby="h_ret" />
+                <input id="annualReturn" type="number" inputmode="decimal" step="any" value="5" aria-describedby="h_ret" />
                 <span class="unit">%</span>
               </div>
               <p id="h_ret" class="help muted">Used only when projection is enabled. Pre-withdrawal-tax compound growth.</p>
             </div>
             <div id="projectionFieldsRow" class="field" style="display: none;">
               <label for="projectionYears">Projection years</label>
-              <input id="projectionYears" type="number" inputmode="numeric" min="0" step="1" value="20" />
+              <input id="projectionYears" type="number" inputmode="decimal" min="0" step="any" value="20" />
             </div>
             <div class="field checkbox">
               <input id="showProjection" type="checkbox" />
@@ -157,7 +157,7 @@
             <h3>Sole proprietor / personal path</h3>
             <div class="field">
               <label for="rrspRoom">Available RRSP room</label>
-              <input id="rrspRoom" type="number" inputmode="decimal" min="0" step="100" value="32490" />
+              <input id="rrspRoom" type="number" inputmode="decimal" min="0" step="any" value="32490" />
               <p class="help muted">Default uses the 2025 CRA dollar maximum from shared tax data where available. Edit to match your notice of assessment.</p>
             </div>
             <div class="field checkbox">
@@ -166,7 +166,7 @@
             </div>
             <div class="field">
               <label for="rrspContribution">RRSP contribution (manual)</label>
-              <input id="rrspContribution" type="number" inputmode="decimal" min="0" step="100" value="32490" disabled aria-disabled="true" />
+              <input id="rrspContribution" type="number" inputmode="decimal" min="0" step="any" value="32490" disabled aria-disabled="true" />
             </div>
             <div class="field checkbox">
               <input id="reinvestRefund" type="checkbox" checked />
@@ -197,7 +197,7 @@
             </div>
             <div id="blendFractionRow" class="field" style="display: none;">
               <label for="salaryBlendFraction">Salary share of withdrawal mix (%)</label>
-              <input id="salaryBlendFraction" type="number" inputmode="decimal" min="0" max="100" step="5" value="50" />
+              <input id="salaryBlendFraction" type="number" inputmode="decimal" min="0" max="100" step="any" value="50" />
               <p class="help muted">Blend mode splits a total withdrawal <em>W</em> into salary = <em>k</em>×<em>W</em> and non-eligible dividends = (1−<em>k</em>)×<em>W</em>, then searches the smallest feasible <em>W</em> that meets your after-tax spending need.</p>
             </div>
             <div class="field checkbox">
@@ -210,7 +210,7 @@
                 <div class="field">
                   <label for="corpPassiveDrag">Passive corporate investment tax drag (%)</label>
                   <div class="inline">
-                    <input id="corpPassiveDrag" type="number" inputmode="decimal" min="0" max="100" step="0.5" value="0" />
+                    <input id="corpPassiveDrag" type="number" inputmode="decimal" min="0" max="100" step="any" value="0" />
                     <span class="unit">%</span>
                   </div>
                   <p class="help muted">Default 0% for the first-year capital comparison. When projection is on, reduces the corporation’s effective return by this percentage (simple drag model).</p>

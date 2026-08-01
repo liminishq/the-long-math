@@ -77,22 +77,22 @@
         <div class="fee-cost-input-fields">
           <div class="fee-cost-field">
             <label for="starting_balance" data-i18n="calculators.advisorFee.startingBalance">Starting balance ($)</label>
-            <input id="starting_balance" type="number" value="1000000" />
+            <input id="starting_balance" type="number" inputmode="decimal" step="any" value="1000000" />
           </div>
 
           <div class="fee-cost-field">
             <label for="monthly_contribution" data-i18n="calculators.advisorFee.monthlyContribution">Monthly contribution ($/mo)</label>
-            <input id="monthly_contribution" type="number" value="5000" />
+            <input id="monthly_contribution" type="number" inputmode="decimal" step="any" value="5000" />
           </div>
 
           <div class="fee-cost-field">
             <label for="horizon_years" data-i18n="calculators.advisorFee.timeHorizon">Time horizon (years)</label>
-            <input id="horizon_years" type="number" value="15" />
+            <input id="horizon_years" type="number" inputmode="decimal" step="any" value="15" />
           </div>
 
           <div class="fee-cost-field">
             <label for="annual_return" data-i18n="calculators.advisorFee.annualReturn">Expected annual return (%)</label>
-            <input id="annual_return" type="text" value="7" placeholder="e.g. 7 or 4.5" data-i18n-attr="placeholder:calculators.advisorFee.annualReturnPlaceholder" />
+            <input id="annual_return" type="text" inputmode="decimal" value="7" placeholder="e.g. 7 or 4.5" data-i18n-attr="placeholder:calculators.advisorFee.annualReturnPlaceholder" />
           </div>
 
           <div class="slider-block">
@@ -115,7 +115,7 @@
 
           <div class="fee-cost-field">
             <label for="custom_advisor_fee" data-i18n="calculators.advisorFee.advisorFeePct">Advisor fee (%/yr)</label>
-            <input id="custom_advisor_fee" type="text" placeholder="e.g. 1.0" data-i18n-attr="placeholder:calculators.advisorFee.advisorFeePlaceholder" />
+            <input id="custom_advisor_fee" type="text" inputmode="decimal" placeholder="e.g. 1.0" data-i18n-attr="placeholder:calculators.advisorFee.advisorFeePlaceholder" />
           </div>
 
           <!-- MER -->
@@ -130,7 +130,7 @@
 
           <div class="fee-cost-field">
             <label for="mer_pct" data-i18n="calculators.advisorFee.merPct">MER (%/yr)</label>
-            <input id="mer_pct" type="text" placeholder="e.g. 2.0" data-i18n-attr="placeholder:calculators.advisorFee.merPlaceholder" />
+            <input id="mer_pct" type="text" inputmode="decimal" placeholder="e.g. 2.0" data-i18n-attr="placeholder:calculators.advisorFee.merPlaceholder" />
           </div>
         </div>
       </section>

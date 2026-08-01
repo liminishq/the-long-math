@@ -68,14 +68,14 @@
 
           <div class="loan-field" id="field-principal">
             <label for="loanPrincipal">Loan amount (principal)</label>
-            <input id="loanPrincipal" type="number" inputmode="decimal" min="0" step="1000" value="300000" />
+            <input id="loanPrincipal" type="number" inputmode="decimal" min="0" step="any" value="300000" />
             <p class="loan-field-error-message" id="error-principal" style="display:none;">Principal must be greater than zero.</p>
           </div>
 
           <div class="loan-field" id="field-rate">
             <label for="annualRate">Annual interest rate</label>
             <div style="display:flex; align-items:center; gap:6px;">
-              <input id="annualRate" type="number" inputmode="decimal" step="0.1" value="6" />
+              <input id="annualRate" type="number" inputmode="decimal" step="any" value="6" />
               <span style="font-size:13px;">%</span>
             </div>
             <p class="loan-field-error-message" id="error-rate" style="display:none;">Rate cannot be negative.</p>
@@ -83,7 +83,7 @@
 
           <div class="loan-field" id="field-years">
             <label for="loanYears">Amortization term (years)</label>
-            <input id="loanYears" type="number" inputmode="numeric" min="1" step="1" value="25" />
+            <input id="loanYears" type="number" inputmode="decimal" min="1" step="any" value="25" />
             <p class="loan-field-error-message" id="error-years" style="display:none;">Term must be greater than zero.</p>
           </div>
 

@@ -74,7 +74,7 @@
   function simulateInvestment(){
     const P0 = clampNonNeg(toNumber(startingAmount.value));
     const contribPerPeriod = toNumber(monthlyContribution.value);
-    const years = Math.max(1, Math.min(60, Math.round(toNumber(timeHorizon.value))));
+    const requestedYears = Math.max(1, Math.min(60, toNumber(timeHorizon.value)));
     const rNomAnnual = toNumber(expectedReturn.value) / 100; // Nominal annual return
     const inflationAnnual = clampNonNeg(toNumber(inflationRate.value) / 100); // Annual inflation
     
@@ -83,7 +83,9 @@
     
     const contribPeriodsPerYear = getContributionPeriodsPerYear();
     const contribAtBeginning = contributionTiming.value === "beginning";
-    const totalPeriods = Math.round(contribPeriodsPerYear * years);
+    const totalPeriods = Math.max(1, Math.round(contribPeriodsPerYear * requestedYears));
+    const years = totalPeriods / contribPeriodsPerYear;
+    const scheduleYears = Math.ceil(years);
     
     // Real simulation (in today's dollars)
     let balanceReal = P0;
@@ -102,7 +104,7 @@
     
     // Track yearly data for aggregation
     let yearData = [];
-    for (let y = 0; y <= years; y++) {
+    for (let y = 0; y <= scheduleYears; y++) {
       yearData.push({
         year: y,
         contributions: 0,
@@ -141,7 +143,7 @@
       // We want periods 0..(contribPeriodsPerYear-1) to map to year 1,
       // contribPeriodsPerYear..(2*contribPeriodsPerYear-1) to map to year 2, etc.
       const yearNum = Math.floor(period / contribPeriodsPerYear) + 1;
-      if (yearNum <= years && yearData[yearNum]) {
+      if (yearNum <= scheduleYears && yearData[yearNum]) {
         yearData[yearNum].contributions += periodContribution;
         yearData[yearNum].growth += periodGrowth;
         yearData[yearNum].endingBalance = balanceReal;
@@ -166,7 +168,7 @@
     }
     
     // Build yearly schedule from yearData (real-only)
-    for (let y = 0; y <= years; y++) {
+    for (let y = 0; y <= scheduleYears; y++) {
       if (y === 0) {
         schedule.push({
           year: 0,

@@ -89,6 +89,11 @@ function calculateBracketTax(taxableIncome, brackets, opts = {}) {
   return { bracketLines, baseTax: totalTax };
 }
 
+function roundNetTax(amount, opts = {}) {
+  const tax = Math.max(0, amount);
+  return opts.roundToDollar === false ? tax : Math.round(tax);
+}
+
 /**
  * Ontario Health Premium (Ontario Taxation Act, 2007, Division C).
  * Piecewise schedule for 2005 and later tax years — band dollar amounts are not annual CPI indexation
@@ -196,7 +201,7 @@ function calculateFederalTax(taxableIncome, cppCreditable, ei, employmentIncome,
   // Step D — Federal minimum tax adjustments (placeholder for future implementation).
   const minimumTaxAdjustments = 0;
 
-  const netTax = Math.round(Math.max(0, taxAfterDividendCredits + minimumTaxAdjustments));
+  const netTax = roundNetTax(taxAfterDividendCredits + minimumTaxAdjustments, opts);
 
   return {
     bracketLines,
@@ -310,7 +315,7 @@ function calculateProvincialTaxGeneric(taxableIncome, prov, dividends, cppCredit
     }
   }
 
-  const netTax = Math.round(taxAfterReductions + premiumsTotal);
+  const netTax = roundNetTax(taxAfterReductions + premiumsTotal, opts);
 
   return {
     bracketLines,
@@ -414,7 +419,7 @@ function calculateOntarioTax(taxableIncome, prov, dividends, cppCreditable, ei, 
   const provincialTaxReduction = 0;
   const minimumTaxAdjustments = 0;
   const taxAfterReductions = taxAfterDividendCredits; // no reductions implemented yet
-  const netTax = Math.round(taxAfterReductions + healthPremium);
+  const netTax = roundNetTax(taxAfterReductions + healthPremium, opts);
 
   return {
     bracketLines,
@@ -615,7 +620,7 @@ const BRACKET_FALLBACK_FIELDS = new Set(['employmentIncome', 'selfEmploymentInco
 
 /**
  * Marginal tax rate = delta tax per dollar of income type X.
- * Uses a $100 income bump (MARGINAL_DELTA) because net tax is rounded to whole dollars.
+ * Uses exact, unrounded tax values so fractional-dollar alignment cannot move the displayed rate.
  * Inactive income types (zero dollars) are not perturbed — returns null for those fields.
  */
 function computeMarginalRatesByType(input, dataCtx) {
@@ -697,7 +702,7 @@ function computeMarginalRatesByType(input, dataCtx) {
 
 /**
  * Run full tax calculation (internal). Used by computePersonalTax and marginal rate.
- * @param {Object} runOpts - Optional. { roundToDollar: false } to use exact bracket tax (for marginal rate calculation).
+ * @param {Object} runOpts - Optional. { roundToDollar: false } to use exact tax values (for marginal rate calculation).
  */
 function runFullCalculation(input, dataCtx, runOpts = {}) {
   const taxYear = input.year ?? 2025;

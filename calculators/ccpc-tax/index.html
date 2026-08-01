@@ -76,13 +76,13 @@
 
         <div class="field">
           <label for="grossRevenue">Gross Corporate Revenue</label>
-          <input type="text" id="grossRevenue" placeholder="0" value="">
+          <input type="text" inputmode="decimal" id="grossRevenue" placeholder="0" value="">
           <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Total revenue before owner salary; salary is entered below and deducted for corporate taxable income.</div>
         </div>
 
         <div class="field">
           <label for="expenses">Total Business Expenses</label>
-          <input type="text" id="expenses" placeholder="0" value="">
+          <input type="text" inputmode="decimal" id="expenses" placeholder="0" value="">
           <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Deductible business expenses excluding shareholder salary and employer CPP (those follow from the salary fields and payroll rules).</div>
         </div>
 
@@ -101,46 +101,46 @@
         <div id="singleShareholderBlock">
           <div class="field">
             <label for="salary">Salary/Bonus Paid to Shareholder</label>
-            <input type="text" id="salary" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="salary" placeholder="0" value="">
           </div>
 
           <div class="field">
             <label for="eligibleDividends">Eligible Dividends Paid</label>
-            <input type="text" id="eligibleDividends" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="eligibleDividends" placeholder="0" value="">
           </div>
 
           <div class="field">
             <label for="nonEligibleDividends">Non-Eligible Dividends Paid</label>
-            <input type="text" id="nonEligibleDividends" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="nonEligibleDividends" placeholder="0" value="">
           </div>
 
           <div class="field">
             <label for="personalOtherIncome">Other Personal Income</label>
-            <input type="text" id="personalOtherIncome" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="personalOtherIncome" placeholder="0" value="">
             <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Personal income from sources other than the corporation</div>
           </div>
 
           <div class="field">
             <label for="capitalGains">Capital Gains</label>
-            <input type="text" id="capitalGains" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="capitalGains" placeholder="0" value="">
             <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Realized capital gains (cash amount). The personal engine includes 50% as taxable capital gains.</div>
           </div>
 
           <div class="field">
             <label for="rrspContribution">RRSP Contribution</label>
-            <input type="text" id="rrspContribution" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="rrspContribution" placeholder="0" value="">
             <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amount contributed this year. The calculator treats this as a current-year RRSP deduction (unused contributions and contribution room are not modeled).</div>
           </div>
 
           <div class="field">
             <label for="fhsaDeduction">FHSA Contribution (Deduction Claimed This Year)</label>
-            <input type="text" id="fhsaDeduction" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="fhsaDeduction" placeholder="0" value="">
             <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amount claimed this year. Contribution room and carry-forward are not modeled.</div>
           </div>
 
           <div class="field">
             <label for="personalDeductions">Personal Deductions</label>
-            <input type="text" id="personalDeductions" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="personalDeductions" placeholder="0" value="">
             <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Estimated personal deductions (medical, donations, etc.)</div>
           </div>
         </div>
@@ -149,77 +149,77 @@
           <h3 class="shareholder-heading">Shareholder 1</h3>
           <div class="field">
             <label for="sh1Salary">Salary/Bonus Paid</label>
-            <input type="text" id="sh1Salary" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="sh1Salary" placeholder="0" value="">
           </div>
           <div class="field">
             <label for="sh1EligibleDividends">Eligible Dividends Paid</label>
-            <input type="text" id="sh1EligibleDividends" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="sh1EligibleDividends" placeholder="0" value="">
           </div>
           <div class="field">
             <label for="sh1NonEligibleDividends">Non-Eligible Dividends Paid</label>
-            <input type="text" id="sh1NonEligibleDividends" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="sh1NonEligibleDividends" placeholder="0" value="">
           </div>
           <div class="field">
             <label for="sh1OtherIncome">Other Personal Income</label>
-            <input type="text" id="sh1OtherIncome" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="sh1OtherIncome" placeholder="0" value="">
             <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Personal income from sources other than the corporation</div>
           </div>
           <div class="field">
             <label for="sh1CapitalGains">Capital Gains</label>
-            <input type="text" id="sh1CapitalGains" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="sh1CapitalGains" placeholder="0" value="">
             <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Realized capital gains (cash amount). 50% inclusion applied by the personal engine.</div>
           </div>
           <div class="field">
             <label for="sh1RrspContribution">RRSP Contribution</label>
-            <input type="text" id="sh1RrspContribution" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="sh1RrspContribution" placeholder="0" value="">
             <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amount contributed this year. Treated as a current-year deduction; contribution room is not modeled.</div>
           </div>
           <div class="field">
             <label for="sh1FhsaDeduction">FHSA Contribution (Deduction Claimed This Year)</label>
-            <input type="text" id="sh1FhsaDeduction" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="sh1FhsaDeduction" placeholder="0" value="">
             <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amount claimed this year. Contribution room is not modeled.</div>
           </div>
           <div class="field">
             <label for="sh1Deductions">Personal Deductions</label>
-            <input type="text" id="sh1Deductions" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="sh1Deductions" placeholder="0" value="">
           </div>
 
           <h3 class="shareholder-heading">Shareholder 2</h3>
           <div class="field">
             <label for="sh2Salary">Salary/Bonus Paid</label>
-            <input type="text" id="sh2Salary" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="sh2Salary" placeholder="0" value="">
           </div>
           <div class="field">
             <label for="sh2EligibleDividends">Eligible Dividends Paid</label>
-            <input type="text" id="sh2EligibleDividends" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="sh2EligibleDividends" placeholder="0" value="">
           </div>
           <div class="field">
             <label for="sh2NonEligibleDividends">Non-Eligible Dividends Paid</label>
-            <input type="text" id="sh2NonEligibleDividends" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="sh2NonEligibleDividends" placeholder="0" value="">
           </div>
           <div class="field">
             <label for="sh2OtherIncome">Other Personal Income</label>
-            <input type="text" id="sh2OtherIncome" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="sh2OtherIncome" placeholder="0" value="">
             <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Personal income from sources other than the corporation</div>
           </div>
           <div class="field">
             <label for="sh2CapitalGains">Capital Gains</label>
-            <input type="text" id="sh2CapitalGains" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="sh2CapitalGains" placeholder="0" value="">
             <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Realized capital gains (cash amount). 50% inclusion applied by the personal engine.</div>
           </div>
           <div class="field">
             <label for="sh2RrspContribution">RRSP Contribution</label>
-            <input type="text" id="sh2RrspContribution" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="sh2RrspContribution" placeholder="0" value="">
             <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amount contributed this year. Treated as a current-year deduction; contribution room is not modeled.</div>
           </div>
           <div class="field">
             <label for="sh2FhsaDeduction">FHSA Contribution (Deduction Claimed This Year)</label>
-            <input type="text" id="sh2FhsaDeduction" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="sh2FhsaDeduction" placeholder="0" value="">
             <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amount claimed this year. Contribution room is not modeled.</div>
           </div>
           <div class="field">
             <label for="sh2Deductions">Personal Deductions</label>
-            <input type="text" id="sh2Deductions" placeholder="0" value="">
+            <input type="text" inputmode="decimal" id="sh2Deductions" placeholder="0" value="">
           </div>
         </div>
 

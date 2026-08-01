@@ -27,19 +27,19 @@
     <div class="fee-cost-input-fields">
       <div class="fee-cost-field">
         <label for="starting_balance">{{ t('calculators.advisorFee.startingBalance') }}</label>
-        <input id="starting_balance" type="number" value="1000000" />
+        <input id="starting_balance" type="number" inputmode="decimal" step="any" value="1000000" />
       </div>
       <div class="fee-cost-field">
         <label for="monthly_contribution">{{ t('calculators.advisorFee.monthlyContribution') }}</label>
-        <input id="monthly_contribution" type="number" value="5000" />
+        <input id="monthly_contribution" type="number" inputmode="decimal" step="any" value="5000" />
       </div>
       <div class="fee-cost-field">
         <label for="horizon_years">{{ t('calculators.advisorFee.timeHorizon') }}</label>
-        <input id="horizon_years" type="number" value="15" />
+        <input id="horizon_years" type="number" inputmode="decimal" step="any" value="15" />
       </div>
       <div class="fee-cost-field">
         <label for="annual_return">{{ t('calculators.advisorFee.annualReturn') }}</label>
-        <input id="annual_return" type="text" value="7" placeholder="{{ t('calculators.advisorFee.annualReturnPlaceholder') }}" />
+        <input id="annual_return" type="text" inputmode="decimal" value="7" placeholder="{{ t('calculators.advisorFee.annualReturnPlaceholder') }}" />
       </div>
       <div class="slider-block">
         <div class="slider-top">
@@ -55,7 +55,7 @@
       <p class="helper">{{ t('calculators.advisorFee.defaultFeeHelper') }}</p>
       <div class="fee-cost-field">
         <label for="custom_advisor_fee">{{ t('calculators.advisorFee.advisorFeePct') }}</label>
-        <input id="custom_advisor_fee" type="text" placeholder="{{ t('calculators.advisorFee.advisorFeePlaceholder') }}" />
+        <input id="custom_advisor_fee" type="text" inputmode="decimal" placeholder="{{ t('calculators.advisorFee.advisorFeePlaceholder') }}" />
       </div>
       <div class="toggle">
         <input id="include_mer" type="checkbox" checked />
@@ -64,7 +64,7 @@
       <p class="helper">{{ t('calculators.advisorFee.merHelper') }}</p>
       <div class="fee-cost-field">
         <label for="mer_pct">{{ t('calculators.advisorFee.merPct') }}</label>
-        <input id="mer_pct" type="text" placeholder="{{ t('calculators.advisorFee.merPlaceholder') }}" />
+        <input id="mer_pct" type="text" inputmode="decimal" placeholder="{{ t('calculators.advisorFee.merPlaceholder') }}" />
       </div>
     </div>
   </section>

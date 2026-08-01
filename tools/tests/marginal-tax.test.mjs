@@ -52,7 +52,7 @@ function personalTax(fields) {
   );
 }
 
-test("MARGINAL_DELTA is 100 (not $1) to survive dollar-rounded net tax", () => {
+test("MARGINAL_DELTA is shared by marginal-rate finite differences", () => {
   assert.equal(MARGINAL_DELTA, 100);
 });
 
@@ -68,6 +68,20 @@ test("ON employment 120k vs 70k: current marginal exceeds retirement marginal", 
   const now = personalTax({ employmentIncome: 120000 });
   const ret = personalTax({ employmentIncome: 70000 });
   assert.ok(now.totals.marginalRate > ret.totals.marginalRate);
+});
+
+test("ON employment 125k-130k marginal does not oscillate from dollar rounding", () => {
+  const expected = 0.434096; // 26% federal + 11.16% Ontario x (1 + 20% + 36%) surtax.
+
+  for (const employmentIncome of [125000, 126000, 127000, 128000, 129000, 130000]) {
+    const result = personalTax({ employmentIncome });
+
+    assert.ok(
+      Math.abs(result.breakdown.marginalRates.employment - expected) < 1e-9,
+      `${employmentIncome} employment marginal should stay in the same ON tax band`
+    );
+    assert.equal(Math.round(result.totals.marginalRate * 100), 43);
+  }
 });
 
 test("eligible dividends only: employment marginal is null, combined uses dividend marginal", () => {

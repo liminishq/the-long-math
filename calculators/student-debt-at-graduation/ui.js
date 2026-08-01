@@ -92,7 +92,7 @@
       '-tuition">Annual tuition</label>' +
       '<input id="' +
       idBase +
-      '-tuition" type="number" inputmode="decimal" min="0" step="100" data-field="tuition" value="' +
+      '-tuition" type="number" inputmode="decimal" min="0" step="any" data-field="tuition" value="' +
       escapeAttr(p.tuition) +
       '" />' +
       "</div>" +
@@ -102,7 +102,7 @@
       '-books">Annual books, supplies, and ancillary fees</label>' +
       '<input id="' +
       idBase +
-      '-books" type="number" inputmode="decimal" min="0" step="50" data-field="books" value="' +
+      '-books" type="number" inputmode="decimal" min="0" step="any" data-field="books" value="' +
       escapeAttr(p.books) +
       '" />' +
       "</div>" +
@@ -112,7 +112,7 @@
       '-living">Annual living expenses</label>' +
       '<input id="' +
       idBase +
-      '-living" type="number" inputmode="decimal" min="0" step="100" data-field="living" value="' +
+      '-living" type="number" inputmode="decimal" min="0" step="any" data-field="living" value="' +
       escapeAttr(p.living) +
       '" />' +
       "</div>" +
@@ -122,7 +122,7 @@
       '-other">Annual other education costs (optional)</label>' +
       '<input id="' +
       idBase +
-      '-other" type="number" inputmode="decimal" min="0" step="50" data-field="other" value="' +
+      '-other" type="number" inputmode="decimal" min="0" step="any" data-field="other" value="' +
       escapeAttr(p.other) +
       '" />' +
       "</div>" +
@@ -132,7 +132,7 @@
       '-funding">Annual amount you can fund without borrowing</label>' +
       '<input id="' +
       idBase +
-      '-funding" type="number" inputmode="decimal" min="0" step="100" data-field="funding" value="' +
+      '-funding" type="number" inputmode="decimal" min="0" step="any" data-field="funding" value="' +
       escapeAttr(p.funding) +
       '" />' +
       '<p class="sd-funding-help">Include earnings, savings, family support, scholarships, bursaries, grants, or any other non-debt funding. Do not include student loans.</p>' +

@@ -123,13 +123,13 @@
             <h2 class="section-title">Inputs</h2>
             <div class="field">
               <label for="simple_excess_amount">Excess amount (CAD)</label>
-              <input id="simple_excess_amount" type="number" inputmode="decimal" min="0" step="100" value="" placeholder="0" />
+              <input id="simple_excess_amount" type="number" inputmode="decimal" min="0" step="any" value="" placeholder="0" />
               <div class="help-text">The over-contribution amount that stayed in the account</div>
               <div id="simple_excess_error" class="error-text" aria-live="polite"></div>
             </div>
             <div class="field">
               <label for="simple_months">Number of months at excess</label>
-              <input id="simple_months" type="number" inputmode="numeric" min="0" step="1" value="" placeholder="0" />
+              <input id="simple_months" type="number" inputmode="decimal" min="0" step="any" value="" placeholder="0" />
               <div class="help-text">Whole months the excess remained (e.g. 3 for three full months)</div>
               <div id="simple_months_error" class="error-text" aria-live="polite"></div>
             </div>
@@ -181,13 +181,13 @@
 
           <div class="field">
             <label for="starting_room">Starting available TFSA room (CAD)</label>
-            <input id="starting_room" type="number" inputmode="decimal" min="0" step="100" value="0" />
+            <input id="starting_room" type="number" inputmode="decimal" min="0" step="any" value="0" />
             <div class="help-text">Room you have at the start date (before any transactions in range)</div>
           </div>
 
           <div class="field">
             <label for="annual_jan1_room">Annual new TFSA room added each January 1 (CAD)</label>
-            <input id="annual_jan1_room" type="number" inputmode="decimal" min="0" step="100" value="7000" />
+            <input id="annual_jan1_room" type="number" inputmode="decimal" min="0" step="any" value="7000" />
             <div class="help-text">New room added on Jan 1 for each year in the range (use 0 if not applicable)</div>
           </div>
 

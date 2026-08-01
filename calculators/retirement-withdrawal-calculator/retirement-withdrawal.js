@@ -148,8 +148,10 @@
   function simulate() {
     const p0 = toNumber(portfolio.value);
     const rA = toNumber(annualReturn.value) / 100;
-    const years = Math.max(1, Math.round(toNumber(retirementYears.value)));
+    const requestedYears = Math.max(1, toNumber(retirementYears.value));
     const ppy = periodsPerYearFromSelect();
+    const totalPeriods = Math.max(1, Math.round(requestedYears * ppy));
+    const years = totalPeriods / ppy;
     const wType = readWithdrawalType();
     const inflOn = realToggle.checked;
     const infl = toNumber(inflationRate.value) / 100;
@@ -202,8 +204,6 @@
       periodicW = annualW / ppy;
       startWR = wr;
     }
-
-    const totalPeriods = years * ppy;
 
     const yearly = [];
     yearly.push({
@@ -280,6 +280,10 @@
       if ((p + 1) % ppy === 0) {
         closeYear((p + 1) / ppy);
       }
+    }
+
+    if (totalPeriods % ppy !== 0) {
+      closeYear(years);
     }
 
     var yearlyForUi = yearly;

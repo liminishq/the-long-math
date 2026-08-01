@@ -14,7 +14,7 @@
     if (!isFiniteNumber(P) || !isFiniteNumber(r) || !isFiniteNumber(years) || !isFiniteNumber(contrib)) return NaN;
     if (years < 0) return NaN;
 
-    const t = Math.round(years);
+    const t = years;
     if (t === 0) return P;
 
     if (r === 0) return P + contrib * t;
@@ -37,10 +37,9 @@
     }
     if (years < 0 || periodsPerYear <= 0) return NaN;
 
-    const t = Math.round(years);
-    if (t === 0) return P;
+    const n = Math.round(periodsPerYear * years);
+    if (n === 0) return P;
 
-    const n = Math.round(periodsPerYear * t);
     const i = Math.pow(1 + rAnnual, 1 / periodsPerYear) - 1;
 
     if (Math.abs(i) < 1e-15) return P + contribPerPeriod * n;
@@ -85,7 +84,7 @@
   }) {
     if (![P, years, rGross, fee, contrib].every(isFiniteNumber)) return NaN;
 
-    const t = Math.round(years);
+    const t = years;
     if (t <= 0) return 0;
 
     const targetNoFee = fvAnnual({ P, r: rGross, years: t, contrib });
