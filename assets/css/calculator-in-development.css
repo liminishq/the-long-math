@@ -4,40 +4,19 @@
 .calc-in-development {
   position: relative;
   margin: 0 0 24px;
-  min-height: 420px;
 }
 
-.calc-in-development-body {
-  opacity: 0.42;
-  filter: grayscale(0.15);
-  pointer-events: none;
-  user-select: none;
-}
-
-.calc-in-development-body input,
-.calc-in-development-body select,
-.calc-in-development-body textarea,
-.calc-in-development-body button {
-  opacity: 0.75;
-  cursor: not-allowed;
-}
-
+/* Sit in normal flow at the top of the calculator, then stick while scrolling. */
 .calc-in-development-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 20;
+  position: sticky;
+  top: 12px;
+  z-index: 30;
   display: flex;
-  align-items: flex-start;
   justify-content: center;
-  padding: 28px 16px 40px;
-  background: rgba(15, 22, 34, 0.28);
-  backdrop-filter: blur(1.5px);
-  -webkit-backdrop-filter: blur(1.5px);
-  border-radius: 18px;
-}
-
-html[data-theme="light"] .calc-in-development-overlay {
-  background: rgba(246, 244, 238, 0.42);
+  align-items: flex-start;
+  margin: 0 0 16px;
+  padding: 0 12px;
+  background: transparent;
 }
 
 .calc-in-development-card {
@@ -77,9 +56,41 @@ html[data-theme="light"] .calc-in-development-overlay {
   margin-top: 0.85rem;
 }
 
+.calc-in-development-body {
+  position: relative;
+  opacity: 0.42;
+  filter: grayscale(0.15);
+  pointer-events: none;
+  user-select: none;
+}
+
+.calc-in-development-body::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 18px;
+  background: rgba(15, 22, 34, 0.22);
+  pointer-events: none;
+}
+
+html[data-theme="light"] .calc-in-development-body::after {
+  background: rgba(246, 244, 238, 0.35);
+}
+
+.calc-in-development-body input,
+.calc-in-development-body select,
+.calc-in-development-body textarea,
+.calc-in-development-body button {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
 @media (max-width: 640px) {
   .calc-in-development-overlay {
-    padding: 18px 12px 28px;
+    top: 8px;
+    margin-bottom: 12px;
+    padding: 0 8px;
   }
 
   .calc-in-development-card {
