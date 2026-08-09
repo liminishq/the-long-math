@@ -44,12 +44,12 @@
 
         <div class="field">
           <label for="startingAmount">Starting amount</label>
-          <input id="startingAmount" type="number" inputmode="decimal" min="0" step="100" value="20000" />
+          <input id="startingAmount" type="number" inputmode="decimal" min="0" step="any" value="20000" />
         </div>
 
         <div class="field">
           <label for="monthlyContribution" id="contributionLabel">Monthly contribution</label>
-          <input id="monthlyContribution" type="number" inputmode="decimal" step="10" value="500" />
+          <input id="monthlyContribution" type="number" inputmode="decimal" step="any" value="500" />
           <p class="help muted">Use a negative amount to model recurring withdrawals.</p>
           <details class="contribution-disclosure">
             <summary style="cursor: pointer; margin-top: 8px; font-size: 12px; color: var(--muted);">How contributions are treated</summary>
@@ -61,13 +61,13 @@
 
         <div class="field">
           <label for="timeHorizon">Time horizon (years)</label>
-          <input id="timeHorizon" type="number" inputmode="numeric" min="1" max="60" step="1" value="25" />
+          <input id="timeHorizon" type="number" inputmode="decimal" min="0.01" max="60" step="any" value="25" />
         </div>
 
         <div class="field">
           <label for="expectedReturn">Expected annual return (%)</label>
           <div class="inline">
-            <input id="expectedReturn" type="number" inputmode="decimal" step="0.1" value="7" />
+            <input id="expectedReturn" type="number" inputmode="decimal" step="any" value="7" />
             <span class="unit">%</span>
           </div>
           <p class="help muted">Enter the nominal (pre-inflation) rate.</p>
@@ -76,7 +76,7 @@
         <div class="field">
           <label for="inflationRate">Assumed long-term inflation rate (%)</label>
           <div class="inline">
-            <input id="inflationRate" type="number" inputmode="decimal" step="0.1" value="2.5" />
+            <input id="inflationRate" type="number" inputmode="decimal" step="any" value="2.5" />
             <span class="unit">%</span>
           </div>
         </div>
@@ -286,6 +286,7 @@
 
   <div id="footerMount"></div>
 
+  <script src="/assets/js/calc-inputs.js"></script>
   <script src="/assets/js/investment-growth.engine.js"></script>
   <script src="/calculators/investment-calculator-inflation-adjusted/script.js"></script>
 </body>

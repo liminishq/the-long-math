@@ -15,7 +15,6 @@
   <script defer src="/assets/js/site.js"></script>
   <link rel="stylesheet" href="/calculators/investment-calculator-inflation-adjusted/styles.css" />
   <link rel="stylesheet" href="/calculators/investment-return-to-reach-goal/styles.css" />
-  <link rel="stylesheet" href="/assets/css/calculator-in-development.css" />
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
   <script>
   window.dataLayer = window.dataLayer || [];
@@ -35,16 +34,6 @@
       <p>Contributions are entered in today's dollars and increase with assumed inflation over time, so your real saving effort stays constant as income and prices rise. The required return is shown in both nominal (pre-inflation) and real (after-inflation) terms.</p>
     </header>
 
-    <div class="calc-in-development">
-      <div class="calc-in-development-overlay" role="status" aria-live="polite" aria-labelledby="calc-in-dev-heading">
-        <div class="calc-in-development-card">
-          <p class="calc-in-development-kicker">In development</p>
-          <h2 id="calc-in-dev-heading">This calculator is nearing completion</h2>
-          <p>The arithmetic is largely in place. Inputs are locked while a few refinements finish before it opens for public use.</p>
-          <p>Check back soon.</p>
-        </div>
-      </div>
-      <div class="calc-in-development-body">
     <div class="card">
       <div class="calc-grid">
         <article class="panel">
@@ -52,18 +41,18 @@
 
           <div class="field">
             <label for="startingAmount">Starting amount (today's dollars)</label>
-            <input id="startingAmount" type="number" inputmode="decimal" min="0" step="100" value="20000" />
+            <input id="startingAmount" type="number" inputmode="decimal" min="0" step="any" value="20000" />
           </div>
 
           <div class="field">
             <label for="targetBalance">Target portfolio value (today's dollars)</label>
-            <input id="targetBalance" type="number" inputmode="decimal" min="0" step="1000" value="1000000" />
+            <input id="targetBalance" type="number" inputmode="decimal" min="0" step="any" value="1000000" />
             <p class="help muted">Real buying power at the end of the horizon — not a future nominal balance.</p>
           </div>
 
           <div class="field">
             <label for="contributionAmount" id="contributionLabel">Monthly contribution (today's dollars)</label>
-            <input id="contributionAmount" type="number" inputmode="decimal" step="10" value="500" />
+            <input id="contributionAmount" type="number" inputmode="decimal" step="any" value="500" />
             <p class="help muted">Use a negative amount to model recurring withdrawals. Nominal contributions rise with inflation; real effort stays constant.</p>
             <details class="contribution-disclosure">
               <summary style="cursor: pointer; margin-top: 8px; font-size: 12px; color: var(--muted);">How contributions are treated</summary>
@@ -75,13 +64,13 @@
 
           <div class="field">
             <label for="timeHorizon">Time horizon (years)</label>
-            <input id="timeHorizon" type="number" inputmode="decimal" min="0.5" max="60" step="0.5" value="25" />
+            <input id="timeHorizon" type="number" inputmode="decimal" min="0.01" max="60" step="any" value="25" />
           </div>
 
           <div class="field">
             <label for="inflationRate">Assumed long-term inflation rate (%)</label>
             <div class="inline">
-              <input id="inflationRate" type="number" inputmode="decimal" step="0.1" value="2.5" />
+              <input id="inflationRate" type="number" inputmode="decimal" step="any" value="2.5" />
               <span class="unit">%</span>
             </div>
           </div>
@@ -215,8 +204,6 @@
         </div>
       </article>
     </div>
-      </div>
-    </div>
 
     <section class="newsletter-signup card" aria-labelledby="newsletter-calc-heading">
       <h2 id="newsletter-calc-heading" class="newsletter-signup-heading">Want new calculators like this when they go live?</h2>
@@ -247,10 +234,10 @@
           The target is stated in today's dollars (real purchasing power). Starting balance and contributions are also in today's dollars. Nominal contributions increase at the assumed inflation rate; real contributions stay constant.
         </p>
         <p style="margin: 0 0 12px; font-size: 14px; line-height: 1.6;">
-          The solver finds the nominal annual return that produces the target real balance. Compounding is annual; the simulation timestep matches contribution frequency. No taxes, fees, or account rules are modeled.
+          The solver finds the nominal annual return that produces the target real balance. Growth compounds each contribution period at the effective period rate derived from the annual return — (1 + r)<sup>1/m</sup> − 1 — not r/m. No taxes, fees, or account rules are modeled.
         </p>
         <p style="margin: 0; font-size: 14px; line-height: 1.6;">
-          Historical S&P 500 context (shown when required return exceeds 7%) uses total return with dividends over calendar years 1975–2024: approximately 12.1% annualized nominal and 8.2% annualized after inflation. Past performance is not a forecast.
+          Historical S&P 500 context (shown when the required real return exceeds 7%) uses total return with dividends over calendar years 1975–2024: approximately 12.1% annualized nominal and 8.2% annualized after inflation. Past performance is not a forecast.
         </p>
       </div>
     </details>
@@ -294,7 +281,7 @@
 
   <div id="footerMount"></div>
 
-  <script src="/assets/js/calculator-in-development.js"></script>
+  <script src="/assets/js/calc-inputs.js"></script>
   <script src="/assets/js/investment-growth.engine.js"></script>
   <script src="/assets/js/calculator-share.js"></script>
   <script src="/calculators/investment-return-to-reach-goal/ui.js"></script>

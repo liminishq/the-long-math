@@ -25,8 +25,12 @@
   const realExplainer = el("realExplainer");
 
   function toNumber(v) {
-    const x = Number(v);
-    return Number.isFinite(x) ? x : 0;
+    if (globalThis.TLM && TLM.calcInputs && typeof TLM.calcInputs.parseNumber === "function") {
+      return TLM.calcInputs.parseNumber(v, 2);
+    }
+    const x = Number(String(v).trim().replace(/,/g, ""));
+    if (!Number.isFinite(x)) return 0;
+    return Math.round(x * 100) / 100;
   }
 
   function clampNonNeg(x) {
@@ -34,10 +38,14 @@
   }
 
   function fmtMoney(x) {
+    if (globalThis.TLM && TLM.calcInputs && typeof TLM.calcInputs.formatMoney === "function") {
+      return TLM.calcInputs.formatMoney(x, 2);
+    }
     return new Intl.NumberFormat(undefined, {
       style: "currency",
       currency: "CAD",
-      maximumFractionDigits: 0,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     }).format(x);
   }
 

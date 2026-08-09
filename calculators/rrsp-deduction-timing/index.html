@@ -22,7 +22,6 @@
   <link rel="stylesheet" href="/assets/css/styles.css" />
   <link rel="stylesheet" href="/assets/css/calc-mobile.css" />
   <link rel="stylesheet" href="/calculators/rrsp-deduction-timing/styles.css" />
-  <link rel="stylesheet" href="/assets/css/calculator-in-development.css" />
   <script defer src="/assets/js/site.js"></script>
 
   <script type="application/ld+json">
@@ -90,16 +89,6 @@
       </div>
     </header>
 
-    <div class="calc-in-development">
-      <div class="calc-in-development-overlay" role="status" aria-live="polite" aria-labelledby="calc-in-dev-heading">
-        <div class="calc-in-development-card">
-          <p class="calc-in-development-kicker">In development</p>
-          <h2 id="calc-in-dev-heading">This calculator is nearing completion</h2>
-          <p>The arithmetic is largely in place. Inputs are locked while a few refinements finish before it opens for public use.</p>
-          <p>Check back soon.</p>
-        </div>
-      </div>
-      <div class="calc-in-development-body">
     <section class="calc-shell" aria-label="RRSP deduction timing calculator">
       <article class="calc-panel" aria-labelledby="inputs-heading">
         <h2 id="inputs-heading" class="panel-heading">Inputs</h2>
@@ -136,7 +125,7 @@
 
           <div class="field">
             <label for="years_to_wait">Years until the future income year</label>
-            <input id="years_to_wait" type="number" min="1" max="40" step="1" value="2" />
+            <input id="years_to_wait" type="number" inputmode="decimal" min="0.01" max="40" step="any" value="2" />
             <p class="help-text">Waiting delays the refund. This is the opportunity-cost clock.</p>
           </div>
 
@@ -151,7 +140,7 @@
 
           <div class="field">
             <label for="annual_rate">Annual return or debt rate on today’s refund (%)</label>
-            <input id="annual_rate" type="number" inputmode="decimal" step="0.1" value="6" />
+            <input id="annual_rate" type="number" inputmode="decimal" step="any" value="6" />
             <p class="help-text">Nominal annual rate. A high-interest debt payoff rate raises the bar for waiting.</p>
           </div>
         </div>
@@ -275,8 +264,6 @@
         </table>
       </div>
     </section>
-      </div>
-    </div>
 
     <section class="calc-panel detail-section" aria-labelledby="assumptions-heading">
       <h2 id="assumptions-heading" class="panel-heading">Scope and Assumptions</h2>
@@ -323,7 +310,6 @@
   </main>
 
   <div id="footerMount"></div>
-  <script src="/assets/js/calculator-in-development.js"></script>
   <script src="/assets/js/investment-growth.engine.js"></script>
   <script type="module" src="/calculators/rrsp-deduction-timing/ui.js"></script>
 </body>

@@ -42,12 +42,22 @@
   var lastResults = null;
 
   function toNumber(v) {
-    var x = Number(v);
-    return Number.isFinite(x) ? x : 0;
+    if (window.TLM && window.TLM.calcInputs && typeof window.TLM.calcInputs.parseNumber === "function") {
+      return window.TLM.calcInputs.parseNumber(v, 2);
+    }
+    var x = Number(String(v).trim().replace(/,/g, ""));
+    if (!Number.isFinite(x)) return 0;
+    return Math.round(x * 100) / 100;
   }
 
   function fmtMoney(x) {
-    return "$" + new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(x);
+    if (window.TLM && window.TLM.calcInputs && typeof window.TLM.calcInputs.formatMoney === "function") {
+      return window.TLM.calcInputs.formatMoney(x, 2);
+    }
+    return "$" + new Intl.NumberFormat(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(x);
   }
 
   function getContributionPeriodsPerYear() {

@@ -55,7 +55,7 @@
       <ul>
         <li>S = starting amount (today's dollars)</li>
         <li>C = contribution per period, entered in today's dollars</li>
-        <li>Y = time horizon in years (1–60)</li>
+        <li>Y = time horizon in years (fractional allowed; monthly frequency maps Y to round(12 × Y) periods)</li>
         <li>r<sub>nom</sub> = expected nominal annual return (percent, converted to decimal)</li>
         <li>π = assumed annual inflation rate (percent, converted to decimal)</li>
         <li>m = number of contribution periods per year (12 for monthly, 1 for yearly)</li>
@@ -152,7 +152,8 @@
       <ul>
         <li>
           All numeric inputs are read directly from the form fields. NaN or non-finite values are treated as 0 for amounts and as 0% for rates,
-          except that the time horizon is clamped between 1 and 60 years and rounded to the nearest whole year.
+          except that the time horizon is clamped to at most 60 years. Fractional horizons are converted to contribution periods
+          (for monthly contributions, T = round(12 × Y)), so 9.5 years becomes 114 months rather than being rounded to 10 years first.
         </li>
         <li>
           Contributions are entered in today's dollars and inflation-indexed: real contribution per period stays at C; nominal contributions rise with π.

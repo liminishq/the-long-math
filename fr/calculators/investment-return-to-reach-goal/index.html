@@ -16,7 +16,6 @@
   <script defer src="/assets/js/site.js"></script>
   <link rel="stylesheet" href="/calculators/investment-calculator-inflation-adjusted/styles.css" />
   <link rel="stylesheet" href="/calculators/investment-return-to-reach-goal/styles.css" />
-  <link rel="stylesheet" href="/assets/css/calculator-in-development.css" />
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
   <script>
   window.dataLayer = window.dataLayer || [];
@@ -38,16 +37,6 @@
       <p>Les cotisations sont en dollars d'aujourd'hui et augmentent selon l'inflation assumée, de sorte que l'effort d'épargne réel reste constant lorsque les revenus et les prix montent. Le rendement requis est affiché en termes nominaux (avant inflation) et réels (après inflation).</p>
     </header>
 
-    <div class="calc-in-development">
-      <div class="calc-in-development-overlay" role="status" aria-live="polite" aria-labelledby="calc-in-dev-heading">
-        <div class="calc-in-development-card">
-          <p class="calc-in-development-kicker">En développement</p>
-          <h2 id="calc-in-dev-heading">Ce calculateur est presque terminé</h2>
-          <p>L'arithmétique est en grande partie en place. Les entrées sont verrouillées le temps de quelques raffinements avant l'ouverture au public.</p>
-          <p>Revenez bientôt.</p>
-        </div>
-      </div>
-      <div class="calc-in-development-body">
     <div class="card">
       <div class="calc-grid">
         <article class="panel">
@@ -55,30 +44,30 @@
 
           <div class="field">
             <label for="startingAmount">Montant initial (dollars d'aujourd'hui)</label>
-            <input id="startingAmount" type="number" inputmode="decimal" min="0" step="100" value="20000" />
+            <input id="startingAmount" type="number" inputmode="decimal" min="0" step="any" value="20000" />
           </div>
 
           <div class="field">
             <label for="targetBalance">Valeur cible du portefeuille (dollars d'aujourd'hui)</label>
-            <input id="targetBalance" type="number" inputmode="decimal" min="0" step="1000" value="1000000" />
+            <input id="targetBalance" type="number" inputmode="decimal" min="0" step="any" value="1000000" />
             <p class="help muted">Pouvoir d'achat réel à la fin de l'horizon — pas un solde nominal futur.</p>
           </div>
 
           <div class="field">
             <label for="contributionAmount" id="contributionLabel">Cotisation mensuelle (dollars d'aujourd'hui)</label>
-            <input id="contributionAmount" type="number" inputmode="decimal" step="10" value="500" />
+            <input id="contributionAmount" type="number" inputmode="decimal" step="any" value="500" />
             <p class="help muted">Montant négatif pour modéliser des retraits récurrents. Les cotisations nominales augmentent avec l'inflation.</p>
           </div>
 
           <div class="field">
             <label for="timeHorizon">Horizon (années)</label>
-            <input id="timeHorizon" type="number" inputmode="decimal" min="0.5" max="60" step="0.5" value="25" />
+            <input id="timeHorizon" type="number" inputmode="decimal" min="0.01" max="60" step="any" value="25" />
           </div>
 
           <div class="field">
             <label for="inflationRate">Taux d'inflation à long terme assumé (%)</label>
             <div class="inline">
-              <input id="inflationRate" type="number" inputmode="decimal" step="0.1" value="2.5" />
+              <input id="inflationRate" type="number" inputmode="decimal" step="any" value="2.5" />
               <span class="unit">%</span>
             </div>
           </div>
@@ -207,8 +196,6 @@
         </div>
       </article>
     </div>
-      </div>
-    </div>
 
     <section class="card calc-related-bottom" aria-labelledby="calc-related-heading">
       <h2 id="calc-related-heading" class="section-title">Calculateurs et articles connexes</h2>
@@ -222,7 +209,7 @@
 
   <div id="footerMount"></div>
 
-  <script src="/assets/js/calculator-in-development.js"></script>
+  <script src="/assets/js/calc-inputs.js"></script>
   <script src="/assets/js/investment-growth.engine.js"></script>
   <script src="/assets/js/calculator-share.js"></script>
   <script src="/calculators/investment-return-to-reach-goal/ui.js"></script>

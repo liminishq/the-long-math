@@ -1,0 +1,99 @@
+/* Temporary gate for calculators still being refined before public use.
+   Remove .calc-in-development markup + this stylesheet link to reactivate. */
+
+.calc-in-development {
+  position: relative;
+  margin: 0 0 24px;
+}
+
+/* Sit in normal flow at the top of the calculator, then stick while scrolling. */
+.calc-in-development-overlay {
+  position: sticky;
+  top: 12px;
+  z-index: 30;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 0 0 16px;
+  padding: 0 12px;
+  background: transparent;
+}
+
+.calc-in-development-card {
+  width: min(520px, 100%);
+  padding: 28px 26px 26px;
+  border-radius: 18px;
+  border: 1px solid rgba(217, 180, 106, 0.55);
+  background: linear-gradient(180deg, var(--card), var(--card2));
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+  text-align: center;
+}
+
+.calc-in-development-kicker {
+  margin: 0 0 10px;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.calc-in-development-card h2 {
+  margin: 0 0 12px;
+  font-size: clamp(1.25rem, 2.4vw, 1.55rem);
+  line-height: 1.25;
+  color: var(--text);
+}
+
+.calc-in-development-card p {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.calc-in-development-card p + p {
+  margin-top: 0.85rem;
+}
+
+.calc-in-development-body {
+  position: relative;
+  opacity: 0.42;
+  filter: grayscale(0.15);
+  pointer-events: none;
+  user-select: none;
+}
+
+.calc-in-development-body::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 18px;
+  background: rgba(15, 22, 34, 0.22);
+  pointer-events: none;
+}
+
+html[data-theme="light"] .calc-in-development-body::after {
+  background: rgba(246, 244, 238, 0.35);
+}
+
+.calc-in-development-body input,
+.calc-in-development-body select,
+.calc-in-development-body textarea,
+.calc-in-development-body button {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .calc-in-development-overlay {
+    top: 8px;
+    margin-bottom: 12px;
+    padding: 0 8px;
+  }
+
+  .calc-in-development-card {
+    padding: 22px 18px 20px;
+  }
+}

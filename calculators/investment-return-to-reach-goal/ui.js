@@ -42,15 +42,28 @@
   var latestSharePayload = null;
 
   function toNumber(v) {
+    if (window.TLM && window.TLM.calcInputs && typeof window.TLM.calcInputs.parseNumber === "function") {
+      return window.TLM.calcInputs.parseNumber(v, 2);
+    }
     var x = Number(String(v).trim().replace(/,/g, ""));
-    return Number.isFinite(x) ? x : 0;
+    if (!Number.isFinite(x)) return 0;
+    return Math.round(x * 100) / 100;
   }
 
   function fmtMoney(x) {
-    return "$" + new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(x);
+    if (window.TLM && window.TLM.calcInputs && typeof window.TLM.calcInputs.formatMoney === "function") {
+      return window.TLM.calcInputs.formatMoney(x, 2);
+    }
+    return "$" + new Intl.NumberFormat(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(x);
   }
 
   function fmtPct(x) {
+    if (window.TLM && window.TLM.calcInputs && typeof window.TLM.calcInputs.formatPercentFromDecimal === "function") {
+      return window.TLM.calcInputs.formatPercentFromDecimal(x, 2);
+    }
     return (x * 100).toFixed(2) + "%";
   }
 
@@ -148,13 +161,13 @@
       returnWarning.hidden = false;
       if (isFrench()) {
         returnWarning.textContent =
-          "Un rendement nominal requis au-dessus de 7 % dépasse plusieurs hypothèses de planification à long terme. " +
+          "Un rendement réel requis (après inflation) au-dessus de 7 % dépasse plusieurs hypothèses de planification à long terme. " +
           "À titre de référence, sur la période " + period + ", le rendement total annualisé du S&P 500 " +
           "(dividendes réinvestis) était d'environ " + histNominalPct + " % en termes nominaux et " +
           histRealPct + " % après inflation. Les rendements passés ne préjugent pas des résultats futurs.";
       } else {
         returnWarning.textContent =
-          "A required nominal return above 7% exceeds many long-run planning assumptions. " +
+          "A required real return (after inflation) above 7% exceeds many long-run planning assumptions. " +
           "For context, over " + period + ", the S&P 500's annualized total return " +
           "(with dividends reinvested) was about " + histNominalPct + "% nominal and " +
           histRealPct + "% after inflation. Past performance is not a forecast.";
@@ -179,6 +192,17 @@
           "Even at a " + fmtPct(solved.nominalAnnualReturn) + " nominal return, the projected real balance (" +
           fmtMoney(solved.projectedFinalReal) + ") falls short of the target by " +
           fmtMoney(solved.shortfallReal) + " in today's dollars.";
+      }
+    } else if (solved.unreachableAtFloor) {
+      shortfallWarning.hidden = false;
+      if (isFrench()) {
+        shortfallWarning.textContent =
+          "Même avec un rendement nominal près de −100 %, le solde réel projeté (" +
+          fmtMoney(solved.projectedFinalReal) + ") dépasse encore l'objectif. Aucun rendement fini plus bas n'atteint exactement cette cible avec ces cotisations.";
+      } else {
+        shortfallWarning.textContent =
+          "Even near a −100% nominal return, the projected real balance (" +
+          fmtMoney(solved.projectedFinalReal) + ") still exceeds the target. No lower finite return reaches this goal exactly with these contributions.";
       }
     } else {
       shortfallWarning.hidden = true;

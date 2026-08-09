@@ -53,7 +53,7 @@
         <li>S = starting amount (today's dollars)</li>
         <li>T = target ending balance (today's dollars)</li>
         <li>C = contribution per period, entered in today's dollars</li>
-        <li>Y = time horizon in years (1–60)</li>
+        <li>Y = time horizon in years (two-decimal inputs supported, e.g. 16.33; monthly frequency maps Y to round(12 × Y) periods)</li>
         <li>π = assumed annual inflation rate (decimal)</li>
         <li>r<sub>nom</sub> = required nominal annual return (unknown, solved)</li>
         <li>r<sub>real,annual</sub> = real annual return derived from r<sub>nom</sub> and π</li>
@@ -80,22 +80,32 @@
         RealFinal = B<sub>T</sub> after m × Y periods.
       </p>
 
-      <h3>4. Solve for r<sub>nom</sub></h3>
+      <h3>4. Period compounding</h3>
+      <div class="formula-block">
+        r<sub>real,period</sub> = (1 + r<sub>real,annual</sub>)<sup>1/m</sup> − 1
+      </div>
       <p>
-        Find the smallest r<sub>nom</sub> ≥ 0 such that RealFinal ≥ T (within $0.01 tolerance). Binary search on r<sub>nom</sub>.
-        If RealFinal &lt; T even at r<sub>nom</sub> = 1000%, the calculator still reports 1000% and shows a shortfall warning.
+        Each contribution period applies this effective period rate (not r/m). The number of periods is N = round(m × Y); the effective horizon is N/m.
       </p>
 
-      <h3>5. Nominal target equivalent</h3>
+      <h3>5. Solve for r<sub>nom</sub></h3>
+      <p>
+        Find r<sub>nom</sub> (which may be negative) such that RealFinal ≈ T (within $0.01 tolerance) by binary search.
+        If the target is already met or exceeded at 0% nominal, the search continues below 0% rather than clamping to zero.
+        If RealFinal &lt; T even at r<sub>nom</sub> = 1000%, the calculator reports 1000% and shows a shortfall warning.
+        If RealFinal still exceeds T near −100% nominal (e.g. large contributions), the floor rate is reported with an unreachable-floor flag.
+      </p>
+
+      <h3>6. Nominal target equivalent</h3>
       <div class="formula-block">
         NominalTarget = T × (1 + π)<sup>Y</sup>
       </div>
 
       <h2>Historical context warning</h2>
       <p>
-        When required r<sub>nom</sub> &gt; 7%, the UI shows a contextual note: S&P 500 annualized total return (with dividends reinvested)
+        When required r<sub>real,annual</sub> &gt; 7%, the UI shows a contextual note: S&P 500 annualized total return (with dividends reinvested)
         over calendar years 1975–2024 was approximately 12.1% nominal and 8.2% after inflation.
-        This is historical context only — not a forecast or recommendation.
+        This is historical context only — not a forecast or recommendation. A high nominal return with modest real return does not trigger the warning.
       </p>
 
       <h2>Implementation</h2>
