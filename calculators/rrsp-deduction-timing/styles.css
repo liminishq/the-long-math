@@ -129,6 +129,48 @@
   background: linear-gradient(180deg, rgba(217, 180, 106, 0.12), var(--surface));
 }
 
+.verdict-card.split {
+  border-color: rgba(167, 139, 250, 0.55);
+  background: linear-gradient(180deg, rgba(167, 139, 250, 0.12), var(--surface));
+}
+
+.split-result {
+  margin-top: 14px;
+}
+
+.scenario-compare {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+@media (min-width: 720px) {
+  .scenario-compare {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.bar-fill.split {
+  background: linear-gradient(90deg, #a78bfa, rgba(167, 139, 250, 0.45));
+}
+
+.projection-box {
+  border-color: rgba(96, 165, 250, 0.55);
+  background: rgba(96, 165, 250, 0.1);
+}
+
+.benefits-box {
+  border-color: rgba(148, 163, 184, 0.55);
+  background: rgba(148, 163, 184, 0.08);
+}
+
+.warning-box p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+  font-size: 0.86rem;
+}
+
 .verdict-label {
   margin: 0 0 5px;
   font-size: 1.25rem;

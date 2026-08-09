@@ -79,17 +79,18 @@ export function test_ON_2026_employment_160k() {
   const r = compute({ year: 2026, province: 'ON', employmentIncome: 160000 });
   assertApprox(r.totals.taxableIncome, 158873, TOL, 'taxableIncome');
   assertApprox(r.totals.federalTax, 27902, TOL, 'federalTax');
-  assertApprox(r.totals.provTax, 16483, TOL, 'provTax');
-  assertApprox(r.totals.totalIncomeTax, 44385, TOL, 'totalIncomeTax');
+  // Provincial tax reflects CRA T4032-ON 2026 surtax thresholds ($5,818 / $7,446).
+  assertApprox(r.totals.provTax, 16486, TOL, 'provTax');
+  assertApprox(r.totals.totalIncomeTax, 44388, TOL, 'totalIncomeTax');
 }
 
 // --- ON eligible dividends (see ON-eligible-dividends-160000-2025.md) ---
 export function test_ON_2025_eligible_dividends_160k() {
   const r = compute({ year: 2025, province: 'ON', eligibleDividends: 160000 });
   assertApprox(r.totals.taxableIncome, 220800, TOL, 'taxableIncome');
-  assertApprox(r.totals.federalTax, 13358, TOL, 'federalTax');
+  assertApprox(r.totals.federalTax, 13494, TOL, 'federalTax');
   assertApprox(r.totals.provTax, 6902, TOL, 'provTax');
-  assertApprox(r.totals.totalIncomeTax, 20260, TOL, 'totalIncomeTax');
+  assertApprox(r.totals.totalIncomeTax, 20396, TOL, 'totalIncomeTax');
   assertApprox(r.totals.cpp, 0, 0, 'cpp');
 }
 

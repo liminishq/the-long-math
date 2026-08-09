@@ -232,7 +232,9 @@ test('Income splitting: shareholder personal tax matches canonical personal engi
   });
 
   assert.equal(ccpc.personal1.totalIncomeTax, canonical.totals.totalIncomeTax);
-  assert.equal(Math.round(ccpc.personal1.totalIncomeTax), 69_679);
+  // Grossed-up non-eligible dividends push net income above the federal BPA
+  // phase-out end, so the minimum BPA applies (higher federal tax than max-BPA snapshots).
+  assert.equal(Math.round(ccpc.personal1.totalIncomeTax), 69_910);
 });
 
 test('RRSP contribution reduces personal taxable income and personal tax', () => {

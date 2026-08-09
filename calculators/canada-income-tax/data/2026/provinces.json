@@ -1,5 +1,5 @@
 {
-  "_source": "Federal/provincial brackets: CRA tax rates page (2026). BC 2026 lowest rate 5.60% per BC Budget 2026 (gov.bc.ca personal tax rates). Quebec: Revenu Québec indexed parameters (not form-verified in calculator). Ontario surtax thresholds indexed in data (verify ON428). Ontario Health Premium: Ontario Taxation Act 2007 bands in-engine.",
+  "_source": "CRA T4032 2026 (Jan/July as applicable) + CRA indexation table. BC lowest rate 5.60% annual (Budget 2026 / gov.bc.ca; July T4032 payroll uses 6.14% proration). NL BPA $13,094 (T4008-NL July 2026; not $15,000 withholding proration). PE top bracket 20% annual (July T4032 payroll 21% proration). Ontario: T4032-ON surtax $5,818/$7,446, OTR basic $300, indexation 1.9%. MB brackets/BPA frozen. Quebec: Revenu Québec parameters (limited form verification).",
   "AB": {
     "name": "Alberta",
     "brackets": [
@@ -186,8 +186,9 @@
     ],
     "credits": {
       "basicPersonalAmount": {
-        "amount": 11188,
-        "rate": 0.087
+        "amount": 13094,
+        "rate": 0.087,
+        "_note": "NL Finance / CRA T4032-NL July 2026: annual BPA increased from $11,188 to $13,094 effective January 1, 2026. The $15,000 figure in mid-year payroll tables is a withholding proration, not the annual credit."
       },
       "cppEiCredit": {
         "rate": 0.087,
@@ -346,13 +347,19 @@
     "surtaxes": [
       {
         "name": "Ontario Surtax",
-        "threshold": 5824,
+        "threshold": 5818,
         "rate": 0.2,
-        "threshold2": 7453,
+        "threshold2": 7446,
         "rate2": 0.36,
-        "_note": "Dollar thresholds on Ontario tax after credits; indexed from 2025 for 2026 (verify Ontario tax forms)."
+        "_note": "CRA T4032-ON 2026: surtax on basic Ontario tax over $5,818 (20%) and $7,446 (additional 36%). Ontario indexing factor for 2026 is 1.9% (not the federal 2.0%)."
       }
     ],
+    "taxReduction": {
+      "basicPersonalAmount": 300,
+      "dependantUnder18": 575,
+      "dependantDisability": 575,
+      "_note": "CRA T4032-ON 2026 Ontario tax reduction personal amounts. Reduction = max(0, min(tax before reduction, 2×amounts − tax before reduction)). Engine models basic amount only (no dependants)."
+    },
     "premiums": [
       {
         "name": "Ontario Health Premium",
@@ -487,7 +494,12 @@
     "credits": {
       "basicPersonalAmount": {
         "amount": 16452,
-        "rate": 0.064
+        "maximum": 16452,
+        "minimum": 14829,
+        "phaseOutStart": 181440,
+        "phaseOutEnd": 258482,
+        "rate": 0.064,
+        "_note": "Yukon mirrors the federal enhanced BPA (CRA T4032-YT / indexation table), credited at the Yukon lowest rate."
       },
       "cppEiCredit": {
         "rate": 0.064,

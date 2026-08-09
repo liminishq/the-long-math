@@ -20,6 +20,11 @@
           "desc": "Estimates Canadian personal income tax with transparent breakdowns. Shows federal and provincial tax calculations, CPP/EI contributions, dividend gross-ups, capital gains inclusion, and detailed \"show the math\" sections."
         },
         {
+          "path": "/calculators/canada-income-tax-bracket/",
+          "title": "Canadian Income Tax Bracket Calculator",
+          "desc": "See your combined federal and provincial marginal and average tax rates, how far you are from the next tax threshold, and the progressive ordinary-income schedule for your province."
+        },
+        {
           "path": "/calculators/capital-gains-tax-canada/",
           "title": "Canada Capital Gains Tax Calculator",
           "desc": "Estimate capital gains tax on a Canadian asset sale. Enter ACB, proceeds, inclusion rate, and marginal tax rate. Handles capital losses and optional primary residence exemption (educational only)."

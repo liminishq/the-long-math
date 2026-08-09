@@ -20,6 +20,11 @@
           "desc": "Estime l’impôt sur le revenu des particuliers au Canada avec des ventilations transparentes. Affiche le calcul fédéral et provincial, les cotisations RPC/AE, les majorations de dividendes, l’inclusion des gains en capital et des sections « montrer le calcul » détaillées."
         },
         {
+          "path": "/calculators/canada-income-tax-bracket/",
+          "title": "Calculateur de tranches d’impôt sur le revenu (Canada)",
+          "desc": "Affiche votre taux marginal et votre taux moyen combinés (fédéral et provincial), la distance jusqu’au prochain seuil d’imposition et le barème progressif pour votre province."
+        },
+        {
           "path": "/calculators/capital-gains-tax-canada/",
           "title": "Calculateur d’impôt sur les gains en capital (Canada)",
           "desc": "Estime l’impôt sur les gains en capital lors de la vente d’un actif au Canada. Saisissez le prix de base ajusté, le produit, le taux d’inclusion et le taux marginal. Gère les pertes en capital et l’exemption pour résidence principale (à titre éducatif seulement)."

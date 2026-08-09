@@ -12,7 +12,11 @@
     "_noteLowestRate": "Schedule 1: federal non-refundable credits use the statutory lowest rate for 2026 (14% first bracket).",
     "basicPersonalAmount": {
       "amount": 16452,
-      "_note": "2026 CRA-indexed BPA (CRA indexation table). Credit = amount × lowestRateForCredits. Enhanced BPA phase-out is not implemented here."
+      "maximum": 16452,
+      "minimum": 14829,
+      "phaseOutStart": 181440,
+      "phaseOutEnd": 258482,
+      "_note": "2026 CRA indexation table. Maximum BPA when net income ≤ start of 29% bracket; minimum when net income ≥ start of 33% bracket; linear phase-out between. Credit = amount × lowestRateForCredits."
     },
     "canadaEmploymentAmount": {
       "amount": 1501,

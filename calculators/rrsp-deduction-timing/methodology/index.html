@@ -21,7 +21,7 @@
     <header class="deduction-hero">
       <p class="hero-kicker">Inspect the arithmetic</p>
       <h1>RRSP Deduction Timing Calculator</h1>
-      <p class="lead">This page documents the formulas, assumptions, and shared engines used to compare claiming an RRSP deduction now with saving it for a future higher-income year.</p>
+      <p class="lead">This page documents the formulas, assumptions, and shared engines used to compare claiming an RRSP deduction now with saving it for a future year, including partial splits and projected tax tables.</p>
       <p class="lead"><strong>No opinions. No hidden assumptions. Just arithmetic.</strong></p>
       <p><a class="inspect-arithmetic-btn" href="/calculators/rrsp-deduction-timing/">Back to Calculator</a></p>
     </header>
@@ -29,26 +29,29 @@
     <article class="calc-panel methodology-content">
       <section>
         <h2>1. What the calculator answers</h2>
-        <p>The calculator compares two uses of the same RRSP deduction amount:</p>
+        <p>The calculator compares uses of the same RRSP deduction amount D:</p>
         <ul>
-          <li><strong>Claim now:</strong> claim the RRSP deduction against current employment income, receive the current-year tax saving, then compound that refund for the waiting period.</li>
-          <li><strong>Claim later:</strong> do not claim the deduction now, then claim the same deduction against expected future employment income.</li>
+          <li><strong>Claim all now:</strong> claim D against current employment income, then compound that tax saving for the waiting period.</li>
+          <li><strong>Claim all later:</strong> claim D against expected future employment income.</li>
+          <li><strong>Optimized split:</strong> claim x now and carry D − x forward, choosing x to maximize future-dated value.</li>
         </ul>
-        <p>The output is the difference between those two values:</p>
-        <pre><code>Deferral Advantage = Future Tax Saving − Future Value of Current Refund</code></pre>
-        <p>A positive result means waiting is ahead in the model. A negative result means claiming now is ahead.</p>
+        <p>All strategy values are expressed at the future date in nominal dollars:</p>
+        <pre><code>Value(x) = TaxSavingNow(x) × (1 + r)^n + TaxSavingLater(D − x)
+
+Deferral Advantage (corners) = TaxSavingLater(D) − TaxSavingNow(D) × (1 + r)^n</code></pre>
       </section>
 
       <section>
         <h2>2. Inputs</h2>
         <ul>
-          <li><strong>Tax year:</strong> the Canadian federal and provincial or territorial tax data set used for both current and future comparisons.</li>
+          <li><strong>Current tax year:</strong> official Canadian tax tables for the claim-now year.</li>
           <li><strong>Province or territory:</strong> residence for provincial or territorial tax purposes.</li>
-          <li><strong>RRSP deduction amount:</strong> the contribution amount being compared for deduction timing.</li>
-          <li><strong>Current employment income:</strong> employment income before claiming the RRSP deduction now.</li>
-          <li><strong>Expected future employment income:</strong> employment income in the year when the deduction would be claimed later.</li>
-          <li><strong>Years until future income:</strong> the number of years the current refund could be invested or used against debt.</li>
-          <li><strong>Annual return or debt rate:</strong> the nominal annual rate applied to the current refund.</li>
+          <li><strong>RRSP deduction amount:</strong> contribution amount already available to deduct.</li>
+          <li><strong>Current employment income:</strong> before claiming the deduction now.</li>
+          <li><strong>Expected future employment income:</strong> nominal dollars in the future claim year.</li>
+          <li><strong>Years until future income:</strong> whole tax years only (integer 1–40 in the calculator UI). Fractional values are rejected, not rounded or truncated. Future tax year = current year + years (same integer used for compounding). A zero-year delay is not offered as a normal input because both claims would belong to the same tax year.</li>
+          <li><strong>Expected inflation:</strong> used only to project indexed tax parameters when an official future table is unavailable.</li>
+          <li><strong>Annual return or debt-interest savings:</strong> rate actually retained on today’s refund after fees and investment taxes, or debt interest avoided.</li>
         </ul>
       </section>
 
@@ -56,78 +59,86 @@
         <h2>3. Shared tax engine</h2>
         <p>The calculator uses the existing Canadian personal income tax engine:</p>
         <pre><code>calculators/canada-income-tax/js/tax.engine.js
-computePersonalTax(input)</code></pre>
-        <p>Before calculating, it loads the selected year’s tax data through:</p>
-        <pre><code>calculators/canada-income-tax/js/tax.data.js
-loadTaxData(year, { basePath: "/calculators/canada-income-tax/data" })</code></pre>
-        <p>The tax engine includes federal and provincial or territorial brackets, non-refundable credits, employment income, CPP, EI, RRSP deductions, FHSA deductions, dividends, capital gains, and other supported fields. This calculator intentionally uses the employment-income path only for the first draft.</p>
+computePersonalTax(input, { dataOverride })</code></pre>
+        <p>Official year folders load through <code>tax.data.js</code>. Future unpublished years resolve through:</p>
+        <pre><code>calculators/canada-income-tax/js/tax.projection.js
+resolveTaxDataForYear(year, { loadOfficialYear, federalInflationRate, ... })</code></pre>
+        <p>Indexation rules live in <code>tax.indexation.js</code>. Official folders always override projections.</p>
       </section>
 
       <section>
-        <h2>4. Current-year tax saving</h2>
-        <p>The current-year tax saving is calculated by running the tax engine twice:</p>
-        <pre><code>Current Tax Before = tax(current employment income, RRSP deduction = 0)
-Current Tax After  = tax(current employment income, RRSP deduction = deduction amount)
-
-Current Tax Saving = Current Tax Before − Current Tax After</code></pre>
-        <p>The calculator uses federal plus provincial or territorial <strong>income tax</strong>. CPP and EI are not part of the refund comparison because an RRSP deduction does not reduce payroll contributions.</p>
+        <h2>4. Tax saving</h2>
+        <pre><code>TaxSaving(income, deduction) =
+  tax(income, RRSP = 0) − tax(income, RRSP = deduction)</code></pre>
+        <p>The comparison uses federal plus provincial or territorial income tax. CPP and EI are excluded because an RRSP deduction does not reduce payroll contributions.</p>
       </section>
 
       <section>
-        <h2>5. Future-year tax saving</h2>
-        <p>The future-year tax saving uses the same tax-year rules selected by the user:</p>
-        <pre><code>Future Tax Before = tax(future employment income, RRSP deduction = 0)
-Future Tax After  = tax(future employment income, RRSP deduction = deduction amount)
-
-Future Tax Saving = Future Tax Before − Future Tax After</code></pre>
-        <p>This means the calculator does not forecast future tax legislation. It asks: using today’s known tax data, how large would the income jump need to be for waiting to beat claiming now?</p>
+        <h2>5. Future tax tables</h2>
+        <ol>
+          <li>If The Long Math has an official <code>data/{year}/</code> folder, that folder is used unchanged.</li>
+          <li>Otherwise the latest official year is projected mechanically:
+            <ul>
+              <li>indexed dollar parameters grow by the inflation factor;</li>
+              <li>tax rates and non-indexed parameters stay fixed;</li>
+              <li>payroll maxima are recomputed from rates × indexed bases where applicable;</li>
+              <li>Ontario Health Premium statutory bands in the engine stay fixed.</li>
+            </ul>
+          </li>
+        </ol>
+        <p>Federal and provincial inflation factors may differ in the projection API. The calculator UI currently applies one user inflation rate to both unless a caller overrides provincial rates in tests.</p>
+        <p>This is not a prediction of future tax policy.</p>
       </section>
 
       <section>
         <h2>6. Refund opportunity cost</h2>
-        <p>If the deduction is claimed now, the current tax saving is available immediately. The calculator compounds that amount for the waiting period using the shared investment growth engine:</p>
-        <pre><code>assets/js/investment-growth.engine.js
-InvestmentGrowthEngine.simulateInvestment({
-  startingAmount: Current Tax Saving,
-  contributionPerPeriod: 0,
-  years: Years To Wait,
-  nominalAnnualReturn: Annual Rate,
-  inflationAnnual: 0
-})</code></pre>
-        <p>The same formula is used for either investment return or debt payoff rate:</p>
-        <pre><code>Future Value of Current Refund = Current Tax Saving × (1 + annual rate)^years</code></pre>
+        <pre><code>Future Value of Current Refund = Current Tax Saving × (1 + r)^n</code></pre>
+        <p>When n = 0, future value equals the current tax saving. When 1 + r ≤ 0, compounding is treated as undefined.</p>
+        <p>Compare only amounts at the same date in the same dollar units. Do not compare a compounded nominal refund with an inflation-discounted present value of a future refund.</p>
       </section>
 
       <section>
-        <h2>7. Blended deduction rates</h2>
-        <p>The calculator reports blended deduction rates instead of relying only on the top marginal rate:</p>
-        <pre><code>Current Blended Rate = Current Tax Saving ÷ Deduction Amount
-Future Blended Rate  = Future Tax Saving ÷ Deduction Amount</code></pre>
-        <p>This matters because a large RRSP deduction can cross more than one federal or provincial bracket. The blended rate is the actual tax saved per dollar of the deduction under the model.</p>
+        <h2>7. Partial-deduction optimizer</h2>
+        <p>Canadian tax is piecewise in deduction space. The optimizer evaluates economically meaningful breakpoints:</p>
+        <ul>
+          <li>x = 0 and x = D;</li>
+          <li>deduction amounts that land current taxable income on federal/provincial/OHP kink points;</li>
+          <li>deduction amounts that land future taxable income on those kink points;</li>
+          <li>a deterministic coarse grid as a safety net.</li>
+        </ul>
+        <p>Each candidate uses the shared tax engine for actual incremental tax savings. Tiny splits that do not beat both corners by a meaningful dollar threshold are collapsed to the better corner.</p>
       </section>
 
       <section>
-        <h2>8. Break-even formulas</h2>
-        <p>The future tax saving must at least equal the future value of the refund available today:</p>
-        <pre><code>Required Future Tax Saving = Future Value of Current Refund</code></pre>
-        <p>Converted to a blended deduction rate:</p>
-        <pre><code>Required Future Blended Rate =
-  Required Future Tax Saving ÷ Deduction Amount</code></pre>
-        <p>The break-even annual return on today’s refund is:</p>
+        <h2>8. Break-even return</h2>
         <pre><code>Break-Even Annual Return =
-  (Future Tax Saving ÷ Current Tax Saving)^(1 ÷ years) − 1</code></pre>
-        <p>If the actual investment return or debt payoff rate is higher than this break-even rate, claiming now wins. If it is lower, waiting may win.</p>
+  (Future Tax Saving ÷ Current Tax Saving)^(1 ÷ n) − 1</code></pre>
+        <p>Defined only when n &gt; 0 and current tax saving &gt; 0. If future tax saving is 0, the break-even rate is −100%.</p>
+        <p>Invariant at the break-even rate: FV(current tax saving) ≈ future tax saving.</p>
       </section>
 
       <section>
         <h2>9. Assumptions and limitations</h2>
+        <h3>Included in the income-tax difference</h3>
         <ul>
-          <li>Employment income only in the first draft.</li>
-          <li>No Canada Child Benefit, GST/HST credit, OAS recovery tax, GIS, tuition credits, medical credits, spousal credits, or other benefit interactions.</li>
-          <li>No alternative minimum tax modelling.</li>
-          <li>RRSP contribution room is not calculated here. Use the <a href="/calculators/rrsp-contribution-room-tax-refund/">RRSP contribution room and tax refund calculator</a> for room and deduction-limit estimates.</li>
-          <li>Future income is evaluated using the selected year’s tax data, not forecast legislation.</li>
-          <li>Inflation is not separately modelled in the first draft. The opportunity-cost rate is nominal.</li>
+          <li>Federal and provincial/territorial bracket tax on employment income.</li>
+          <li>Federal enhanced Basic Personal Amount with income-dependent phase-out.</li>
+          <li>Provincial/territorial BPA and other non-refundable credits modeled by the shared engine (employment path).</li>
+          <li>Ontario surtax, Ontario Tax Reduction (basic amount only; no dependants), and Ontario Health Premium.</li>
+          <li>Yukon-style enhanced territorial BPA where configured.</li>
+        </ul>
+        <h3>Not included (benefits / transfers — not the same as omitted income-tax lines)</h3>
+        <ul>
+          <li>Canada Child Benefit, GST/HST credit, GIS, and other income-tested benefits or clawbacks.</li>
+          <li>OAS recovery tax.</li>
+        </ul>
+        <h3>Income-tax engine limitations</h3>
+        <ul>
+          <li>Employment income path only.</li>
+          <li>Specialized credits out of scope (for example BC tax reduction, Alberta supplemental credit, tuition, medical, spousal, AMT).</li>
+          <li>RRSP contribution room is not calculated here.</li>
+          <li>Future tax legislation is not predicted; only mechanical indexation of current rules when official tables are missing.</li>
+          <li>Multi-year allocation across several future incomes is not in this release.</li>
         </ul>
       </section>
 
@@ -139,6 +150,7 @@ Future Blended Rate  = Future Tax Saving ÷ Deduction Amount</code></pre>
           <li><a href="/articles/investing-and-financial-literacy/rrsp-deduction-timing/">RRSP Deduction Timing: Claim Now or Save It for Later?</a> — article explaining the decision framework.</li>
           <li><a href="https://www.canada.ca/en/revenue-agency/services/forms-publications/tax-packages-years/general-income-tax-benefit-package/5000-s7.html" target="_blank" rel="noopener noreferrer">CRA Schedule 7</a> — RRSP contributions and unused contributions.</li>
           <li><a href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/deductions-credits-expenses/line-20800-rrsp-deduction.html" target="_blank" rel="noopener noreferrer">CRA line 20800</a> — RRSP deduction.</li>
+          <li><a href="https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4032-payroll-deductions-tables/t4032on-jan/t4032on-january-general-information.html" target="_blank" rel="noopener noreferrer">CRA T4032-ON 2026</a> — Ontario brackets, BPA, surtax, health premium.</li>
         </ul>
       </section>
     </article>

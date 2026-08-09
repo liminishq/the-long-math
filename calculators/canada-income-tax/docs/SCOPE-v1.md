@@ -14,7 +14,8 @@ For in-scope inputs, unrounded arithmetic matches **hand-traced CRA federal and 
 | Provinces | All provinces/territories in `provinces.json` (provincial logic signed off per wave) |
 | Golden-trace focus | **BC** and **ON** first; then all provinces |
 | Income types | Employment, self-employment (income tax only), other income, eligible/non-eligible dividends, capital gains (50% inclusion), RRSP/FHSA/estimated deductions |
-| Federal | Schedule 8 (employment CPP path), net income / taxable income, Schedule 1 brackets and non-refundable credits, federal dividend gross-up/DTC per `dividends.json` |
+| Federal | Schedule 8 (employment CPP path), net income / taxable income, Schedule 1 brackets and non-refundable credits including **enhanced BPA phase-out**, federal dividend gross-up/DTC per `dividends.json` |
+| Ontario extras | Surtax, Ontario Tax Reduction (basic amount), Ontario Health Premium |
 | Payroll (employment) | CRA annual maximums; base CPP → line 30800 credit; first additional + CPP2 → line 22215 deduction; EI → credit only |
 
 ## Out of scope (v1) — document on methodology and UI
@@ -23,7 +24,9 @@ For in-scope inputs, unrounded arithmetic matches **hand-traced CRA federal and 
 - Self-employment **CPP/QPP** (lines 22200, 31000) — self-employment **income** counts for tax; **no** CPP/EI calculated
 - Multiple employers, T4 aggregation, Schedule 8 overpayment (line 44800)
 - Working beneficiaries, CPT20/CPT30, partial-year Schedule 8 proration
-- Enhanced federal BPA phase-out, AMT, OAS clawback, most secondary credits
+- AMT, OAS clawback, most secondary credits (age amount, caregiver, medical, tuition, etc.)
+- Ontario Tax Reduction dependant amounts (engine models the basic personal amount only)
+- BC tax reduction; Alberta supplemental tax credit
 
 ## Rounding
 

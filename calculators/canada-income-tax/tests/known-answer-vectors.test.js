@@ -62,9 +62,11 @@ export function test_ON_2025_eligible_dividends_only_160k() {
   const result = computePersonalTax(input, { dataOverride: data });
 
   assertApprox(result.totals.taxableIncome, 220800, TOLERANCE, 'taxableIncome (160000 * 1.38)');
-  assertApprox(result.totals.federalTax, 13358, TOLERANCE, 'federalTax');
+  // Federal tax includes enhanced BPA phase-out at net income $220,800 (between
+  // the 29% and 33% bracket thresholds). Older snapshots used the maximum BPA only.
+  assertApprox(result.totals.federalTax, 13494, TOLERANCE, 'federalTax');
   assertApprox(result.totals.provTax, 6902, TOLERANCE, 'provTax');
-  assertApprox(result.totals.totalIncomeTax, 20260, TOLERANCE, 'totalIncomeTax');
+  assertApprox(result.totals.totalIncomeTax, 20396, TOLERANCE, 'totalIncomeTax');
   assertApprox(result.totals.takeHomeAfterPayroll, 139530, 2500, 'takeHomeAfterPayroll'); // 160000 - totalTax; tighten when methodology locked
   if (result.totals.totalIncome !== 160000) {
     throw new Error(`totalIncome: expected 160000, got ${result.totals.totalIncome}`);

@@ -12,7 +12,11 @@
     "_noteLowestRate": "Schedule 1: BPA and Canada employment credit use 15% (statutory), not the effective first-bracket rate.",
     "basicPersonalAmount": {
       "amount": 16129,
-      "_note": "2025 CRA-indexed BPA. Credit = amount × lowestRateForCredits (15%). Phases out above net income $177,882 (not implemented here)."
+      "maximum": 16129,
+      "minimum": 14538,
+      "phaseOutStart": 177882,
+      "phaseOutEnd": 253414,
+      "_note": "2025 CRA indexation table. Maximum BPA when net income ≤ start of 29% bracket; minimum when net income ≥ start of 33% bracket; linear phase-out between. Credit = amount × lowestRateForCredits (15%)."
     },
     "canadaEmploymentAmount": {
       "amount": 1471,
@@ -25,5 +29,5 @@
   "rrspRoomRate": 0.18,
   "rrspDollarMax": 32490,
   "_source": "CRA: canada.ca/en/revenue-agency/.../canadian-income-tax-rates-individuals-current-previous-years.html and .../adjustment-personal-income-tax-benefit-amounts.html",
-  "_note": "2025 CRA-indexed brackets and BPA ($16,129). Canada employment amount $1,471 (CRA indexation table). RRSP 2025: 18% of prior-year earned income, max $32,490."
+  "_note": "2025 CRA-indexed brackets and BPA ($16,129 max / $14,538 min). Canada employment amount $1,471 (CRA indexation table). RRSP 2025: 18% of prior-year earned income, max $32,490."
 }

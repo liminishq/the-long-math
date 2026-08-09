@@ -188,18 +188,20 @@
       </div>
 
       <h4 id="provincial-ontario">3.2 Ontario-specific flow</h4>
-      <p>Ontario follows ON428 ordering exactly:</p>
+      <p>Ontario follows ON428 / CRA T4032-ON ordering:</p>
       <ol>
         <li>Compute base bracket tax on TI.</li>
         <li>Subtract Ontario non-refundable credits (Basic Personal Amount, etc.).</li>
         <li>Compute surtax on tax after credits (with two tiers).</li>
         <li>Add surtax.</li>
         <li>Subtract Ontario dividend tax credit.</li>
+        <li>Apply Ontario Tax Reduction (basic personal amount only in this engine; dependants not modeled).</li>
         <li>Add Ontario Health Premium based on TI.</li>
       </ol>
       <div class="formula-block">
-        Tax<sub>ON</sub> = max(0, TaxAfterCredits<sub>ON</sub> + Surtax<sub>ON</sub> − DTC<sub>ON</sub>) + OHP
+        Tax<sub>ON</sub> = max(0, TaxAfterCredits<sub>ON</sub> + Surtax<sub>ON</sub> − DTC<sub>ON</sub> − OTR<sub>ON</sub>) + OHP
       </div>
+      <p>Federal Basic Personal Amount uses the enhanced amount with linear phase-out between the starts of the 29% and 33% federal brackets (CRA indexation table), credited at the statutory lowest federal rate.</p>
 
       <h3 id="payroll">4. CPP and EI (annual return, not payroll withholding)</h3>
       <p>Employee CPP uses CRA YMPE/YAMPE and rates in <code>payroll.json</code> (Schedule 8 / T4), not per-paycheque withholding tables.</p>

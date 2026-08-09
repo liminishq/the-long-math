@@ -10,6 +10,10 @@ import {
   combinedBracketMarginalRate,
   isMarginalRateInBounds
 } from './marginal-tax.js';
+import {
+  calculateOntarioTaxReduction,
+  resolveEnhancedBasicPersonalAmount
+} from './tax.bpa.js';
 
 export { MARGINAL_DELTA } from './marginal-tax.js';
 
@@ -142,6 +146,8 @@ function calculateOntarioHealthPremium(taxableIncome, _taxYear) {
  * @param {number} employmentIncome - Employment income (for Canada Employment Amount eligibility)
  * @param {Object} dividends - Pre-computed dividend amounts (eligibleDTCFed, nonEligibleDTCFed)
  * @param {Object} federal - Federal tax data (brackets, credits)
+ * @param {Object} [opts]
+ * @param {number} [opts.netIncome] - Net income for enhanced BPA phase-out (defaults to taxableIncome)
  * @returns {Object} Federal tax breakdown
  */
 function calculateFederalTax(taxableIncome, cppCreditable, ei, employmentIncome, dividends, federal, opts = {}) {
@@ -153,11 +159,27 @@ function calculateFederalTax(taxableIncome, cppCreditable, ei, employmentIncome,
   let totalCredits = 0;
 
   const creditRate = federal.credits.lowestRateForCredits ?? Math.min(...federal.brackets.map(b => b.rate));
+  const netIncomeForBpa = opts.netIncome != null ? opts.netIncome : taxableIncome;
 
   if (federal.credits.basicPersonalAmount) {
-    const base = federal.credits.basicPersonalAmount.amount;
+    const bpa = resolveEnhancedBasicPersonalAmount(
+      federal.credits.basicPersonalAmount,
+      netIncomeForBpa,
+      federal.brackets
+    );
+    const base = bpa.amount;
     const credit = base * creditRate;
-    creditBases.push({ name: 'Basic Personal Amount', base, rate: creditRate, credit });
+    creditBases.push({
+      name: 'Basic Personal Amount',
+      base,
+      rate: creditRate,
+      credit,
+      maximum: bpa.maximum,
+      minimum: bpa.minimum,
+      phaseOutStart: bpa.phaseOutStart,
+      phaseOutEnd: bpa.phaseOutEnd,
+      phased: bpa.phased
+    });
     credits.push({ name: 'Basic Personal Amount', amount: credit });
     totalCredits += credit;
   }
@@ -228,15 +250,31 @@ function calculateProvincialTaxGeneric(taxableIncome, prov, dividends, cppCredit
   let totalCredits = 0;
 
   const defaultProvCreditRate = Math.min(...prov.brackets.map(b => b.rate));
+  const netIncomeForBpa = opts.netIncome != null ? opts.netIncome : taxableIncome;
 
   if (prov.credits && prov.credits.basicPersonalAmount) {
     const configuredRate = prov.credits.basicPersonalAmount.rate;
     const creditRate = typeof configuredRate === 'number'
       ? configuredRate
       : defaultProvCreditRate;
-    const base = prov.credits.basicPersonalAmount.amount;
+    const bpa = resolveEnhancedBasicPersonalAmount(
+      prov.credits.basicPersonalAmount,
+      netIncomeForBpa,
+      null
+    );
+    const base = bpa.amount;
     const credit = base * creditRate;
-    creditBases.push({ name: 'Basic Personal Amount', base, rate: creditRate, credit });
+    creditBases.push({
+      name: 'Basic Personal Amount',
+      base,
+      rate: creditRate,
+      credit,
+      maximum: bpa.maximum,
+      minimum: bpa.minimum,
+      phaseOutStart: bpa.phaseOutStart,
+      phaseOutEnd: bpa.phaseOutEnd,
+      phased: bpa.phased
+    });
     credits.push({ name: 'Basic Personal Amount', amount: credit });
     totalCredits += credit;
   }
@@ -337,13 +375,14 @@ function calculateProvincialTaxGeneric(taxableIncome, prov, dividends, cppCredit
 }
 
 /**
- * Ontario-specific provincial tax calculation, mirroring ON428 ordering exactly:
+ * Ontario-specific provincial tax calculation, mirroring ON428 ordering:
  * 1. brackets → basic tax
  * 2. subtract non-refundable credits (BPA etc.), clamp at 0
  * 3. compute surtax on post-credit tax
  * 4. add surtax
  * 5. subtract dividend tax credit (after surtax), clamp at 0
- * 6. add Ontario Health Premium (piecewise, capped at $900)
+ * 6. Ontario Tax Reduction (CRA T4032-ON / ON428)
+ * 7. add Ontario Health Premium (piecewise, capped at $900)
  */
 function calculateOntarioTax(taxableIncome, prov, dividends, cppCreditable, ei, opts = {}, taxYear = 2025) {
   const { bracketLines, baseTax } = calculateBracketTax(taxableIncome, prov.brackets, opts);
@@ -400,7 +439,6 @@ function calculateOntarioTax(taxableIncome, prov, dividends, cppCreditable, ei, 
   const taxWithSurtax = taxAfterCredits + surtax;
 
   // Step 5: Ontario dividend tax credit AFTER surtax.
-  // For eligible dividends: credit = grossed_up_eligible × 0.10 (encoded in dividends.eligibleDTCProv).
   let provincialDividendCredits = 0;
   if (dividends) {
     provincialDividendCredits =
@@ -409,16 +447,19 @@ function calculateOntarioTax(taxableIncome, prov, dividends, cppCreditable, ei, 
   }
   const taxAfterDividendCredits = Math.max(0, taxWithSurtax - provincialDividendCredits);
 
-  // Step 6: Ontario Health Premium on taxableIncome, added after credits, surtax, and DTC.
+  // Step 6: Ontario Tax Reduction (before OHP).
+  const otr = calculateOntarioTaxReduction(taxAfterDividendCredits, prov.taxReduction || {});
+  const provincialTaxReduction = otr.reduction;
+  const minimumTaxAdjustments = 0;
+  const taxAfterReductions = Math.max(0, taxAfterDividendCredits - provincialTaxReduction);
+
+  // Step 7: Ontario Health Premium on taxableIncome.
   const premiums = [];
   const healthPremium = calculateOntarioHealthPremium(taxableIncome, taxYear);
   if (healthPremium > 0) {
     premiums.push({ name: 'Ontario Health Premium', amount: healthPremium });
   }
 
-  const provincialTaxReduction = 0;
-  const minimumTaxAdjustments = 0;
-  const taxAfterReductions = taxAfterDividendCredits; // no reductions implemented yet
   const netTax = roundNetTax(taxAfterReductions + healthPremium, opts);
 
   return {
@@ -742,7 +783,10 @@ function runFullCalculation(input, dataCtx, runOpts = {}) {
   );
   const taxableIncome = netIncome;
 
-  const calcOpts = runOpts.roundToDollar === false ? { roundToDollar: false } : {};
+  const calcOpts = {
+    ...(runOpts.roundToDollar === false ? { roundToDollar: false } : {}),
+    netIncome
+  };
   const federal = calculateFederalTax(
     taxableIncome, cppCreditable, ei, employmentIncome, dividends, dataCtx.federal, calcOpts
   );
@@ -809,7 +853,13 @@ export function computePersonalTax(input, opts = {}) {
   } = normalizedInput;
 
   const dataCtx = buildDataContext(opts);
-  const result = runFullCalculation(normalizedInput, dataCtx);
+  // Allow unrounded net tax for threshold / next-dollar marginal analysis.
+  // Display paths leave roundToDollar unset (default: round federal and provincial net tax to dollars).
+  const result = runFullCalculation(
+    normalizedInput,
+    dataCtx,
+    opts.roundToDollar === false ? { roundToDollar: false } : {}
+  );
   const {
     totalIncome,
     grossIncomeForTax,
@@ -871,9 +921,9 @@ export function computePersonalTax(input, opts = {}) {
     if (year === 2025 && province === 'ON' && eligibleDividends === 160000 && noEmployment && otherIncome === 0 &&
         nonEligibleDividends === 0 && capitalGains === 0) {
       assertCraTrace(taxableIncome, 220800, 'taxableIncome');
-      assertCraTrace(federalTax, 13358, 'federalTax');
+      assertCraTrace(federalTax, 13494, 'federalTax');
       assertCraTrace(provTax, 6902, 'provTax');
-      assertCraTrace(totalIncomeTax, 20260, 'totalIncomeTax');
+      assertCraTrace(totalIncomeTax, 20396, 'totalIncomeTax');
     }
   }
 

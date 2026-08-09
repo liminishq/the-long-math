@@ -352,6 +352,12 @@
         "rate2": 0.36
       }
     ],
+    "taxReduction": {
+      "basicPersonalAmount": 294,
+      "dependantUnder18": 544,
+      "dependantDisability": 544,
+      "_note": "CRA T4032-ON 2025 Ontario tax reduction personal amounts. Engine models basic amount only."
+    },
     "premiums": [
       {
         "name": "Ontario Health Premium",
