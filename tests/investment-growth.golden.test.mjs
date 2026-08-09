@@ -54,8 +54,8 @@ test("solveRequiredNominalReturn inverts forward simulation", () => {
   assert.ok(Math.abs(solved.projectedFinalReal - forward.finalBalanceReal) < 1);
 });
 
-test("fractional years use period count, not rounded whole years", () => {
-  const result = Engine.simulateInvestment({
+test("fractional years keep exact horizon; contribution dates stay inside Y", () => {
+  const monthly = Engine.simulateInvestment({
     startingAmount: 0,
     contributionPerPeriod: 1000,
     years: 9.5,
@@ -65,9 +65,39 @@ test("fractional years use period count, not rounded whole years", () => {
     contributionAtBeginning: false,
     indexContributionsToInflation: true,
   });
-  assert.equal(result.years, 9.5);
-  assert.equal(result.periods, 114);
-  assert.equal(result.finalBalanceReal, 1000 * 114);
+  assert.equal(monthly.years, 9.5);
+  assert.equal(monthly.periods, 114);
+  assert.equal(monthly.finalBalanceReal, 1000 * 114);
+
+  const yearly = Engine.simulateInvestment({
+    startingAmount: 100000,
+    contributionPerPeriod: 0,
+    years: 9.5,
+    nominalAnnualReturn: 0.07,
+    inflationAnnual: 0,
+    contributionPeriodsPerYear: 1,
+    contributionAtBeginning: false,
+  });
+  assert.equal(yearly.years, 9.5);
+  assert.ok(Math.abs(yearly.finalBalanceReal - 100000 * Math.pow(1.07, 9.5)) < 1e-6);
+});
+
+test("zero-contribution fractional horizon ignores contribution frequency", () => {
+  const expected = Math.pow(2, 1 / 9.5) - 1;
+  for (const m of [1, 12]) {
+    for (const beginning of [false, true]) {
+      const solved = Engine.solveRequiredNominalReturn({
+        startingAmount: 100000,
+        contributionPerPeriod: 0,
+        years: 9.5,
+        inflationAnnual: 0,
+        contributionPeriodsPerYear: m,
+        contributionAtBeginning: beginning,
+        targetBalanceReal: 200000,
+      });
+      assert.ok(Math.abs(solved.nominalAnnualReturn - expected) < 1e-7);
+    }
+  }
 });
 
 test("goal solver and forward simulator match on fractional horizon", () => {

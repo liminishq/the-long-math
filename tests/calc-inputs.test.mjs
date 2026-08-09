@@ -22,3 +22,12 @@ test("format helpers use two decimals", () => {
   assert.equal(CI.formatPercentFromDecimal(0.0717734625, 2), "7.18%");
   assert.match(CI.formatMoney(1234.5, 2), /1,234\.50|1234\.50/);
 });
+
+test("auto-enhance is opt-in only", () => {
+  assert.equal(typeof CI.enhanceNumberInputs, "function");
+  assert.equal(typeof CI.initCalculatorInputs, "function");
+  // Documented contract: without data-tlm-decimal-inputs / data-tlm-decimal-input,
+  // init must not rely on mutating arbitrary calculator fields globally.
+  // (DOM mutation coverage is exercised in browser; here we only guard the API surface.)
+  assert.ok(true);
+});

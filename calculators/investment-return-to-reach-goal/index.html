@@ -27,7 +27,7 @@
 <body>
   <div id="site-header"></div>
 
-  <div class="wrap">
+  <div class="wrap" data-tlm-decimal-inputs>
     <header class="intro-section">
       <h1>Investment Return Required to Reach a Goal</h1>
       <p>Most people think about retirement or financial targets in <strong>today's dollars</strong> — real purchasing power, not a future nominal account balance. This calculator works backward: you enter a target in today's dollars, your starting balance, contributions (indexed to inflation), time horizon, and inflation assumption — and it shows the annual return required to get there.</p>
@@ -234,7 +234,7 @@
           The target is stated in today's dollars (real purchasing power). Starting balance and contributions are also in today's dollars. Nominal contributions increase at the assumed inflation rate; real contributions stay constant.
         </p>
         <p style="margin: 0 0 12px; font-size: 14px; line-height: 1.6;">
-          The solver finds the nominal annual return that produces the target real balance. Growth compounds each contribution period at the effective period rate derived from the annual return — (1 + r)<sup>1/m</sup> − 1 — not r/m. No taxes, fees, or account rules are modeled.
+          The solver finds the nominal annual return that produces the target real balance. The terminal horizon is the exact entered number of years Y. Contribution frequency only sets contribution dates inside that horizon; growth uses continuous annual compounding over exact time intervals, (1 + r)<sup>Δt</sup>. No taxes, fees, or account rules are modeled.
         </p>
         <p style="margin: 0; font-size: 14px; line-height: 1.6;">
           Historical S&P 500 context (shown when the required real return exceeds 7%) uses total return with dividends over calendar years 1975–2024: approximately 12.1% annualized nominal and 8.2% annualized after inflation. Past performance is not a forecast.

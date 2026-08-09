@@ -14,6 +14,8 @@ await import(pathToFileURL(join(root, "assets", "js", "investment-growth.engine.
 const Engine = globalThis.InvestmentGrowthEngine;
 
 const ABS_R = 1e-7;
+/** Randomized round-trip tolerance (solver money-bracket + float). */
+const ABS_R_RANDOM = 5e-6;
 const ABS_MONEY = 0.05;
 const results = [];
 
@@ -35,21 +37,37 @@ function close(a, b, tol) {
   return Number.isFinite(a) && Number.isFinite(b) && Math.abs(a - b) <= tol;
 }
 
-/* ---------- Independent real-space reference (mirrors documented model) ---------- */
+/* ---------- Independent real-space reference (exact Y; does NOT use round(mY)) ---------- */
 
-function refPeriodRate(rAnnual, m) {
-  if (m === 1) return rAnnual;
-  return Math.pow(1 + rAnnual, 1 / m) - 1;
-}
+const TIME_EPS = 1e-12;
 
 function refRealReturn(rNom, infl) {
   if (infl <= -1) return rNom;
   return (1 + rNom) / (1 + infl) - 1;
 }
 
+function refContributionTimes(Y, m, beginning) {
+  const times = [];
+  if (beginning) {
+    let k = 0;
+    while (k / m < Y - TIME_EPS) {
+      times.push(k / m);
+      k += 1;
+    }
+  } else {
+    let k = 1;
+    while (k / m <= Y + TIME_EPS) {
+      times.push(k / m);
+      k += 1;
+    }
+  }
+  return times;
+}
+
 /**
- * Forward simulation in today's dollars with constant real contributions
- * (mathematically equivalent to nominal C_t = C_0 (1+i)^t with Fisher real growth).
+ * Exact-horizon forward model:
+ * FV_start = S (1+r_real)^Y
+ * FV_k = C (1+r_real)^(Y - t_k) for each contribution date t_k inside Y.
  */
 function refSimulate({
   startingAmount,
@@ -59,36 +77,36 @@ function refSimulate({
   inflationAnnual,
   contributionPeriodsPerYear,
   contributionAtBeginning,
+  indexContributionsToInflation = true,
 }) {
   const m = Math.max(1, Math.round(contributionPeriodsPerYear));
-  let yearsInput = Number(years);
-  if (!Number.isFinite(yearsInput) || yearsInput < 0) yearsInput = 0;
-  yearsInput = Math.min(60, yearsInput);
-  if (yearsInput === 0) {
+  let Y = Number(years);
+  if (!Number.isFinite(Y) || Y < 0) Y = 0;
+  Y = Math.min(60, Y);
+  const rReal = refRealReturn(nominalAnnualReturn, Math.max(0, inflationAnnual));
+  if (Y === 0) {
     return {
       finalBalanceReal: Math.max(0, startingAmount),
       years: 0,
       periods: 0,
-      realAnnualReturn: refRealReturn(nominalAnnualReturn, inflationAnnual),
+      contributionTimes: [],
+      realAnnualReturn: rReal,
     };
   }
-  const N = Math.max(1, Math.min(Math.round(m * 60), Math.round(m * yearsInput)));
-  const yearsEff = N / m;
-  const rReal = refRealReturn(nominalAnnualReturn, Math.max(0, inflationAnnual));
-  const rp = refPeriodRate(rReal, m);
-  let bal = Math.max(0, startingAmount);
-  const C = contributionPerPeriod;
-  for (let p = 0; p < N; p += 1) {
-    if (contributionAtBeginning) bal += C;
-    bal += bal * rp;
-    if (!contributionAtBeginning) bal += C;
+  const times = refContributionTimes(Y, m, !!contributionAtBeginning);
+  let bal = Math.max(0, startingAmount) * Math.pow(1 + rReal, Y);
+  const C0 = contributionPerPeriod;
+  for (const t of times) {
+    const C = indexContributionsToInflation ? C0 : C0 / Math.pow(1 + Math.max(0, inflationAnnual), t);
+    bal += C * Math.pow(1 + rReal, Y - t);
   }
   return {
     finalBalanceReal: bal,
-    years: yearsEff,
-    periods: N,
+    years: Y,
+    periods: times.length,
+    contributionTimes: times,
     realAnnualReturn: rReal,
-    nominalTargetFromRealGoal: (G) => G * Math.pow(1 + Math.max(0, inflationAnnual), yearsEff),
+    nominalTargetFromRealGoal: (G) => G * Math.pow(1 + Math.max(0, inflationAnnual), Y),
   };
 }
 
@@ -434,42 +452,167 @@ for (const m of [1, 12]) {
   }
 }
 
-test("Audit fractional horizon 9.5y round-trip", () => {
-  const inputs = {
-    startingAmount: 975000,
-    contributionPerPeriod: 6000,
+test("Audit fractional horizon: exact Y, not round(mY) — zero contrib controls", () => {
+  for (const Y of [9.49, 9.5, 9.51]) {
+    const expected = Math.pow(2, 1 / Y) - 1;
+    for (const m of [1, 12]) {
+      for (const beginning of [false, true]) {
+        const solved = prodSolve({
+          startingAmount: 100000,
+          contributionPerPeriod: 0,
+          years: Y,
+          inflationAnnual: 0,
+          contributionPeriodsPerYear: m,
+          contributionAtBeginning: beginning,
+          targetBalanceReal: 200000,
+        });
+        record(
+          `exactY ${Y} m=${m} begin=${beginning}`,
+          expected,
+          solved.nominalAnnualReturn,
+          close(solved.nominalAnnualReturn, expected, ABS_R)
+        );
+        assert.equal(solved.simulation.years, Y);
+      }
+    }
+  }
+  // Must NOT equal the 10-year doubling rate.
+  const at95 = prodSolve({
+    startingAmount: 100000,
+    contributionPerPeriod: 0,
     years: 9.5,
-    inflationAnnual: 0.023,
-    contributionPeriodsPerYear: 12,
-    contributionAtBeginning: true,
-  };
-  const known = 0.055;
-  const fwd = refSimulate(Object.assign({}, inputs, { nominalAnnualReturn: known }));
-  assert.equal(fwd.periods, 114);
-  const solved = prodSolve(Object.assign({}, inputs, { targetBalanceReal: fwd.finalBalanceReal }));
-  record("frac recover", known, solved.nominalAnnualReturn, close(solved.nominalAnnualReturn, known, ABS_R));
+    inflationAnnual: 0,
+    contributionPeriodsPerYear: 1,
+    contributionAtBeginning: false,
+    targetBalanceReal: 200000,
+  });
+  const tenYear = Math.pow(2, 0.1) - 1;
+  record(
+    "9.5y yearly ≠ 10y answer",
+    true,
+    Math.abs(at95.nominalAnnualReturn - tenYear) > 0.001,
+    Math.abs(at95.nominalAnnualReturn - tenYear) > 0.001
+  );
 });
 
-test("Audit fractional horizon 16.33y and 21.5y round-trips", () => {
-  for (const years of [16.33, 21.5]) {
-    const inputs = {
-      startingAmount: 40000,
-      contributionPerPeriod: 750,
-      years,
-      inflationAnnual: 0.025,
-      contributionPeriodsPerYear: 12,
+test("Audit fractional horizon: inflation control at 9.5y", () => {
+  for (const m of [1, 12]) {
+    const solved = prodSolve({
+      startingAmount: 100000,
+      contributionPerPeriod: 0,
+      years: 9.5,
+      inflationAnnual: 0.02,
+      contributionPeriodsPerYear: m,
       contributionAtBeginning: false,
-    };
-    const known = 0.07;
-    const fwd = refSimulate(Object.assign({}, inputs, { nominalAnnualReturn: known }));
-    assert.equal(fwd.periods, Math.round(12 * years));
-    const solved = prodSolve(Object.assign({}, inputs, { targetBalanceReal: fwd.finalBalanceReal }));
+      targetBalanceReal: 100000,
+    });
+    const nomTarget = 100000 * Math.pow(1.02, 9.5);
+    record(`infl9.5 m=${m} nom`, 0.02, solved.nominalAnnualReturn, close(solved.nominalAnnualReturn, 0.02, ABS_R));
+    record(`infl9.5 m=${m} real`, 0, solved.realAnnualReturn, close(solved.realAnnualReturn, 0, ABS_R));
     record(
-      `horizon ${years}y recover`,
-      known,
-      solved.nominalAnnualReturn,
-      close(solved.nominalAnnualReturn, known, ABS_R)
+      `infl9.5 m=${m} target`,
+      nomTarget,
+      100000 * Math.pow(1.02, solved.simulation.years),
+      close(100000 * Math.pow(1.02, solved.simulation.years), nomTarget, ABS_MONEY)
     );
+  }
+});
+
+test("Audit continuity sweep 8.00–11.00y (zero contrib)", () => {
+  let prev = null;
+  let maxJump = 0;
+  const ratesByFreq = { 1: [], 12: [] };
+  for (let Y = 8; Y <= 11 + 1e-12; Y = Math.round((Y + 0.01) * 100) / 100) {
+    const vals = [];
+    for (const m of [1, 12]) {
+      for (const beginning of [false, true]) {
+        const solved = prodSolve({
+          startingAmount: 100000,
+          contributionPerPeriod: 0,
+          years: Y,
+          inflationAnnual: 0,
+          contributionPeriodsPerYear: m,
+          contributionAtBeginning: beginning,
+          targetBalanceReal: 200000,
+        });
+        vals.push(solved.nominalAnnualReturn);
+        ratesByFreq[m].push(solved.nominalAnnualReturn);
+      }
+    }
+    const spread = Math.max(...vals) - Math.min(...vals);
+    if (spread > 1e-9) {
+      record(`continuity freq invariance at ${Y}`, 0, spread, false);
+    }
+    const mid = vals[0];
+    if (prev != null) {
+      const jump = Math.abs(mid - prev);
+      if (jump > maxJump) maxJump = jump;
+    }
+    prev = mid;
+  }
+  // Smoothness: successive 0.01y steps should not jump by ~the old round(Y) discontinuity (~0.004).
+  record("continuity max step jump", "<0.001", maxJump, maxJump < 0.001, `maxJump=${maxJump}`);
+  const monthlyVsYearly =
+    Math.max(
+      ...ratesByFreq[1].map((r, i) => Math.abs(r - ratesByFreq[12][i]))
+    );
+  record("monthly vs yearly zero-contrib", 0, monthlyVsYearly, monthlyVsYearly < 1e-9);
+});
+
+test("Audit fractional horizon contribution-date report (yearly)", () => {
+  const rows = [];
+  for (const Y of [9.5, 9.49, 9.51, 16.33, 21.5]) {
+    const fwd = prodForward({
+      startingAmount: 100000,
+      contributionPerPeriod: 1000,
+      years: Y,
+      nominalAnnualReturn: 0.07,
+      inflationAnnual: 0,
+      contributionPeriodsPerYear: 1,
+      contributionAtBeginning: false,
+    });
+    const solved = prodSolve({
+      startingAmount: 100000,
+      contributionPerPeriod: 0,
+      years: Y,
+      inflationAnnual: 0,
+      contributionPeriodsPerYear: 1,
+      contributionAtBeginning: false,
+      targetBalanceReal: 200000,
+    });
+    rows.push({
+      Y,
+      N: fwd.periods,
+      Yeff: fwd.years,
+      times: fwd.contributionTimes,
+      solvedNom: solved.nominalAnnualReturn,
+    });
+    record(`yearly report Yeff=${Y}`, Y, fwd.years, fwd.years === Y);
+  }
+  console.log("Yearly contribution fractional-horizon report:", JSON.stringify(rows, null, 2));
+});
+
+test("Audit fractional horizon round-trips with contributions", () => {
+  for (const years of [9.5, 16.33, 21.5]) {
+    for (const m of [1, 12]) {
+      const inputs = {
+        startingAmount: 40000,
+        contributionPerPeriod: m === 12 ? 750 : 9000,
+        years,
+        inflationAnnual: 0.025,
+        contributionPeriodsPerYear: m,
+        contributionAtBeginning: false,
+      };
+      const known = 0.07;
+      const fwd = refSimulate(Object.assign({}, inputs, { nominalAnnualReturn: known }));
+      const solved = prodSolve(Object.assign({}, inputs, { targetBalanceReal: fwd.finalBalanceReal }));
+      record(
+        `horizon ${years}y m=${m} recover`,
+        known,
+        solved.nominalAnnualReturn,
+        close(solved.nominalAnnualReturn, known, ABS_R)
+      );
+    }
   }
 });
 
@@ -666,19 +809,27 @@ test("Audit randomized round-trips (200 seeded)", () => {
     }
     const err = Math.abs(solved.nominalAnnualReturn - known);
     if (err > maxErr) maxErr = err;
-    if (err <= 1e-6) pass += 1;
+    if (err <= ABS_R_RANDOM) pass += 1;
     else {
       fail += 1;
       fails.push({ n, known, got: solved.nominalAnnualReturn, err, inputs });
     }
   }
 
-  record("random pass count", ">=190", pass, pass >= 190, `pass=${pass} fail=${fail} maxErr=${maxErr}`);
-  record("random max err", "<=1e-6", maxErr, maxErr <= 1e-6 || pass >= 190, `maxErr=${maxErr}`);
-  if (fail > 10) {
+  record(
+    "random pass count",
+    200,
+    pass,
+    fail === 0 && pass >= 190,
+    `pass=${pass} fail=${fail} maxErr=${maxErr} tol=${ABS_R_RANDOM}`
+  );
+  record("random max err", `<=${ABS_R_RANDOM}`, maxErr, maxErr <= ABS_R_RANDOM, `maxErr=${maxErr}`);
+  if (fail > 0) {
     console.error("Sample failures", fails.slice(0, 5));
   }
-  console.log(`Randomized round-trips: pass=${pass} fail=${fail} maxErr=${maxErr}`);
+  console.log(
+    `Randomized round-trips: pass=${pass} fail=${fail} maxErr=${maxErr} tol=${ABS_R_RANDOM}`
+  );
 });
 
 /* ---------- Production vs independent reference agreement ---------- */
