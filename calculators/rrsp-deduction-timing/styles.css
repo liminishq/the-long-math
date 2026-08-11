@@ -12,8 +12,7 @@
   text-transform: uppercase;
 }
 
-.hero-actions,
-.example-row {
+.hero-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;

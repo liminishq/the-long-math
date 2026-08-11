@@ -346,12 +346,14 @@ function uniqueSortedAmounts(values, maxDeduction) {
  * This is an illustrative comparison strategy, not the optimizer result.
  * Uses statutory bracket thresholds only (not BPA / OHP / OTR kinks).
  *
- * @returns {number} claim-now amount in [0, maxDeduction]
+ * @returns {{ claimNow: number, targetThreshold: number|null, neededClaim: number }}
  */
 function claimAmountToExitCurrentBracket(taxableIncome, taxData, province, maxDeduction) {
   const ti = Number(taxableIncome);
   const D = Math.max(0, Number(maxDeduction) || 0);
-  if (!Number.isFinite(ti) || !(ti > 0) || !(D > 0)) return 0;
+  if (!Number.isFinite(ti) || !(ti > 0) || !(D > 0)) {
+    return { claimNow: 0, targetThreshold: null, neededClaim: 0 };
+  }
 
   const floors = [];
   for (const b of taxData?.federal?.brackets || []) {
@@ -363,10 +365,17 @@ function claimAmountToExitCurrentBracket(taxableIncome, taxData, province, maxDe
     const t = Number(b.threshold);
     if (Number.isFinite(t) && t > 0 && t < ti) floors.push(t);
   }
-  if (!floors.length) return 0;
+  if (!floors.length) {
+    return { claimNow: 0, targetThreshold: null, neededClaim: 0 };
+  }
 
-  const target = Math.max(...floors);
-  return Math.min(D, Math.max(0, ti - target));
+  const targetThreshold = Math.max(...floors);
+  const neededClaim = Math.max(0, ti - targetThreshold);
+  return {
+    claimNow: Math.min(D, neededClaim),
+    targetThreshold,
+    neededClaim
+  };
 }
 
 /**
@@ -398,6 +407,7 @@ function optimizeDeductionSplit({
       allNow: null,
       allLater: null,
       bracketExitSplit: null,
+      bracketExitInfo: null,
       advantageVersusAllNow: null,
       advantageVersusAllLater: null,
       labels: null,
@@ -609,18 +619,21 @@ function optimizeDeductionSplit({
   // Illustrative row for the comparison table when the result is a corner:
   // claim just enough to exit the current top federal/provincial bracket.
   let bracketExitSplit = null;
-  const bracketExitClaimRaw = claimAmountToExitCurrentBracket(
-    currentTI,
-    currentData,
-    province,
-    D
-  );
-  const bracketExitClaim = roundMoney(bracketExitClaimRaw);
+  const exitPlan = claimAmountToExitCurrentBracket(currentTI, currentData, province, D);
+  const bracketExitClaim = roundMoney(exitPlan.claimNow);
   const bracketExitCarry = Math.max(0, roundMoney(D - bracketExitClaim));
-  if (
-    bracketExitClaim > SPLIT_AMOUNT_TOLERANCE &&
-    bracketExitCarry > SPLIT_AMOUNT_TOLERANCE
-  ) {
+  const bracketExitInfo = {
+    neededClaim: roundMoney(exitPlan.neededClaim),
+    targetThreshold:
+      exitPlan.targetThreshold == null ? null : roundMoney(exitPlan.targetThreshold),
+    availableDeduction: roundMoney(D),
+    claimNow: bracketExitClaim,
+    carryForward: bracketExitCarry,
+    isInterior:
+      bracketExitClaim > SPLIT_AMOUNT_TOLERANCE &&
+      bracketExitCarry > SPLIT_AMOUNT_TOLERANCE
+  };
+  if (bracketExitInfo.isInterior) {
     const evaluated = evaluateClaimNow(bracketExitClaim);
     if (evaluated) {
       bracketExitSplit = {
@@ -628,10 +641,7 @@ function optimizeDeductionSplit({
         claimNow: bracketExitClaim,
         carryForward: Math.max(0, D - bracketExitClaim),
         kind: "bracket_exit",
-        targetTaxableIncome: Math.max(
-          0,
-          Number(currentTI) - bracketExitClaim
-        )
+        targetTaxableIncome: bracketExitInfo.targetThreshold
       };
     }
   }
@@ -642,6 +652,7 @@ function optimizeDeductionSplit({
     allNow: allNowScenario,
     allLater: allLaterScenario,
     bracketExitSplit,
+    bracketExitInfo,
     advantageVersusAllNow: strategy.totalFutureValue - allNowScenario.totalFutureValue,
     advantageVersusAllLater: strategy.totalFutureValue - allLaterScenario.totalFutureValue,
     candidatesEvaluated: points.length,

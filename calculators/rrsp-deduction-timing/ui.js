@@ -80,6 +80,8 @@ import { SUPPORTED_TAX_YEARS, computeDeductionTiming, parseMoney } from "./engin
         strategyBracketExit: "Sortir de la tranche actuelle",
         bracketExitNote: (now, later, year) =>
           `Illustration : réclamez ${now} en ${year} pour atteindre le seuil de la tranche inférieure suivante, et reportez ${later}.`,
+        bracketExitInsufficientNote: (needed, threshold, available) =>
+          `Aucune répartition partielle ici : sortir de la tranche actuelle exigerait de réclamer environ ${needed} maintenant (pour atteindre ${threshold}). Avec seulement ${available} disponibles, cela équivaut à tout réclamer maintenant.`,
         resultSuffix: " · Résultat",
         compareLaterHeading: (y) => `Déduction en ${y}`,
         compareValueHeading: (y) => `Valeur en ${y}`,
@@ -171,6 +173,8 @@ import { SUPPORTED_TAX_YEARS, computeDeductionTiming, parseMoney } from "./engin
         strategyBracketExit: "Exit current bracket",
         bracketExitNote: (now, later, year) =>
           `Illustration: claim ${now} in ${year} to reach the next lower tax-bracket threshold, and carry ${later} forward.`,
+        bracketExitInsufficientNote: (needed, threshold, available) =>
+          `No partial split row here: exiting the current tax bracket would require claiming about ${needed} now (to reach ${threshold}). With only ${available} available, that path matches claiming all now.`,
         resultSuffix: " · Result",
         compareLaterHeading: (y) => `Deduction in ${y}`,
         compareValueHeading: (y) => `Value in ${y}`,
@@ -542,29 +546,56 @@ import { SUPPORTED_TAX_YEARS, computeDeductionTiming, parseMoney } from "./engin
 
     const note = $("optimal_note");
     if (!note) return;
+    const info = opt.bracketExitInfo;
+    const insufficientForExit =
+      info &&
+      info.targetThreshold != null &&
+      Number(info.neededClaim) > Number(info.availableDeduction) + 1;
     if (kind === "all_now" || kind === "claim") {
       note.hidden = false;
-      note.textContent = TEXT.optimalAllNow(fmtMoney(inputs.deductionAmount));
       if (opt.bracketExitSplit) {
-        note.textContent +=
+        note.textContent =
+          TEXT.optimalAllNow(fmtMoney(inputs.deductionAmount)) +
           " " +
           TEXT.bracketExitNote(
             fmtMoney(opt.bracketExitSplit.claimNow),
             fmtMoney(opt.bracketExitSplit.carryForward),
             inputs.taxYear
           );
+      } else if (insufficientForExit) {
+        note.textContent =
+          TEXT.optimalAllNow(fmtMoney(inputs.deductionAmount)) +
+          " " +
+          TEXT.bracketExitInsufficientNote(
+            fmtMoney(info.neededClaim),
+            fmtMoney(info.targetThreshold),
+            fmtMoney(info.availableDeduction)
+          );
+      } else {
+        note.textContent = TEXT.optimalAllNow(fmtMoney(inputs.deductionAmount));
       }
     } else if (kind === "all_later" || kind === "defer") {
       note.hidden = false;
-      note.textContent = TEXT.optimalAllLater(fmtMoney(inputs.deductionAmount));
       if (opt.bracketExitSplit) {
-        note.textContent +=
+        note.textContent =
+          TEXT.optimalAllLater(fmtMoney(inputs.deductionAmount)) +
           " " +
           TEXT.bracketExitNote(
             fmtMoney(opt.bracketExitSplit.claimNow),
             fmtMoney(opt.bracketExitSplit.carryForward),
             inputs.taxYear
           );
+      } else if (insufficientForExit) {
+        note.textContent =
+          TEXT.optimalAllLater(fmtMoney(inputs.deductionAmount)) +
+          " " +
+          TEXT.bracketExitInsufficientNote(
+            fmtMoney(info.neededClaim),
+            fmtMoney(info.targetThreshold),
+            fmtMoney(info.availableDeduction)
+          );
+      } else {
+        note.textContent = TEXT.optimalAllLater(fmtMoney(inputs.deductionAmount));
       }
     } else {
       note.hidden = true;
@@ -869,35 +900,6 @@ import { SUPPORTED_TAX_YEARS, computeDeductionTiming, parseMoney } from "./engin
     }
   }
 
-  function setExample(kind) {
-    if (kind === "defer") {
-      $("current_income").value = "60000";
-      $("future_income").value = "170000";
-      $("deduction_amount").value = "15000";
-      $("years_to_wait").value = "2";
-      $("annual_rate").value = "6";
-      if ($("inflation_rate")) $("inflation_rate").value = "2";
-    } else if (kind === "split") {
-      $("current_income").value = "100000";
-      $("future_income").value = "100000";
-      $("deduction_amount").value = "80000";
-      $("years_to_wait").value = "1";
-      $("annual_rate").value = "0";
-      if ($("inflation_rate")) $("inflation_rate").value = "0";
-    } else {
-      // Claim-now demo (spec scenario)
-      $("current_income").value = "84000";
-      $("future_income").value = "96000";
-      $("deduction_amount").value = "8500";
-      $("years_to_wait").value = "1";
-      $("annual_rate").value = "7.5";
-      if ($("inflation_rate")) $("inflation_rate").value = "2.3";
-    }
-    if ($("refund_use")) $("refund_use").value = "invest";
-    updateDynamicLabels();
-    calculate();
-  }
-
   function attachEvents() {
     fields.forEach((id) => {
       const node = $(id);
@@ -908,10 +910,6 @@ import { SUPPORTED_TAX_YEARS, computeDeductionTiming, parseMoney } from "./engin
 
     const button = $("calculate_btn");
     if (button) button.addEventListener("click", calculate);
-
-    document.querySelectorAll("[data-example]").forEach((btn) => {
-      btn.addEventListener("click", () => setExample(btn.getAttribute("data-example")));
-    });
   }
 
   document.addEventListener("DOMContentLoaded", () => {
