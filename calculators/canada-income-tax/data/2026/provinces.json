@@ -83,6 +83,14 @@
         "_note": "Provincial credit on base CPP and EI (lowest rate 5.6000% for 2026)."
       }
     },
+    "taxReduction": {
+      "type": "bc",
+      "baseAmount": 690,
+      "netIncomeThreshold": 25570,
+      "reductionFactor": 0.0356,
+      "maximumNetIncome": 44952,
+      "_note": "gov.bc.ca B.C. tax reduction credit 2026 (annual return). Budget 2026 raised the base to $690 for 2026–2030 and pauses indexation of this credit (with brackets and basic personal tax credits) for 2027–2030. Jan T4032 $575 / $41,722 figures are superseded for the annual return; July payroll $805 is withholding proration only."
+    },
     "surtaxes": [],
     "premiums": []
   },
@@ -146,7 +154,14 @@
       }
     },
     "surtaxes": [],
-    "premiums": []
+    "premiums": [],
+    "taxReduction": {
+      "type": "lowIncome",
+      "basicReduction": 818,
+      "phaseOutBase": 22359,
+      "phaseOutRate": 0.03,
+      "_note": "NB428 low-income tax reduction, single-filer path (AFI = own net income). 2025 Form NB428: basic $802, base $21,920, 3%. 2026 amounts indexed by NB first-bracket factor 52333/51306 pending publication of 2026 Form NB428. Spouse/dependant add-ons not modeled."
+    }
   },
   "NL": {
     "name": "Newfoundland and Labrador",
@@ -196,7 +211,14 @@
       }
     },
     "surtaxes": [],
-    "premiums": []
+    "premiums": [],
+    "taxReduction": {
+      "type": "lowIncome",
+      "basicReduction": 1008,
+      "phaseOutBase": 24191,
+      "phaseOutRate": 0.16,
+      "_note": "NL428 low-income tax reduction, single-filer path (AFI = own net income). 2025 Form NL428: basic $997, individual base $23,928, 16% (gov.nl.ca). 2026 amounts indexed by NL first-bracket factor 44678/44192 pending publication of 2026 Form NL428. Spouse/dependant add-ons not modeled."
+    }
   },
   "NS": {
     "name": "Nova Scotia",
@@ -233,7 +255,14 @@
       }
     },
     "surtaxes": [],
-    "premiums": []
+    "premiums": [],
+    "taxReduction": {
+      "type": "lowIncome",
+      "basicReduction": 300,
+      "phaseOutBase": 15000,
+      "phaseOutRate": 0.05,
+      "_note": "NS428 low-income tax reduction, single-filer path (AFI = own net income). Form NS428 2025: basic $300, base $15,000, 5%. These form parameters are carried for 2026 pending Form NS428 2026; spouse/dependant/child add-ons not modeled."
+    }
   },
   "NT": {
     "name": "Northwest Territories",
@@ -358,7 +387,8 @@
       "basicPersonalAmount": 300,
       "dependantUnder18": 575,
       "dependantDisability": 575,
-      "_note": "CRA T4032-ON 2026 Ontario tax reduction personal amounts. Reduction = max(0, min(tax before reduction, 2×amounts − tax before reduction)). Engine models basic amount only (no dependants)."
+      "_note": "CRA T4032-ON 2026 Ontario tax reduction personal amounts. Reduction = max(0, min(tax before reduction, 2×amounts − tax before reduction)). Engine models basic amount only (no dependants).",
+      "type": "ontario"
     },
     "premiums": [
       {
@@ -410,7 +440,7 @@
   },
   "QC": {
     "name": "Quebec",
-    "_note": "Quebec personal tax calculated using Revenu Québec parameters (2026 indexation).",
+    "_note": "Quebec brackets and BPA from Finances Québec Parameters of the Personal Income Tax System for 2026 (BPA $18,952; brackets $54,345 / $108,680 / $132,245). Not a full TP-1 audit: no QPP/QPIP, no federal Quebec abatement; employment path still uses federal Schedule 8 CPP/EI.",
     "brackets": [
       {
         "threshold": 0,

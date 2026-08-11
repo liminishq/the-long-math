@@ -56,6 +56,13 @@ export const PROVINCE_DEFAULT_INDEXATION_RULES = [
   { path: "taxReduction.basicPersonalAmount", indexed: true, class: "indexed" },
   { path: "taxReduction.dependantUnder18", indexed: true, class: "indexed" },
   { path: "taxReduction.dependantDisability", indexed: true, class: "indexed" },
+  { path: "taxReduction.baseAmount", indexed: true, class: "indexed" },
+  { path: "taxReduction.netIncomeThreshold", indexed: true, class: "indexed" },
+  { path: "taxReduction.maximumNetIncome", indexed: true, class: "indexed" },
+  { path: "taxReduction.basicReduction", indexed: true, class: "indexed" },
+  { path: "taxReduction.phaseOutBase", indexed: true, class: "indexed" },
+  { path: "taxReduction.reductionFactor", indexed: false, class: "fixed" },
+  { path: "taxReduction.phaseOutRate", indexed: false, class: "fixed" },
   { path: "brackets[].rate", indexed: false, class: "fixed" },
   { path: "credits.basicPersonalAmount.rate", indexed: false, class: "fixed" },
   { path: "credits.cppEiCredit.rate", indexed: false, class: "fixed" },
@@ -70,7 +77,8 @@ export const PROVINCE_DEFAULT_INDEXATION_RULES = [
  *
  * Sources informing freezes:
  * - Manitoba: CRA T4032-MB 2026 "What's new" — brackets/BPA not indexed.
- * - BC Budget 2026: tax-bracket indexation paused for 2027–2030 (projection from 2026).
+ * - BC Budget 2026 / gov.bc.ca: bracket indexation and basic personal tax credits
+ *   (including B.C. tax reduction credit parameters) paused for 2027–2030.
  * - PEI: legislated BPA floor $15,000.
  */
 export const PROVINCE_INDEXATION_OVERRIDES = {
@@ -93,7 +101,31 @@ export const PROVINCE_INDEXATION_OVERRIDES = {
       path: "brackets[].threshold",
       indexed: false,
       class: "special",
-      note: "BC Budget 2026: personal tax bracket indexation paused for 2027–2030. Projection from 2026 therefore holds 2026 bracket thresholds fixed."
+      note: "BC Budget 2026 / gov.bc.ca: personal tax bracket indexation paused for 2027–2030. Projection from 2026 holds 2026 bracket thresholds fixed."
+    },
+    {
+      path: "credits.basicPersonalAmount.amount",
+      indexed: false,
+      class: "special",
+      note: "gov.bc.ca basic personal tax credits: Budget 2026 paused indexation of basic personal tax credits for 2027–2030."
+    },
+    {
+      path: "taxReduction.baseAmount",
+      indexed: false,
+      class: "special",
+      note: "gov.bc.ca: B.C. tax reduction credit base held for 2026–2030; indexation paused 2027–2030."
+    },
+    {
+      path: "taxReduction.netIncomeThreshold",
+      indexed: false,
+      class: "special",
+      note: "gov.bc.ca: B.C. tax reduction net-income threshold indexation paused for 2027–2030."
+    },
+    {
+      path: "taxReduction.maximumNetIncome",
+      indexed: false,
+      class: "special",
+      note: "gov.bc.ca: B.C. tax reduction maximum net income indexation paused for 2027–2030."
     }
   ],
   PE: [

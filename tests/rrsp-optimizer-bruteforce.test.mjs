@@ -30,13 +30,14 @@ function mulberry32(seed) {
 }
 
 function taxSaving(year, province, income, deduction, dataOverride) {
+  // Match optimizer: compare unrounded tax savings.
   const before = computePersonalTax(
     { year, province, employmentIncome: income, rrspDeduction: 0 },
-    { dataOverride }
+    { dataOverride, roundToDollar: false }
   );
   const after = computePersonalTax(
     { year, province, employmentIncome: income, rrspDeduction: deduction },
-    { dataOverride }
+    { dataOverride, roundToDollar: false }
   );
   return Math.max(0, before.totals.totalIncomeTax - after.totals.totalIncomeTax);
 }
@@ -71,6 +72,32 @@ async function bruteForceMax(ctx, step) {
   if (vD != null && vD > best) {
     best = vD;
     bestX = ctx.D;
+  }
+  return { best, bestX };
+}
+
+/** Local $1 rescan around candidate deduction points (and endpoints). */
+function localRescanMax(ctx, centers, radius = 200) {
+  let best = -Infinity;
+  let bestX = 0;
+  const seen = new Set();
+  const consider = (x) => {
+    const xx = Math.max(0, Math.min(ctx.D, Math.round(x)));
+    if (seen.has(xx)) return;
+    seen.add(xx);
+    const v = valueAt(xx, ctx);
+    if (v != null && v > best) {
+      best = v;
+      bestX = xx;
+    }
+  };
+  consider(0);
+  consider(ctx.D);
+  for (const c of centers) {
+    if (!Number.isFinite(c)) continue;
+    const lo = Math.max(0, Math.floor(c - radius));
+    const hi = Math.min(ctx.D, Math.ceil(c + radius));
+    for (let x = lo; x <= hi; x += 1) consider(x);
   }
   return { best, bestX };
 }
@@ -177,9 +204,11 @@ test("engine still accepts yearsToWait=0 as same-year edge case", async () => {
 test("optimizer never loses to corners; brute-force check across jurisdictions", async () => {
   const rand = mulberry32(20260809);
   const N = 1000;
-  let maxGap = 0;
+  let maxCoarseGap = 0;
+  let minSignedDiff = Infinity;
   let worst = null;
   let splitCount = 0;
+  const candidates = [];
 
   for (let i = 0; i < N; i++) {
     const province = PROVINCES[Math.floor(rand() * PROVINCES.length)];
@@ -205,6 +234,7 @@ test("optimizer never loses to corners; brute-force check across jurisdictions",
     );
 
     const optV = result.optimization.optimal.totalFutureValue;
+    const optX = result.optimization.optimal.claimNow;
     const allNow = result.optimization.allNow.totalFutureValue;
     const allLater = result.optimization.allLater.totalFutureValue;
     assert.ok(optV + 1e-6 >= allNow - 1, "optimal must beat or match all-now");
@@ -242,13 +272,18 @@ test("optimizer never loses to corners; brute-force check across jurisdictions",
       }
     };
 
-    // Fine grid: $50 steps, or denser for small D.
+    // Coarse grid, then keep cases with the largest apparent gaps for $1 local rescan.
     const step = deductionAmount <= 5000 ? 25 : deductionAmount <= 20000 ? 50 : 100;
-    const { best } = await bruteForceMax(ctx, step);
-    const gap = best - optV;
-    if (gap > maxGap) {
-      maxGap = gap;
-      worst = {
+    const { best, bestX } = await bruteForceMax(ctx, step);
+    const coarseGap = best - optV;
+    if (coarseGap > maxCoarseGap) maxCoarseGap = coarseGap;
+    candidates.push({
+      coarseGap,
+      optV,
+      optX,
+      bestX,
+      ctx,
+      meta: {
         province,
         currentIncome,
         futureIncome,
@@ -256,26 +291,51 @@ test("optimizer never loses to corners; brute-force check across jurisdictions",
         yearsToWait,
         annualRate,
         inflationRate,
-        optV,
-        best,
-        gap,
         strategy: result.optimization.strategyKind
-      };
-    }
+      }
+    });
   }
 
-  // Tolerance: one grid step of tax difference is bounded; allow $40 of objective gap
-  // relative to a $25–$100 deduction grid (shows optimizer did not miss a material peak).
-  assert.ok(
-    maxGap <= 40,
-    `Optimizer lagged brute force by $${maxGap.toFixed(2)}; worst=${JSON.stringify(worst)}`
-  );
+  candidates.sort((a, b) => b.coarseGap - a.coarseGap);
+  const toRescan = candidates.slice(0, 40);
+
+  for (const row of toRescan) {
+    const local = localRescanMax(row.ctx, [row.optX, row.bestX, 0, row.ctx.D], 400);
+    // Signed difference: optimizer value minus best independently found.
+    const signed = row.optV - local.best;
+    if (signed < minSignedDiff) {
+      minSignedDiff = signed;
+      worst = {
+        ...row.meta,
+        optV: row.optV,
+        optX: row.optX,
+        independentBest: local.best,
+        independentX: local.bestX,
+        signedDiff: signed,
+        coarseGap: row.coarseGap
+      };
+    }
+    // Optimizer may beat a local grid; it must not lose beyond float/currency noise.
+    assert.ok(
+      signed >= -0.05,
+      `Optimizer lagged independent $1 rescan by $${(-signed).toFixed(4)}; worst=${JSON.stringify({
+        ...row.meta,
+        optV: row.optV,
+        optX: row.optX,
+        independentBest: local.best,
+        independentX: local.bestX,
+        signedDiff: signed
+      })}`
+    );
+  }
+
   assert.ok(splitCount >= 0);
   console.log(
     JSON.stringify({
       cases: N,
       splitCount,
-      maxGap: Number(maxGap.toFixed(4)),
+      maxCoarseGap: Number(maxCoarseGap.toFixed(4)),
+      minSignedDiff: Number(minSignedDiff.toFixed(4)),
       worst
     })
   );

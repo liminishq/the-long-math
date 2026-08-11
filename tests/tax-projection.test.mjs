@@ -125,7 +125,7 @@ test("Manitoba frozen brackets stay fixed under projection; federal still indexe
   assert.equal(resolved.federal.brackets[1].threshold, Math.round(58523 * 1.02 * 1.02));
 });
 
-test("BC projected brackets stay frozen after 2026 Budget pause rule", async () => {
+test("BC projected brackets and basic personal credits stay frozen 2027–2030", async () => {
   const resolved = await resolveTaxDataForYear(2029, {
     loadOfficialYear: loadOfficial,
     federalInflationRate: 0.02,
@@ -134,6 +134,24 @@ test("BC projected brackets stay frozen after 2026 Budget pause rule", async () 
   const base = await loadOfficial(2026);
   assert.equal(resolved.provinces.BC.brackets[1].threshold, base.provinces.BC.brackets[1].threshold);
   assert.equal(resolved.provinces.BC.brackets[0].rate, 0.056);
+  assert.equal(
+    resolved.provinces.BC.credits.basicPersonalAmount.amount,
+    base.provinces.BC.credits.basicPersonalAmount.amount
+  );
+  assert.equal(resolved.provinces.BC.taxReduction.baseAmount, base.provinces.BC.taxReduction.baseAmount);
+  assert.equal(
+    resolved.provinces.BC.taxReduction.netIncomeThreshold,
+    base.provinces.BC.taxReduction.netIncomeThreshold
+  );
+  assert.equal(
+    resolved.provinces.BC.taxReduction.maximumNetIncome,
+    base.provinces.BC.taxReduction.maximumNetIncome
+  );
+  // Contrast: a normally indexed province still moves BPA.
+  assert.ok(
+    resolved.provinces.ON.credits.basicPersonalAmount.amount >
+      base.provinces.ON.credits.basicPersonalAmount.amount
+  );
 });
 
 test("PEI BPA floor stays $15,000 under projection", async () => {

@@ -12,6 +12,7 @@ import {
 } from './marginal-tax.js';
 import {
   calculateOntarioTaxReduction,
+  calculateProvincialTaxReduction,
   resolveEnhancedBasicPersonalAmount
 } from './tax.bpa.js';
 
@@ -331,7 +332,13 @@ function calculateProvincialTaxGeneric(taxableIncome, prov, dividends, cppCredit
   }
   const taxAfterDividendCredits = Math.max(0, taxAfterMinimumTax - provincialDividendCredits);
 
-  const provincialTaxReduction = 0;
+  const netIncomeForReduction = opts.netIncome != null ? opts.netIncome : taxableIncome;
+  const reductionResult = calculateProvincialTaxReduction(
+    taxAfterDividendCredits,
+    netIncomeForReduction,
+    prov.taxReduction || {}
+  );
+  const provincialTaxReduction = reductionResult.reduction || 0;
   const taxAfterReductions = Math.max(0, taxAfterDividendCredits - provincialTaxReduction);
 
   const premiums = [];

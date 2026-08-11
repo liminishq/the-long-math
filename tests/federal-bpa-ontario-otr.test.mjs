@@ -5,6 +5,8 @@ import { fileURLToPath } from "node:url";
 import { loadTaxData } from "../calculators/canada-income-tax/js/tax.data.js";
 import { computePersonalTax } from "../calculators/canada-income-tax/js/tax.engine.js";
 import {
+  calculateBCTaxReduction,
+  calculateLowIncomeTaxReduction,
   calculateOntarioTaxReduction,
   resolveEnhancedBasicPersonalAmount
 } from "../calculators/canada-income-tax/js/tax.bpa.js";
@@ -129,6 +131,70 @@ test("NL 2026 BPA is annual $13,094", async () => {
   assert.equal(d.provinces.NL.credits.basicPersonalAmount.amount, 13094);
 });
 
+test("B.C. tax reduction formula corners (2026)", () => {
+  const cfg = {
+    type: "bc",
+    baseAmount: 690,
+    netIncomeThreshold: 25570,
+    reductionFactor: 0.0356
+  };
+  assert.equal(calculateBCTaxReduction(1000, 20000, cfg).reduction, 690);
+  assert.equal(calculateBCTaxReduction(1000, 25570, cfg).reduction, 690);
+  const mid = calculateBCTaxReduction(1000, 30000, cfg);
+  assert.ok(Math.abs(mid.rawReduction - Math.round((690 - 0.0356 * (30000 - 25570)) * 100) / 100) < 1e-9);
+  assert.equal(
+    calculateBCTaxReduction(1000, 44952, { ...cfg, maximumNetIncome: 44952 }).reduction,
+    0
+  );
+  assert.equal(calculateBCTaxReduction(200, 20000, cfg).reduction, 200);
+});
+
+test("B.C. tax reduction applies in engine; RRSP can restore it", async () => {
+  const d = await data(2026);
+  assert.equal(d.provinces.BC.taxReduction.baseAmount, 690);
+  assert.equal(d.provinces.BC.taxReduction.netIncomeThreshold, 25570);
+
+  const low = tax({ year: 2026, province: "BC", otherIncome: 22000, rrspDeduction: 0 }, d);
+  const high = tax({ year: 2026, province: "BC", otherIncome: 50000, rrspDeduction: 0 }, d);
+  assert.ok(low.breakdown.provincial.provincialTaxReduction > 0);
+  assert.equal(high.breakdown.provincial.provincialTaxReduction, 0);
+
+  // Above extinguishment ($44,952); a $15k RRSP deduction moves NI into the phase-out range.
+  const before = tax({ year: 2026, province: "BC", otherIncome: 50000, rrspDeduction: 0 }, d);
+  const after = tax({ year: 2026, province: "BC", otherIncome: 50000, rrspDeduction: 15000 }, d);
+  assert.equal(before.breakdown.provincial.provincialTaxReduction, 0);
+  assert.ok(after.breakdown.provincial.provincialTaxReduction > 0);
+  assert.ok(before.totals.provTax > after.totals.provTax);
+});
+
+test("NL low-income tax reduction single-filer path (2025 form amounts)", async () => {
+  const d = await data(2025);
+  const cfg = d.provinces.NL.taxReduction;
+  assert.equal(cfg.basicReduction, 997);
+  assert.equal(cfg.phaseOutBase, 23928);
+  assert.equal(cfg.phaseOutRate, 0.16);
+
+  const full = calculateLowIncomeTaxReduction(2000, 20000, cfg);
+  assert.equal(full.reduction, 997);
+  const partial = calculateLowIncomeTaxReduction(2000, 26000, cfg);
+  assert.ok(Math.abs(partial.rawReduction - (997 - 0.16 * (26000 - 23928))) < 1e-9);
+  const gone = calculateLowIncomeTaxReduction(2000, 30160, cfg);
+  assert.equal(gone.reduction, 0);
+
+  const eng = tax({ year: 2025, province: "NL", otherIncome: 22000, rrspDeduction: 0 }, d);
+  assert.ok(eng.breakdown.provincial.provincialTaxReduction > 0);
+});
+
+test("NB and NS low-income tax reductions activate at low income", async () => {
+  const d = await data(2026);
+  const nb = tax({ year: 2026, province: "NB", otherIncome: 25000, rrspDeduction: 0 }, d);
+  const ns = tax({ year: 2026, province: "NS", otherIncome: 18000, rrspDeduction: 0 }, d);
+  const nbHigh = tax({ year: 2026, province: "NB", otherIncome: 80000, rrspDeduction: 0 }, d);
+  assert.ok(nb.breakdown.provincial.provincialTaxReduction > 0);
+  assert.ok(ns.breakdown.provincial.provincialTaxReduction > 0);
+  assert.equal(nbHigh.breakdown.provincial.provincialTaxReduction, 0);
+});
+
 test("getTaxBreakpoints exposes federal BPA phase-out and ON OHP points", async () => {
   const { getTaxBreakpoints } = await import("../calculators/canada-income-tax/js/tax.kinks.js");
   const d = await data(2026);
@@ -139,4 +205,10 @@ test("getTaxBreakpoints exposes federal BPA phase-out and ON OHP points", async 
   assert.ok(incomes.includes(20000));
   assert.ok(incomes.includes(53891));
   assert.ok(points.some((p) => /BPA phase-out/i.test(p.reason)));
+
+  const bc = getTaxBreakpoints(d, "BC");
+  assert.ok(bc.some((p) => p.income === 25570));
+  assert.ok(bc.some((p) => p.income === 44952));
+  const nl = getTaxBreakpoints(d, "NL");
+  assert.ok(nl.some((p) => p.income === 24191));
 });

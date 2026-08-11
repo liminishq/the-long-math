@@ -12,8 +12,11 @@ const SUPPORTED_TAX_YEARS = OFFICIAL_TAX_YEARS.slice();
 const DEFAULT_TAX_YEAR = latestOfficialTaxYear();
 const TAX_DATA_BASE_PATH = "/calculators/canada-income-tax/data";
 const CLOSE_ENOUGH_DOLLARS = 50;
-const SPLIT_ADVANTAGE_THRESHOLD = 25;
+/** Prefer a corner only when the split edge is within floating-point noise. */
+const SPLIT_ADVANTAGE_THRESHOLD = 0.01;
 const SPLIT_AMOUNT_TOLERANCE = 1;
+/** Local $1 polish around the best candidate (catches missed nearby statutory kinks). */
+const LOCAL_REFINE_RADIUS = 400;
 const DEFAULT_INFLATION = 0.02;
 
 const OFFICIAL_LOADS = new Map();
@@ -156,8 +159,19 @@ function breakEvenAnnualRate(currentSaving, futureSaving, years) {
   return Number.isFinite(rate) ? rate : null;
 }
 
-function runTaxScenario({ year, province, employmentIncome, rrspDeduction, dataOverride }) {
-  const opts = dataOverride ? { dataOverride } : {};
+function runTaxScenario({
+  year,
+  province,
+  employmentIncome,
+  rrspDeduction,
+  dataOverride,
+  roundToDollar = false
+}) {
+  // Optimizer / timing comparisons use exact tax (no dollar rounding). Display layers may round.
+  const opts = {
+    ...(dataOverride ? { dataOverride } : {}),
+    ...(roundToDollar === false ? { roundToDollar: false } : {})
+  };
   const before = computePersonalTax(
     {
       year,
@@ -217,6 +231,87 @@ function collectIncomeKinkPoints(taxData, province, year) {
     },
     searchUpTo: 400000
   }).map((row) => row.income);
+}
+
+function taxableIncomeBeforeDeduction(year, province, employmentIncome, taxData) {
+  const base = computePersonalTax(
+    { year, province, employmentIncome, rrspDeduction: 0 },
+    { dataOverride: taxData, roundToDollar: false }
+  );
+  return Number(base.totals?.taxableIncome);
+}
+
+function taxRowAtNetIncome(year, province, employmentIncome, ti0, ni, taxData) {
+  const ded = Math.max(0, ti0 - ni);
+  return computePersonalTax(
+    { year, province, employmentIncome, rrspDeduction: ded },
+    { dataOverride: taxData, roundToDollar: false }
+  );
+}
+
+/**
+ * Lowest net income where predicate(ni) is true, under fixed employment income.
+ */
+function invertNetIncomePredicate(year, province, employmentIncome, taxData, predicate) {
+  const code = String(province || "").toUpperCase();
+  const ti0 = taxableIncomeBeforeDeduction(year, code, employmentIncome, taxData);
+  if (!(ti0 > 0)) return null;
+  if (!predicate(taxRowAtNetIncome(year, code, employmentIncome, ti0, ti0, taxData), ti0)) {
+    return null;
+  }
+  let low = 0;
+  let high = ti0;
+  for (let i = 0; i < 56; i++) {
+    const mid = (low + high) / 2;
+    if (predicate(taxRowAtNetIncome(year, code, employmentIncome, ti0, mid, taxData), mid)) {
+      high = mid;
+    } else {
+      low = mid;
+    }
+  }
+  return high;
+}
+
+/**
+ * Net-income point where an income-driven provincial reduction stops fully wiping
+ * provincial tax, under a fixed employment income (CPP/EI credits held constant).
+ */
+function findProvincialReductionFullWipeNetIncome(year, province, employmentIncome, taxData) {
+  const code = String(province || "").toUpperCase();
+  const tr = taxData?.provinces?.[code]?.taxReduction;
+  if (!tr || typeof tr !== "object") return null;
+  const type = String(tr.type || "").toLowerCase();
+  if (type !== "bc" && type !== "lowincome" && type !== "low_income") return null;
+
+  const rawReduction = (ni) => {
+    if (type === "bc") {
+      const baseAmount = Number(tr.baseAmount) || 0;
+      const thr = Number(tr.netIncomeThreshold) || 0;
+      const factor = Number(tr.reductionFactor) || 0;
+      const maxNi = Number(tr.maximumNetIncome);
+      if (Number.isFinite(maxNi) && maxNi > 0 && ni >= maxNi) return 0;
+      return Math.max(0, baseAmount - factor * Math.max(0, ni - thr));
+    }
+    const basic = Number(tr.basicReduction) || 0;
+    const phaseOutBase = Number(tr.phaseOutBase) || 0;
+    const phaseOutRate = Number(tr.phaseOutRate) || 0;
+    return Math.max(0, basic - phaseOutRate * Math.max(0, ni - phaseOutBase));
+  };
+
+  return invertNetIncomePredicate(year, code, employmentIncome, taxData, (row, ni) => {
+    const p = row.breakdown?.provincial || {};
+    const taxBefore = Number(p.taxAfterDividendCredits ?? p.taxAfterSurtax ?? p.taxAfterCredits) || 0;
+    return taxBefore > rawReduction(ni);
+  });
+}
+
+/** Net income where federal (or provincial) net tax becomes positive under fixed employment. */
+function findJurisdictionTaxOnsetNetIncome(year, province, employmentIncome, taxData, which) {
+  return invertNetIncomePredicate(year, province, employmentIncome, taxData, (row) => {
+    if (which === "federal") return Number(row.totals?.federalTax) > 0;
+    if (which === "provincial") return Number(row.totals?.provTax) > 0;
+    return Number(row.totals?.totalIncomeTax) > 0;
+  });
 }
 
 /**
@@ -308,6 +403,24 @@ function optimizeDeductionSplit({
     if (later != null) candidates.push(D - later);
   }
 
+  // Employment-path credit / reduction full-wipe points (CPP/EI credits fixed with E).
+  const addEmploymentPathKinks = (year, income, ti, data, toClaimNow) => {
+    const extras = [
+      findProvincialReductionFullWipeNetIncome(year, province, income, data),
+      findJurisdictionTaxOnsetNetIncome(year, province, income, data, "federal"),
+      findJurisdictionTaxOnsetNetIncome(year, province, income, data, "provincial"),
+      findJurisdictionTaxOnsetNetIncome(year, province, income, data, "total")
+    ];
+    for (const kink of extras) {
+      if (kink == null) continue;
+      const amount = deductionToReachIncome(ti, kink, D);
+      if (amount == null) continue;
+      candidates.push(toClaimNow ? amount : D - amount);
+    }
+  };
+  addEmploymentPathKinks(currentYear, currentIncome, currentTI, currentData, true);
+  addEmploymentPathKinks(futureYear, futureIncome, futureTI, futureData, false);
+
   // Dense safety net for large deductions crossing many bands (still deterministic).
   if (D > 0) {
     const step = Math.max(250, Math.round(D / 80));
@@ -317,9 +430,8 @@ function optimizeDeductionSplit({
   const points = uniqueSortedAmounts(candidates, D);
   let best = null;
 
-  for (const x of points) {
-    const claimNow = x;
-    const carryForward = D - x;
+  const evaluateClaimNow = (claimNow) => {
+    const carryForward = D - claimNow;
     const nowSaving = taxSavingOnly({
       year: currentYear,
       province,
@@ -335,18 +447,31 @@ function optimizeDeductionSplit({
       dataOverride: futureData
     });
     const nowFv = futureValueOfRefund(nowSaving, yearsToWait, annualRate);
-    if (nowFv == null) continue;
-    const totalFutureValue = nowFv + laterSaving;
-    const row = {
+    if (nowFv == null) return null;
+    return {
       claimNow,
       carryForward,
       nowSaving,
       laterSaving,
       nowFutureValue: nowFv,
-      totalFutureValue
+      totalFutureValue: nowFv + laterSaving
     };
+  };
+
+  for (const x of points) {
+    const row = evaluateClaimNow(x);
+    if (!row) continue;
     if (!best || row.totalFutureValue > best.totalFutureValue + 1e-9) {
       best = row;
+    }
+  }
+
+  if (best && D > 0) {
+    const lo = Math.max(0, Math.floor(best.claimNow - LOCAL_REFINE_RADIUS));
+    const hi = Math.min(D, Math.ceil(best.claimNow + LOCAL_REFINE_RADIUS));
+    for (let x = lo; x <= hi; x += 1) {
+      const row = evaluateClaimNow(x);
+      if (row && row.totalFutureValue > best.totalFutureValue + 1e-9) best = row;
     }
   }
 

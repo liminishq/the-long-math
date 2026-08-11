@@ -83,6 +83,14 @@
         "_note": "Provincial credit on base CPP and EI (lowest rate 5.0600% for 2025)."
       }
     },
+    "taxReduction": {
+      "type": "bc",
+      "baseAmount": 562,
+      "netIncomeThreshold": 25020,
+      "reductionFactor": 0.0356,
+      "maximumNetIncome": 40807,
+      "_note": "gov.bc.ca B.C. tax reduction credit 2025 (annual return)."
+    },
     "surtaxes": [],
     "premiums": []
   },
@@ -146,7 +154,14 @@
       }
     },
     "surtaxes": [],
-    "premiums": []
+    "premiums": [],
+    "taxReduction": {
+      "type": "lowIncome",
+      "basicReduction": 802,
+      "phaseOutBase": 21920,
+      "phaseOutRate": 0.03,
+      "_note": "Form NB428 2025 low-income tax reduction. Single-filer path only (AFI = own net income). Spouse/dependant add-ons not modeled."
+    }
   },
   "NL": {
     "name": "Newfoundland and Labrador",
@@ -195,7 +210,14 @@
       }
     },
     "surtaxes": [],
-    "premiums": []
+    "premiums": [],
+    "taxReduction": {
+      "type": "lowIncome",
+      "basicReduction": 997,
+      "phaseOutBase": 23928,
+      "phaseOutRate": 0.16,
+      "_note": "Form NL428 2025 / gov.nl.ca Low Income Tax Reduction. Single-filer path only (AFI = own net income). Spouse/dependant add-ons not modeled."
+    }
   },
   "NS": {
     "name": "Nova Scotia",
@@ -232,7 +254,14 @@
       }
     },
     "surtaxes": [],
-    "premiums": []
+    "premiums": [],
+    "taxReduction": {
+      "type": "lowIncome",
+      "basicReduction": 300,
+      "phaseOutBase": 15000,
+      "phaseOutRate": 0.05,
+      "_note": "Form NS428 2025 low-income tax reduction. Single-filer path only (AFI = own net income). Spouse/dependant/child add-ons not modeled."
+    }
   },
   "NT": {
     "name": "Northwest Territories",
@@ -356,7 +385,8 @@
       "basicPersonalAmount": 294,
       "dependantUnder18": 544,
       "dependantDisability": 544,
-      "_note": "CRA T4032-ON 2025 Ontario tax reduction personal amounts. Engine models basic amount only."
+      "_note": "CRA T4032-ON 2025 Ontario tax reduction personal amounts. Engine models basic amount only.",
+      "type": "ontario"
     },
     "premiums": [
       {

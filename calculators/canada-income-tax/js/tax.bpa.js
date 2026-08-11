@@ -105,3 +105,87 @@ export function calculateOntarioTaxReduction(taxBeforeReduction, taxReductionCon
   const reduction = Math.max(0, Math.min(tax, raw));
   return { reduction, personalAmounts, taxBeforeReduction: tax };
 }
+
+/**
+ * B.C. tax reduction credit (BC428 / gov.bc.ca basic credits).
+ *
+ * reduction = max(0, baseAmount − reductionFactor × max(0, netIncome − netIncomeThreshold))
+ * then capped at tax before reduction (non-refundable).
+ *
+ * 2026: base $690, threshold $25,570, factor 3.56%, zero by $44,952.
+ */
+function roundCents(amount) {
+  return Math.round(Number(amount) * 100) / 100;
+}
+
+export function calculateBCTaxReduction(taxBeforeReduction, netIncome, taxReductionConfig = {}) {
+  const tax = Math.max(0, Number(taxBeforeReduction) || 0);
+  const baseAmount = Number(taxReductionConfig.baseAmount) || 0;
+  const threshold = Number(taxReductionConfig.netIncomeThreshold) || 0;
+  const factor = Number(taxReductionConfig.reductionFactor) || 0;
+  const maxNi = Number(taxReductionConfig.maximumNetIncome);
+  const ni = Math.max(0, Number(netIncome) || 0);
+
+  if (!(baseAmount > 0) || !(tax > 0) || !(factor > 0)) {
+    return { reduction: 0, rawReduction: 0, taxBeforeReduction: tax, netIncome: ni };
+  }
+  if (Number.isFinite(maxNi) && maxNi > 0 && ni >= maxNi) {
+    return { reduction: 0, rawReduction: 0, taxBeforeReduction: tax, netIncome: ni };
+  }
+
+  const rawReduction = Math.max(0, roundCents(baseAmount - factor * Math.max(0, ni - threshold)));
+  const reduction = Math.max(0, Math.min(tax, rawReduction));
+  return { reduction, rawReduction, taxBeforeReduction: tax, netIncome: ni };
+}
+
+/**
+ * Atlantic-style low-income tax reduction (NL428 / NB428 / NS428), single-filer path.
+ *
+ * basicReduction − phaseOutRate × max(0, adjustedFamilyIncome − phaseOutBase),
+ * capped at tax before reduction. Under employment-path assumptions with no spouse
+ * or dependant inputs, adjusted family income = the filer's own net income.
+ *
+ * Spouse / eligible-dependant / child add-ons are out of scope (need extra facts).
+ */
+export function calculateLowIncomeTaxReduction(taxBeforeReduction, netIncome, taxReductionConfig = {}) {
+  const tax = Math.max(0, Number(taxBeforeReduction) || 0);
+  const basic = Number(taxReductionConfig.basicReduction) || 0;
+  const phaseOutBase = Number(taxReductionConfig.phaseOutBase) || 0;
+  const phaseOutRate = Number(taxReductionConfig.phaseOutRate) || 0;
+  const ni = Math.max(0, Number(netIncome) || 0);
+
+  if (!(basic > 0) || !(tax > 0) || !(phaseOutRate > 0)) {
+    return { reduction: 0, rawReduction: 0, taxBeforeReduction: tax, adjustedFamilyIncome: ni };
+  }
+
+  const rawReduction = Math.max(
+    0,
+    roundCents(basic - phaseOutRate * Math.max(0, ni - phaseOutBase))
+  );
+  const reduction = Math.max(0, Math.min(tax, rawReduction));
+  return { reduction, rawReduction, taxBeforeReduction: tax, adjustedFamilyIncome: ni };
+}
+
+/**
+ * Dispatch provincial tax-reduction configs used after dividend tax credit.
+ * Ontario keeps its dedicated ON428 path; this covers BC + Atlantic LITR styles.
+ */
+export function calculateProvincialTaxReduction(taxBeforeReduction, netIncome, taxReductionConfig = {}) {
+  if (!taxReductionConfig || typeof taxReductionConfig !== "object") {
+    return { reduction: 0, type: null };
+  }
+  const type = String(taxReductionConfig.type || "").toLowerCase();
+  if (type === "bc") {
+    return { type: "bc", ...calculateBCTaxReduction(taxBeforeReduction, netIncome, taxReductionConfig) };
+  }
+  if (type === "lowincome" || type === "low_income") {
+    return {
+      type: "lowIncome",
+      ...calculateLowIncomeTaxReduction(taxBeforeReduction, netIncome, taxReductionConfig)
+    };
+  }
+  if (type === "ontario" || taxReductionConfig.basicPersonalAmount != null) {
+    return { type: "ontario", ...calculateOntarioTaxReduction(taxBeforeReduction, taxReductionConfig) };
+  }
+  return { reduction: 0, type: type || null };
+}

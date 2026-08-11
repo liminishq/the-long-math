@@ -98,6 +98,64 @@ export function collectTaxIncomeKinks(taxData, provinceCode, incomeContext = {})
     }
   }
 
+  const tr = prov?.taxReduction;
+  const trType = String(tr?.type || "").toLowerCase();
+  if (trType === "bc") {
+    const thr = Number(tr.netIncomeThreshold) || 0;
+    const maxNi = Number(tr.maximumNetIncome) || 0;
+    const baseAmount = Number(tr.baseAmount) || 0;
+    const factor = Number(tr.reductionFactor) || 0;
+    if (thr > 0) add(thr, "B.C. tax reduction phase-out start");
+    if (maxNi > 0) add(maxNi, "B.C. tax reduction extinguishment");
+    // Where tax-before-reduction crosses the income-dependent raw credit (full-wipe ends).
+    if (
+      baseAmount > 0 &&
+      factor > 0 &&
+      typeof incomeContext.computeTaxBeforeReduction === "function"
+    ) {
+      const hit = invertCrossing(
+        (income) => Number(incomeContext.computeTaxBeforeReduction(income)) || 0,
+        (income) => {
+          const ni = Math.max(0, Number(income) || 0);
+          if (Number.isFinite(maxNi) && maxNi > 0 && ni >= maxNi) return 0;
+          return Math.max(0, baseAmount - factor * Math.max(0, ni - thr));
+        },
+        incomeContext.searchUpTo || 120000
+      );
+      if (hit != null) add(hit, "B.C. tax reduction full-wipe end");
+    } else if (thr > 0) {
+      add(thr + 5000, "B.C. tax reduction region");
+      add(thr + 15000, "B.C. tax reduction region");
+    }
+  } else if (trType === "lowincome" || trType === "low_income") {
+    const base = Number(tr.phaseOutBase) || 0;
+    const basic = Number(tr.basicReduction) || 0;
+    const rate = Number(tr.phaseOutRate) || 0;
+    if (base > 0) add(base, `${code} low-income tax reduction phase-out start`);
+    if (base > 0 && basic > 0 && rate > 0) {
+      add(base + basic / rate, `${code} low-income tax reduction extinguishment`);
+    }
+    // Where tax-before-reduction crosses the raw LITR (provincial tax becomes positive).
+    if (
+      basic > 0 &&
+      rate > 0 &&
+      typeof incomeContext.computeTaxBeforeReduction === "function"
+    ) {
+      const hit = invertCrossing(
+        (income) => Number(incomeContext.computeTaxBeforeReduction(income)) || 0,
+        (income) => {
+          const ni = Math.max(0, Number(income) || 0);
+          return Math.max(0, basic - rate * Math.max(0, ni - base));
+        },
+        incomeContext.searchUpTo || 120000
+      );
+      if (hit != null) add(hit, `${code} low-income tax reduction full-wipe end`);
+    } else if (base > 0) {
+      add(base - 2000, `${code} low-income tax reduction region`);
+      add(base + 2000, `${code} low-income tax reduction region`);
+    }
+  }
+
   // Deduplicate by rounded cent; merge reasons when the same income is a kink for multiple mechanisms.
   const map = new Map();
   for (const row of out) {
@@ -133,6 +191,24 @@ function invertTaxLevelToIncome(computeTax, targetTax, searchUpTo) {
   for (let i = 0; i < 56; i++) {
     const mid = (low + high) / 2;
     if (Number(computeTax(mid)) > targetTax) high = mid;
+    else low = mid;
+  }
+  return high;
+}
+
+/**
+ * Find the lowest income where left(income) exceeds right(income).
+ * Used for reduction full-wipe boundaries (tax-before-reduction vs raw reduction).
+ */
+function invertCrossing(leftFn, rightFn, searchUpTo) {
+  if (typeof leftFn !== "function" || typeof rightFn !== "function") return null;
+  const pred = (income) => Number(leftFn(income)) > Number(rightFn(income));
+  if (!pred(searchUpTo)) return null;
+  let low = 0;
+  let high = searchUpTo;
+  for (let i = 0; i < 56; i++) {
+    const mid = (low + high) / 2;
+    if (pred(mid)) high = mid;
     else low = mid;
   }
   return high;
