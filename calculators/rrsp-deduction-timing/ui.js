@@ -77,6 +77,9 @@ import { SUPPORTED_TAX_YEARS, computeDeductionTiming, parseMoney } from "./engin
         strategyClaimNow: "Réclamer maintenant",
         strategyClaimLater: "Réclamer plus tard",
         strategySplit: "Répartir",
+        strategyBracketExit: "Sortir de la tranche actuelle",
+        bracketExitNote: (now, later, year) =>
+          `Illustration : réclamez ${now} en ${year} pour atteindre le seuil de la tranche inférieure suivante, et reportez ${later}.`,
         resultSuffix: " · Résultat",
         compareLaterHeading: (y) => `Déduction en ${y}`,
         compareValueHeading: (y) => `Valeur en ${y}`,
@@ -165,6 +168,9 @@ import { SUPPORTED_TAX_YEARS, computeDeductionTiming, parseMoney } from "./engin
         strategyClaimNow: "Claim now",
         strategyClaimLater: "Claim later",
         strategySplit: "Split",
+        strategyBracketExit: "Exit current bracket",
+        bracketExitNote: (now, later, year) =>
+          `Illustration: claim ${now} in ${year} to reach the next lower tax-bracket threshold, and carry ${later} forward.`,
         resultSuffix: " · Result",
         compareLaterHeading: (y) => `Deduction in ${y}`,
         compareValueHeading: (y) => `Value in ${y}`,
@@ -504,6 +510,17 @@ import { SUPPORTED_TAX_YEARS, computeDeductionTiming, parseMoney } from "./engin
         value: opt.optimal.totalFutureValue,
         isResult: true
       });
+    } else if (opt.bracketExitSplit) {
+      // When the result is a corner, show an illustrative bracket-exit split:
+      // claim just enough to leave the current top federal/provincial bracket.
+      rows.push({
+        key: "bracket_exit",
+        label: TEXT.strategyBracketExit,
+        now: opt.bracketExitSplit.claimNow,
+        later: opt.bracketExitSplit.carryForward,
+        value: opt.bracketExitSplit.totalFutureValue,
+        isResult: false
+      });
     }
 
     tbody.innerHTML = "";
@@ -528,9 +545,27 @@ import { SUPPORTED_TAX_YEARS, computeDeductionTiming, parseMoney } from "./engin
     if (kind === "all_now" || kind === "claim") {
       note.hidden = false;
       note.textContent = TEXT.optimalAllNow(fmtMoney(inputs.deductionAmount));
+      if (opt.bracketExitSplit) {
+        note.textContent +=
+          " " +
+          TEXT.bracketExitNote(
+            fmtMoney(opt.bracketExitSplit.claimNow),
+            fmtMoney(opt.bracketExitSplit.carryForward),
+            inputs.taxYear
+          );
+      }
     } else if (kind === "all_later" || kind === "defer") {
       note.hidden = false;
       note.textContent = TEXT.optimalAllLater(fmtMoney(inputs.deductionAmount));
+      if (opt.bracketExitSplit) {
+        note.textContent +=
+          " " +
+          TEXT.bracketExitNote(
+            fmtMoney(opt.bracketExitSplit.claimNow),
+            fmtMoney(opt.bracketExitSplit.carryForward),
+            inputs.taxYear
+          );
+      }
     } else {
       note.hidden = true;
       note.textContent = "";
