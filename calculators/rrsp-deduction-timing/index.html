@@ -77,10 +77,7 @@
       <p class="hero-kicker">Canadian RRSP tax planning calculator</p>
       <h1>RRSP Deduction Timing Calculator: Claim Now or Save It for Later?</h1>
       <p class="lead">
-        Compare the arithmetic of claiming an RRSP deduction this year versus saving the deduction for a future higher-income year. The calculator uses The Long Math’s shared Canadian income tax engine and the shared investment growth engine.
-      </p>
-      <p class="lead">
-        The question is not “which year gives the biggest refund?” The question is whether the future refund beats what today’s refund could earn, pay down, or otherwise do during the waiting period.
+        Compare claiming an RRSP deduction this year with carrying it forward. The question is whether a larger future tax saving beats what today’s refund could earn or pay down while you wait.
       </p>
       <p class="lead"><strong>No opinions. No hidden assumptions. Just arithmetic.</strong></p>
       <div class="hero-actions">
@@ -92,183 +89,153 @@
     <section class="calc-shell" aria-label="RRSP deduction timing calculator">
       <article class="calc-panel" aria-labelledby="inputs-heading">
         <h2 id="inputs-heading" class="panel-heading">Inputs</h2>
-        <div class="input-grid">
-          <div class="field">
-            <label for="tax_year">Current tax year</label>
-            <select id="tax_year" aria-describedby="tax_year_help"></select>
-            <p id="tax_year_help" class="help-text">Official Canadian tax tables for the year you could claim the deduction now. Future years use official tables when available, otherwise a mechanical projection of indexed amounts.</p>
-          </div>
 
-          <div class="field">
-            <label for="province">Province or territory</label>
-            <select id="province"></select>
-            <p class="help-text">Residence for provincial or territorial income tax purposes.</p>
+        <div class="input-group">
+          <h3 class="input-group-title">Your RRSP deduction</h3>
+          <div class="input-grid">
+            <div class="field">
+              <label for="tax_year">Tax year</label>
+              <select id="tax_year" aria-describedby="tax_year_help"></select>
+              <p id="tax_year_help" class="help-text">Year you could claim the deduction now.</p>
+            </div>
+            <div class="field">
+              <label for="province">Province or territory</label>
+              <select id="province"></select>
+            </div>
+            <div class="field">
+              <label for="deduction_amount">RRSP deduction available</label>
+              <input id="deduction_amount" type="text" inputmode="decimal" value="8500" />
+              <p class="help-text">Amount already contributed to your RRSP that you can choose to deduct now or carry forward.</p>
+            </div>
           </div>
+        </div>
 
-          <div class="field">
-            <label for="deduction_amount">RRSP deduction amount to compare</label>
-            <input id="deduction_amount" type="text" inputmode="decimal" value="15000" />
-            <p class="help-text">This assumes the contribution already exists and you are deciding when to claim the deduction.</p>
+        <div class="input-group">
+          <h3 class="input-group-title">Your income</h3>
+          <div class="input-grid">
+            <div class="field">
+              <label for="current_income" id="label_current_income">Income this year</label>
+              <input id="current_income" type="text" inputmode="decimal" value="84000" />
+            </div>
+            <div class="field">
+              <label for="future_income" id="label_future_income">Expected income in future year</label>
+              <input id="future_income" type="text" inputmode="decimal" value="96000" />
+              <p class="help-text">Enter your expected income in that year’s dollars.</p>
+            </div>
+            <div class="field">
+              <label for="years_to_wait">Years until future claim</label>
+              <input id="years_to_wait" type="number" inputmode="numeric" min="1" max="40" step="1" value="1" />
+              <p class="help-text">Enter a whole number of years (1–40).</p>
+            </div>
           </div>
+        </div>
 
-          <div class="field">
-            <label for="current_income">Current employment income before RRSP deduction</label>
-            <input id="current_income" type="text" inputmode="decimal" value="80000" />
-            <p class="help-text">Employment income for the year you could claim the deduction now.</p>
-          </div>
-
-          <div class="field">
-            <label for="future_income">Expected future employment income</label>
-            <input id="future_income" type="text" inputmode="decimal" value="140000" />
-            <p class="help-text">Enter the amount you expect to earn in that future year's dollars.</p>
-          </div>
-
-          <div class="field">
-            <label for="years_to_wait">Years until the future income year</label>
-            <input id="years_to_wait" type="number" inputmode="numeric" min="1" max="40" step="1" value="2" />
-            <p class="help-text">Whole tax years only (1–40). Fractional values are rejected. Waiting delays the refund and advances the future tax year by the same count (current tax year + years).</p>
-          </div>
-
-          <div class="field">
-            <label for="inflation_rate">Expected inflation (%)</label>
-            <input id="inflation_rate" type="number" inputmode="decimal" min="-5" max="20" step="any" value="2" />
-            <p class="help-text">Used to project future tax brackets and indexed tax amounts when official tax tables are not yet available. This is not a prediction of future tax policy.</p>
-          </div>
-
-          <div class="field">
-            <label for="refund_use">If claimed now, the refund is used for</label>
-            <select id="refund_use">
-              <option value="invest">Investment return</option>
-              <option value="debt">Debt payoff rate</option>
-            </select>
-            <p class="help-text">Both options use the same compounding math. Choose the label that matches how you would actually use the refund.</p>
-          </div>
-
-          <div class="field">
-            <label for="annual_rate">Expected annual return or debt-interest savings on the refund (%)</label>
-            <input id="annual_rate" type="number" inputmode="decimal" step="any" value="6" />
-            <p class="help-text">Use the annual return you expect to retain after applicable fees and investment taxes, or the effective interest rate avoided if the refund would be used to repay debt.</p>
+        <div class="input-group">
+          <h3 class="input-group-title">Assumptions</h3>
+          <div class="input-grid">
+            <div class="field">
+              <label for="inflation_rate">Expected inflation (%)</label>
+              <input id="inflation_rate" type="number" inputmode="decimal" min="-5" max="20" step="any" value="2.3" />
+              <p class="help-text">Used only to project future tax thresholds when official tables are unavailable.</p>
+            </div>
+            <div class="field">
+              <label for="refund_use">What would you do with a refund received now?</label>
+              <select id="refund_use">
+                <option value="invest">Invest it</option>
+                <option value="debt">Pay down debt</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="annual_rate" id="label_annual_rate">Expected annual return (%)</label>
+              <input id="annual_rate" type="number" inputmode="decimal" step="any" value="7.5" />
+              <p id="help_annual_rate" class="help-text">Use the annual return you expect to retain after fees and applicable investment taxes.</p>
+            </div>
           </div>
         </div>
 
         <div class="example-row" aria-label="Example scenarios">
-          <button type="button" class="ghost-btn" data-example="default">80k → 140k</button>
-          <button type="button" class="ghost-btn" data-example="claim">75k → 105k</button>
-          <button type="button" class="ghost-btn" data-example="defer">60k → 170k</button>
-          <button type="button" class="ghost-btn" data-example="split">Partial split</button>
+          <button type="button" class="ghost-btn" data-example="claim">Claim now</button>
+          <button type="button" class="ghost-btn" data-example="defer">Defer</button>
+          <button type="button" class="ghost-btn" data-example="split">Split</button>
         </div>
 
-        <p style="margin-top: 14px;">
+        <p class="calc-actions">
           <button id="calculate_btn" type="button" class="primary-btn">Recalculate</button>
         </p>
       </article>
 
       <article class="calc-panel" aria-labelledby="results-heading">
-        <h2 id="results-heading" class="panel-heading">Result</h2>
+        <p class="result-kicker" id="results-heading">Result</p>
 
         <section id="verdict_card" class="verdict-card neutral" aria-live="polite">
-          <h3 id="verdict_label" class="verdict-label">Calculating…</h3>
-          <p id="verdict_sentence" class="verdict-copy">Enter your assumptions to compare claiming now with saving the deduction.</p>
+          <h2 id="verdict_label" class="verdict-label">Calculating…</h2>
+          <p id="verdict_advantage" class="verdict-advantage" hidden></p>
+          <p id="verdict_sentence" class="verdict-copy">Enter your assumptions to compare claiming now with carrying the deduction forward.</p>
+          <ul id="verdict_allocation" class="verdict-allocation" hidden></ul>
+          <p id="verdict_why" class="verdict-why" hidden></p>
         </section>
 
-        <section id="split_result_block" class="split-result" hidden>
-          <h3 class="panel-heading" style="margin-top:0;">Best deduction timing</h3>
-          <div class="result-grid">
-            <div class="metric-card primary">
-              <p class="metric-label">Claim now</p>
-              <p id="out_split_claim_now" class="metric-value">$–</p>
-            </div>
-            <div class="metric-card primary">
-              <p class="metric-label">Carry forward</p>
-              <p id="out_split_carry_forward" class="metric-value">$–</p>
-            </div>
-            <div class="metric-card">
-              <p class="metric-label">Advantage vs claiming the full deduction now</p>
-              <p id="out_split_advantage_vs_now" class="metric-value">$–</p>
-              <p class="metric-note">Future-dated value of the optimized split minus the all-now strategy.</p>
-            </div>
+        <section class="compare-block" aria-labelledby="compare-heading">
+          <h3 id="compare-heading" class="block-heading">Compare your options</h3>
+          <div class="table-wrap">
+            <table class="calc-table" id="compare_table">
+              <thead>
+                <tr>
+                  <th scope="col">Strategy</th>
+                  <th scope="col">Deduction now</th>
+                  <th scope="col" id="compare_later_heading">Deduction later</th>
+                  <th scope="col" id="compare_value_heading">Value later</th>
+                </tr>
+              </thead>
+              <tbody id="compare_table_body"></tbody>
+            </table>
+          </div>
+          <p id="optimal_note" class="optimal-note" hidden></p>
+        </section>
+
+        <section class="why-block" aria-labelledby="why-heading">
+          <h3 id="why-heading" class="block-heading">Why this result</h3>
+          <div class="why-grid">
+            <dl class="why-list">
+              <div class="why-row">
+                <dt id="why_tax_now_label">Tax saved if claimed now</dt>
+                <dd id="out_claim_now_tax_saved">$–</dd>
+              </div>
+              <div class="why-row">
+                <dt id="why_tax_later_label">Tax saved if claimed later</dt>
+                <dd id="out_defer_tax_saved">$–</dd>
+              </div>
+              <div class="why-row">
+                <dt id="why_fv_label">Value of today’s tax savings later</dt>
+                <dd id="out_claim_now_future_value">$–</dd>
+              </div>
+              <div class="why-row is-total">
+                <dt id="why_advantage_label">Advantage</dt>
+                <dd id="out_advantage">$–</dd>
+              </div>
+            </dl>
+            <dl class="why-list">
+              <div class="why-row">
+                <dt id="rate_now_label">Effective deduction rate, now</dt>
+                <dd id="out_current_blended_rate">–</dd>
+              </div>
+              <div class="why-row">
+                <dt id="rate_later_label">Effective deduction rate, later</dt>
+                <dd id="out_future_blended_rate">–</dd>
+              </div>
+              <div class="why-row">
+                <dt>Break-even annual return</dt>
+                <dd id="out_break_even_return">–</dd>
+              </div>
+            </dl>
           </div>
         </section>
 
-        <div class="result-grid">
-          <div class="metric-card primary">
-            <p class="metric-label">Deferral advantage (all later − all now FV)</p>
-            <p id="out_advantage" class="metric-value">$–</p>
-            <p class="metric-note">Positive means waiting with the full deduction is ahead. Negative means claiming the full deduction now is ahead.</p>
-          </div>
-          <div class="metric-card">
-            <p class="metric-label">Claim now: tax saved</p>
-            <p id="out_claim_now_tax_saved" class="metric-value">$–</p>
-            <p class="metric-note">Current-year income tax reduction from the full RRSP deduction.</p>
-          </div>
-          <div class="metric-card">
-            <p class="metric-label">Claim now: future value</p>
-            <p id="out_claim_now_future_value" class="metric-value">$–</p>
-            <p id="out_refund_use" class="metric-note">Today’s refund is compounded during the wait.</p>
-          </div>
-          <div class="metric-card">
-            <p class="metric-label">Claim later: tax saved</p>
-            <p id="out_defer_tax_saved" class="metric-value">$–</p>
-            <p class="metric-note">Future-year income tax reduction from the same full deduction.</p>
-          </div>
-          <div class="metric-card">
-            <p class="metric-label">Current blended deduction rate</p>
-            <p id="out_current_blended_rate" class="metric-value">–</p>
-            <p class="metric-note">Current tax saved divided by the deduction.</p>
-          </div>
-          <div class="metric-card">
-            <p class="metric-label">Future blended deduction rate</p>
-            <p id="out_future_blended_rate" class="metric-value">–</p>
-            <p class="metric-note">Future tax saved divided by the deduction.</p>
-          </div>
+        <div class="notice-list">
+          <p id="tax_only_notice" class="notice">Tax-only comparison. Income-tested benefits and clawbacks are not included.</p>
+          <p id="projection_warning" class="notice" hidden></p>
+          <p id="quebec_notice" class="notice qc" hidden>Quebec calculation limitation: this calculator uses a simplified Quebec income-tax model and does not reproduce the complete Quebec tax return. Results should be treated as estimates.</p>
         </div>
-
-        <div class="scenario-compare" aria-label="Strategy comparison">
-          <div class="metric-card">
-            <p id="label_scenario_all_now" class="metric-label">All now (future-dated value)</p>
-            <p id="out_scenario_all_now_value" class="metric-value">$–</p>
-            <p class="metric-note">Tax saved now: <span id="out_scenario_all_now_tax">$–</span></p>
-          </div>
-          <div class="metric-card">
-            <p id="label_scenario_all_later" class="metric-label">All later (future-dated value)</p>
-            <p id="out_scenario_all_later_value" class="metric-value">$–</p>
-            <p class="metric-note">Tax saved later: <span id="out_scenario_all_later_tax">$–</span></p>
-          </div>
-          <div class="metric-card">
-            <p id="label_scenario_optimal" class="metric-label">Optimized split (future-dated value)</p>
-            <p id="out_scenario_optimal_value" class="metric-value">$–</p>
-            <p class="metric-note">Claim now / carry forward: <span id="out_scenario_optimal_detail">$–</span></p>
-          </div>
-        </div>
-
-        <div class="bar-compare" aria-hidden="true">
-          <div class="bar-row">
-            <div class="bar-label"><span>Claim now, compounded</span><span id="out_wait">–</span></div>
-            <div class="bar-track"><div id="bar_claim_now" class="bar-fill"></div></div>
-          </div>
-          <div class="bar-row">
-            <div class="bar-label"><span id="label_bar_defer">Claim later</span><span id="out_tax_year">–</span></div>
-            <div class="bar-track"><div id="bar_defer" class="bar-fill blue"></div></div>
-          </div>
-          <div id="bar_split_row" class="bar-row" hidden>
-            <div class="bar-label"><span>Optimized split</span><span id="out_future_tax_year">–</span></div>
-            <div class="bar-track"><div id="bar_split" class="bar-fill split"></div></div>
-          </div>
-        </div>
-
-        <p class="help-text" style="margin-top:10px;">
-          Future tax table: <span id="out_future_table_source">–</span>
-        </p>
-
-        <section id="projection_warning" class="warning-box projection-box" hidden>
-          <h3>Projected tax tables</h3>
-          <p id="projection_warning_text"></p>
-        </section>
-
-        <section id="benefits_warning" class="warning-box benefits-box">
-          <h3>Benefits and clawbacks</h3>
-          <p id="benefits_warning_text">Tax-only comparison: This result does not include income-tested benefits or clawbacks such as CCB, GST/HST credits, OAS recovery tax, GIS, or other programs whose value may change when net income changes.</p>
-        </section>
 
         <section id="warning_box" class="warning-box" hidden>
           <h3>Check these assumptions</h3>
@@ -277,82 +244,57 @@
       </article>
     </section>
 
-    <section class="calc-panel detail-section" aria-labelledby="break-even-heading">
-      <h2 id="break-even-heading" class="panel-heading">Break-Even Math</h2>
-      <div class="detail-grid">
-        <div class="metric-card">
-          <p class="metric-label">Raw extra tax saving from waiting</p>
-          <p id="out_raw_tax_difference" class="metric-value">$–</p>
-          <p class="metric-note">Future tax saved minus current tax saved, before opportunity cost.</p>
+    <details class="assumptions-details detail-section">
+      <summary>Assumptions &amp; tax methodology</summary>
+      <div class="assumptions-body">
+        <ul class="detail-list">
+          <li>Employment-income path using the shared Canadian personal income tax engine (brackets, non-refundable credits including the federal enhanced BPA phase-out, and modeled provincial reductions such as Ontario Tax Reduction and B.C. tax reduction where applicable).</li>
+          <li>The effective deduction rate is the tax saving divided by the deduction—a blended rate across every bracket the deduction crosses.</li>
+          <li>When official future-year tax tables are unavailable, indexed thresholds are projected mechanically from the latest official year using the inflation input. Rates and non-indexed parameters stay unchanged.</li>
+          <li>Income-tested benefits and clawbacks (CCB, GST/HST credit, OAS recovery, GIS, and similar) are not modelled.</li>
+          <li>The RRSP contribution is assumed already made. This calculator compares deduction timing, not contribution room.</li>
+          <li>Strategy values are compared at the future claim date in nominal dollars. CPP and EI are excluded because an RRSP deduction does not reduce payroll contributions.</li>
+          <li>Quebec uses a simplified provincial model and is not a full TP-1 form trace.</li>
+        </ul>
+        <p class="help-text"><a href="/calculators/rrsp-deduction-timing/methodology/">Full methodology page</a></p>
+        <h3 class="block-heading">Break-even arithmetic</h3>
+        <p class="help-text">
+          The <span id="formula_use_label">investment return</span> is applied to the refund you could receive now. The future tax saving is not compounded because it is received only in the future year.
+        </p>
+        <pre id="formula_output" class="formula-box" aria-live="polite"></pre>
+        <h3 class="block-heading">Tax calculation detail</h3>
+        <div class="table-wrap">
+          <table class="calc-table">
+            <thead>
+              <tr>
+                <th>Scenario</th>
+                <th>Taxable income</th>
+                <th>Income tax</th>
+              </tr>
+            </thead>
+            <tbody id="tax_table_body"></tbody>
+          </table>
         </div>
-        <div class="metric-card">
-          <p class="metric-label">Future saving required to break even</p>
-          <p id="out_required_future_tax_saving" class="metric-value">$–</p>
-          <p class="metric-note">The future deduction must save at least this much tax to beat claiming now.</p>
-        </div>
-        <div class="metric-card">
-          <p class="metric-label">Required future blended rate</p>
-          <p id="out_required_future_rate" class="metric-value">–</p>
-          <p class="metric-note">Break-even future tax saving divided by <span id="out_deduction">$–</span>.</p>
-        </div>
-        <div class="metric-card">
-          <p class="metric-label">Break-even annual return on today’s refund</p>
-          <p id="out_break_even_return" class="metric-value">–</p>
-          <p class="metric-note">If your actual use of the refund beats this rate, claiming now wins.</p>
-        </div>
+        <p class="help-text" style="margin-top:10px;">
+          Future tax table: <span id="out_future_table_source">–</span>
+          · Year: <span id="out_future_tax_year">–</span>
+        </p>
       </div>
-
-      <p class="help-text" style="margin-top: 12px;">
-        The <span id="formula_use_label">investment return</span> is applied to the refund you could receive now. The future tax saving is not compounded because it is received only in the future year.
-      </p>
-      <pre id="formula_output" class="formula-box" aria-live="polite"></pre>
-    </section>
-
-    <section class="calc-panel detail-section" aria-labelledby="tax-detail-heading">
-      <h2 id="tax-detail-heading" class="panel-heading">Tax Calculation Detail</h2>
-      <p class="help-text">
-        Each tax saving is calculated by running the shared Canadian personal income tax engine twice: once with no RRSP deduction and once with the RRSP deduction. The calculator compares the income tax difference, excluding CPP and EI because RRSP deductions do not reduce payroll contributions.
-      </p>
-      <div class="table-wrap">
-        <table class="calc-table">
-          <thead>
-            <tr>
-              <th>Scenario</th>
-              <th>Taxable income</th>
-              <th>Income tax</th>
-            </tr>
-          </thead>
-          <tbody id="tax_table_body"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="calc-panel detail-section" aria-labelledby="assumptions-heading">
-      <h2 id="assumptions-heading" class="panel-heading">Scope and Assumptions</h2>
-      <ul class="detail-list">
-        <li>Employment income path. The shared engine includes federal/provincial brackets, non-refundable credits (including the federal enhanced BPA phase-out), Ontario surtax, Ontario Tax Reduction (basic amount), and Ontario Health Premium where applicable.</li>
-        <li>Income-tested benefits and clawbacks (CCB, GST/HST credit, OAS recovery tax, GIS, and similar programs) are not income tax and are not modelled. The comparison is tax-only.</li>
-        <li>Future income is entered in that future year’s dollars. When official tax tables for the future year are unavailable, indexed thresholds are projected mechanically from the latest official year using the inflation input. Rates and non-indexed parameters stay unchanged. This is not a forecast of future tax legislation.</li>
-        <li>The RRSP contribution is assumed to have already been made or be otherwise available to deduct. This calculator compares deduction timing, not contribution room.</li>
-        <li>The tax saving is the change in federal plus provincial or territorial income tax. CPP and EI are excluded from the refund comparison because an RRSP deduction does not reduce payroll contributions.</li>
-        <li>The opportunity-cost rate should be the return or interest saving you actually retain after fees and investment taxes, or the debt interest avoided.</li>
-        <li>All strategy values are compared at the future date in nominal dollars.</li>
-      </ul>
-    </section>
+    </details>
 
     <section class="calc-panel detail-section" aria-labelledby="faq-heading">
       <h2 id="faq-heading" class="panel-heading">FAQ</h2>
       <details>
         <summary>Should I claim my RRSP deduction now or save it for later?</summary>
-        <p>Claim now when the compounded value of today’s refund is larger than the future tax saving. Save the deduction only when the higher-income year is likely, close, and large enough to beat that opportunity cost.</p>
+        <p>Claim now when the compounded value of today’s refund is larger than the future tax saving. Carry the deduction forward when the higher-income year produces enough extra tax saving to beat that opportunity cost.</p>
       </details>
       <details>
         <summary>Is the marginal tax rate enough for this decision?</summary>
-        <p>No. The calculator uses the full tax difference before and after the deduction. That produces a blended deduction rate across the whole RRSP deduction, which matters when the deduction crosses more than one bracket.</p>
+        <p>No. The calculator uses the full tax difference before and after the deduction—the effective deduction rate across every bracket crossed.</p>
       </details>
       <details>
         <summary>Does this calculate my official CRA refund?</summary>
-        <p>No. It estimates the tax difference created by the RRSP deduction under explicit assumptions. Your actual refund also depends on withholding, credits, other deductions, benefits, and other tax-return details.</p>
+        <p>No. It estimates the tax difference created by the RRSP deduction under explicit assumptions. Your actual refund also depends on withholding, credits, other deductions, benefits, and other return details.</p>
       </details>
     </section>
 

@@ -60,7 +60,7 @@
 
 @media (min-width: 1020px) {
   .calc-shell {
-    grid-template-columns: minmax(300px, 0.85fr) minmax(0, 1.15fr);
+    grid-template-columns: minmax(300px, 0.92fr) minmax(0, 1.18fr);
     align-items: start;
   }
 }
@@ -68,13 +68,34 @@
 .calc-panel {
   padding: 18px;
   border: 1px solid var(--border);
-  border-radius: 18px;
-  background: linear-gradient(180deg, var(--card), var(--card2));
+  border-radius: 16px;
+  background: var(--card);
 }
 
 .panel-heading {
-  margin: 0 0 12px;
+  margin: 0 0 14px;
   font-size: 1rem;
+}
+
+.input-group {
+  margin: 0 0 18px;
+  padding: 0 0 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.input-group:last-of-type {
+  margin-bottom: 12px;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.input-group-title {
+  margin: 0 0 10px;
+  color: var(--accent2);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .input-grid {
@@ -107,194 +128,107 @@
   line-height: 1.45;
 }
 
+.calc-actions {
+  margin-top: 4px;
+}
+
+/* —— Result hero —— */
+.result-kicker {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .verdict-card {
-  padding: 18px;
-  border-radius: 18px;
+  padding: 18px 18px 16px;
+  border-radius: 14px;
   border: 1px solid var(--border);
   background: var(--surface);
 }
 
-.verdict-card.claim {
-  border-color: rgba(74, 222, 128, 0.55);
-  background: linear-gradient(180deg, rgba(74, 222, 128, 0.10), var(--surface));
-}
-
-.verdict-card.defer {
-  border-color: rgba(96, 165, 250, 0.55);
-  background: linear-gradient(180deg, rgba(96, 165, 250, 0.11), var(--surface));
+.verdict-card.claim,
+.verdict-card.defer,
+.verdict-card.split {
+  border-color: rgba(217, 180, 106, 0.55);
 }
 
 .verdict-card.neutral {
-  border-color: rgba(217, 180, 106, 0.65);
-  background: linear-gradient(180deg, rgba(217, 180, 106, 0.12), var(--surface));
-}
-
-.verdict-card.split {
-  border-color: rgba(167, 139, 250, 0.55);
-  background: linear-gradient(180deg, rgba(167, 139, 250, 0.12), var(--surface));
-}
-
-.split-result {
-  margin-top: 14px;
-}
-
-.scenario-compare {
-  display: grid;
-  gap: 12px;
-  margin-top: 14px;
-}
-
-@media (min-width: 720px) {
-  .scenario-compare {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-.bar-fill.split {
-  background: linear-gradient(90deg, #a78bfa, rgba(167, 139, 250, 0.45));
-}
-
-.projection-box {
-  border-color: rgba(96, 165, 250, 0.55);
-  background: rgba(96, 165, 250, 0.1);
-}
-
-.benefits-box {
-  border-color: rgba(148, 163, 184, 0.55);
-  background: rgba(148, 163, 184, 0.08);
-}
-
-.warning-box p {
-  margin: 0;
-  color: var(--muted);
-  line-height: 1.55;
-  font-size: 0.86rem;
+  border-color: var(--border);
 }
 
 .verdict-label {
-  margin: 0 0 5px;
-  font-size: 1.25rem;
+  margin: 0 0 8px;
+  font-size: 1.35rem;
+  line-height: 1.25;
+}
+
+.verdict-advantage {
+  margin: 0 0 12px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent);
 }
 
 .verdict-copy {
+  margin: 0 0 12px;
+  color: var(--muted);
+  line-height: 1.55;
+  font-size: 0.92rem;
+}
+
+.verdict-allocation {
   margin: 0;
-  color: var(--muted);
-  line-height: 1.6;
-}
-
-.result-grid {
+  padding: 0;
+  list-style: none;
   display: grid;
-  gap: 12px;
-  margin-top: 14px;
+  gap: 4px;
+  font-size: 0.9rem;
 }
 
-@media (min-width: 720px) {
-  .result-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-.metric-card {
-  padding: 14px;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.metric-card.primary {
-  border-color: rgba(217, 180, 106, 0.65);
-}
-
-.metric-label {
-  margin: 0 0 5px;
-  color: var(--muted);
-  font-size: 0.78rem;
-}
-
-.metric-value {
-  margin: 0;
-  font-size: 1.32rem;
-  font-weight: 800;
-}
-
-.metric-note {
-  margin: 5px 0 0;
-  color: var(--muted);
-  font-size: 0.78rem;
-  line-height: 1.45;
-}
-
-.bar-compare {
-  display: grid;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.bar-row {
-  display: grid;
-  gap: 6px;
-}
-
-.bar-label {
+.verdict-allocation li {
   display: flex;
   justify-content: space-between;
-  gap: 10px;
-  font-size: 0.82rem;
-  color: var(--muted);
+  gap: 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
 }
 
-.bar-track {
-  height: 12px;
-  border-radius: 999px;
-  overflow: hidden;
-  background: var(--surface2);
-  border: 1px solid var(--border);
+.verdict-allocation span:last-child {
+  font-weight: 700;
+  white-space: nowrap;
 }
 
-.bar-fill {
-  height: 100%;
-  width: 0%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--accent), rgba(217, 180, 106, 0.45));
-  transition: width 0.2s ease;
+.verdict-why {
+  margin: 12px 0 0;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.55;
 }
 
-.bar-fill.blue {
-  background: linear-gradient(90deg, #60a5fa, rgba(96, 165, 250, 0.45));
-}
-
-.detail-section {
+/* —— Comparison table —— */
+.compare-block,
+.why-block {
   margin-top: 18px;
 }
 
-.detail-grid {
-  display: grid;
-  gap: 12px;
-}
-
-@media (min-width: 760px) {
-  .detail-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.detail-list {
-  margin: 0;
-  padding-left: 1.1rem;
-  color: var(--muted);
-  line-height: 1.6;
+.block-heading {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
 }
 
 .table-wrap {
   overflow-x: auto;
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 12px;
 }
 
 .calc-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
 }
 
 .calc-table th,
@@ -307,25 +241,108 @@
 .calc-table th {
   color: var(--muted);
   background: var(--surface2);
+  font-weight: 600;
 }
 
-.calc-table td:nth-child(2),
-.calc-table td:nth-child(3) {
+.calc-table td:nth-child(n + 2),
+.calc-table th:nth-child(n + 2) {
   text-align: right;
   white-space: nowrap;
 }
 
-.formula-box {
-  white-space: pre-wrap;
-  overflow-x: auto;
+.calc-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.calc-table tr.is-result td {
+  background: rgba(217, 180, 106, 0.08);
+  font-weight: 700;
+}
+
+.optimal-note {
   margin: 10px 0 0;
-  padding: 13px;
-  border-radius: 12px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+/* —— Why this result —— */
+.why-grid {
+  display: grid;
+  gap: 14px;
+}
+
+@media (min-width: 720px) {
+  .why-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.why-list {
+  margin: 0;
+  padding: 12px 14px;
   border: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.18);
-  color: var(--text);
-  font-size: 0.84rem;
-  line-height: 1.65;
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.why-list dt,
+.why-list dd {
+  margin: 0;
+}
+
+.why-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.86rem;
+}
+
+.why-row:last-child {
+  border-bottom: 0;
+}
+
+.why-row dt {
+  color: var(--muted);
+}
+
+.why-row dd {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.why-row.is-total {
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.why-row.is-total dd {
+  color: var(--accent);
+}
+
+/* —— Notices —— */
+.notice-list {
+  margin-top: 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.notice {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.notice.qc {
+  border-color: rgba(217, 180, 106, 0.4);
 }
 
 .warning-box {
@@ -347,10 +364,70 @@
   color: var(--muted);
 }
 
+/* —— Methodology / FAQ —— */
+.detail-section {
+  margin-top: 18px;
+}
+
+.assumptions-details {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  padding: 0 16px;
+}
+
+.assumptions-details > summary {
+  cursor: pointer;
+  padding: 14px 0;
+  font-weight: 700;
+  list-style-position: outside;
+}
+
+.assumptions-details[open] > summary {
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.assumptions-body {
+  padding-bottom: 14px;
+}
+
+.detail-list {
+  margin: 0 0 12px;
+  padding-left: 1.1rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.formula-box {
+  white-space: pre-wrap;
+  overflow-x: auto;
+  margin: 10px 0 0;
+  padding: 13px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--text);
+  font-size: 0.84rem;
+  line-height: 1.65;
+}
+
 .calc-related-bottom {
   margin-top: 22px;
 }
 
 .calc-related-bottom ul {
   margin-bottom: 0;
+}
+
+@media (max-width: 719px) {
+  .verdict-label {
+    font-size: 1.2rem;
+  }
+
+  .calc-table th,
+  .calc-table td {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
 }

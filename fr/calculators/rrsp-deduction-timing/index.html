@@ -78,10 +78,7 @@
       <p class="hero-kicker">Calculateur fiscal canadien REER</p>
       <h1>Calculateur de calendrier de déduction REER : réclamer maintenant ou plus tard?</h1>
       <p class="lead">
-        Comparez l'arithmétique d'une déduction REER réclamée cette année avec la même déduction gardée pour une année future à revenu plus élevé. Le calculateur utilise le moteur partagé d'impôt canadien de The Long Math et le moteur partagé de croissance des placements.
-      </p>
-      <p class="lead">
-        La question n'est pas « quelle année donne le plus gros remboursement? » La question est de savoir si le remboursement futur dépasse ce que le remboursement d'aujourd'hui pourrait rapporter, rembourser ou accomplir pendant l'attente.
+        Comparez une déduction REER réclamée cette année avec un report. La question est de savoir si une économie d'impôt future plus élevée dépasse ce que le remboursement d'aujourd'hui pourrait rapporter ou rembourser pendant l'attente.
       </p>
       <p class="lead"><strong>Pas d'opinions. Pas d'hypothèses cachées. Juste de l'arithmétique.</strong></p>
       <div class="hero-actions">
@@ -93,183 +90,153 @@
     <section class="calc-shell" aria-label="Calculateur de calendrier de déduction REER">
       <article class="calc-panel" aria-labelledby="inputs-heading">
         <h2 id="inputs-heading" class="panel-heading">Entrées</h2>
-        <div class="input-grid">
-          <div class="field">
-            <label for="tax_year">Année d'imposition actuelle</label>
-            <select id="tax_year" aria-describedby="tax_year_help"></select>
-            <p id="tax_year_help" class="help-text">Tables fiscales canadiennes officielles pour l'année où la déduction pourrait être réclamée maintenant. Les années futures utilisent les tables officielles lorsqu'elles existent, sinon une projection mécanique des montants indexés.</p>
-          </div>
 
-          <div class="field">
-            <label for="province">Province ou territoire</label>
-            <select id="province"></select>
-            <p class="help-text">Résidence aux fins de l'impôt provincial ou territorial.</p>
+        <div class="input-group">
+          <h3 class="input-group-title">Votre déduction REER</h3>
+          <div class="input-grid">
+            <div class="field">
+              <label for="tax_year">Année d'imposition</label>
+              <select id="tax_year" aria-describedby="tax_year_help"></select>
+              <p id="tax_year_help" class="help-text">Année où la déduction pourrait être réclamée maintenant.</p>
+            </div>
+            <div class="field">
+              <label for="province">Province ou territoire</label>
+              <select id="province"></select>
+            </div>
+            <div class="field">
+              <label for="deduction_amount">Déduction REER disponible</label>
+              <input id="deduction_amount" type="text" inputmode="decimal" value="8500" />
+              <p class="help-text">Montant déjà cotisé à votre REER que vous pouvez déduire maintenant ou reporter.</p>
+            </div>
           </div>
+        </div>
 
-          <div class="field">
-            <label for="deduction_amount">Montant de déduction REER à comparer</label>
-            <input id="deduction_amount" type="text" inputmode="decimal" value="15000" />
-            <p class="help-text">Suppose que la cotisation existe déjà et que la décision porte sur l'année de réclamation de la déduction.</p>
+        <div class="input-group">
+          <h3 class="input-group-title">Votre revenu</h3>
+          <div class="input-grid">
+            <div class="field">
+              <label for="current_income" id="label_current_income">Revenu cette année</label>
+              <input id="current_income" type="text" inputmode="decimal" value="84000" />
+            </div>
+            <div class="field">
+              <label for="future_income" id="label_future_income">Revenu prévu l'année future</label>
+              <input id="future_income" type="text" inputmode="decimal" value="96000" />
+              <p class="help-text">Entrez le revenu prévu en dollars de cette année-là.</p>
+            </div>
+            <div class="field">
+              <label for="years_to_wait">Années avant la réclamation future</label>
+              <input id="years_to_wait" type="number" inputmode="numeric" min="1" max="40" step="1" value="1" />
+              <p class="help-text">Entrez un nombre entier d'années (1–40).</p>
+            </div>
           </div>
+        </div>
 
-          <div class="field">
-            <label for="current_income">Revenu d'emploi actuel avant déduction REER</label>
-            <input id="current_income" type="text" inputmode="decimal" value="80000" />
-            <p class="help-text">Revenu d'emploi pour l'année où la déduction pourrait être réclamée maintenant.</p>
-          </div>
-
-          <div class="field">
-            <label for="future_income">Revenu d'emploi futur prévu</label>
-            <input id="future_income" type="text" inputmode="decimal" value="140000" />
-            <p class="help-text">Entrez le montant que vous prévoyez gagner en dollars de cette année future.</p>
-          </div>
-
-          <div class="field">
-            <label for="years_to_wait">Années jusqu'à l'année de revenu futur</label>
-            <input id="years_to_wait" type="number" inputmode="numeric" min="1" max="40" step="1" value="2" />
-            <p class="help-text">Années d'imposition entières seulement (1–40). Les valeurs fractionnaires sont refusées. L'attente retarde le remboursement et avance l'année fiscale future du même nombre (année actuelle + années).</p>
-          </div>
-
-          <div class="field">
-            <label for="inflation_rate">Inflation prévue (%)</label>
-            <input id="inflation_rate" type="number" inputmode="decimal" min="-5" max="20" step="any" value="2" />
-            <p class="help-text">Sert à projeter les tranches et montants fiscaux indexés lorsque les tables officielles ne sont pas encore disponibles. Ce n'est pas une prédiction de politique fiscale future.</p>
-          </div>
-
-          <div class="field">
-            <label for="refund_use">Si réclamé maintenant, le remboursement sert à</label>
-            <select id="refund_use">
-              <option value="invest">Rendement de placement</option>
-              <option value="debt">Taux de remboursement de dette</option>
-            </select>
-            <p class="help-text">Les deux options utilisent la même capitalisation. Choisissez l'étiquette qui correspond à l'utilisation réelle du remboursement.</p>
-          </div>
-
-          <div class="field">
-            <label for="annual_rate">Rendement annuel prévu ou intérêts de dette évités sur le remboursement (%)</label>
-            <input id="annual_rate" type="number" inputmode="decimal" step="any" value="6" />
-            <p class="help-text">Utilisez le rendement annuel que vous prévoyez conserver après frais et impôts de placement applicables, ou le taux d'intérêt effectif évité si le remboursement sert à rembourser une dette.</p>
+        <div class="input-group">
+          <h3 class="input-group-title">Hypothèses</h3>
+          <div class="input-grid">
+            <div class="field">
+              <label for="inflation_rate">Inflation prévue (%)</label>
+              <input id="inflation_rate" type="number" inputmode="decimal" min="-5" max="20" step="any" value="2.3" />
+              <p class="help-text">Sert seulement à projeter les seuils fiscaux futurs lorsque les tables officielles sont absentes.</p>
+            </div>
+            <div class="field">
+              <label for="refund_use">Que feriez-vous d'un remboursement reçu maintenant?</label>
+              <select id="refund_use">
+                <option value="invest">L'investir</option>
+                <option value="debt">Rembourser une dette</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="annual_rate" id="label_annual_rate">Rendement annuel prévu (%)</label>
+              <input id="annual_rate" type="number" inputmode="decimal" step="any" value="7.5" />
+              <p id="help_annual_rate" class="help-text">Utilisez le rendement annuel que vous prévoyez conserver après frais et impôts de placement applicables.</p>
+            </div>
           </div>
         </div>
 
         <div class="example-row" aria-label="Exemples">
-          <button type="button" class="ghost-btn" data-example="default">80 k → 140 k</button>
-          <button type="button" class="ghost-btn" data-example="claim">75 k → 105 k</button>
-          <button type="button" class="ghost-btn" data-example="defer">60 k → 170 k</button>
-          <button type="button" class="ghost-btn" data-example="split">Répartition partielle</button>
+          <button type="button" class="ghost-btn" data-example="claim">Réclamer maintenant</button>
+          <button type="button" class="ghost-btn" data-example="defer">Reporter</button>
+          <button type="button" class="ghost-btn" data-example="split">Répartir</button>
         </div>
 
-        <p style="margin-top: 14px;">
+        <p class="calc-actions">
           <button id="calculate_btn" type="button" class="primary-btn">Recalculer</button>
         </p>
       </article>
 
       <article class="calc-panel" aria-labelledby="results-heading">
-        <h2 id="results-heading" class="panel-heading">Résultat</h2>
+        <p class="result-kicker" id="results-heading">Résultat</p>
 
         <section id="verdict_card" class="verdict-card neutral" aria-live="polite">
-          <h3 id="verdict_label" class="verdict-label">Calcul…</h3>
+          <h2 id="verdict_label" class="verdict-label">Calcul…</h2>
+          <p id="verdict_advantage" class="verdict-advantage" hidden></p>
           <p id="verdict_sentence" class="verdict-copy">Entrez vos hypothèses pour comparer la réclamation maintenant avec le report de la déduction.</p>
+          <ul id="verdict_allocation" class="verdict-allocation" hidden></ul>
+          <p id="verdict_why" class="verdict-why" hidden></p>
         </section>
 
-        <section id="split_result_block" class="split-result" hidden>
-          <h3 class="panel-heading" style="margin-top:0;">Meilleur calendrier de déduction</h3>
-          <div class="result-grid">
-            <div class="metric-card primary">
-              <p class="metric-label">Réclamer maintenant</p>
-              <p id="out_split_claim_now" class="metric-value">$–</p>
-            </div>
-            <div class="metric-card primary">
-              <p class="metric-label">Reporter</p>
-              <p id="out_split_carry_forward" class="metric-value">$–</p>
-            </div>
-            <div class="metric-card">
-              <p class="metric-label">Avantage par rapport à tout réclamer maintenant</p>
-              <p id="out_split_advantage_vs_now" class="metric-value">$–</p>
-              <p class="metric-note">Valeur à la date future de la répartition optimisée moins la stratégie tout-maintenant.</p>
-            </div>
+        <section class="compare-block" aria-labelledby="compare-heading">
+          <h3 id="compare-heading" class="block-heading">Comparer vos options</h3>
+          <div class="table-wrap">
+            <table class="calc-table" id="compare_table">
+              <thead>
+                <tr>
+                  <th scope="col">Stratégie</th>
+                  <th scope="col">Déduction maintenant</th>
+                  <th scope="col" id="compare_later_heading">Déduction plus tard</th>
+                  <th scope="col" id="compare_value_heading">Valeur plus tard</th>
+                </tr>
+              </thead>
+              <tbody id="compare_table_body"></tbody>
+            </table>
+          </div>
+          <p id="optimal_note" class="optimal-note" hidden></p>
+        </section>
+
+        <section class="why-block" aria-labelledby="why-heading">
+          <h3 id="why-heading" class="block-heading">Pourquoi ce résultat</h3>
+          <div class="why-grid">
+            <dl class="why-list">
+              <div class="why-row">
+                <dt id="why_tax_now_label">Impôt économisé si réclamé maintenant</dt>
+                <dd id="out_claim_now_tax_saved">$–</dd>
+              </div>
+              <div class="why-row">
+                <dt id="why_tax_later_label">Impôt économisé si réclamé plus tard</dt>
+                <dd id="out_defer_tax_saved">$–</dd>
+              </div>
+              <div class="why-row">
+                <dt id="why_fv_label">Valeur ultérieure de l'économie d'aujourd'hui</dt>
+                <dd id="out_claim_now_future_value">$–</dd>
+              </div>
+              <div class="why-row is-total">
+                <dt id="why_advantage_label">Avantage</dt>
+                <dd id="out_advantage">$–</dd>
+              </div>
+            </dl>
+            <dl class="why-list">
+              <div class="why-row">
+                <dt id="rate_now_label">Taux effectif de déduction, maintenant</dt>
+                <dd id="out_current_blended_rate">–</dd>
+              </div>
+              <div class="why-row">
+                <dt id="rate_later_label">Taux effectif de déduction, plus tard</dt>
+                <dd id="out_future_blended_rate">–</dd>
+              </div>
+              <div class="why-row">
+                <dt>Rendement annuel de seuil</dt>
+                <dd id="out_break_even_return">–</dd>
+              </div>
+            </dl>
           </div>
         </section>
 
-        <div class="result-grid">
-          <div class="metric-card primary">
-            <p class="metric-label">Avantage du report (tout plus tard − valeur future tout maintenant)</p>
-            <p id="out_advantage" class="metric-value">$–</p>
-            <p class="metric-note">Positif signifie que tout reporter est en avance. Négatif signifie que tout réclamer maintenant est en avance.</p>
-          </div>
-          <div class="metric-card">
-            <p class="metric-label">Réclamer maintenant : impôt économisé</p>
-            <p id="out_claim_now_tax_saved" class="metric-value">$–</p>
-            <p class="metric-note">Réduction d'impôt de l'année courante grâce à la déduction REER complète.</p>
-          </div>
-          <div class="metric-card">
-            <p class="metric-label">Réclamer maintenant : valeur future</p>
-            <p id="out_claim_now_future_value" class="metric-value">$–</p>
-            <p id="out_refund_use" class="metric-note">Le remboursement d'aujourd'hui est capitalisé pendant l'attente.</p>
-          </div>
-          <div class="metric-card">
-            <p class="metric-label">Réclamer plus tard : impôt économisé</p>
-            <p id="out_defer_tax_saved" class="metric-value">$–</p>
-            <p class="metric-note">Réduction d'impôt future grâce à la même déduction complète.</p>
-          </div>
-          <div class="metric-card">
-            <p class="metric-label">Taux mixte actuel de déduction</p>
-            <p id="out_current_blended_rate" class="metric-value">–</p>
-            <p class="metric-note">Impôt actuel économisé divisé par la déduction.</p>
-          </div>
-          <div class="metric-card">
-            <p class="metric-label">Taux mixte futur de déduction</p>
-            <p id="out_future_blended_rate" class="metric-value">–</p>
-            <p class="metric-note">Impôt futur économisé divisé par la déduction.</p>
-          </div>
+        <div class="notice-list">
+          <p id="tax_only_notice" class="notice">Comparaison fiscale seulement. Les prestations et récupérations fondées sur le revenu ne sont pas incluses.</p>
+          <p id="projection_warning" class="notice" hidden></p>
+          <p id="quebec_notice" class="notice qc" hidden>Limitation pour le Québec : ce calculateur utilise un modèle d'impôt québécois simplifié et ne reproduit pas la déclaration complète. Traitez les résultats comme des estimations.</p>
         </div>
-
-        <div class="scenario-compare" aria-label="Comparaison des stratégies">
-          <div class="metric-card">
-            <p id="label_scenario_all_now" class="metric-label">Tout maintenant (valeur à la date future)</p>
-            <p id="out_scenario_all_now_value" class="metric-value">$–</p>
-            <p class="metric-note">Impôt économisé maintenant : <span id="out_scenario_all_now_tax">$–</span></p>
-          </div>
-          <div class="metric-card">
-            <p id="label_scenario_all_later" class="metric-label">Tout plus tard (valeur à la date future)</p>
-            <p id="out_scenario_all_later_value" class="metric-value">$–</p>
-            <p class="metric-note">Impôt économisé plus tard : <span id="out_scenario_all_later_tax">$–</span></p>
-          </div>
-          <div class="metric-card">
-            <p id="label_scenario_optimal" class="metric-label">Répartition optimisée (valeur à la date future)</p>
-            <p id="out_scenario_optimal_value" class="metric-value">$–</p>
-            <p class="metric-note">Réclamer maintenant / reporter : <span id="out_scenario_optimal_detail">$–</span></p>
-          </div>
-        </div>
-
-        <div class="bar-compare" aria-hidden="true">
-          <div class="bar-row">
-            <div class="bar-label"><span>Réclamer maintenant, capitalisé</span><span id="out_wait">–</span></div>
-            <div class="bar-track"><div id="bar_claim_now" class="bar-fill"></div></div>
-          </div>
-          <div class="bar-row">
-            <div class="bar-label"><span id="label_bar_defer">Réclamer plus tard</span><span id="out_tax_year">–</span></div>
-            <div class="bar-track"><div id="bar_defer" class="bar-fill blue"></div></div>
-          </div>
-          <div id="bar_split_row" class="bar-row" hidden>
-            <div class="bar-label"><span>Répartition optimisée</span><span id="out_future_tax_year">–</span></div>
-            <div class="bar-track"><div id="bar_split" class="bar-fill split"></div></div>
-          </div>
-        </div>
-
-        <p class="help-text" style="margin-top:10px;">
-          Table fiscale future : <span id="out_future_table_source">–</span>
-        </p>
-
-        <section id="projection_warning" class="warning-box projection-box" hidden>
-          <h3>Tables fiscales projetées</h3>
-          <p id="projection_warning_text"></p>
-        </section>
-
-        <section id="benefits_warning" class="warning-box benefits-box">
-          <h3>Prestations et récupérations</h3>
-          <p id="benefits_warning_text">Comparaison fiscale seulement: ce résultat n'inclut pas les prestations ou récupérations fondées sur le revenu net, comme l'ACE, les crédits de TPS/TVH, la récupération de la SV, le SRG ou d'autres programmes dont la valeur peut changer lorsque le revenu net change.</p>
-        </section>
 
         <section id="warning_box" class="warning-box" hidden>
           <h3>Vérifiez ces hypothèses</h3>
@@ -278,78 +245,53 @@
       </article>
     </section>
 
-    <section class="calc-panel detail-section" aria-labelledby="break-even-heading">
-      <h2 id="break-even-heading" class="panel-heading">Seuil de rentabilité</h2>
-      <div class="detail-grid">
-        <div class="metric-card">
-          <p class="metric-label">Économie d'impôt brute supplémentaire du report</p>
-          <p id="out_raw_tax_difference" class="metric-value">$–</p>
-          <p class="metric-note">Impôt futur économisé moins impôt actuel économisé, avant coût d'opportunité.</p>
+    <details class="assumptions-details detail-section">
+      <summary>Hypothèses et méthodologie fiscale</summary>
+      <div class="assumptions-body">
+        <ul class="detail-list">
+          <li>Chemin revenu d'emploi via le moteur fiscal canadien partagé (tranches, crédits non remboursables y compris le BPA fédéral majoré, et réductions provinciales modélisées comme la réduction d'impôt de l'Ontario et la réduction d'impôt de la C.-B. le cas échéant).</li>
+          <li>Le taux effectif de déduction est l'économie d'impôt divisée par la déduction — un taux mixte sur toutes les tranches traversées.</li>
+          <li>Lorsque les tables officielles de l'année future sont absentes, les seuils indexés sont projetés mécaniquement à partir de la dernière année officielle avec l'inflation saisie.</li>
+          <li>Les prestations et récupérations fondées sur le revenu (ACE, crédits de TPS/TVH, récupération de la SV, SRG, etc.) ne sont pas modélisées.</li>
+          <li>La cotisation REER est supposée déjà faite. Ce calculateur compare le calendrier de déduction, pas l'espace de cotisation.</li>
+          <li>Les stratégies sont comparées à la date de réclamation future, en dollars nominaux. Le RPC et l'AE sont exclus.</li>
+          <li>Le Québec utilise un modèle provincial simplifié et n'est pas un suivi complet du formulaire TP-1.</li>
+        </ul>
+        <p class="help-text"><a href="/fr/calculators/rrsp-deduction-timing/methodology/">Page de méthodologie complète</a></p>
+        <h3 class="block-heading">Arithmétique du seuil de rentabilité</h3>
+        <p class="help-text">
+          Le <span id="formula_use_label">rendement du placement</span> s'applique au remboursement qui pourrait être reçu aujourd'hui. L'économie d'impôt future n'est pas capitalisée.
+        </p>
+        <pre id="formula_output" class="formula-box" aria-live="polite"></pre>
+        <h3 class="block-heading">Détail du calcul fiscal</h3>
+        <div class="table-wrap">
+          <table class="calc-table">
+            <thead>
+              <tr>
+                <th>Scénario</th>
+                <th>Revenu imposable</th>
+                <th>Impôt sur le revenu</th>
+              </tr>
+            </thead>
+            <tbody id="tax_table_body"></tbody>
+          </table>
         </div>
-        <div class="metric-card">
-          <p class="metric-label">Économie future requise pour atteindre le seuil</p>
-          <p id="out_required_future_tax_saving" class="metric-value">$–</p>
-          <p class="metric-note">La déduction future doit économiser au moins ce montant pour battre la réclamation maintenant.</p>
-        </div>
-        <div class="metric-card">
-          <p class="metric-label">Taux mixte futur requis</p>
-          <p id="out_required_future_rate" class="metric-value">–</p>
-          <p class="metric-note">Économie future de seuil divisée par <span id="out_deduction">$–</span>.</p>
-        </div>
-        <div class="metric-card">
-          <p class="metric-label">Rendement annuel de seuil sur le remboursement actuel</p>
-          <p id="out_break_even_return" class="metric-value">–</p>
-          <p class="metric-note">Si l'utilisation réelle du remboursement dépasse ce taux, réclamer maintenant gagne.</p>
-        </div>
+        <p class="help-text" style="margin-top:10px;">
+          Table fiscale future : <span id="out_future_table_source">–</span>
+          · Année : <span id="out_future_tax_year">–</span>
+        </p>
       </div>
-
-      <p class="help-text" style="margin-top: 12px;">
-        Le <span id="formula_use_label">rendement du placement</span> est appliqué au remboursement qui pourrait être reçu aujourd'hui. L'économie d'impôt future n'est pas capitalisée puisqu'elle est reçue seulement dans l'année future.
-      </p>
-      <pre id="formula_output" class="formula-box" aria-live="polite"></pre>
-    </section>
-
-    <section class="calc-panel detail-section" aria-labelledby="tax-detail-heading">
-      <h2 id="tax-detail-heading" class="panel-heading">Détail du calcul fiscal</h2>
-      <p class="help-text">
-        Chaque économie d'impôt est calculée en exécutant deux fois le moteur partagé d'impôt canadien : une fois sans déduction REER et une fois avec la déduction REER. Le calculateur compare la différence d'impôt sur le revenu, sans inclure le RPC et l'AE, car une déduction REER ne réduit pas les cotisations salariales.
-      </p>
-      <div class="table-wrap">
-        <table class="calc-table">
-          <thead>
-            <tr>
-              <th>Scénario</th>
-              <th>Revenu imposable</th>
-              <th>Impôt sur le revenu</th>
-            </tr>
-          </thead>
-          <tbody id="tax_table_body"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="calc-panel detail-section" aria-labelledby="assumptions-heading">
-      <h2 id="assumptions-heading" class="panel-heading">Portée et hypothèses</h2>
-      <ul class="detail-list">
-        <li>Chemin revenu d'emploi. Le moteur partagé inclut les tranches fédérales/provinciales, les crédits non remboursables (y compris le montant personnel de base fédéral majoré et sa réduction progressive), la surtaxe de l'Ontario, la réduction d'impôt de l'Ontario (montant de base) et la prime de santé de l'Ontario le cas échéant.</li>
-        <li>Les prestations et récupérations fondées sur le revenu net (ACE, crédits de TPS/TVH, récupération de la SV, SRG et programmes semblables) ne sont pas de l'impôt sur le revenu et ne sont pas modélisées. La comparaison est fiscale seulement.</li>
-        <li>Le revenu futur est saisi en dollars de l'année future. Lorsque les tables officielles de l'année future sont absentes, les seuils indexés sont projetés mécaniquement à partir de la dernière année officielle avec l'inflation saisie. Les taux et paramètres non indexés restent inchangés. Ce n'est pas une prévision de législation fiscale.</li>
-        <li>La cotisation REER est supposée déjà faite ou disponible à déduire. Ce calculateur compare le calendrier de déduction, pas l'espace de cotisation.</li>
-        <li>L'économie d'impôt est la variation de l'impôt fédéral plus provincial ou territorial. Le RPC et l'AE sont exclus parce qu'une déduction REER ne réduit pas les cotisations salariales.</li>
-        <li>Le taux de coût d'opportunité doit être le rendement ou l'intérêt réellement conservé après frais et impôts de placement, ou l'intérêt de dette évité.</li>
-        <li>Toutes les stratégies sont comparées à la date future, en dollars nominaux.</li>
-      </ul>
-    </section>
+    </details>
 
     <section class="calc-panel detail-section" aria-labelledby="faq-heading">
       <h2 id="faq-heading" class="panel-heading">FAQ</h2>
       <details>
         <summary>Devrais-je réclamer ma déduction REER maintenant ou la garder pour plus tard?</summary>
-        <p>Réclamez maintenant lorsque la valeur capitalisée du remboursement d'aujourd'hui dépasse l'économie d'impôt future. Gardez la déduction seulement lorsque l'année à revenu plus élevé est probable, proche et assez importante pour dépasser ce coût d'opportunité.</p>
+        <p>Réclamez maintenant lorsque la valeur capitalisée du remboursement d'aujourd'hui dépasse l'économie d'impôt future. Reportez la déduction lorsque l'année à revenu plus élevé produit assez d'économie supplémentaire pour battre ce coût d'opportunité.</p>
       </details>
       <details>
         <summary>Le taux marginal suffit-il pour cette décision?</summary>
-        <p>Non. Le calculateur utilise la différence complète d'impôt avant et après la déduction. Cela produit un taux de déduction mixte sur toute la déduction REER, ce qui compte lorsque la déduction traverse plusieurs tranches.</p>
+        <p>Non. Le calculateur utilise la différence complète d'impôt avant et après la déduction — le taux effectif de déduction sur toutes les tranches traversées.</p>
       </details>
       <details>
         <summary>Ce calculateur prédit-il mon remboursement officiel de l'ARC?</summary>
