@@ -57,5 +57,9 @@
       "question": "Peut-on perdre de l'argent dans un CELI?",
       "answerHtml": "<p>Oui. Les placements à l'intérieur peuvent perdre de la valeur. Le CELI vous protège de l'impôt sur les gains — pas des pertes de marché. Les pertes en capital dans un CELI ne s'imputent pas aux autres revenus ou gains. Et une perte ne restaure pas votre plafond de cotisation.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/tfsa-room/",
+    "calculatorName": "Calculateur d’espace de cotisation au CELI"
+  }
 }

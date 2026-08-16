@@ -61,5 +61,9 @@
       "question": "What is the RRSP contribution deadline?",
       "answerHtml": "<p>RRSP contributions must be made within 60 days of the end of the tax year to count toward that year's deduction. For most years, this means a deadline in late February or early March of the following calendar year.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/tfsa-rrsp-fhsa/",
+    "calculatorName": "TFSA vs RRSP vs FHSA Calculator"
+  }
 }

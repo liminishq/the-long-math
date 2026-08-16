@@ -57,5 +57,9 @@
       "question": "How does retirement account type affect withdrawal planning in Canada?",
       "answerHtml": "<p>RRSP and RRIF withdrawals are generally included in taxable income. RRIFs require minimum annual withdrawals based on age, which can force taxable income regardless of whether the retiree needs the funds. TFSA withdrawals are generally not included in taxable income and do not affect income-tested benefits. Non-registered accounts are taxed differently depending on whether returns are interest, dividends, or capital gains. Account structure determines the tax cost of each withdrawal and the optimal drawdown sequence.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/retirement-withdrawal-calculator/",
+    "calculatorName": "Retirement Withdrawal Calculator"
+  }
 }

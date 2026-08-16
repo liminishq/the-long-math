@@ -57,5 +57,9 @@
       "question": "Does compound interest work against you too?",
       "answerHtml": "<p>Yes — in debt and inflation, the same mechanism works in reverse. Credit card balances and loans compound against the borrower. Inflation compounds the erosion of purchasing power over time. The formula is neutral. Whether compounding works for you or against you depends entirely on which side of it you are on.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/investment-simple/",
+    "calculatorName": "Simple Investment Calculator"
+  }
 }

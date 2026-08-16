@@ -57,5 +57,9 @@
       "question": "Is \"XEQT and chill\" appropriate for everyone?",
       "answerHtml": "<p>No. It requires a long time horizon, the ability to tolerate significant temporary losses, and the discipline to continue contributing and not sell during volatility. For investors who cannot meet those behavioral requirements, the strategy will not deliver its theoretical outcome.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/active-vs-passive-break-even/",
+    "calculatorName": "Active vs Passive Break-Even Calculator"
+  }
 }

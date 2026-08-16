@@ -57,5 +57,9 @@
       "question": "What is a good real rate of return?",
       "answerHtml": "<p>A good real rate of return depends on the <a href=\"/articles/investing-and-financial-literacy/asset-classes-for-investing/\">asset class</a>, time period, fees, taxes, and inflation environment. Broad stock-market investments have historically aimed for positive real returns over long periods, while cash and very low-risk holdings may produce smaller real returns and can lose purchasing power when inflation is higher than the yield. The important point is not just the nominal return, but what remains after inflation, fees, and taxes.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/investment-calculator-inflation-adjusted/",
+    "calculatorName": "Inflation-Adjusted Investment Calculator"
+  }
 }

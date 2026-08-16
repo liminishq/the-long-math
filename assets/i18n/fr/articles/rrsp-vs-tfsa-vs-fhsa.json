@@ -61,5 +61,9 @@
       "question": "Quelle est la date limite de cotisation au REER?",
       "answerHtml": "<p>Les cotisations REER doivent être versées dans les 60 jours suivant la fin de l'année d'imposition pour être déduites pour cette année. En pratique, la date limite tombe souvent fin février ou début mars de l'année suivante.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/tfsa-rrsp-fhsa/",
+    "calculatorName": "Calculateur CELI vs REER vs CELIAPP"
+  }
 }

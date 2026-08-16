@@ -57,5 +57,9 @@
       "question": "Do you need a lot of money to start investing?",
       "answerHtml": "<p>No. Many people begin with small, regular contributions — $25 or $50 per month is a legitimate starting point. The amount matters less than the consistency and the timing. Starting earlier with less tends to outperform starting later with more, because time is the variable that matters most.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/investment-simple/",
+    "calculatorName": "Simple Investment Calculator"
+  }
 }

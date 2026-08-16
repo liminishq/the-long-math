@@ -24,5 +24,9 @@
     { "question": "Investir est-il toujours meilleur a long terme?", "answerHtml": "<p>Pas toujours. Les frais, le comportement en baisse et l'horizon reel peuvent changer fortement le resultat.</p>" },
     { "question": "Les comptes CELI/REER changent-ils la comparaison?", "answerHtml": "<p>Oui. Le traitement fiscal favorable peut augmenter significativement le rendement net de l'option investissement.</p>" },
     { "question": "Puis-je faire un mix des deux?", "answerHtml": "<p>Oui. Une allocation hybride peut ameliorer la constance du plan et reduire le risque de regret.</p>" }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/pay-off-mortgage-vs-invest/",
+    "calculatorName": "Calculateur Rembourser l’hypothèque ou investir"
+  }
 }

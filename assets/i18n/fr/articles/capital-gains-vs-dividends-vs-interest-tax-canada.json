@@ -202,5 +202,9 @@
     { "question": "Les dividendes déterminés et autres que déterminés sont-ils imposés de la même façon?", "answerHtml": "<p>Non. Les dividendes déterminés utilisent une majoration de 38 % et un crédit fédéral de 15,0198 %. Les dividendes autres que déterminés utilisent une majoration de 15 % et un crédit fédéral de 9,0301 %. Les crédits provinciaux diffèrent aussi. Les deux catégories ne sont pas interchangeables.</p>" },
     { "question": "Les dividendes étrangers sont-ils imposés comme les dividendes canadiens?", "answerHtml": "<p>Non. Les dividendes étrangers ne donnent pas droit au crédit d’impôt canadien pour dividendes et sont inclus en totalité dans le revenu, un peu comme les intérêts. Une retenue d’impôt étrangère peut aussi réduire le montant reçu avant qu’il arrive dans un compte canadien.</p>" },
     { "question": "Faut-il choisir ses placements selon leur traitement fiscal?", "answerHtml": "<p>Le traitement fiscal doit être une donnée de la décision, pas toute la décision. Comme le montre l’exemple du seuil d’équivalence, un placement dont le traitement fiscal est moins favorable peut quand même produire un meilleur résultat après impôt si son rendement avant impôt est assez élevé. L’étiquette fiscale ne remplace pas l’évaluation du placement lui-même.</p>" }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/canada-income-tax/",
+    "calculatorName": "Calculateur d’impôt sur le revenu des particuliers au Canada"
+  }
 }

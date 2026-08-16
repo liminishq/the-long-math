@@ -49,5 +49,9 @@
       "question": "Quel est le rendement de seuil de rentabilité pour un conseiller?",
       "answerHtml": "<p>Cela dépend des honoraires, de la FGR et de l'horizon. Dans les scénarios modélisés sur ce site, un conseiller avec un barème institutionnel canadien type et une FGR de 2 % devrait générer environ 3 à 4 points de pourcentage de rendement annuel supplémentaire par rapport à un portefeuille à faible coût non géré — de façon soutenue sur des décennies — pour simplement compenser les coûts.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/advisor-fee/",
+    "calculatorName": "Calculateur du coût d’un conseiller financier"
+  }
 }

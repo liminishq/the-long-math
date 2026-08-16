@@ -15,6 +15,7 @@ Use this rule when creating a new article draft or running parallel agents for a
 - Include a short source checklist for any tax, contribution, threshold, policy, rate, or data claim.
 - Mark unresolved facts as `TODO: verify` instead of filling them from memory.
 - Keep draft status explicit: draft, needs source review, needs math review, or ready for human review.
+- If a live calculator lets the reader apply the article, plan the shared `calculatorCallout` (see `75-article-calculator-callout.mdc`).
 
 ## Do Not
 

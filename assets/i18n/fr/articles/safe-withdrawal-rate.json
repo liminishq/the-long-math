@@ -57,5 +57,9 @@
       "question": "Comment le type de compte de retraite affecte-t-il la planification des retraits au Canada?",
       "answerHtml": "<p>Les retraits du REER et du FERR sont généralement inclus dans le revenu imposable. Les FERR exigent des retraits annuels minimums selon l'âge, ce qui peut forcer un revenu imposable que le retraité ait besoin ou non des fonds. Les retraits du CELI ne sont généralement pas inclus dans le revenu imposable et n'affectent pas les prestations liées au revenu. Les comptes non enregistrés sont imposés différemment selon que les rendements sont des intérêts, des dividendes ou des gains en capital. La structure des comptes détermine le coût fiscal de chaque retrait et la séquence optimale de décaissement.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/retirement-withdrawal-calculator/",
+    "calculatorName": "Calculateur de retrait à la retraite"
+  }
 }

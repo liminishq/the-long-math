@@ -57,5 +57,9 @@
       "question": "Qu'est-ce qu'un bon taux de rendement réel?",
       "answerHtml": "<p>Un bon taux de rendement réel dépend de la <a href=\"/articles/investing-and-financial-literacy/asset-classes-for-investing/\">classe d'actifs</a>, de la période, des frais, des impôts et du contexte d'inflation. Les placements largement exposés au marché boursier ont historiquement visé des rendements réels positifs sur de longues périodes, tandis que les liquidités et les placements à très faible risque peuvent produire des rendements réels plus faibles et perdre du pouvoir d'achat quand l'inflation dépasse le rendement. Le point important n'est pas seulement le rendement nominal, mais ce qui reste après inflation, frais et impôts.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/investment-calculator-inflation-adjusted/",
+    "calculatorName": "Calculateur de placement ajusté à l’inflation"
+  }
 }

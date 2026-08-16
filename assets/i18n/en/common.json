@@ -62,5 +62,9 @@
     "mortgageSchedule12": "Mortgage — first 12 months (monthly)",
     "mortgageScheduleAnnual": "Mortgage — annual summary",
     "loanAmortizationSection": "Loan amortization schedule"
+  },
+  "calculatorCallout": {
+    "heading": "Ready to run your own numbers?",
+    "lead": "Try the {name}."
   }
 }

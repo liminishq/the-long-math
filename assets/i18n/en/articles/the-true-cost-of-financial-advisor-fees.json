@@ -49,5 +49,9 @@
       "question": "What is the break-even return for an advisor?",
       "answerHtml": "<p>It depends on the fee structure, MER, and time horizon. In the scenarios modeled on this site, an advisor using a standard Canadian institutional AUM schedule plus a 2% MER would need to generate approximately 3–4 percentage points of additional annual return above a low-cost unmanaged portfolio — sustained over decades — to break even on fees.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/advisor-fee/",
+    "calculatorName": "Cost of a Financial Advisor Calculator"
+  }
 }

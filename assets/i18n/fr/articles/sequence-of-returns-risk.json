@@ -24,5 +24,9 @@
     { "question": "Le risque de sequence existe-t-il aussi en phase d'epargne?", "answerHtml": "<p>Beaucoup moins, car les cotisations regulieres peuvent compenser en partie les baisses.</p>" },
     { "question": "Comment le reduire concretement?", "answerHtml": "<p>Retrait plus prudent, depenses flexibles, reserve de liquidites et diversification adaptee.</p>" },
     { "question": "Est-ce un probleme seulement pour les actions?", "answerHtml": "<p>Non. C'est un probleme de flux de retraits et de volatilite globale du portefeuille.</p>" }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/retirement-withdrawal-calculator/",
+    "calculatorName": "Calculateur de retrait à la retraite"
+  }
 }

@@ -57,5 +57,9 @@
       "question": "Faut-il beaucoup d'argent pour commencer à investir?",
       "answerHtml": "<p>Non. Beaucoup commencent par de petites cotisations régulières — 25 $ ou 50 $ par mois est un point de départ légitime. Le montant importe moins que la régularité et le moment. Commencer plus tôt avec moins tend à surpasser commencer plus tard avec plus, parce que le temps est la variable qui compte le plus.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/investment-simple/",
+    "calculatorName": "Calculateur de placement simple"
+  }
 }

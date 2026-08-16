@@ -49,5 +49,9 @@
       "question": "How do lenders decide how much mortgage you qualify for?",
       "answerHtml": "<p>Lenders use two ratios. The Gross Debt Service ratio (GDS) measures housing costs — mortgage payment, property taxes, heating, and 50% of condo fees if applicable — as a percentage of gross income. FCAC's mortgage tool uses 39% as a common qualification guideline. The Total Debt Service ratio (TDS) adds all other debt payments (car loans, student loans, credit cards, lines of credit) and is generally guided at 44%, though actual lender standards can vary by mortgage type. Borrowers must also pass the mortgage stress test, qualifying at the higher of 5.25% or their contract rate plus 2%, regardless of the actual rate they receive.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/mortgage-calculator/",
+    "calculatorName": "Calculateur d’hypothèque"
+  }
 }

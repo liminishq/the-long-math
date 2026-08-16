@@ -41,5 +41,9 @@
       "question": "Les hauts revenus devraient-ils prioriser le REER?",
       "answerHtml": "<p>Souvent, oui. Les hauts revenus obtiennent des déductions plus importantes parce que les cotisations REER sont déduites au taux marginal. Si le revenu de retraite se situe dans une tranche inférieure, l'écart entre les taux de cotisation et de retrait crée un avantage permanent et capitalisable — surtout si le remboursement est réinvesti.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/rrsp-contribution-room-tax-refund/",
+    "calculatorName": "Calculateur d’espace de cotisation REER et de remboursement d’impôt"
+  }
 }

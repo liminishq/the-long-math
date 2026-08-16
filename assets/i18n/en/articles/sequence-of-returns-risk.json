@@ -57,5 +57,9 @@
       "question": "Is the 4% rule really a sequence-risk question?",
       "answerHtml": "<p>In large part, yes. Withdrawal-rate research is largely an attempt to understand what a portfolio could have supported across difficult historical return sequences. The 4% figure is a reference point derived from specific assumptions, not a universal rule.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/retirement-withdrawal-calculator/",
+    "calculatorName": "Retirement Withdrawal Calculator"
+  }
 }

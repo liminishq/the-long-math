@@ -57,5 +57,9 @@
       "question": "« XEQT and chill » convient-il à tout le monde?",
       "answerHtml": "<p>Non. Il faut un long horizon, la capacité d'accepter des pertes temporaires importantes et la discipline de continuer à cotiser sans vendre dans la volatilité. Sans ces exigences comportementales, la stratégie ne livrera pas son résultat théorique.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/active-vs-passive-break-even/",
+    "calculatorName": "Calculateur du seuil de rentabilité actif vs passif"
+  }
 }

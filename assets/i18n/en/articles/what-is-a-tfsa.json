@@ -57,5 +57,9 @@
       "question": "Can you lose money in a TFSA?",
       "answerHtml": "<p>Yes. The investments inside can go down in value. The TFSA protects you from taxes on gains — it does not protect you from market losses. Capital losses inside a TFSA cannot be claimed against other income or gains elsewhere. And losses do not restore your contribution room.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/tfsa-room/",
+    "calculatorName": "TFSA Contribution Room Calculator"
+  }
 }

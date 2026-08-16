@@ -53,5 +53,9 @@
       "question": "Et si je cotise par excédent par erreur?",
       "answerHtml": "<p>Les cotisations excédentaires sont assujetties à une pénalité d'impôt de 1 % par mois sur le montant excédentaire, de façon semblable aux règles de cotisation excédentaire au REER. Surveillez vos cotisations de près, surtout les années où le droit reporté entre en jeu.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/tfsa-rrsp-fhsa/",
+    "calculatorName": "Calculateur CELI vs REER vs CELIAPP"
+  }
 }

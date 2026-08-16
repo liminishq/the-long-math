@@ -62,5 +62,9 @@
     "mortgageSchedule12": "Hypothèque — 12 premiers mois (mensuel)",
     "mortgageScheduleAnnual": "Hypothèque — résumé annuel",
     "loanAmortizationSection": "Tableau d’amortissement du prêt"
+  },
+  "calculatorCallout": {
+    "heading": "Prêt à faire vos propres calculs?",
+    "lead": "Essayez le {name}."
   }
 }

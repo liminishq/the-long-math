@@ -237,5 +237,9 @@
     { "question": "Are eligible and non-eligible dividends taxed the same?", "answerHtml": "<p>No. Eligible dividends use a 38% gross-up and a 15.0198% federal dividend tax credit. Non-eligible dividends use a 15% gross-up and a 9.0301% federal credit. Provincial credits also differ. The two categories are not interchangeable.</p>" },
     { "question": "Are foreign dividends taxed like Canadian dividends?", "answerHtml": "<p>No. Foreign dividends do not qualify for the Canadian dividend tax credit and are included in income in full, similar to interest income. Foreign withholding tax may also reduce the amount received before it reaches a Canadian account.</p>" },
     { "question": "Should I choose investments based on their tax treatment?", "answerHtml": "<p>Tax treatment should be one input to the decision, not the whole decision. As the break-even example shows, an investment with worse tax treatment can still produce a better after-tax result if the pre-tax return is high enough. The tax label does not substitute for evaluating the investment itself.</p>" }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/canada-income-tax/",
+    "calculatorName": "Canada Personal Income Tax Calculator"
+  }
 }

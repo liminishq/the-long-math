@@ -41,5 +41,9 @@
       "question": "Should high-income earners prioritize RRSPs?",
       "answerHtml": "<p>Often, yes. High-income earners receive larger tax deductions because RRSP contributions are deducted at their marginal rate. If retirement income falls into a lower bracket, the gap between contribution and withdrawal rates creates a permanent, compounding advantage — especially when the refund is reinvested.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/rrsp-contribution-room-tax-refund/",
+    "calculatorName": "RRSP Contribution Room & Tax Refund Calculator"
+  }
 }

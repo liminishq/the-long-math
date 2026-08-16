@@ -57,5 +57,9 @@
       "question": "L'intérêt composé peut-il aussi jouer contre moi?",
       "answerHtml": "<p>Oui — avec la dette et l'inflation, le même mécanisme s'inverse. Les soldes de cartes de crédit et les prêts se capitalisent au détriment de l'emprunteur. L'inflation capitalise l'érosion du pouvoir d'achat dans le temps. La formule est neutre. Qu'elle joue pour vous ou contre vous dépend entièrement du côté où vous vous situez.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/investment-simple/",
+    "calculatorName": "Calculateur de placement simple"
+  }
 }

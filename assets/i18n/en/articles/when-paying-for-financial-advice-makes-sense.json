@@ -181,5 +181,9 @@
       "question": "When does DIY investing make more sense?",
       "answerHtml": "<p>DIY investing may make more sense when the investor has a simple financial life, stable behaviour, low-cost diversified investments, modest planning needs, and enough interest to manage the basics. The more complex the household becomes, the more valuable targeted advice may become.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/advisor-fee/",
+    "calculatorName": "Cost of a Financial Advisor Calculator"
+  }
 }

@@ -18,6 +18,7 @@ const {
 const {
   localizeRootHref: localizeCalculatorRootHrefForLang,
 } = require("./lib/fr-hrefs.js");
+const { injectCalculatorCallout } = require("./lib/article-calc-callout.js");
 
 const ROOT = path.resolve(__dirname, "..");
 const DIST = path.join(ROOT, "dist");
@@ -636,7 +637,14 @@ function build() {
         pageId: "article-" + outputSlug,
         article,
         wrapMainHtml: injectNewsletterAtArticleEnd(
-          prefixRootRelativeLinks(article.wrapMainHtml || "", pathPrefix),
+          injectCalculatorCallout(
+            prefixRootRelativeLinks(article.wrapMainHtml || "", pathPrefix),
+            article.calculatorCallout,
+            {
+              t: tFn,
+              localizeRootHref: (rel) => localizeCalculatorRootHrefForLang(code, pathPrefix, rel),
+            }
+          ),
           env
         ),
         disclaimerHtml: prefixRootRelativeLinks(article.disclaimerHtml || "", pathPrefix),

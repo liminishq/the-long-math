@@ -181,5 +181,9 @@
       "question": "Quand le placement autonome a-t-il plus de sens?",
       "answerHtml": "<p>Le placement autonome peut avoir plus de sens lorsque l'investisseur a une vie financière simple, un comportement stable, des placements diversifiés à faible coût, des besoins de planification modestes et assez d'intérêt pour gérer les bases. Plus le ménage devient complexe, plus des conseils ciblés peuvent devenir précieux.</p>"
     }
-  ]
+  ],
+  "calculatorCallout": {
+    "href": "/calculators/advisor-fee/",
+    "calculatorName": "Calculateur du coût d’un conseiller financier"
+  }
 }
