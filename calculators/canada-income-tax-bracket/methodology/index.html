@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspect the Arithmetic – Canadian Income Tax Bracket Calculator | The Long Math</title>
+  <meta name="description" content="Formulae, threshold analysis, and assumptions for the Canadian Income Tax Bracket Calculator." />
+  <link rel="canonical" href="https://www.thelongmath.com/calculators/canada-income-tax-bracket/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <h1>Inspect the Arithmetic — Canadian Income Tax Bracket Calculator</h1>
+      <p class="methodology-meta">Version 1.0<br>Last verified: August 2026</p>
+
+      <p>
+        Transparent arithmetic is the operating system of this calculator.
+      </p>
+      <p>
+        This document publishes the formulae, threshold-finding procedure, and assumptions used to estimate combined federal and provincial marginal and average income tax rates.
+      </p>
+      <p>
+        No opinions. No hidden assumptions. Just arithmetic.
+      </p>
+
+      <p><a class="inspect-arithmetic-btn" href="/calculators/canada-income-tax-bracket/">Back to Calculator</a></p>
+
+      <h2>Purpose</h2>
+      <p>
+        The calculator isolates the progressive ordinary-income schedule for a selected tax year and province or territory. It reports combined marginal rate, combined average rate, estimated federal and provincial income tax, distance to the next and previous rate-change thresholds, and the full combined schedule.
+      </p>
+      <p>
+        It does not maintain a separate tax-rate table. It reads the same year-specific parameter files as the <a href="/calculators/canada-income-tax/">Canada Personal Income Tax Calculator</a> and runs that engine on ordinary taxable income.
+      </p>
+
+      <h2>Shared engine</h2>
+      <p>
+        Tax payable is computed by <code>computePersonalTax</code> in <code>calculators/canada-income-tax/js/tax.engine.js</code>. Bracket analysis lives in <code>calculators/canada-income-tax/js/tax-thresholds.js</code>. The personal-tax methodology page documents credits, bracket application, and payroll items:
+      </p>
+      <p>
+        <a href="/calculators/canada-income-tax/methodology/">Inspect the Arithmetic — Canada Personal Income Tax Calculator</a>
+      </p>
+      <p>
+        Statutory federal and provincial/territorial bracket tables used by the engine are published here:
+      </p>
+      <p>
+        <a href="/tools/income-tax-brackets-canada/">Canada Income Tax Brackets — Federal and Provincial</a>
+      </p>
+
+      <h2>Definitions</h2>
+      <p>Let:</p>
+      <ul>
+        <li>Y = tax year</li>
+        <li>P = province or territory of residence</li>
+        <li>I = ordinary taxable income entered by the user</li>
+        <li>T(I) = estimated federal + provincial/territorial income tax on I</li>
+        <li>Δ = $1 (the ordinary-income finite-difference step)</li>
+      </ul>
+      <p>
+        Ordinary taxable income is passed to the engine as <code>otherIncome</code>, with employment income, self-employment income, dividends, capital gains, RRSP/FHSA deductions, and extra deductions set to zero. That keeps CPP/EI and the Canada Employment Amount from distorting the progressive income-tax schedule this page is meant to show.
+      </p>
+
+      <h2>Formulae</h2>
+
+      <h3 id="tax">1. Estimated tax and after-tax income</h3>
+      <p>
+        Displayed federal tax, provincial tax, total income tax, and after-tax income are the rounded engine totals for input (Y, P, I), matching the personal income tax calculator’s dollar rounding.
+      </p>
+      <div class="formula-block">After-tax income = I − T(I)</div>
+      <p class="formula-meta">
+        Payroll contributions (CPP, EI, QPP, QPIP) are not included in these totals. This page is income tax only.
+      </p>
+
+      <h3 id="average">2. Combined average tax rate</h3>
+      <div class="formula-block">Average rate = T(I) / I &nbsp;&nbsp;(0% if I = 0)</div>
+      <p class="formula-meta">
+        T(I) here is the rounded display total used on the calculator. Average rate is usually lower than marginal rate in a progressive system.
+      </p>
+
+      <h3 id="marginal">3. Combined marginal tax rate</h3>
+      <p>
+        The next-dollar rate is a finite difference on <strong>unrounded</strong> tax, so dollar rounding does not invent fake rate jumps:
+      </p>
+      <div class="formula-block">Marginal rate(I) = [ T<sub>exact</sub>(I + Δ) − T<sub>exact</sub>(I) ] / Δ</div>
+      <p class="formula-meta">
+        Δ = $1. T<sub>exact</sub> is <code>computePersonalTax</code> with <code>roundToDollar: false</code>. Two rates are treated as different when they differ by more than 0.005 percentage points (5 × 10<sup>−5</sup> as a decimal).
+      </p>
+
+      <h3 id="thresholds">4. Combined rate-change thresholds</h3>
+      <p>
+        Candidate incomes are collected from the engine’s parameters, then kept only where the combined next-dollar rate actually changes:
+      </p>
+      <ul>
+        <li>Federal bracket thresholds</li>
+        <li>Provincial or territorial bracket thresholds</li>
+        <li>Income where federal tax, provincial tax, or combined tax first becomes positive (credits exhausted)</li>
+        <li>Ontario Health Premium kink points, where modeled</li>
+        <li>Provincial surtax points, found by inverting tax-after-credits to the published surtax thresholds (Ontario and other provinces that encode surtaxes)</li>
+      </ul>
+      <p>
+        Candidates within half a cent are merged. A candidate at income T is kept only if:
+      </p>
+      <div class="formula-block">Marginal rate(T − Δ) differs from Marginal rate(T)</div>
+      <p class="formula-meta">
+        Convention: a verified threshold T is the income at which the next-dollar combined income-tax rate changes. The new rate applies to income at or above T.
+      </p>
+
+      <h3 id="schedule">5. Combined marginal-rate schedule</h3>
+      <p>
+        Bands are the half-open ranges between 0, the verified thresholds, and infinity. The rate shown for a band is the next-dollar rate sampled inside that band (mid-band, or $1,000 above an open-ended top band).
+      </p>
+      <p>
+        The “why the rate changes here” label is the reason attached to the threshold at the start of the band (federal bracket, provincial bracket, credit exhaustion, Ontario Health Premium, surtax, or a combination when several coincide).
+      </p>
+
+      <h3 id="next-previous">6. Next and previous thresholds</h3>
+      <p>
+        Relative to taxable income I:
+      </p>
+      <ul>
+        <li><strong>Next threshold</strong> = smallest verified T with T &gt; I, or none if I is already in the highest modeled band.</li>
+        <li><strong>Previous threshold</strong> = largest verified T with T ≤ I, or none if I is at or below the first change point.</li>
+      </ul>
+      <p>
+        Distance below the next threshold is T − I. Additional tax and additional after-tax income compare the rounded engine result at I with the rounded result at T.
+      </p>
+      <p>
+        To sit immediately below the previous threshold, income is reduced to T − Δ. The reduction in taxable income, income tax, and after-tax income compares the current rounded result with that lower-income result.
+      </p>
+
+      <h2>Assumptions</h2>
+      <ol>
+        <li>Input I is taxable income after deductions, not necessarily gross employment or business income.</li>
+        <li>Income is ordinary (non-dividend, non-gain). Dividend gross-up and capital-gains inclusion are out of scope on this page.</li>
+        <li>Supported years are the years present under <code>calculators/canada-income-tax/data/</code>.</li>
+        <li>Quebec personal tax (QPP, QPIP, TP-1, federal Quebec abatement) is not form-verified in the shared engine. Figures follow the engine’s current Quebec parameters.</li>
+        <li>Ontario Health Premium and surtaxes are included where the engine models them. They can change the combined next-dollar rate without matching a published statutory bracket line.</li>
+        <li>This is an educational estimate. It is not a tax return.</li>
+      </ol>
+
+      <h2>Implementation notes</h2>
+      <ul>
+        <li>UI: <code>calculators/canada-income-tax-bracket/ui.js</code></li>
+        <li>Analysis: <code>analyzeOrdinaryTaxPosition</code> in <code>calculators/canada-income-tax/js/tax-thresholds.js</code></li>
+        <li>Tax data path: <code>/calculators/canada-income-tax/data</code></li>
+      </ul>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between this documentation and the calculator output, the arithmetic in the shared engine governs.
+      </p>
+
+      <h2>Sources and References</h2>
+      <ul class="methodology-sources">
+        <li><a href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/frequently-asked-questions-individuals/canadian-income-tax-rates-individuals-current-previous-years.html" target="_blank" rel="noopener noreferrer">CRA — Canadian income tax rates for individuals</a></li>
+        <li><a href="/tools/income-tax-brackets-canada/">Canada Income Tax Brackets — Federal and Provincial</a> (this site’s parameter tables)</li>
+        <li><a href="/calculators/canada-income-tax/methodology/">Canada Personal Income Tax Calculator — inspect the arithmetic</a></li>
+      </ul>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>

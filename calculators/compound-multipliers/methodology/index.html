@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspect the Arithmetic – Compound Interest Multipliers | The Long Math</title>
+  <meta name="description" content="Formulae, grid construction, and assumptions for the Compound Interest Multipliers table." />
+  <link rel="canonical" href="https://www.thelongmath.com/calculators/compound-multipliers/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <h1>Inspect the Arithmetic — Compound Interest Multipliers</h1>
+      <p class="methodology-meta">Version 1.0<br>Last verified: August 2026</p>
+
+      <p>
+        Transparent arithmetic is the operating system of this calculator.
+      </p>
+      <p>
+        This document publishes the formula, grid construction, and display rounding used to generate the compound interest multipliers table.
+      </p>
+      <p>
+        No opinions. No hidden assumptions. Just arithmetic.
+      </p>
+
+      <p><a class="inspect-arithmetic-btn" href="/calculators/compound-multipliers/">Back to Calculator</a></p>
+
+      <h2>Purpose</h2>
+      <p>
+        The page is a static grid of growth factors. Each cell is how many times larger an amount becomes after compounding at a fixed annual rate for a stated number of years. Multiply any starting amount by the cell value to get a future value under those assumptions.
+      </p>
+
+      <h2>Definitions</h2>
+      <p>Let:</p>
+      <ul>
+        <li>r = annual rate as a decimal (the table labels rates as percents: 1% is r = 0.01)</li>
+        <li>t = number of years (integer)</li>
+        <li>M(r, t) = compound interest multiplier</li>
+      </ul>
+
+      <h2>Formulae</h2>
+
+      <h3 id="multiplier">1. Multiplier</h3>
+      <div class="formula-block">M(r, t) = (1 + r)<sup>t</sup></div>
+      <p class="formula-meta">
+        <strong>Rationale:</strong> One compounding event per year at a constant rate. The script computes <code>Math.pow(1 + r, y)</code> for each cell.
+      </p>
+      <p class="formula-meta">
+        <strong>Limitation:</strong> This is nominal growth only. It does not include inflation, taxes, fees, or cash flows.
+      </p>
+
+      <h3 id="grid">2. Grid range</h3>
+      <p>The published table is fixed:</p>
+      <ul>
+        <li>Annual rates: 1% through 15% in 1 percentage-point steps</li>
+        <li>Years: 0 through 50 inclusive</li>
+      </ul>
+      <p>
+        At t = 0, M = 1 for every rate. That is the identity: no elapsed compounding periods.
+      </p>
+
+      <h3 id="example">3. Worked example</h3>
+      <p>
+        At 7% for 30 years:
+      </p>
+      <div class="formula-block">M = (1.07)<sup>30</sup> ≈ 7.612255</div>
+      <p>
+        $10,000 × 7.612255 ≈ $76,123. The table stores the multiplier, not a dollar amount.
+      </p>
+
+      <h3 id="display">4. Display rounding</h3>
+      <p>Internal values use full floating-point precision. Display formatting is:</p>
+      <ul>
+        <li>Exact integers (including every year-0 cell) are shown without decimals.</li>
+        <li>Values ≥ 1,000 are shown with 6 significant figures.</li>
+        <li>Other values are shown with up to 9 decimal places, with trailing zeros stripped.</li>
+      </ul>
+      <p class="formula-meta">
+        Rounding is cosmetic. Recalculating (1 + r)<sup>t</sup> independently should match the unrounded value, not necessarily the trimmed cell text.
+      </p>
+
+      <h2>Assumptions</h2>
+      <ol>
+        <li>Annual compounding once per year. No monthly or continuous compounding.</li>
+        <li>Constant rate for the full horizon. No path, volatility, or sequence of returns.</li>
+        <li>No starting principal is required. The cell is a pure multiplier.</li>
+        <li>No inflation adjustment, taxes, fees, contributions, or withdrawals.</li>
+        <li>Share-scenario links encode a selected rate and year; they do not change the formula.</li>
+      </ol>
+
+      <h2>Implementation notes</h2>
+      <ul>
+        <li>The grid is built in <code>calculators/compound-multipliers/script.js</code>.</li>
+        <li>There is no separate engine file. The page script is the arithmetic.</li>
+      </ul>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between this documentation and the table, the formula (1 + r)<sup>t</sup> governs.
+      </p>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>

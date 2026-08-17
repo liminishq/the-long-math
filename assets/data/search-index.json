@@ -924,6 +924,24 @@
   },
   {
     "type": "calculator",
+    "title": "Inspect the Arithmetic — Canadian Income Tax Bracket Calculator",
+    "url": "/calculators/canada-income-tax-bracket/methodology/",
+    "desc": "Formulae, threshold analysis, and assumptions for the Canadian Income Tax Bracket Calculator.",
+    "keywords": [
+      "Inspect the Arithmetic – Canadian Income Tax Bracket Calculator",
+      "Inspect the Arithmetic — Canadian Income Tax Bracket Calculator",
+      "methodology",
+      "formulae",
+      "marginal",
+      "average",
+      "tax",
+      "bracket",
+      "threshold",
+      "canada"
+    ]
+  },
+  {
+    "type": "calculator",
     "title": "Inspectable Arithmetic for the Canada Personal Income Tax Calculator",
     "url": "/calculators/canada-income-tax/methodology/",
     "desc": "Formulae, computational structure, and assumptions for the Canada Personal Income Tax Calculator.",
@@ -1037,6 +1055,22 @@
       "transparent",
       "inspectable",
       "arithmetic"
+    ]
+  },
+  {
+    "type": "calculator",
+    "title": "Inspect the Arithmetic — Compound Interest Multipliers",
+    "url": "/calculators/compound-multipliers/methodology/",
+    "desc": "Formulae, grid construction, and assumptions for the Compound Interest Multipliers table.",
+    "keywords": [
+      "Inspect the Arithmetic – Compound Interest Multipliers",
+      "Inspect the Arithmetic — Compound Interest Multipliers",
+      "methodology",
+      "formulae",
+      "compound",
+      "interest",
+      "multipliers",
+      "assumptions"
     ]
   },
   {
@@ -1169,6 +1203,22 @@
       "inflation",
       "future dollars",
       "today dollars"
+    ]
+  },
+  {
+    "type": "calculator",
+    "title": "Inspect the Arithmetic — Future Buying Power Calculator",
+    "url": "/calculators/future-buying-power/methodology/",
+    "desc": "Formulae, computational structure, and assumptions for the Future Buying Power Calculator.",
+    "keywords": [
+      "Inspect the Arithmetic – Future Buying Power Calculator",
+      "Inspect the Arithmetic — Future Buying Power Calculator",
+      "methodology",
+      "formulae",
+      "inflation",
+      "purchasing",
+      "power",
+      "assumptions"
     ]
   },
   {
@@ -1744,6 +1794,24 @@
       "withdrawals",
       "add",
       "next"
+    ]
+  },
+  {
+    "type": "calculator",
+    "title": "Inspect the Arithmetic — TFSA Contribution Room Calculator",
+    "url": "/calculators/tfsa-room/methodology/",
+    "desc": "Formulae, contribution-room rules, and assumptions for the TFSA Contribution Room Calculator (Canada).",
+    "keywords": [
+      "Inspect the Arithmetic – TFSA Contribution Room Calculator",
+      "Inspect the Arithmetic — TFSA Contribution Room Calculator",
+      "methodology",
+      "formulae",
+      "tfsa",
+      "room",
+      "contribution",
+      "withdrawals",
+      "assumptions",
+      "canada"
     ]
   },
   {

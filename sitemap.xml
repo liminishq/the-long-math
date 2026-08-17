@@ -267,6 +267,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.thelongmath.com/calculators/tfsa-room/methodology/</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.thelongmath.com/calculators/active-vs-passive-break-even/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -281,6 +287,12 @@
     <loc>https://www.thelongmath.com/calculators/compound-multipliers/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.thelongmath.com/calculators/compound-multipliers/methodology/</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.thelongmath.com/calculators/tfsa-rrsp-fhsa/</loc>
@@ -456,6 +468,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.thelongmath.com/calculators/future-buying-power/methodology/</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.thelongmath.com/calculators/inflation-time-machine/</loc>
     <lastmod>2026-06-13</lastmod>
     <changefreq>monthly</changefreq>
@@ -494,6 +512,12 @@
     <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.thelongmath.com/calculators/canada-income-tax-bracket/methodology/</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.thelongmath.com/calculators/canada-income-tax/methodology/</loc>

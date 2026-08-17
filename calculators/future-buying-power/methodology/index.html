@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspect the Arithmetic – Future Buying Power Calculator | The Long Math</title>
+  <meta name="description" content="Formulae, computational structure, and assumptions for the Future Buying Power Calculator." />
+  <link rel="canonical" href="https://www.thelongmath.com/calculators/future-buying-power/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <h1>Inspect the Arithmetic — Future Buying Power Calculator</h1>
+      <p class="methodology-meta">Version 1.0<br>Last verified: August 2026</p>
+
+      <p>
+        Transparent arithmetic is the operating system of this calculator.
+      </p>
+      <p>
+        This document publishes the formulae, computational structure, and assumptions used to generate the outputs displayed on the calculator page.
+      </p>
+      <p>
+        No opinions. No hidden assumptions. Just arithmetic.
+      </p>
+
+      <p><a class="inspect-arithmetic-btn" href="/calculators/future-buying-power/">Back to Calculator</a></p>
+
+      <h2>Purpose</h2>
+      <p>
+        The calculator shows the arithmetic of a constant annual inflation assumption. It answers two related questions: how many future dollars would match today’s buying power, and what a future nominal amount would be worth in today’s dollars. It does not forecast inflation.
+      </p>
+
+      <h2>Definitions</h2>
+      <p>Let:</p>
+      <ul>
+        <li>A = amount today</li>
+        <li>i = assumed annual inflation rate (decimal; the page input is a percent)</li>
+        <li>t = years into the future</li>
+        <li>M = inflation multiplier</li>
+      </ul>
+
+      <h2>Formulae</h2>
+
+      <h3 id="multiplier">1. Inflation multiplier</h3>
+      <div class="formula-block">M = (1 + i)<sup>t</sup></div>
+      <p class="formula-meta">
+        <strong>Rationale:</strong> Annual compounding at a constant rate. The engine computes <code>Math.pow(1 + inflationRatePct / 100, years)</code>.
+      </p>
+      <p class="formula-meta">
+        <strong>Limitation:</strong> Actual CPI does not rise at a constant rate. Year-to-year inflation varies. This calculator isolates the constant-rate case.
+      </p>
+
+      <h3 id="future-dollars">2. Future dollars needed</h3>
+      <div class="formula-block">Future dollars needed = A × M</div>
+      <p class="formula-meta">
+        <strong>Rationale:</strong> The nominal amount that preserves today’s purchasing power after t years of inflation at rate i.
+      </p>
+
+      <h3 id="buying-power">3. Future buying power in today’s dollars</h3>
+      <div class="formula-block">Today’s buying power of amount A received in t years = A ÷ M</div>
+      <p class="formula-meta">
+        <strong>Rationale:</strong> The inverse of the same multiplier. Discounting a future nominal dollar back by cumulative inflation.
+      </p>
+
+      <h3 id="retained">4. Purchasing power retained and lost</h3>
+      <div class="formula-block">Purchasing power retained = 1 / M<br>Purchasing power lost = 1 − (1 / M)<br>Additional dollars needed = (A × M) − A</div>
+      <p class="formula-meta">
+        Purchasing power retained is the share of today’s buying power still represented by an unadjusted dollar after t years. Additional dollars needed is the extra nominal amount required to keep buying power constant.
+      </p>
+
+      <h3 id="cpi-reference">5. Historical CPI reference table (context only)</h3>
+      <p>
+        The headline results do <strong>not</strong> use CPI. They use the user-entered inflation rate. The reference table on the calculator is context for choosing that assumption.
+      </p>
+      <p>
+        For each trailing period of n years, the table reports a geometric average from annual CPI index values:
+      </p>
+      <div class="formula-block">average annual inflation = (CPI<sub>end</sub> / CPI<sub>end − n</sub>)<sup>1/n</sup> − 1</div>
+      <p class="formula-meta">
+        End year is the latest year in the stored Canada or United States CPI series. The displayed percent is rounded to one decimal place. Canada and the United States are loaded from <code>/tools/inflation-tables/data/CPI/CAN.json</code> and <code>/tools/inflation-tables/data/CPI/USA.json</code>.
+      </p>
+      <p>
+        Year-by-year rates and source notes are on the <a href="/tools/inflation-tables/">Historical Inflation Rates (CPI)</a> page. Converting a specific dollar amount between two calendar years uses the <a href="/calculators/inflation-time-machine/">Inflation Time Machine</a>, which applies index ratios rather than a constant rate.
+      </p>
+
+      <h2>Assumptions</h2>
+      <ol>
+        <li>Inflation is a constant annual rate chosen by the user. It is not a forecast.</li>
+        <li>Compounding is annual. There is no intra-year path.</li>
+        <li>Amount, rate, and years must be finite and ≥ 0.</li>
+        <li>No taxes, fees, wages, or portfolio returns are applied.</li>
+        <li>Display rounding for money is to the nearest dollar. The multiplier is shown to a few decimal places. Internals keep full floating-point precision.</li>
+      </ol>
+
+      <h2>Implementation notes</h2>
+      <ul>
+        <li>Headline math lives in <code>calculators/future-buying-power/engine.js</code> (<code>FutureBuyingPowerEngine.computeFutureBuyingPower</code>).</li>
+        <li>CPI geometric averages use <code>/assets/js/cpi-inflation.js</code> (<code>historicalCpiCagrTable</code>).</li>
+        <li>The page UI reads those results. It does not re-implement the formulas.</li>
+      </ul>
+
+      <p style="margin-top: 2em; font-weight: 600;">
+        If any discrepancy is identified between this documentation and the calculator output, the arithmetic in the engine governs.
+      </p>
+
+      <h2>Sources and References</h2>
+      <ul class="methodology-sources">
+        <li><a href="https://www.statcan.gc.ca/" target="_blank" rel="noopener noreferrer">Statistics Canada</a> (Canada CPI series used in the reference table)</li>
+        <li><a href="https://www.bls.gov/" target="_blank" rel="noopener noreferrer">U.S. Bureau of Labor Statistics</a> (United States CPI series used in the reference table)</li>
+        <li><a href="/tools/inflation-tables/">Historical Inflation Rates (CPI)</a> — year-by-year tables on this site</li>
+        <li><a href="/calculators/inflation-time-machine/data/">Inflation Time Machine data notes</a></li>
+      </ul>
+    </div>
+
+    <div id="footerMount"></div>
+  </div>
+</body>
+</html>
