@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Canadian Income Tax Bracket Calculator | The Long Math</title>
+  <meta name="description" content="Calculate your Canadian combined marginal and average income tax rates, see how far you are from the next tax threshold, and inspect the progressive federal–provincial schedule." />
+  <link rel="canonical" href="https://www.thelongmath.com/calculators/canada-income-tax-bracket/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Canadian Income Tax Bracket Calculator | The Long Math" />
+  <meta property="og:description" content="See your combined marginal and average tax rates, distance to the next tax threshold, and the full progressive schedule for your province." />
+  <meta property="og:url" content="https://www.thelongmath.com/calculators/canada-income-tax-bracket/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Canadian Income Tax Bracket Calculator" />
+  <meta name="twitter:description" content="Marginal rate, average rate, and distance to the next Canadian tax threshold — from The Long Math’s shared tax engine." />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="/assets/css/calc-mobile.css" />
+  <link rel="stylesheet" href="/calculators/canada-income-tax-bracket/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Canadian Income Tax Bracket Calculator",
+    "url": "https://www.thelongmath.com/calculators/canada-income-tax-bracket/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "description": "Calculate combined Canadian federal and provincial marginal and average income tax rates and see distance to the next tax-rate threshold."
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What tax bracket am I in in Canada?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Canada uses separate federal and provincial or territorial progressive brackets. Your combined tax treatment is the income range where the tax rate on your next dollar of ordinary taxable income stays the same. This calculator identifies that combined range from The Long Math’s personal income tax engine, not only from headline statutory tables."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is my marginal tax rate?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Your marginal tax rate is the estimated income tax rate on your next dollar of ordinary taxable income. It can change at federal or provincial brackets and at other income points the engine models, such as Ontario’s surtax or Health Premium."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is my average tax rate?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Average tax rate equals total estimated federal and provincial income tax divided by taxable income. It is usually lower than your marginal rate in a progressive system."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What happens when I move into a higher tax bracket?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Only the income inside the higher marginal-rate band is taxed at the higher rate. Income below that threshold keeps the rates that already applied to those portions."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does all of my income get taxed at the higher rate?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Crossing a tax-rate threshold does not re-tax all prior income at the new rate. Progressive brackets apply rates incrementally."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are federal and provincial tax brackets combined?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Federal and provincial systems run separately, but your combined marginal rate is the sum of the next-dollar effects from both. Because of credits, surtaxes, and premiums, the combined schedule is not always a simple addition of two published bracket tables."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is taxable income the same as gross income?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Taxable income is income after allowed deductions. Gross employment or business income can be higher. This calculator asks for taxable income so the progressive schedule is isolated."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can an RRSP deduction move me into a lower tax bracket?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "An RRSP deduction reduces taxable income. If the reduction crosses a threshold identified by the engine, your next-dollar marginal rate can fall. Whether that is useful depends on the deduction size, your current position relative to thresholds, and other tax circumstances. This page does not optimize RRSP contributions."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <main class="wrap">
+    <header class="bracket-hero">
+      <p class="hero-kicker">Canadian income tax · progressive schedule</p>
+      <h1>Canadian Income Tax Bracket Calculator</h1>
+      <p class="lead">
+        See your current marginal and average tax rates, how far you are from the next tax threshold, and what changes when you cross it.
+      </p>
+      <p class="lead">
+        Canadian income tax is progressive. Different portions of your taxable income can be taxed at different rates.
+        This calculator shows your combined federal and provincial or territorial marginal tax rate, your average income tax rate, and how far your taxable income is from the next change in your tax rate.
+      </p>
+      <p class="lead"><em>No opinions. No hidden assumptions. Just arithmetic.</em></p>
+    </header>
+
+    <div class="inspect-bar calc-toolbar" aria-label="Related tools and export">
+      <a href="/calculators/canada-income-tax/" class="inspect-arithmetic-btn">Full income tax calculator</a>
+      <a href="/calculators/canada-income-tax-bracket/methodology/" class="inspect-arithmetic-btn">Inspect the Arithmetic</a>
+      <a href="/tools/income-tax-brackets-canada/" class="inspect-arithmetic-btn">Inspect the Data</a>
+    </div>
+
+    <section class="calc-shell" aria-label="Canadian income tax bracket calculator">
+      <article class="calc-panel" aria-labelledby="inputs-heading">
+        <h2 id="inputs-heading" class="panel-heading">Inputs</h2>
+        <div class="input-grid">
+          <div class="field">
+            <label for="tax_year">Tax year</label>
+            <select id="tax_year" aria-describedby="tax_year_help"></select>
+            <p id="tax_year_help" class="help-text">Uses every year supported by The Long Math personal tax engine. Latest supported year is selected by default.</p>
+          </div>
+
+          <div class="field">
+            <label for="province">Province or territory</label>
+            <select id="province" aria-describedby="province_help"></select>
+            <p id="province_help" class="help-text">Residence for provincial or territorial income tax.</p>
+            <div id="province_warning" class="inline-warning" hidden></div>
+          </div>
+
+          <div class="field">
+            <label for="taxable_income">Taxable income</label>
+            <input id="taxable_income" type="text" inputmode="decimal" value="100000" aria-describedby="taxable_income_help" />
+            <p id="taxable_income_help" class="help-text">Enter your taxable income after deductions, not necessarily your gross employment or business income.</p>
+          </div>
+        </div>
+        <p id="calc_status" class="status-line" aria-live="polite">Loading tax data…</p>
+      </article>
+
+      <article class="calc-panel" aria-labelledby="results-heading">
+        <h2 id="results-heading" class="panel-heading">Your tax rate</h2>
+
+        <div class="rate-hero" aria-live="polite">
+          <div class="rate-pair">
+            <div class="rate-block">
+              <h3>Combined marginal tax rate</h3>
+              <p id="marginal_rate" class="rate-value">–%</p>
+              <p class="rate-note">This is the estimated tax rate on your next dollar of ordinary taxable income.</p>
+            </div>
+            <div class="rate-block">
+              <h3>Combined average tax rate</h3>
+              <p id="average_rate" class="rate-value">–%</p>
+              <p class="rate-note">This is your estimated total income tax divided by taxable income.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-lines" aria-label="Income tax totals">
+          <div class="result-line">
+            <span>Estimated federal income tax</span>
+            <strong id="federal_tax">$–</strong>
+          </div>
+          <div class="result-line">
+            <span>Estimated provincial / territorial income tax</span>
+            <strong id="provincial_tax">$–</strong>
+          </div>
+          <div class="result-line">
+            <span>Estimated total income tax</span>
+            <strong id="total_tax">$–</strong>
+          </div>
+          <div class="result-line">
+            <span>Estimated after-tax income</span>
+            <strong id="after_tax">$–</strong>
+          </div>
+        </div>
+
+        <section class="bracket-charts" aria-labelledby="bracket-charts-heading">
+          <h3 id="bracket-charts-heading" class="bracket-charts-heading">Where your taxable income sits in the statutory brackets</h3>
+          <div class="bracket-charts-grid">
+            <div id="federal_bracket_chart" class="bracket-chart" aria-live="polite"></div>
+            <div id="provincial_bracket_chart" class="bracket-chart" aria-live="polite"></div>
+          </div>
+          <p class="help-text bracket-charts-footnote">
+            These charts show published federal and provincial or territorial tax brackets only — not surtaxes, premiums, or credit effects.
+            The green bar rises to your taxable income. The scale ends at the start of the top bracket.
+          </p>
+        </section>
+
+        <section class="result-share-block" id="bracket_share_block" aria-labelledby="bracket-share-heading">
+          <h3 id="bracket-share-heading" class="result-share-title">Share scenario</h3>
+          <p class="result-share-copy">Snapshot your estimate as a shareable image.</p>
+          <p class="result-share-helper">Shares an image plus a link to this calculator scenario.</p>
+          <div class="result-share-actions">
+            <button type="button" id="share_result_btn">Share scenario</button>
+            <button type="button" id="download_result_btn">Save this calculation</button>
+            <button type="button" id="copy_result_link_btn">Copy shareable link</button>
+          </div>
+          <p class="result-share-status" id="result_share_status" aria-live="polite"></p>
+        </section>
+      </article>
+    </section>
+
+    <section class="threshold-section" aria-label="Tax-rate thresholds">
+      <div id="next_threshold_card" class="threshold-card calc-panel" aria-live="polite">
+        <h3>Next tax-rate threshold</h3>
+        <p class="threshold-distance">Calculating…</p>
+      </div>
+
+      <div id="previous_threshold_card" class="threshold-card calc-panel" aria-live="polite">
+        <h3>Previous tax-rate threshold</h3>
+        <p class="threshold-distance">Calculating…</p>
+      </div>
+
+      <p class="progressive-note">
+        Crossing a tax bracket does not cause all of your income to be taxed at the higher rate. Only income within the higher marginal-rate band is taxed at that rate.
+      </p>
+    </section>
+
+    <section class="schedule-section content-section" aria-labelledby="schedule-heading">
+      <h2 id="schedule-heading">Combined marginal-rate schedule</h2>
+      <p>
+        This table is built from the shared tax engine for the selected year and province.
+        It lists every modeled income range where the combined next-dollar income-tax rate is constant, including effects from brackets, credits, and — where modeled — surtaxes or health premiums.
+        Federal and provincial statutory rates are not shown as separate columns when that split would misstate mechanisms such as Ontario’s surtax or Health Premium.
+      </p>
+      <p id="schedule_ohp_note" class="help-text schedule-note" hidden>
+        In Ontario, the Health Premium is phased in over short income bands, then becomes a flat dollar amount.
+        During a phase-in, the combined marginal rate rises temporarily.
+        When the premium becomes flat, that extra marginal piece drops away and the combined rate returns to the underlying federal + Ontario income-tax rate — it is not a second “Health Premium tax bracket” at that lower percentage.
+      </p>
+      <div class="table-wrap">
+        <table class="calc-table" aria-describedby="schedule-heading">
+          <thead>
+            <tr>
+              <th scope="col">Taxable income range</th>
+              <th scope="col">Combined marginal rate</th>
+              <th scope="col">Why the rate changes here</th>
+            </tr>
+          </thead>
+          <tbody id="schedule_body">
+            <tr><td colspan="3">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="explain-heading">
+      <h2 id="explain-heading">Marginal rate, average rate, and progressive brackets</h2>
+
+      <h3>Marginal tax rate</h3>
+      <p>
+        The marginal tax rate is the tax rate that applies to your next dollar of ordinary taxable income.
+        In this calculator it is estimated from the shared engine as the change in total income tax when taxable income rises by one dollar, using unrounded internal tax amounts so dollar rounding does not invent fake rate jumps.
+      </p>
+
+      <h3>Average tax rate</h3>
+      <p>
+        Average tax rate = total income tax ÷ taxable income.
+        It is the share of taxable income paid as estimated federal and provincial income tax.
+        At $0 taxable income, average tax rate is shown as 0%.
+      </p>
+
+      <h3>Why crossing a tax bracket does not make you poorer</h3>
+      <p>
+        Suppose the combined rate rises from 30% to 36% at $100,000.
+        Income up to that threshold is still taxed under the lower schedule.
+        Only dollars above $100,000 face 36%.
+        Earning one more dollar that crosses the line costs about 36¢ of income tax on that dollar — it does not reprice the dollars you already earned.
+      </p>
+      <p>
+        That arithmetic describes the tax schedule. It is not a recommendation about whether to earn more income.
+      </p>
+    </section>
+
+    <section class="content-section faq-section" aria-labelledby="faq-heading">
+      <h2 id="faq-heading">Frequently asked questions</h2>
+      <div class="faq-accordion">
+        <details class="faq-accordion-item">
+          <summary>What tax bracket am I in in Canada?</summary>
+          <div class="faq-accordion-body">
+            <p>Canada uses separate federal and provincial or territorial progressive brackets. Your combined “bracket” here is the income range where the tax treatment of your next dollar stays the same under the shared engine — including credits and, where modeled, surtaxes or premiums.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>What is my marginal tax rate?</summary>
+          <div class="faq-accordion-body">
+            <p>It is the estimated income-tax rate on your next dollar of ordinary taxable income for the selected year and province.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>What is my average tax rate?</summary>
+          <div class="faq-accordion-body">
+            <p>Total estimated income tax divided by taxable income. In a progressive system it is usually lower than your marginal rate.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>What happens when I move into a higher tax bracket?</summary>
+          <div class="faq-accordion-body">
+            <p>Only income inside the higher marginal-rate band is taxed at the higher rate. Prior portions keep the rates that already applied to them.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>Does all of my income get taxed at the higher rate?</summary>
+          <div class="faq-accordion-body">
+            <p>No. That is the classic bracket mistake. Progressive rates apply incrementally.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>Are federal and provincial tax brackets combined?</summary>
+          <div class="faq-accordion-body">
+            <p>The systems are separate, but your combined marginal rate reflects both. It is not always a clean sum of two published statutory tables once surtaxes, premiums, or credit exhaustion are included.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>Is taxable income the same as gross income?</summary>
+          <div class="faq-accordion-body">
+            <p>No. Taxable income is after deductions. Enter taxable income here so the progressive ordinary-income schedule is isolated.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>Can an RRSP deduction move me into a lower tax bracket?</summary>
+          <div class="faq-accordion-body">
+            <p>An RRSP deduction reduces taxable income. If that reduction crosses a threshold, your next-dollar marginal rate can fall. Whether the deduction is worth claiming now depends on more than this schedule — see the <a href="/calculators/rrsp-deduction-timing/">RRSP deduction timing calculator</a> and <a href="/articles/investing-and-financial-literacy/what-is-an-rrsp/">What is an RRSP?</a> This page does not recommend contribution amounts.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="content-section calc-related-bottom" aria-labelledby="related-heading">
+      <h2 id="related-heading">Related calculators and articles</h2>
+      <ul>
+        <li><a href="/calculators/canada-income-tax/">Canada Personal Income Tax Calculator</a></li>
+        <li><a href="/tools/income-tax-brackets-canada/">Canada Income Tax Brackets — federal and provincial tables</a></li>
+        <li><a href="/calculators/rrsp-deduction-timing/">RRSP Deduction Timing Calculator</a></li>
+        <li><a href="/calculators/rrsp-contribution-room-tax-refund/">RRSP contribution room and tax refund estimator</a></li>
+        <li><a href="/articles/investing-and-financial-literacy/what-is-an-rrsp/">What is an RRSP?</a></li>
+      </ul>
+    </section>
+
+    <div class="disclaimer">
+      <p>
+        <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
+      </p>
+      <p>
+        This calculator estimates <strong>income tax only</strong> on ordinary taxable income. It does not include CPP, QPP, EI, or other payroll contributions. It does not model every credit, deduction, or special rule. Results are educational estimates from The Long Math’s shared Canadian personal income tax engine.
+      </p>
+    </div>
+
+    <div id="footerMount"></div>
+  </main>
+
+  <script defer src="/assets/js/calculator-share.js?v=20260426"></script>
+  <script type="module" src="/calculators/canada-income-tax-bracket/ui.js"></script>
+</body>
+</html>

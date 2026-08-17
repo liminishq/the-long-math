@@ -7,10 +7,27 @@
 
 import { resolveEnhancedBasicPersonalAmount } from "./tax.bpa.js";
 
-/** Ontario Health Premium statutory kink incomes (Taxation Act, 2007). Not CPI-indexed. */
-export const ONTARIO_HEALTH_PREMIUM_KINK_POINTS = [
-  20000, 25000, 36000, 38500, 48000, 48600, 72000, 72600, 200000, 200600
+/**
+ * Ontario Health Premium statutory kink incomes (Taxation Act, 2007). Not CPI-indexed.
+ * Phase-in bands temporarily raise the combined next-dollar rate; flat bands do not
+ * (the premium is a fixed dollar amount, so its marginal contribution is zero).
+ */
+export const ONTARIO_HEALTH_PREMIUM_KINKS = [
+  { income: 20000, reason: "Ontario Health Premium phase-in begins" },
+  { income: 25000, reason: "Ontario Health Premium becomes flat" },
+  { income: 36000, reason: "Ontario Health Premium phase-in begins" },
+  { income: 38500, reason: "Ontario Health Premium becomes flat" },
+  { income: 48000, reason: "Ontario Health Premium phase-in begins" },
+  { income: 48600, reason: "Ontario Health Premium becomes flat" },
+  { income: 72000, reason: "Ontario Health Premium phase-in begins" },
+  { income: 72600, reason: "Ontario Health Premium becomes flat" },
+  { income: 200000, reason: "Ontario Health Premium phase-in begins" },
+  { income: 200600, reason: "Ontario Health Premium becomes flat" }
 ];
+
+export const ONTARIO_HEALTH_PREMIUM_KINK_POINTS = ONTARIO_HEALTH_PREMIUM_KINKS.map(
+  (k) => k.income
+);
 
 /**
  * Collect statutory income points where the combined tax function can change slope.
@@ -57,8 +74,8 @@ export function collectTaxIncomeKinks(taxData, provinceCode, incomeContext = {})
   }
 
   if (code === "ON") {
-    for (const t of ONTARIO_HEALTH_PREMIUM_KINK_POINTS) {
-      add(t, "Ontario Health Premium");
+    for (const kink of ONTARIO_HEALTH_PREMIUM_KINKS) {
+      add(kink.income, kink.reason);
     }
 
     // Ontario Tax Reduction becomes nil when tax before reduction ≥ 2 × basic amount.

@@ -924,6 +924,30 @@
   },
   {
     "type": "calculator",
+    "title": "Canadian Income Tax Bracket Calculator",
+    "url": "/calculators/canada-income-tax-bracket/",
+    "desc": "Calculate your Canadian combined marginal and average income tax rates, see how far you are from the next tax threshold, and inspect the progressive federal–provincial schedule.",
+    "keywords": [
+      "Canadian Income Tax Bracket Calculator",
+      "canada income tax bracket",
+      "calculate",
+      "canadian",
+      "combined",
+      "marginal",
+      "average",
+      "income",
+      "tax",
+      "rates",
+      "see",
+      "far",
+      "next",
+      "threshold",
+      "inspect",
+      "progressive"
+    ]
+  },
+  {
+    "type": "calculator",
     "title": "Inspect the Arithmetic — Canadian Income Tax Bracket Calculator",
     "url": "/calculators/canada-income-tax-bracket/methodology/",
     "desc": "Formulae, threshold analysis, and assumptions for the Canadian Income Tax Bracket Calculator.",
