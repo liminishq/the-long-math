@@ -5,14 +5,20 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const {
   findArticleCalloutInsertIndex,
+  findCalculatorArticleCalloutInsertIndex,
   injectCalculatorCallout,
+  injectArticleCalloutOnCalculator,
   normalizeCallout,
+  normalizeArticleCallout,
+  articleDisplayName,
 } = require("../build/lib/article-calc-callout.js");
 
 const t = (key) =>
   ({
     "common.calculatorCallout.heading": "Ready to run your own numbers?",
     "common.calculatorCallout.lead": "Try the {name}.",
+    "common.articleCallout.heading": "Want the walkthrough?",
+    "common.articleCallout.lead": "Read {name}.",
   })[key] || key;
 
 test("rejects incomplete or off-site callouts", () => {
@@ -56,4 +62,67 @@ test("does not inject twice", () => {
     { t }
   );
   assert.equal(out, html);
+});
+
+test("rejects incomplete or off-site article callouts", () => {
+  assert.equal(normalizeArticleCallout(null), null);
+  assert.equal(normalizeArticleCallout({ href: "/calculators/x/", articleName: "X" }), null);
+  assert.equal(
+    normalizeArticleCallout({ href: "https://example.com/articles/x/", articleName: "X" }),
+    null
+  );
+  assert.ok(
+    normalizeArticleCallout({
+      href: "/articles/investing-and-financial-literacy/compound-interest/",
+      articleName: "Compound Interest",
+    })
+  );
+});
+
+test("calculator insert prefers related or FAQ, not a mid-page newsletter", () => {
+  const html = `<div class="wrap">
+<section class="newsletter-signup card"><h2>Want new calculators</h2></section>
+<section class="card"><h2>Important note</h2><p>Just arithmetic.</p></section>
+<section class="faq-section"><h2>FAQ</h2></section>
+<section class="card calc-related-bottom"><h2>Related</h2></section>
+<div class="disclaimer"></div>
+</div>`;
+  const idx = findCalculatorArticleCalloutInsertIndex(html);
+  assert.ok(html.slice(idx).startsWith('<section class="faq-section"'));
+});
+
+test("calculator insert lands before related when related is first", () => {
+  const html = `<div class="wrap">
+<div class="card calc-related"><h2>Related</h2></div>
+<section class="newsletter-signup card"></section>
+</div>`;
+  const idx = findCalculatorArticleCalloutInsertIndex(html);
+  assert.ok(html.slice(idx).startsWith('<div class="card calc-related"'));
+});
+
+test("injects article callout before calculator FAQ", () => {
+  const html = `<div class="wrap">
+<p>Results.</p>
+<section class="faq-section"><h2>FAQ</h2></section>
+</div>`;
+  const out = injectArticleCalloutOnCalculator(
+    html,
+    {
+      href: "/articles/investing-and-financial-literacy/pay-off-your-mortgage-faster-or-invest/",
+      articleName: "Pay Off Your Mortgage Faster or Invest?",
+    },
+    { t }
+  );
+  const calloutAt = out.indexOf("calc-article-callout");
+  const faqAt = out.indexOf("faq-section");
+  assert.ok(calloutAt > 0 && calloutAt < faqAt);
+  assert.match(out, /Want the walkthrough\?/);
+  assert.match(out, /href="\/articles\/investing-and-financial-literacy\/pay-off-your-mortgage-faster-or-invest\/"/);
+});
+
+test("articleDisplayName prefers headline", () => {
+  assert.equal(
+    articleDisplayName({ meta: { headline: "Safe Withdrawal Rate", title: "Safe Withdrawal Rate | The Long Math" } }),
+    "Safe Withdrawal Rate"
+  );
 });

@@ -66,5 +66,9 @@
   "calculatorCallout": {
     "heading": "Prêt à faire vos propres calculs?",
     "lead": "Essayez le {name}."
+  },
+  "articleCallout": {
+    "heading": "Vous voulez l'explication?",
+    "lead": "Lisez {name}."
   }
 }

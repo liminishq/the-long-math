@@ -1,29 +1,43 @@
 ---
-description: End-of-article calculator call-out when a live tool lets the reader apply the article they just finished.
+description: Reciprocal article ↔ calculator call-outs when a live tool and an article answer the same reader question.
 globs: assets/i18n/**/articles/*.json,calculators/**/*,build/lib/article-calc-callout.js
 alwaysApply: false
 ---
 
-# Article calculator call-out
+# Article ↔ calculator call-out
 
-When an article and a live calculator answer the same reader question, the last sentence of the copy must be followed by the shared call-out — before FAQ, newsletter, related reading, disclaimer, and footer.
+When an article and a live calculator answer the same reader question, each page gets the shared high-contrast call-out pointing at the other.
 
-## Do
+## Article → calculator
+
+The last sentence of the copy must be followed by the call-out — before FAQ, newsletter, related reading, disclaimer, and footer.
 
 - Add `calculatorCallout` to both `assets/i18n/en/articles/{slug}.json` and the FR file:
   `{ "href": "/calculators/{live-slug}/", "calculatorName": "Exact calculator title" }`
 - Use one primary calculator. Secondary tools stay in related reading.
-- Verify the href exists and does not overclaim what the tool models. If it omits a rule the article taught, add `note`.
-- When shipping a new calculator that matches an existing article, add the call-out in the same change.
-- When shipping a new article that has a matching live calculator, include `calculatorCallout` before publish.
+- Default copy lives in `common.calculatorCallout`.
+
+## Calculator → article
+
+After the tool and any remaining explanation — before related links, FAQ, or the disclaimer.
+
+- Add the calculator slug to `CALCULATOR_PRIMARY_ARTICLE` in `build/lib/article-calc-callout.js`.
+- Use one primary article: the piece that answers the calculator’s actual question. Other matching articles stay in related reading.
+- The build injects `.calc-article-callout` from that map. Do not hand-build a second CTA card.
+- Default copy lives in `common.articleCallout`.
+- Do not point a live calculator at an unpublished article.
+
+## Do
+
+- Verify the href exists and does not overclaim what the tool or article covers. If it omits a rule the other page taught, add `note`.
+- When shipping a new pair, add both directions in the same change.
 
 ## Do not
 
-- Do not add a call-out when no live tool applies the article’s actual question.
-- Do not invent a calculator, link a draft, or point at a generic nearby tool to fill the slot.
-- Do not hand-build a second CTA card. The build injects `.article-calc-callout` from `calculatorCallout`.
+- Do not add a call-out when no live counterpart applies the page’s actual question.
+- Do not invent a calculator or article, link a draft, or point at a generic nearby page to fill the slot.
 - Do not place the call-out inside FAQ, related reading, or the footer.
 
 ## Copy
 
-Default heading/lead live in `common.calculatorCallout`. Override `heading`, `lead` (`{name}`), or `note` only when the default would mislead.
+Override `heading`, `lead` (`{name}`), or `note` only when the default would mislead.

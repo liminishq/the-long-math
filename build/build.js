@@ -18,7 +18,12 @@ const {
 const {
   localizeRootHref: localizeCalculatorRootHrefForLang,
 } = require("./lib/fr-hrefs.js");
-const { injectCalculatorCallout } = require("./lib/article-calc-callout.js");
+const {
+  injectCalculatorCallout,
+  injectArticleCalloutsIntoCalculatorsDir,
+  articleDisplayName,
+  CALCULATOR_PRIMARY_ARTICLE,
+} = require("./lib/article-calc-callout.js");
 
 const ROOT = path.resolve(__dirname, "..");
 const DIST = path.join(ROOT, "dist");
@@ -667,6 +672,7 @@ function build() {
 
   emitFrenchStaticMirrors();
   emitFrenchCalculatorStaticPages();
+  injectCalculatorArticleCallouts(dictEn);
   fingerprintAssetsAndRewriteHtml();
   emitCacheHeaders();
   syncFingerprintedAssetsToSource();
@@ -742,6 +748,52 @@ function emitFrenchCalculatorStaticPages() {
     const out = path.join(DIST, rel);
     copyRecursive(src, out, () => true);
     console.log("  " + out);
+  }
+}
+
+function injectCalculatorArticleCallouts(dictEn) {
+  console.log("Injecting calculator → article call-outs...");
+  for (const { code, pathPrefix } of LANGS) {
+    const merged = getMergedDict(ROOT, code, dictEn);
+    const tFn = (key) => t(merged, key);
+    const calloutsBySlug = {};
+    for (const [calcSlug, articleSlug] of Object.entries(CALCULATOR_PRIMARY_ARTICLE)) {
+      const articleKey = kebabToCamel(articleSlug);
+      const enArt = dictEn.articles[articleKey];
+      if (!enArt) {
+        console.warn("Missing article JSON for calculator callout:", articleSlug);
+        continue;
+      }
+      const locArt = merged.articles[articleKey];
+      const article = normalizeArticlePayload(mergeArticlePayload(enArt, locArt));
+      const name = articleDisplayName(article);
+      if (!name) {
+        console.warn("Missing article name for calculator callout:", articleSlug);
+        continue;
+      }
+      calloutsBySlug[calcSlug] = {
+        href: articleLogicalPathForLang(articleSlug, code),
+        articleName: name,
+      };
+    }
+    const opts = {
+      t: tFn,
+      localizeRootHref: (rel) => localizeCalculatorRootHrefForLang(code, pathPrefix, rel),
+    };
+    const distCalcs = path.join(
+      DIST,
+      pathPrefix === "" ? "calculators" : path.join("fr", "calculators")
+    );
+    const sourceCalcs = path.join(
+      ROOT,
+      pathPrefix === "" ? "calculators" : path.join("fr", "calculators")
+    );
+    for (const file of injectArticleCalloutsIntoCalculatorsDir(distCalcs, calloutsBySlug, opts)) {
+      console.log("  " + file);
+    }
+    for (const file of injectArticleCalloutsIntoCalculatorsDir(sourceCalcs, calloutsBySlug, opts)) {
+      console.log("  " + file);
+    }
   }
 }
 

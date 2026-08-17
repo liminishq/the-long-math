@@ -15,7 +15,7 @@ Use this rule when adding calculator references, methodology links, related read
 - Link to calculator methodology or inspect-the-arithmetic pages when the article relies on a calculator's assumptions.
 - Keep related links relevant to the reader's current calculation or decision.
 - Preserve existing valid internal links unless the linked page has moved.
-- When a live calculator lets the reader apply the article they just finished, add the shared end-of-copy call-out (`calculatorCallout`). See `75-article-calculator-callout.mdc`.
+- When a live calculator and an article answer the same reader question, add both shared call-outs (`calculatorCallout` on the article, `CALCULATOR_PRIMARY_ARTICLE` on the calculator). See `75-article-calculator-callout.mdc`.
 
 ## Do Not
 

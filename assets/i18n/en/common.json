@@ -66,5 +66,9 @@
   "calculatorCallout": {
     "heading": "Ready to run your own numbers?",
     "lead": "Try the {name}."
+  },
+  "articleCallout": {
+    "heading": "Want the walkthrough?",
+    "lead": "Read {name}."
   }
 }
