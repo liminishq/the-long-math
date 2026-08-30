@@ -20,6 +20,12 @@
     return Number.isFinite(n) ? n : NaN;
   }
 
+  function parseWholeDollars(x) {
+    const n = num(x);
+    if (!Number.isFinite(n)) return NaN;
+    return Math.trunc(n);
+  }
+
   let manifest = null;
 
   function getGlobalYearRange() {
@@ -154,11 +160,11 @@
 
     const converted = E.computeConverted(amount, ratio);
     const flag = (country && country.flag) ? country.flag + " " : "";
-    const fmt = E.formatMoneyInt;
+    const fmt = function (n) { return E.formatMoneyIntWithCurrency(n, country); };
     const fromY = startYear;
     const toY = endYear;
     if (primaryEl) {
-      primaryEl.textContent = flag + "$" + fmt(amount) + " in " + fromY + " → $" + fmt(converted) + " in " + toY;
+      primaryEl.textContent = flag + fmt(amount) + " in " + fromY + " → " + fmt(converted) + " in " + toY;
     }
 
     const pctMag = E.computePercentChangeMagnitude(ratio);
@@ -205,7 +211,7 @@
         const conv = item.converted;
         const line = document.createElement("div");
         line.className = "comparison-row" + (c.code === selectedCode ? " comparison-row-selected" : "");
-        line.textContent = c.flag + " " + c.name + " — $" + E.formatMoneyInt(amount) + " → $" + E.formatMoneyInt(conv);
+        line.textContent = c.flag + " " + c.name + " — " + E.formatMoneyIntWithCurrency(amount, c) + " → " + E.formatMoneyIntWithCurrency(conv, c);
         container.appendChild(line);
       });
     });
@@ -221,7 +227,8 @@
 
     const country = getSelectedCountry();
     const amountEl = $("amount_input");
-    const amount = Number.isFinite(num(amountEl ? amountEl.value : "")) ? num(amountEl.value) : 100;
+    const parsedAmount = parseWholeDollars(amountEl ? amountEl.value : "");
+    const amount = Number.isFinite(parsedAmount) && parsedAmount >= 0 ? parsedAmount : 100;
 
     if (!country || !available.length) {
       if ($("primary_result")) $("primary_result").textContent = "";
@@ -297,7 +304,11 @@
 
     if (amountEl) {
       amountEl.addEventListener("input", updateUI);
-      amountEl.addEventListener("change", updateUI);
+      amountEl.addEventListener("change", function () {
+        const n = parseWholeDollars(amountEl.value);
+        if (Number.isFinite(n) && n >= 0) amountEl.value = String(Math.max(0, n));
+        updateUI();
+      });
     }
     if (countrySel) countrySel.addEventListener("change", updateUI);
     if (startSel) startSel.addEventListener("change", updateUI);

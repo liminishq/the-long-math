@@ -156,7 +156,9 @@
       contributed = P0;
       for (let y = 1; y <= year; y++) {
         const yr = byYear.get(y);
-        if (yr) contributed += yr.contributions;
+        if (yr) {
+          contributed += yr.netCashFlow != null ? yr.netCashFlow : yr.contributions;
+        }
       }
       milestones.push({ year, balance: row.balance, contributed });
     }
@@ -170,13 +172,11 @@
     const Y = clampNonNeg(toNumber(years.value));
     const rNom = toNumber(annualReturn.value) / 100;
     const useReal = !!realToggle.checked;
-    const infl = useReal ? clampNonNeg(toNumber(inflationRate.value) / 100) : 0;
+    const infl = useReal ? toNumber(inflationRate.value) / 100 : 0;
 
     inflationWrap.classList.toggle("hidden", !useReal);
     realExplainer.classList.toggle("hidden", !useReal);
 
-    // Real toggle: constant real contribution + real growth (indexed contributions).
-    // Nominal mode: inflation = 0, same period math as the former closed-form FV.
     const sim = Engine.simulateInvestment({
       startingAmount: P0,
       contributionPerPeriod: PMT,
@@ -185,14 +185,48 @@
       inflationAnnual: infl,
       contributionPeriodsPerYear: ppy,
       contributionAtBeginning: false,
-      indexContributionsToInflation: true,
+      indexContributionsToInflation: false,
     });
 
-    const fv = sim.finalBalanceReal;
+    if (sim.error) {
+      finalBalanceEl.textContent = sim.error;
+      totalInvestedEl.textContent = "—";
+      interestEarnedEl.textContent = "—";
+      irrEl.textContent = "—";
+      milestonesBody.innerHTML = "";
+      return;
+    }
+
+    const fv = useReal ? sim.finalBalanceReal : sim.finalBalanceNominal;
     const N = sim.periods;
-    const invested = P0 + PMT * N;
+    const invested = useReal
+      ? P0 + sim.totalContributions
+      : P0 + (sim.totalContributionsNominal != null ? sim.totalContributionsNominal : PMT * N);
     const interest = fv - invested;
-    const irr = computeIRR(P0, PMT, N, fv, ppy);
+    const irr = computeIRR(P0, PMT, N, sim.finalBalanceNominal, ppy);
+
+    const finalLabel = el("finalBalanceLabel");
+    const investedLabel = el("totalInvestedLabel");
+    const growthLabel = el("interestEarnedLabel");
+    const contributedHead = el("milestonesContributedHead");
+    const balanceHead = el("milestonesBalanceHead");
+    if (finalLabel) {
+      finalLabel.textContent = useReal ? "Final balance (today's dollars)" : "Final balance";
+    }
+    if (investedLabel) {
+      investedLabel.textContent = useReal
+        ? "Total capital invested (today's dollars)"
+        : "Total capital invested";
+    }
+    if (growthLabel) {
+      growthLabel.textContent = useReal ? "Growth from returns (today's dollars)" : "Growth from returns";
+    }
+    if (contributedHead) {
+      contributedHead.textContent = useReal ? "Total contributed (today's $)" : "Total contributed";
+    }
+    if (balanceHead) {
+      balanceHead.textContent = useReal ? "Balance (today's $)" : "Balance";
+    }
 
     finalBalanceEl.textContent = fmtMoney(fv);
     totalInvestedEl.textContent = fmtMoney(invested);

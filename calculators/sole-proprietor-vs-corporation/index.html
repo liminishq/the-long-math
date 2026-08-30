@@ -120,9 +120,10 @@
             <div class="field">
               <label for="taxYear">Tax year</label>
               <select id="taxYear" aria-label="Tax year">
-                <option value="2025" selected>2025</option>
+                <option value="2025">2025</option>
+                <option value="2026" selected>2026</option>
               </select>
-              <p class="help muted">Bracket and corporate tables use the latest published data file for this year (future years may map to the latest available tables).</p>
+              <p class="help muted">Uses published personal and corporate tax data files for the selected year. Verification notes on this page still call out Ontario 2025 examples where noted.</p>
             </div>
             <div class="field">
               <label for="businessIncome">Annual business income (gross)</label>
@@ -156,17 +157,17 @@
           <article class="panel">
             <h3>Sole proprietor / personal path</h3>
             <div class="field">
-              <label for="rrspRoom">Available RRSP room</label>
-              <input id="rrspRoom" type="number" inputmode="decimal" min="0" step="any" value="32490" />
-              <p class="help muted">Default uses the 2025 CRA dollar maximum from shared tax data where available. Edit to match your notice of assessment.</p>
+              <label for="rrspRoom">Available RRSP room (including carry-forward)</label>
+              <input id="rrspRoom" type="number" inputmode="decimal" min="0" step="any" value="33810" />
+              <p class="help muted">Enter total available RRSP deduction room from your notice of assessment (new annual room plus unused carry-forward, after pension adjustments). Default starts at the 2026 CRA annual new-room dollar maximum as a convenient starting point — edit upward if you have carry-forward.</p>
             </div>
             <div class="field checkbox">
               <input id="autoRrsp" type="checkbox" checked />
-              <label for="autoRrsp">Auto RRSP contribution (min of room, income, annual dollar limit)</label>
+              <label for="autoRrsp">Auto RRSP contribution (min of available room and business income)</label>
             </div>
             <div class="field">
               <label for="rrspContribution">RRSP contribution (manual)</label>
-              <input id="rrspContribution" type="number" inputmode="decimal" min="0" step="any" value="32490" disabled aria-disabled="true" />
+              <input id="rrspContribution" type="number" inputmode="decimal" min="0" step="any" value="33810" disabled aria-disabled="true" />
             </div>
             <div class="field checkbox">
               <input id="reinvestRefund" type="checkbox" checked />

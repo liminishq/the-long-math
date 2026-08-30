@@ -43,7 +43,7 @@
     "common.export.no": "No",
     "common.export.additionalTables": "Additional tables (detail)",
     "common.export.exportResults": "Export results",
-    "common.export.mortgageSchedule12": "Mortgage — first 12 months (monthly)",
+    "common.export.mortgageSchedule12": "Mortgage — first 12 payments",
     "common.export.mortgageScheduleAnnual": "Mortgage — annual summary",
     "common.export.loanAmortizationSection": "Loan amortization schedule",
   };
@@ -518,7 +518,7 @@
       }
     });
 
-    sectionEl.querySelectorAll(".loan-field").forEach(function (field) {
+    sectionEl.querySelectorAll(".loan-field, .fee-cost-field").forEach(function (field) {
       if (!isVisible(field)) return;
       var lab = field.querySelector("label");
       var inp = field.querySelector("input:not([type=hidden]), select, textarea");
@@ -652,14 +652,15 @@
   }
 
   function getCalculatorWrap() {
-    return document.querySelector(".loan-wrap.wrap, .wrap");
+    return document.querySelector(".loan-wrap.wrap, .sd-wrap.wrap, .sd-wrap, .wrap");
   }
 
   function findPrimaryCalcRoot() {
     var wrap = getCalculatorWrap();
     if (!wrap) return null;
+    if (wrap.classList && wrap.classList.contains("sd-wrap")) return wrap;
     var sel =
-      ".mortgage-grid, .calc-grid, .loan-calc-grid, .account-grid, .grid, #calc_card, .tool-card";
+      ".mortgage-grid, .calc-grid, .loan-calc-grid, .account-grid, .grid, #calc_card, .tool-card, .sd-card, .sd-wrap";
     var nodes = wrap.querySelectorAll(sel);
     for (var i = 0; i < nodes.length; i++) {
       if (isVisible(nodes[i])) return nodes[i];
@@ -675,7 +676,7 @@
   }
 
   function getSectionHeading(ch) {
-    var h2 = ch.querySelector("h2.section-title, h2.loan-section-title, h2.tool-card__title");
+    var h2 = ch.querySelector("h2.section-title, h2.loan-section-title, h2.tool-card__title, h2.sd-section-title");
     if (h2) return normText(h2.textContent);
     h2 = ch.querySelector("h2");
     return h2 ? normText(h2.textContent) : "";
@@ -686,7 +687,8 @@
     if (ch.tagName === "SECTION" && (ch.classList.contains("panel") || ch.classList.contains("card"))) {
       return true;
     }
-    return !!(ch.classList && ch.classList.contains("loan-panel"));
+    if (ch.classList && ch.classList.contains("loan-panel")) return true;
+    return !!(ch.classList && ch.classList.contains("sd-card"));
   }
 
   function getSectionBlocks(calcRoot) {

@@ -32,7 +32,7 @@
     <header>
       <h1>Simple Investment Calculator</h1>
       <p class="lead">
-        Enter a starting balance, contribution amount, time horizon, and expected return — get a projected final balance, milestone table, and money-weighted IRR. Toggle on inflation adjustment to see results in today's dollars.
+        Enter a starting balance, contribution amount, time horizon, and expected return — get a projected final balance, milestone table, and money-weighted IRR. Contributions stay the dollar amount you enter. The inflation toggle is a display control: it shows that same path in today's dollars.
       </p>
     </header>
 
@@ -82,6 +82,9 @@
           <div class="field checkbox">
             <input id="realToggle" type="checkbox" />
             <label for="realToggle">Show inflation-adjusted (real) results</label>
+            <p class="help muted" style="margin: 6px 0 0;">
+              Display only. Contributions stay the entered amount; this does not raise deposits with inflation.
+            </p>
           </div>
 
           <div id="inflationWrap" class="field hidden">
@@ -91,14 +94,14 @@
               <span class="unit">%</span>
             </div>
             <p class="help muted">
-              Real return = (1 + nominal) ÷ (1 + inflation) − 1. Contribution amounts are not adjusted upward for inflation in this calculator.
+              Used only to express the same fixed-contribution path in today's dollars: future value ÷ (1 + inflation)<sup>years</sup>.
             </p>
           </div>
 
           <div class="callout" style="margin-top: 16px;">
             <h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 700;">Need a more detailed analysis?</h3>
             <p style="margin: 0; font-size: 13px; line-height: 1.5;">
-              This calculator uses simplified inflation math and does not adjust contributions for rising prices. For a more thorough model — one that treats contributions in today's dollars and shows purchasing power year by year — use the <a href="/calculators/investment-calculator-inflation-adjusted/" style="color:var(--accent2);">Inflation-Adjusted Investment Calculator</a>.
+              This calculator keeps contributions at the dollar amount you enter. For a model that treats contributions as today's dollars and raises the nominal deposit with inflation — and shows real and nominal balances side by side — use the <a href="/calculators/investment-calculator-inflation-adjusted/" style="color:var(--accent2);">Inflation-Adjusted Investment Calculator</a>.
             </p>
           </div>
 
@@ -116,19 +119,19 @@
 
           <div class="results">
             <div class="result-row highlight">
-              <div class="label">Final balance</div>
+              <div class="label" id="finalBalanceLabel">Final balance</div>
               <div class="value highlight-value" id="finalBalance">$—</div>
             </div>
             <div class="result-row">
-              <div class="label">Total capital invested</div>
+              <div class="label" id="totalInvestedLabel">Total capital invested</div>
               <div class="value" id="totalInvested">$—</div>
             </div>
             <div class="result-row">
-              <div class="label">Growth from returns</div>
+              <div class="label" id="interestEarnedLabel">Growth from returns</div>
               <div class="value" id="interestEarned">$—</div>
             </div>
             <div class="result-row highlight">
-              <div class="label">IRR (money-weighted, annualized)</div>
+              <div class="label">IRR (money-weighted, nominal, annualized)</div>
               <div class="value highlight-value" id="irr">—</div>
             </div>
           </div>
@@ -141,8 +144,8 @@
               <thead>
                 <tr>
                   <th>Year</th>
-                  <th>Total contributed</th>
-                  <th>Balance</th>
+                  <th id="milestonesContributedHead">Total contributed</th>
+                  <th id="milestonesBalanceHead">Balance</th>
                 </tr>
               </thead>
               <tbody id="milestonesBody">
@@ -154,10 +157,9 @@
           <div id="realExplainer" class="callout hidden">
             <h3 style="margin: 0 0 8px; font-size: 14px;">Inflation-adjusted results (real dollars)</h3>
             <p style="margin: 0; font-size: 13px; line-height: 1.5;">
-              Results in real mode are shown in today's dollars — they estimate purchasing power after inflation, not just the nominal account balance.<br><br>
-              This calculator converts your nominal return into a real return using:<br>
-              <strong>real = (1 + nominal) ÷ (1 + inflation) − 1</strong><br><br>
-              Note: contribution amounts are not automatically increased for inflation in this calculator. For a model that treats contributions in today's dollars and adjusts them over time, see the <a href="/calculators/investment-calculator-inflation-adjusted/" style="color:var(--accent2);">Inflation-Adjusted Investment Calculator</a>.
+              Real mode is a display control. The contribution you typed stays that dollar amount for the whole horizon. The calculator projects that nominal path, then shows the ending balance in today's dollars:<br>
+              <strong>today's dollars = nominal future value ÷ (1 + inflation)<sup>years</sup></strong><br><br>
+              IRR is still calculated from the nominal cash flows, so it does not change when you toggle this display. For a model that raises contributions with inflation and shows real and nominal balances together, see the <a href="/calculators/investment-calculator-inflation-adjusted/" style="color:var(--accent2);">Inflation-Adjusted Investment Calculator</a>.
             </p>
           </div>
 
@@ -167,7 +169,7 @@
             <h3>Assumptions</h3>
             <ul>
               <li><span class="muted">Compounding:</span> per contribution period</li>
-              <li><span class="muted">Contributions:</span> end of each period</li>
+              <li><span class="muted">Contributions:</span> end of each period, fixed dollar amount (not increased with inflation)</li>
               <li><span class="muted">Fees:</span> none modeled</li>
               <li><span class="muted">Taxes:</span> not modeled</li>
             </ul>
@@ -221,8 +223,8 @@
         <details class="faq-accordion-item">
           <summary>What does "inflation-adjusted" mean in this calculator?</summary>
           <div class="faq-accordion-body">
-            <p>When real mode is enabled, the calculator converts your nominal expected return to a real return using the Fisher equation: real = (1 + nominal) ÷ (1 + inflation) − 1. It then uses that real rate for compounding, so the final balance is expressed in today's purchasing power rather than future nominal dollars.</p>
-            <p>One important limitation: this calculator does not automatically adjust your contribution amounts for inflation. If you contribute $500/month today and inflation runs at 2.5%, a truly inflation-neutral model would increase contributions each year to maintain the same real saving effort. The <a href="/calculators/investment-calculator-inflation-adjusted/">Inflation-Adjusted Investment Calculator</a> handles this correctly and should be used for any analysis where that distinction matters.</p>
+            <p>When real mode is enabled, the calculator still uses your entered contribution amount for every period. It projects that fixed-dollar path, then divides the ending nominal balance by (1 + inflation)<sup>years</sup> so the result is in today's purchasing power. The inflation checkbox does not change how much you contribute.</p>
+            <p>If you contribute $500/month today and want the <em>saving effort</em> to keep pace with prices, the nominal deposit has to rise with inflation. That is a different model. The <a href="/calculators/investment-calculator-inflation-adjusted/">Inflation-Adjusted Investment Calculator</a> indexes contributions and shows real and nominal balances together.</p>
           </div>
         </details>
 
@@ -245,7 +247,7 @@
         <details class="faq-accordion-item">
           <summary>What assumptions does this calculator make?</summary>
           <div class="faq-accordion-body">
-            <p>This calculator assumes a constant expected return (no volatility or sequence-of-returns risk), fixed contribution amounts throughout, contributions occurring at the end of each period, compounding once per contribution period, and no fees or taxes. When real mode is enabled, it also assumes a constant inflation rate.</p>
+            <p>This calculator assumes a constant expected return (no volatility or sequence-of-returns risk), fixed contribution amounts throughout (not increased with inflation), contributions occurring at the end of each period, compounding once per contribution period, and no fees or taxes. When real mode is enabled, it also assumes a constant inflation rate used only to express the same path in today's dollars.</p>
             <p>These are simplified assumptions appropriate for first-pass estimates. Fees in particular can compound into a substantial drag over long horizons — the <a href="/fees/">fee calculators</a> quantify that impact explicitly. Taxes depend on account type: returns inside a <a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/">TFSA</a> are tax-free, while a taxable account will reduce effective returns depending on the type of income generated.</p>
           </div>
         </details>
@@ -253,7 +255,7 @@
         <details class="faq-accordion-item">
           <summary>How does compounding frequency affect results?</summary>
           <div class="faq-accordion-body">
-            <p>This calculator compounds returns once per contribution period — so monthly contributions compound monthly, and annual contributions compound annually. More frequent compounding produces slightly higher balances than less frequent compounding at the same nominal annual rate, because each period's growth is itself reinvested sooner.</p>
+            <p>This calculator compounds returns once per contribution period — monthly contributions compound monthly, and annual contributions compound annually. The annual return is converted so the effective annual growth rate is preserved either way. Frequency mainly changes contribution timing (twelve smaller deposits versus one annual deposit), not the compounding power of the same annual rate.</p>
             <p>For a transparent look at how compounding multipliers work at different rates and horizons, see the <a href="/calculators/compound-multipliers/">Compound Interest Multipliers Table</a>. For a deeper explanation of the compounding mechanic itself, see <a href="/articles/investing-and-financial-literacy/compound-interest/">Compound Interest: The Ultimate Wealth Builder</a>.</p>
           </div>
         </details>

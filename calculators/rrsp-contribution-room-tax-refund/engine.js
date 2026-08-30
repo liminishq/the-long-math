@@ -11,7 +11,7 @@ import { computeTaxFromBrackets } from "../canada-income-tax/js/marginal-tax.js"
 const TAX_DATA_CACHE = {};
 
 async function loadTaxDataForYear(year) {
-  const key = year === 2026 ? 2025 : year; // reuse 2025 brackets for 2026 until separate data exists
+  const key = year;
   if (TAX_DATA_CACHE[key]) return TAX_DATA_CACHE[key];
 
   const basePath = "/calculators/canada-income-tax/data";
@@ -64,7 +64,12 @@ async function computeScenario(rawInputs) {
   });
 
   const availableRoom = room.availableRoomForDeduction;
-  const deductibleContribution = Math.max(0, Math.min(plannedContribution, availableRoom));
+  // Usable room for deduction/excess: never invent room when the estimate is negative.
+  const usableRoom =
+    room.usableRoomForContribution != null
+      ? room.usableRoomForContribution
+      : Math.max(0, availableRoom);
+  const deductibleContribution = Math.max(0, Math.min(plannedContribution, usableRoom));
 
   const newTaxable = Math.max(0, taxableBefore - deductibleContribution);
 
@@ -78,8 +83,8 @@ async function computeScenario(rawInputs) {
   const chosenRefund = refundMethod === "marginal" ? simpleRefund : progressiveRefund;
 
   const afterTaxCost = plannedContribution - chosenRefund;
-  const remainingRoom = Math.max(0, availableRoom - deductibleContribution);
-  const excessContribution = Math.max(0, plannedContribution - availableRoom);
+  const remainingRoom = Math.max(0, usableRoom - deductibleContribution);
+  const excessContribution = Math.max(0, plannedContribution - usableRoom);
 
   const effectiveRefundRate = plannedContribution > 0 ? chosenRefund / plannedContribution : 0;
 

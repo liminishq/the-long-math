@@ -312,3 +312,61 @@ test('Capital gains increase personal taxable income by the 50% inclusion amount
   assert.ok(withGains.personal.totalIncomeTax > withoutGains.personal.totalIncomeTax);
   assert.equal(withGains.corporate.taxableIncome, withoutGains.corporate.taxableIncome);
 });
+
+test('Headline totalTaxBurden is corporate + personal income tax, excluding employee CPP/EI', () => {
+  const r = computeCCPCTax({
+    year: 2025,
+    province: ON,
+    grossRevenue: 150_000,
+    expenses: 0,
+    salary: 100_000,
+    eligibleDividends: 0,
+    nonEligibleDividends: 0
+  });
+  assert.equal(
+    r.combined.totalTaxBurden,
+    r.corporate.totalCorporateTax + r.personal.totalIncomeTax
+  );
+  assert.ok(r.combined.employeeCppEi > 0);
+  assert.ok(r.combined.employerCppExpense > 0);
+  assert.notEqual(r.combined.totalTaxBurden, r.corporate.totalCorporateTax + r.personal.totalBurden);
+});
+
+test('Salary above current-year corporate income is still taxed as paid and flagged', () => {
+  const r = computeCCPCTax({
+    year: 2025,
+    province: ON,
+    grossRevenue: 50_000,
+    expenses: 0,
+    salary: 100_000,
+    eligibleDividends: 0,
+    nonEligibleDividends: 0
+  });
+  assert.equal(r.corporate.taxableIncome, 0);
+  assert.equal(r.corporate.totalCorporateTax, 0);
+  assert.ok(r.personal.totalIncomeTax > 0);
+  const salaryNote = (r.combined.fundingNotes || []).find(
+    (n) => n.code === 'salary_exceeds_current_year_income'
+  );
+  assert.ok(salaryNote, 'expected salary funding note');
+  assert.ok(salaryNote.compensationCost > 50_000);
+});
+
+test('Dividends above after-tax corporate cash clip retained earnings and are flagged', () => {
+  const r = computeCCPCTax({
+    year: 2025,
+    province: ON,
+    grossRevenue: 80_000,
+    expenses: 0,
+    salary: 0,
+    eligibleDividends: 0,
+    nonEligibleDividends: 200_000
+  });
+  assert.equal(r.combined.retainedEarnings, 0);
+  const divNote = (r.combined.fundingNotes || []).find(
+    (n) => n.code === 'dividends_exceed_current_year_cash'
+  );
+  assert.ok(divNote, 'expected dividend funding note');
+  assert.equal(divNote.dividendDistributions, 200_000);
+  assert.ok(divNote.afterTaxCorporateCash < 200_000);
+});

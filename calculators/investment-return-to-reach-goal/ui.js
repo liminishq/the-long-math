@@ -144,7 +144,51 @@
 
   function isFrench() {
     var lang = (document.documentElement.lang || "").toLowerCase();
-    return lang.indexOf("fr") === 0;
+    if (lang.indexOf("fr") === 0) return true;
+    try {
+      return (window.location.pathname || "").indexOf("/fr/") === 0;
+    } catch (_e) {
+      return false;
+    }
+  }
+
+  var COPY = {
+    en: {
+      showFewer: "Show fewer rows",
+      showFull: "Show full schedule",
+      shareTitle: "Investment return required to reach a goal",
+      shareHeadline: "Required nominal return",
+      shareSublinePrefix: "Real return: ",
+      shareContext: function (target, years) {
+        return "Target: " + target + " (today's dollars) over " + years + " years";
+      },
+      shareTextPrefix: "Required return to reach my investment goal: ",
+      shareTextSuffix: " nominal",
+      csvTitle: "# Investment Return Required to Reach a Goal",
+      csvFreqMonthly: "Monthly",
+      csvFreqYearly: "Yearly",
+      csvHeader: "Year,Contributions (real),Growth (real),Ending Balance (real)"
+    },
+    fr: {
+      showFewer: "Afficher moins de lignes",
+      showFull: "Afficher l'échéancier complet",
+      shareTitle: "Rendement requis pour atteindre un objectif de placement",
+      shareHeadline: "Rendement nominal requis",
+      shareSublinePrefix: "Rendement réel : ",
+      shareContext: function (target, years) {
+        return "Objectif : " + target + " (dollars d'aujourd'hui) sur " + years + " ans";
+      },
+      shareTextPrefix: "Rendement requis pour atteindre mon objectif : ",
+      shareTextSuffix: " nominal",
+      csvTitle: "# Rendement requis pour atteindre un objectif de placement",
+      csvFreqMonthly: "Mensuel",
+      csvFreqYearly: "Annuel",
+      csvHeader: "Année,Cotisations (réel),Croissance (réel),Solde final (réel)"
+    }
+  };
+
+  function t() {
+    return isFrench() ? COPY.fr : COPY.en;
   }
 
   function updateReturnWarning(solved) {
@@ -243,20 +287,22 @@
 
     if (isMonthly && contribPeriodsPerYear === 12 && results.monthlySchedule.length > 0) {
       rowsToRender.forEach(function (entry) {
+        var cashFlow = entry.netCashFlow != null ? entry.netCashFlow : entry.contributions;
         var row = document.createElement("tr");
         row.innerHTML =
           "<td>" + entry.period + "</td>" +
-          "<td>" + fmtMoney(entry.contributions) + "</td>" +
+          "<td>" + fmtMoney(cashFlow) + "</td>" +
           "<td>" + fmtMoney(entry.growth) + "</td>" +
           "<td>" + fmtMoney(entry.balance) + "</td>";
         scheduleBody.appendChild(row);
       });
     } else {
       rowsToRender.forEach(function (entry) {
+        var cashFlow = entry.netCashFlow != null ? entry.netCashFlow : entry.contributions;
         var row = document.createElement("tr");
         row.innerHTML =
           "<td>" + entry.year + "</td>" +
-          "<td>" + fmtMoney(entry.contributions) + "</td>" +
+          "<td>" + fmtMoney(cashFlow) + "</td>" +
           "<td>" + fmtMoney(entry.growth) + "</td>" +
           "<td>" + fmtMoney(entry.balance) + "</td>";
         scheduleBody.appendChild(row);
@@ -266,7 +312,7 @@
     if (scheduleToggleButton) {
       if (scheduleData.length > maxRowsCollapsed) {
         scheduleToggleButton.style.display = "inline-flex";
-        scheduleToggleButton.textContent = showFullSchedule ? "Show fewer rows" : "Show full schedule";
+        scheduleToggleButton.textContent = showFullSchedule ? t().showFewer : t().showFull;
       } else {
         scheduleToggleButton.style.display = "none";
       }
@@ -275,17 +321,18 @@
 
   function buildSharePayload(solved) {
     if (!window.TLM || !window.TLM.shareCard) return null;
+    var copy = t();
     var scenario = scenarioFromInputs();
     var url = window.TLM.shareCard.buildResultUrl(window.location.href, scenario);
     return {
       calculatorName: "investment-return-to-reach-goal",
       brand: "The Long Math",
-      title: "Investment return required to reach a goal",
-      headline: "Required nominal return",
+      title: copy.shareTitle,
+      headline: copy.shareHeadline,
       mainValue: fmtPct(solved.nominalAnnualReturn),
-      subline: "Real return: " + fmtPct(solved.realAnnualReturn),
-      contextLine: "Target: " + fmtMoney(readTargetReal()) + " (today's dollars) over " + readInputs().years + " years",
-      shareText: "Required return to reach my investment goal: " + fmtPct(solved.nominalAnnualReturn) + " nominal",
+      subline: copy.shareSublinePrefix + fmtPct(solved.realAnnualReturn),
+      contextLine: copy.shareContext(fmtMoney(readTargetReal()), readInputs().years),
+      shareText: copy.shareTextPrefix + fmtPct(solved.nominalAnnualReturn) + copy.shareTextSuffix,
       url: url,
     };
   }
@@ -319,7 +366,8 @@
     var solved = lastSolve;
     var sim = solved.simulation;
     var inputs = readInputs();
-    var csv = "# Investment Return Required to Reach a Goal\n";
+    var copy = t();
+    var csv = copy.csvTitle + "\n";
     csv += "# Generated: " + new Date().toLocaleString() + "\n";
     csv += "#\n";
     csv += "# Inputs:\n";
@@ -328,7 +376,7 @@
     csv += "# Contribution per period (today's dollars)," + fmtMoney(inputs.contributionPerPeriod).replace(/[$,]/g, "") + "\n";
     csv += "# Time Horizon (years)," + inputs.years + "\n";
     csv += "# Assumed Inflation Rate," + (inputs.inflationAnnual * 100) + "%\n";
-    csv += "# Contribution Frequency," + (inputs.contributionPeriodsPerYear === 12 ? "Monthly" : "Yearly") + "\n";
+    csv += "# Contribution Frequency," + (inputs.contributionPeriodsPerYear === 12 ? copy.csvFreqMonthly : copy.csvFreqYearly) + "\n";
     csv += "# Contribution Timing," + (inputs.contributionAtBeginning ? "Beginning of period" : "End of period") + "\n";
     csv += "# Contributions indexed to inflation,yes\n";
     csv += "#\n";
@@ -336,10 +384,11 @@
     csv += "# Required Nominal Return," + fmtPct(solved.nominalAnnualReturn) + "\n";
     csv += "# Required Real Return," + fmtPct(solved.realAnnualReturn) + "\n";
     csv += "#\n";
-    csv += "Year,Contributions (real),Growth (real),Ending Balance (real)\n";
+    csv += copy.csvHeader + "\n";
     sim.schedule.forEach(function (entry) {
+      var cashFlow = entry.netCashFlow != null ? entry.netCashFlow : entry.contributions;
       csv += entry.year + ",";
-      csv += fmtMoney(entry.contributions).replace(/[$,]/g, "") + ",";
+      csv += fmtMoney(cashFlow).replace(/[$,]/g, "") + ",";
       csv += fmtMoney(entry.growth).replace(/[$,]/g, "") + ",";
       csv += fmtMoney(entry.balance).replace(/[$,]/g, "") + "\n";
     });

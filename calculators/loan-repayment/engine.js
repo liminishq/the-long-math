@@ -99,11 +99,10 @@
 
     // Helpers for labels
     function periodLabel(k) {
-      // Monthly => "Month n"; Biweekly/Weekly => "Week n"
-      if (m === 12) {
-        return "Month " + k;
-      }
-      return "Week " + k;
+      if (m === 12) return "Month " + k;
+      if (m === 26) return "Payment " + k;
+      if (m === 52) return "Week " + k;
+      return "Payment " + k;
     }
 
     for (let k = 1; k <= N; k++) {

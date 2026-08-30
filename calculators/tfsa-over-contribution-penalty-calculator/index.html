@@ -60,7 +60,7 @@
       "name": "Do withdrawals restore TFSA room immediately?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "In real life, withdrawals add to your contribution room starting January 1 of the next year, not in the same year. This calculator’s Advanced mode models that: withdrawals reduce excess from that point forward but do not restore same-year contribution room."
+        "text": "No. Advanced mode reduces excess when a withdrawal is made, then restores the withdrawal amount as contribution room on January 1 of the following year. The withdrawal must be inside the selected date range."
       }
     }
   ]
@@ -128,9 +128,9 @@
               <div id="simple_excess_error" class="error-text" aria-live="polite"></div>
             </div>
             <div class="field">
-              <label for="simple_months">Number of months at excess</label>
+              <label for="simple_months">Number of affected calendar months</label>
               <input id="simple_months" type="number" inputmode="decimal" min="0" step="any" value="" placeholder="0" />
-              <div class="help-text">Whole months the excess remained (e.g. 3 for three full months)</div>
+              <div class="help-text">Count of calendar months the excess applied under CRA’s calendar-month rule</div>
               <div id="simple_months_error" class="error-text" aria-live="polite"></div>
             </div>
           </article>
@@ -144,7 +144,7 @@
             </div>
             <div id="simple_echo" class="note-block" style="display: none;"></div>
             <p class="note-block" style="margin-top: 10px;">
-              This simplified estimate assumes the excess amount stayed the same for the full number of months entered.
+              This simplified estimate assumes the excess amount stayed the same for each affected calendar month entered.
             </p>
             <p class="note-block simple-disclaimer">
               This is a simplified estimate for a constant excess amount. If your excess changed over time, use Advanced mode.
@@ -159,7 +159,7 @@
         This tool estimates the penalty based on the <strong>highest excess amount</strong> reached in each month. If your excess changed during the month, the month is still assessed using that month’s highest excess.
       </div>
       <div class="note-block withdrawal-assumption">
-        In this model, <strong>withdrawals reduce excess from that point forward but do not restore same-year contribution room</strong>. Room is only increased by the “annual new TFSA room (Jan 1)” value or by explicit room-adjustment transactions.
+        In this model, <strong>withdrawals reduce excess from that point forward and restore contribution room on January 1 of the following year</strong>. Include the withdrawal date in the calculation range so the model can carry it forward.
       </div>
 
       <div class="calc-grid">
@@ -186,6 +186,12 @@
           </div>
 
           <div class="field">
+            <label for="starting_excess">Starting excess / opening over-contribution (CAD)</label>
+            <input id="starting_excess" type="number" inputmode="decimal" min="0" step="any" value="0" />
+            <div class="help-text">Excess already present at the start date (defaults to 0). Use this instead of inventing an earlier contribution event when you already know opening excess.</div>
+          </div>
+
+          <div class="field">
             <label for="annual_jan1_room">Annual new TFSA room added each January 1 (CAD)</label>
             <input id="annual_jan1_room" type="number" inputmode="decimal" min="0" step="any" value="7000" />
             <div class="help-text">New room added on Jan 1 for each year in the range (use 0 if not applicable)</div>
@@ -193,7 +199,7 @@
 
           <div class="field">
             <label>Transactions</label>
-            <div class="help-text">Add contributions, withdrawals, and optional room adjustments. Transactions outside the date range are ignored.</div>
+            <div class="help-text">Add contributions, withdrawals, and optional room adjustments. Transactions outside the date range are ignored, including prior-year withdrawals that would otherwise restore room on January 1.</div>
             <div class="txn-table-wrap">
               <table class="txn-table" id="txn_table">
                 <thead>
@@ -295,7 +301,7 @@
       </div>
       <div class="faq-item">
         <h3>What does the simple calculator assume?</h3>
-        <p>The simple mode assumes the excess amount stayed the same for the full number of months you enter. If your excess changed over time, use Advanced mode.</p>
+        <p>The simple mode assumes the excess amount stayed the same for each affected calendar month you enter. If your excess changed over time, use Advanced mode.</p>
       </div>
       <div class="faq-item">
         <h3>When should I use advanced mode?</h3>
@@ -303,7 +309,7 @@
       </div>
       <div class="faq-item">
         <h3>Do withdrawals restore TFSA room immediately?</h3>
-        <p>In real life, withdrawals add to your contribution room starting January 1 of the next year, not in the same year. This calculator’s Advanced mode models that: withdrawals reduce excess from that point forward but do not restore same-year contribution room.</p>
+        <p>No. Advanced mode reduces excess when a withdrawal is made, then restores the withdrawal amount as contribution room on January 1 of the following year. The withdrawal must be inside the selected date range so the calculator can carry it forward.</p>
       </div>
     </section>
 

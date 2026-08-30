@@ -65,19 +65,29 @@
     return Math.max(2009, yearTurned18);
   }
 
+  function lastPublishedLimitYear() {
+    if (!limitsData?.limits?.length) return 2026;
+    let maxY = 2009;
+    for (const entry of limitsData.limits) {
+      const y = Number(entry.year);
+      if (Number.isFinite(y) && y > maxY) maxY = y;
+    }
+    return maxY;
+  }
+
   // -----------------------------
   // Populate eligibility year dropdown
   // -----------------------------
   function populateEligibilityYearDropdown(preferredYear = null) {
     const select = $("eligibility_start_year");
-    const currentYear = new Date().getFullYear();
+    const lastLimitYear = lastPublishedLimitYear();
     const birthYear = num($("birth_year").value);
     
     // Clear existing options
     select.innerHTML = "";
 
-    // Add options from 2009 to current year
-    for (let year = 2009; year <= currentYear; year++) {
+    // Eligibility start can be any year from 2009 through the last published limit year
+    for (let year = 2009; year <= lastLimitYear; year++) {
       const option = document.createElement("option");
       option.value = year;
       option.textContent = year;
@@ -87,9 +97,9 @@
     // Set value: use preferredYear if provided, otherwise calculate from birth year, otherwise default to 2009
     let yearToSet = 2009;
     if (preferredYear !== null && Number.isFinite(preferredYear)) {
-      yearToSet = clamp(preferredYear, 2009, currentYear);
+      yearToSet = clamp(preferredYear, 2009, lastLimitYear);
     } else if (Number.isFinite(birthYear)) {
-      yearToSet = clamp(calculateEligibilityStartYear(birthYear), 2009, currentYear);
+      yearToSet = clamp(calculateEligibilityStartYear(birthYear), 2009, lastLimitYear);
     }
     
     select.value = yearToSet;
@@ -101,16 +111,19 @@
   function populateAsOfYearDropdown() {
     const select = $("as_of_year");
     const currentYear = new Date().getFullYear();
+    const lastLimitYear = lastPublishedLimitYear();
+    // Restrict to years with published CRA limits in tfsa_limits.json
+    const maxAsOf = lastLimitYear;
+    const defaultYear = Math.min(currentYear, maxAsOf);
     
     // Clear existing options
     select.innerHTML = "";
 
-    // Add options from 2009 to current year + 1 (for projections)
-    for (let year = 2009; year <= currentYear + 1; year++) {
+    for (let year = 2009; year <= maxAsOf; year++) {
       const option = document.createElement("option");
       option.value = year;
       option.textContent = year;
-      if (year === currentYear) {
+      if (year === defaultYear) {
         option.selected = true;
       }
       select.appendChild(option);
@@ -138,19 +151,17 @@
     const birthYear = num($("birth_year").value);
     const eligibilityStartYear = num($("eligibility_start_year").value);
     const asOfYear = num($("as_of_year").value);
-    const lifetimeContributionsTotal = num($("lifetime_contributions_total").value.replace(/,/g, "")) || 0;
+    const totalContributionsThroughAsOfDate = num($("total_contributions_through_as_of_date").value.replace(/,/g, "")) || 0;
     const withdrawalsPriorYearsTotal = num($("withdrawals_prior_years_total").value.replace(/,/g, "")) || 0;
-    const contributionsThisYear = num($("contributions_this_year").value.replace(/,/g, "")) || 0;
     const withdrawalsThisYear = num($("withdrawals_this_year").value.replace(/,/g, "")) || 0;
 
     return {
       limitsData,
       birthYear,
-      eligibilityStartYear: clamp(eligibilityStartYear, 2009, new Date().getFullYear()),
-      asOfYear: clamp(asOfYear, 2009, new Date().getFullYear() + 1),
-      lifetimeContributionsTotal: clamp(lifetimeContributionsTotal, 0, 10000000),
+      eligibilityStartYear: clamp(eligibilityStartYear, 2009, lastPublishedLimitYear()),
+      asOfYear: clamp(asOfYear, 2009, lastPublishedLimitYear()),
+      totalContributionsThroughAsOfDate: clamp(totalContributionsThroughAsOfDate, 0, 10000000),
       withdrawalsPriorYearsTotal: clamp(withdrawalsPriorYearsTotal, 0, 10000000),
-      contributionsThisYear: clamp(contributionsThisYear, 0, 10000000),
       withdrawalsThisYear: clamp(withdrawalsThisYear, 0, 10000000)
     };
   }
@@ -208,9 +219,8 @@
         <div style="margin-bottom: 8px;"><strong>Calculation method:</strong> Year-by-year estimate</div>
         <div style="margin-bottom: 4px;">Eligible years: ${result.eligibleYearsRange.start}–${result.eligibleYearsRange.end} (${result.eligibleYearsCount} years)</div>
         <div style="margin-bottom: 4px;">Total entitlement from limits: ${fmtCAD(result.totalEntitlement)}</div>
-        <div style="margin-bottom: 4px;">Less lifetime contributions: ${fmtCAD(inp.lifetimeContributionsTotal)}</div>
+        <div style="margin-bottom: 4px;">Less total contributions through the as-of date: ${fmtCAD(inp.totalContributionsThroughAsOfDate)}</div>
         <div style="margin-bottom: 4px;">Plus withdrawals in prior years: ${fmtCAD(inp.withdrawalsPriorYearsTotal)}</div>
-        <div style="margin-bottom: 4px;">Less contributions this year: ${fmtCAD(inp.contributionsThisYear)}</div>
         <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
           <div style="margin-bottom: 4px;"><strong>This year withdrawals:</strong> ${fmtCAD(inp.withdrawalsThisYear)}</div>
           <div style="margin-bottom: 4px; font-size: 12px; color: var(--muted);">(Adds back to room next year, not this year)</div>
@@ -226,9 +236,8 @@
     $("birth_year").value = "";
     populateEligibilityYearDropdown();
     populateAsOfYearDropdown();
-    $("lifetime_contributions_total").value = "";
+    $("total_contributions_through_as_of_date").value = "";
     $("withdrawals_prior_years_total").value = "";
-    $("contributions_this_year").value = "";
     $("withdrawals_this_year").value = "";
     render();
   }
@@ -276,9 +285,8 @@
     const inputs = [
       "eligibility_start_year",
       "as_of_year",
-      "lifetime_contributions_total",
+      "total_contributions_through_as_of_date",
       "withdrawals_prior_years_total",
-      "contributions_this_year",
       "withdrawals_this_year"
     ];
 
@@ -296,8 +304,8 @@
     $("reset_button").addEventListener("click", reset);
 
     // Format number inputs on blur
-    ["lifetime_contributions_total", "withdrawals_prior_years_total", 
-     "contributions_this_year", "withdrawals_this_year"].forEach(id => {
+    ["total_contributions_through_as_of_date", "withdrawals_prior_years_total",
+     "withdrawals_this_year"].forEach(id => {
       $(id).addEventListener("blur", function() {
         formatNumberInput(this);
       });

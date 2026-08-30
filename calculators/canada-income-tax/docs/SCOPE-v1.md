@@ -17,15 +17,16 @@ For in-scope inputs, unrounded arithmetic matches **hand-traced CRA federal and 
 | Federal | Schedule 8 (employment CPP path), net income / taxable income, Schedule 1 brackets and non-refundable credits including **enhanced BPA phase-out**, federal dividend gross-up/DTC per `dividends.json` |
 | Ontario extras | Surtax, Ontario Tax Reduction (basic amount), Ontario Health Premium |
 | Provincial income-driven reductions | B.C. tax reduction; NL/NB/NS low-income tax reduction (**single-filer** path only) |
-| Payroll (employment) | CRA annual maximums; base CPP → line 30800 credit; first additional + CPP2 → line 22215 deduction; EI → credit only |
+| Payroll | CRA annual maximums; employment base CPP → line 30800 credit; first additional + CPP2 → line 22215 deduction; EI → credit only. Outside Quebec, self-employed CPP pays both halves and splits the base/enhanced amounts between lines 31000 and 22200. |
 
 ## Out of scope (v1) — document on methodology and UI
 
 - Quebec QPP, QPIP, TP-1 form tracing, and federal Quebec abatement (QC brackets/BPA from Finances Québec are in data; employment path still uses federal Schedule 8 CPP/EI, not QC-native)
-- Self-employment **CPP/QPP** (lines 22200, 31000) — self-employment **income** counts for tax; **no** CPP/EI calculated
+- Quebec self-employment **QPP/QPIP**; non-Quebec self-employed CPP is modeled
 - Multiple employers, T4 aggregation, Schedule 8 overpayment (line 44800)
 - Working beneficiaries, CPT20/CPT30, partial-year Schedule 8 proration
-- AMT, OAS clawback, most secondary credits (age amount, caregiver, medical, tuition, etc.)
+- AMT, most secondary credits (caregiver, medical, tuition, etc.)
+- OAS clawback, age amount, and pension income amount unless the caller supplies `oasBenefits`, `age`, and/or `eligiblePensionIncome` (optional retirement path used by the RRSP Withdrawal Calculator)
 - Ontario Tax Reduction dependant amounts (engine models the basic personal amount only)
 - Spouse / eligible-dependant / child add-ons on Atlantic low-income tax reductions
 - Alberta supplemental tax credit

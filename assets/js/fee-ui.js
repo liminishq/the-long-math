@@ -21,6 +21,17 @@
     return Number.isFinite(n) ? n : NaN;
   }
 
+  function clampFinite(n, lo, hi) {
+    if (!Number.isFinite(n)) return n;
+    return Math.min(hi, Math.max(lo, n));
+  }
+
+  function formatFeePctLabel(pct) {
+    if (!Number.isFinite(pct)) return "";
+    const trimmed = String(Number(pct.toFixed(4)));
+    return trimmed + "%";
+  }
+
   function pctToDec(pct) {
     return pct / 100;
   }
@@ -98,11 +109,21 @@
     applyFeeCostFromQuery();
 
     function render() {
-      const P = numFromInput("P");
-      const years = numFromInput("years");
-      const rGross = pctToDec(numFromInput("rGrossPct"));
-      const fee = pctToDec(numFromInput("feePct"));
-      const contrib = numFromInput("contrib");
+      const P = clampFinite(numFromInput("P"), 0, 1e12);
+      const years = clampFinite(numFromInput("years"), 1, 100);
+      const rGrossPct = clampFinite(numFromInput("rGrossPct"), 0, 50);
+      const feePct = clampFinite(numFromInput("feePct"), 0, 30);
+      const contrib = clampFinite(numFromInput("contrib"), 0, 1e9);
+      const rGross = pctToDec(rGrossPct);
+      const fee = pctToDec(feePct);
+
+      const feeLabel = document.getElementById("outWithFeeLabel");
+      if (feeLabel) {
+        const feeTxt = formatFeePctLabel(feePct);
+        feeLabel.textContent = feeTxt
+          ? "Ending value (with " + feeTxt + " fee)"
+          : "Ending value (with fee)";
+      }
 
       const noFee = window.TLM_FeeMath.endingValueWithFee({ P, gross: rGross, fee: 0, years, contrib });
       const withFee = window.TLM_FeeMath.endingValueWithFee({ P, gross: rGross, fee, years, contrib });
@@ -132,23 +153,23 @@
 
     if (window.TLM && window.TLM.shareCard && window.TLM.shareCard.wireCalculatorShare && document.getElementById("share_result_btn")) {
       window.TLM.shareCard.wireCalculatorShare(calculatorSlugFromPath(), function () {
-        const P = numFromInput("P");
-        const years = numFromInput("years");
-        const rGross = pctToDec(numFromInput("rGrossPct"));
-        const fee = pctToDec(numFromInput("feePct"));
-        const contrib = numFromInput("contrib");
+        const P = clampFinite(numFromInput("P"), 0, 1e12);
+        const years = clampFinite(numFromInput("years"), 1, 100);
+        const rGrossPct = clampFinite(numFromInput("rGrossPct"), 0, 50);
+        const feePct = clampFinite(numFromInput("feePct"), 0, 30);
+        const contrib = clampFinite(numFromInput("contrib"), 0, 1e9);
+        const rGross = pctToDec(rGrossPct);
+        const fee = pctToDec(feePct);
         const noFee = window.TLM_FeeMath.endingValueWithFee({ P, gross: rGross, fee: 0, years, contrib });
         const withFee = window.TLM_FeeMath.endingValueWithFee({ P, gross: rGross, fee, years, contrib });
         if (!Number.isFinite(noFee) || !Number.isFinite(withFee)) return null;
         const diff = noFee - withFee;
-        const rGV = numFromInput("rGrossPct");
-        const fV = numFromInput("feePct");
         return {
           scenario: {
             P: Math.round(P),
             years: years,
-            rGrossPct: Number((Number.isFinite(rGV) ? rGV : 0).toFixed(4)),
-            feePct: Number((Number.isFinite(fV) ? fV : 0).toFixed(4)),
+            rGrossPct: Number((Number.isFinite(rGrossPct) ? rGrossPct : 0).toFixed(4)),
+            feePct: Number((Number.isFinite(feePct) ? feePct : 0).toFixed(4)),
             contrib: Math.round(Number.isFinite(contrib) ? contrib : 0),
           },
           card: {
@@ -183,11 +204,11 @@
     }
 
     function render() {
-      const P = numFromInput("P");
-      const years = numFromInput("years");
-      const rGross = pctToDec(numFromInput("rGrossPct"));
-      const fee = pctToDec(numFromInput("feePct"));
-      const contrib = numFromInput("contrib");
+      const P = clampFinite(numFromInput("P"), 0, 1e12);
+      const years = clampFinite(numFromInput("years"), 1, 100);
+      const rGross = pctToDec(clampFinite(numFromInput("rGrossPct"), 0, 50));
+      const fee = pctToDec(clampFinite(numFromInput("feePct"), 0, 30));
+      const contrib = clampFinite(numFromInput("contrib"), 0, 1e9);
 
       // Under this model, alphaRequired == fee (exactly).
       const alphaRequired = window.TLM_FeeMath.requiredAlphaToOffsetFeeSimple({ fee });
@@ -315,7 +336,7 @@
     function activeVsPassiveContribOptions() {
       const sel = document.getElementById("contribFreq");
       const freq = sel && sel.value ? sel.value : "monthly";
-      const contrib = numFromInput("contrib");
+      const contrib = clampFinite(numFromInput("contrib"), 0, 1e9);
       if (freq === "annual") {
         return { contrib };
       }
@@ -343,12 +364,12 @@
     }
 
     function render() {
-      const P = numFromInput("P");
-      const years = numFromInput("years");
-      const rPassivePortfolio = pctToDec(numFromInput("rPassivePortfolioPct"));
-      const rActivePortfolio = pctToDec(numFromInput("rActivePortfolioPct"));
-      const feePassive = pctToDec(numFromInput("feePassivePct"));
-      const feeActive = pctToDec(numFromInput("feeActivePct"));
+      const P = clampFinite(numFromInput("P"), 0, 1e12);
+      const years = clampFinite(numFromInput("years"), 1, 100);
+      const rPassivePortfolio = pctToDec(clampFinite(numFromInput("rPassivePortfolioPct"), 0, 50));
+      const rActivePortfolio = pctToDec(clampFinite(numFromInput("rActivePortfolioPct"), 0, 50));
+      const feePassive = pctToDec(clampFinite(numFromInput("feePassivePct"), 0, 30));
+      const feeActive = pctToDec(clampFinite(numFromInput("feeActivePct"), 0, 30));
       const contribOpts = activeVsPassiveContribOptions();
 
       // Break-even alpha (fee difference)
@@ -418,14 +439,14 @@
 
     if (window.TLM && window.TLM.shareCard && window.TLM.shareCard.wireCalculatorShare && document.getElementById("share_result_btn")) {
       window.TLM.shareCard.wireCalculatorShare(calculatorSlugFromPath(), function () {
-        const P = numFromInput("P");
-        const years = numFromInput("years");
-        const rPassivePortfolio = pctToDec(numFromInput("rPassivePortfolioPct"));
-        const rActivePortfolio = pctToDec(numFromInput("rActivePortfolioPct"));
-        const feePassive = pctToDec(numFromInput("feePassivePct"));
-        const feeActive = pctToDec(numFromInput("feeActivePct"));
+        const P = clampFinite(numFromInput("P"), 0, 1e12);
+        const years = clampFinite(numFromInput("years"), 1, 100);
+        const rPassivePortfolio = pctToDec(clampFinite(numFromInput("rPassivePortfolioPct"), 0, 50));
+        const rActivePortfolio = pctToDec(clampFinite(numFromInput("rActivePortfolioPct"), 0, 50));
+        const feePassive = pctToDec(clampFinite(numFromInput("feePassivePct"), 0, 30));
+        const feeActive = pctToDec(clampFinite(numFromInput("feeActivePct"), 0, 30));
         const contribOpts = activeVsPassiveContribOptions();
-        const contrib = numFromInput("contrib");
+        const contrib = clampFinite(numFromInput("contrib"), 0, 1e9);
         const freqEl = document.getElementById("contribFreq");
         const contribFreq = freqEl && freqEl.value ? freqEl.value : "monthly";
         const endPassive = window.TLM_FeeMath.endingValueWithFee({

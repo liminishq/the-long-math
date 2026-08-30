@@ -36,6 +36,17 @@
       "cppEiCredit": {
         "rate": 0.08,
         "_note": "Provincial credit on base CPP and EI (lowest rate 8.0000% for 2025)."
+      },
+      "ageAmount": {
+        "amount": 6221,
+        "phaseOutStart": 46308,
+        "phaseOutRate": 0.15,
+        "minimumAge": 65,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
+      },
+      "pensionIncomeAmount": {
+        "amount": 1719,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
       }
     },
     "surtaxes": [],
@@ -81,6 +92,17 @@
       "cppEiCredit": {
         "rate": 0.0506,
         "_note": "Provincial credit on base CPP and EI (lowest rate 5.0600% for 2025)."
+      },
+      "ageAmount": {
+        "amount": 5799,
+        "phaseOutStart": 43169,
+        "phaseOutRate": 0.15,
+        "minimumAge": 65,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
+      },
+      "pensionIncomeAmount": {
+        "amount": 1000,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
       }
     },
     "taxReduction": {
@@ -118,6 +140,17 @@
       "cppEiCredit": {
         "rate": 0.108,
         "_note": "Provincial credit on base CPP and EI (lowest rate 10.8000% for 2025)."
+      },
+      "ageAmount": {
+        "amount": 3728,
+        "phaseOutStart": 27749,
+        "phaseOutRate": 0.15,
+        "minimumAge": 65,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
+      },
+      "pensionIncomeAmount": {
+        "amount": 1000,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
       }
     },
     "surtaxes": [],
@@ -151,6 +184,17 @@
       "cppEiCredit": {
         "rate": 0.094,
         "_note": "Provincial credit on base CPP and EI (lowest rate 9.4000% for 2025)."
+      },
+      "ageAmount": {
+        "amount": 6037,
+        "phaseOutStart": 44945,
+        "phaseOutRate": 0.15,
+        "minimumAge": 65,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
+      },
+      "pensionIncomeAmount": {
+        "amount": 1000,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
       }
     },
     "surtaxes": [],
@@ -207,6 +251,17 @@
       "cppEiCredit": {
         "rate": 0.087,
         "_note": "Provincial credit on base CPP and EI (lowest rate 8.7000% for 2025)."
+      },
+      "ageAmount": {
+        "amount": 7064,
+        "phaseOutStart": 38712,
+        "phaseOutRate": 0.15,
+        "minimumAge": 65,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
+      },
+      "pensionIncomeAmount": {
+        "amount": 1000,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
       }
     },
     "surtaxes": [],
@@ -251,6 +306,17 @@
       "cppEiCredit": {
         "rate": 0.0879,
         "_note": "Provincial credit on base CPP and EI (lowest rate 8.7900% for 2025)."
+      },
+      "ageAmount": {
+        "amount": 5734,
+        "phaseOutStart": 30828,
+        "phaseOutRate": 0.15,
+        "minimumAge": 65,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
+      },
+      "pensionIncomeAmount": {
+        "amount": 1173,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
       }
     },
     "surtaxes": [],
@@ -291,6 +357,17 @@
       "cppEiCredit": {
         "rate": 0.059,
         "_note": "Provincial credit on base CPP and EI (lowest rate 5.9000% for 2025)."
+      },
+      "ageAmount": {
+        "amount": 8727,
+        "phaseOutStart": 45522,
+        "phaseOutRate": 0.15,
+        "minimumAge": 65,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
+      },
+      "pensionIncomeAmount": {
+        "amount": 1000,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
       }
     },
     "surtaxes": [],
@@ -324,6 +401,17 @@
       "cppEiCredit": {
         "rate": 0.04,
         "_note": "Provincial credit on base CPP and EI (lowest rate 4.0000% for 2025)."
+      },
+      "ageAmount": {
+        "amount": 12303,
+        "phaseOutStart": 45522,
+        "phaseOutRate": 0.15,
+        "minimumAge": 65,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
+      },
+      "pensionIncomeAmount": {
+        "amount": 2000,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
       }
     },
     "surtaxes": [],
@@ -370,6 +458,17 @@
       "cppEiCredit": {
         "rate": 0.0505,
         "_note": "Provincial credit on base CPP and EI (lowest rate 5.0500% for 2025)."
+      },
+      "ageAmount": {
+        "amount": 6223,
+        "phaseOutStart": 46330,
+        "phaseOutRate": 0.15,
+        "minimumAge": 65,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
+      },
+      "pensionIncomeAmount": {
+        "amount": 1762,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
       }
     },
     "surtaxes": [
@@ -427,6 +526,17 @@
       "cppEiCredit": {
         "rate": 0.095,
         "_note": "Provincial credit on base CPP and EI (lowest rate 9.5000% for 2025)."
+      },
+      "ageAmount": {
+        "amount": 6510,
+        "phaseOutStart": 36600,
+        "phaseOutRate": 0.15,
+        "minimumAge": 65,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
+      },
+      "pensionIncomeAmount": {
+        "amount": 1000,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
       }
     },
     "surtaxes": [],
@@ -486,6 +596,17 @@
       "cppEiCredit": {
         "rate": 0.105,
         "_note": "Provincial credit on base CPP and EI (lowest rate 10.5000% for 2025)."
+      },
+      "ageAmount": {
+        "amount": 5785,
+        "phaseOutStart": 43066,
+        "phaseOutRate": 0.15,
+        "minimumAge": 65,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
+      },
+      "pensionIncomeAmount": {
+        "amount": 1000,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
       }
     },
     "surtaxes": [],
@@ -527,6 +648,17 @@
       "cppEiCredit": {
         "rate": 0.064,
         "_note": "Provincial credit on base CPP and EI (lowest rate 6.4000% for 2025)."
+      },
+      "ageAmount": {
+        "amount": 9028,
+        "phaseOutStart": 45522,
+        "phaseOutRate": 0.15,
+        "minimumAge": 65,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
+      },
+      "pensionIncomeAmount": {
+        "amount": 2000,
+        "_note": "CRA line 30100 / 31400 pages for 2025 Form 428 amounts. Age amount phases out at 15% of net income above the threshold."
       }
     },
     "surtaxes": [],

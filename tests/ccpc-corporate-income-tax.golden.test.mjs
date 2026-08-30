@@ -71,3 +71,14 @@ test("QC 2026: SBD rate follows the corporate taxation-year start date", () => {
   assert.equal(afterChange.provincialTax, 100_000 * 0.022);
   assert.equal(afterChange.federalTax, 100_000 * 0.09);
 });
+
+test("public calculateCorporateTax boundary clamps negative or non-finite income to $0", () => {
+  const zero = calculateCorporateTax(0, "ON");
+  const negative = calculateCorporateTax(-50_000, "ON");
+  const nan = calculateCorporateTax(Number.NaN, "ON");
+  assert.equal(negative.taxableIncome, 0);
+  assert.equal(nan.taxableIncome, 0);
+  assert.equal(negative.totalCorporateTax, zero.totalCorporateTax);
+  assert.equal(nan.totalCorporateTax, zero.totalCorporateTax);
+  assert.equal(zero.totalCorporateTax, 0);
+});

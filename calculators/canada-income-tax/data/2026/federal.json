@@ -25,7 +25,24 @@
     "cppEiCredit": {
       "rate": 0.14,
       "_note": "CPP/EI non-refundable credit rate matches statutory lowest federal rate for 2026."
+    },
+    "ageAmount": {
+      "amount": 9208,
+      "phaseOutStart": 46432,
+      "phaseOutRate": 0.15,
+      "minimumAge": 65,
+      "_note": "CRA indexation table 2026: Age amount $9,208; net income threshold $46,432. Phase-out 15% (ITA 118(2))."
+    },
+    "pensionIncomeAmount": {
+      "amount": 2000,
+      "_note": "Federal pension income amount remains $2,000 for 2026 (Finance Canada credit table; not CPI-indexed)."
     }
+  },
+  "oasRecovery": {
+    "rate": 0.15,
+    "threshold": 95323,
+    "_source": "CRA indexation table: Old age security repayment threshold 2026. canada.ca/en/services/benefits/publicpensions/old-age-security/recovery-tax.html",
+    "_note": "Repay 15% of line 23400 above the threshold, not exceeding OAS received."
   },
   "rrspRoomRate": 0.18,
   "rrspDollarMax": 33810,

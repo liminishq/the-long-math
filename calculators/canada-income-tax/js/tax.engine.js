@@ -15,6 +15,10 @@ import {
   calculateProvincialTaxReduction,
   resolveEnhancedBasicPersonalAmount
 } from './tax.bpa.js';
+import {
+  addAgeAndPensionCredits,
+  computeOasRecovery
+} from './tax.credits.js';
 
 export { MARGINAL_DELTA } from './marginal-tax.js';
 
@@ -167,8 +171,8 @@ function calculateOntarioHealthPremium(taxableIncome, _taxYear) {
 
 /**
  * Calculate federal tax. Mirrors Federal Schedule 1 ordering.
- * @param {number} taxableIncome - Taxable income (after line 22215 enhanced CPP deduction)
- * @param {number} cppCreditable - Base CPP for line 30800 credit only (not enhanced CPP or CPP2)
+ * @param {number} taxableIncome - Taxable income after applicable line 22200/22215 CPP deductions
+ * @param {number} cppCreditable - Base CPP for line 30800/31000 credits (not enhanced CPP or CPP2)
  * @param {number} ei - EI premium (credit only; not deducted from taxable income)
  * @param {number} employmentIncome - Employment income (for Canada Employment Amount eligibility)
  * @param {Object} dividends - Pre-computed dividend amounts (eligibleDTCFed, nonEligibleDTCFed)
@@ -212,14 +216,14 @@ function calculateFederalTax(taxableIncome, cppCreditable, ei, employmentIncome,
   }
 
   if (federal.credits.canadaEmploymentAmount && employmentIncome > 0) {
-    const base = federal.credits.canadaEmploymentAmount.amount;
+    const base = Math.min(employmentIncome, federal.credits.canadaEmploymentAmount.amount);
     const credit = base * creditRate;
     creditBases.push({ name: 'Canada Employment Amount', base, rate: creditRate, credit });
     credits.push({ name: 'Canada Employment Amount', amount: credit });
     totalCredits += credit;
   }
 
-  // Line 30800 base CPP credit + EI (line 31200); enhanced CPP is deducted, not credited.
+  // Lines 30800/31000 base CPP credit + EI (line 31200); enhanced CPP is deducted, not credited.
   if (federal.credits.cppEiCredit && cppCreditable > 0) {
     const rate = federal.credits.cppEiCredit.rate;
     const credit = cppCreditable * rate;
@@ -234,6 +238,16 @@ function calculateFederalTax(taxableIncome, cppCreditable, ei, employmentIncome,
     credits.push({ name: 'EI', amount: credit });
     totalCredits += credit;
   }
+
+  totalCredits += addAgeAndPensionCredits({
+    creditsConfig: federal.credits,
+    creditRate,
+    age: opts.age,
+    netIncome: netIncomeForBpa,
+    eligiblePensionIncome: opts.eligiblePensionIncome,
+    creditBases,
+    credits
+  });
 
   const taxAfterCredits = Math.max(0, baseTax - totalCredits);
 
@@ -306,7 +320,7 @@ function calculateProvincialTaxGeneric(taxableIncome, prov, dividends, cppCredit
     totalCredits += credit;
   }
 
-  // Form 428 line 58240 — provincial credit on base CPP/QPP and EI (when configured).
+  // Form 428 lines 58240/58280 — provincial credit on base CPP/QPP and EI (when configured).
   if (prov.credits?.cppEiCredit) {
     const creditRate = prov.credits.cppEiCredit.rate ?? defaultProvCreditRate;
     if (cppCreditable > 0) {
@@ -322,6 +336,20 @@ function calculateProvincialTaxGeneric(taxableIncome, prov, dividends, cppCredit
       totalCredits += credit;
     }
   }
+
+  const defaultProvCreditRateAfterCpp = Math.min(...prov.brackets.map(b => b.rate));
+  const personCreditRate = prov.credits?.basicPersonalAmount?.rate
+    ?? prov.credits?.ageAmount?.rate
+    ?? defaultProvCreditRateAfterCpp;
+  totalCredits += addAgeAndPensionCredits({
+    creditsConfig: prov.credits,
+    creditRate: personCreditRate,
+    age: opts.age,
+    netIncome: netIncomeForBpa,
+    eligiblePensionIncome: opts.eligiblePensionIncome,
+    creditBases,
+    credits
+  });
 
   const taxAfterCredits = Math.max(0, baseTax - totalCredits);
 
@@ -420,7 +448,7 @@ function calculateProvincialTaxGeneric(taxableIncome, prov, dividends, cppCredit
 function calculateOntarioTax(taxableIncome, prov, dividends, cppCreditable, ei, opts = {}, taxYear = 2025) {
   const { bracketLines, baseTax } = calculateBracketTax(taxableIncome, prov.brackets, opts);
 
-  // Step 2: Ontario non-refundable credits (ON428 — BPA, line 58240 CPP/EI when configured).
+  // Step 2: Ontario non-refundable credits (ON428 — BPA, lines 58240/58280 CPP/EI when configured).
   const credits = [];
   const creditBases = [];
   let creditTotal = 0;
@@ -449,6 +477,15 @@ function calculateOntarioTax(taxableIncome, prov, dividends, cppCreditable, ei, 
       creditTotal += credit;
     }
   }
+  creditTotal += addAgeAndPensionCredits({
+    creditsConfig: prov.credits,
+    creditRate: defaultRate,
+    age: opts.age,
+    netIncome: opts.netIncome != null ? opts.netIncome : taxableIncome,
+    eligiblePensionIncome: opts.eligiblePensionIncome,
+    creditBases,
+    credits
+  });
   const taxAfterCredits = Math.max(0, baseTax - creditTotal);
 
   // Step 3: Ontario surtax on taxAfterCredits (not reduced by dividend credits).
@@ -629,43 +666,6 @@ function calculateCPP(employmentIncome, payroll) {
 }
 
 /**
- * Employer CPP for standard T4 employment: matched to employee CPP (same rates/caps).
- * Reused by calculators that need to model owner salary as a corporate deduction.
- */
-export function employerCppForT4Employment(employmentIncome, opts = {}) {
-  const dataCtx = buildDataContext(opts);
-  const income = Math.max(0, Number(employmentIncome) || 0);
-  return calculateCPP(income, dataCtx.payroll).cpp;
-}
-
-/**
- * Calculate EI premium
- * @param {number} employmentIncome - Employment income
- * @param {Object} payroll - Payroll data (ei)
- * @returns {Object} EI calculation
- */
-function calculateEI(employmentIncome, payroll) {
-  const insurableEarnings = Math.min(employmentIncome, payroll.ei.maxInsurableEarnings);
-  const ei = Math.min(insurableEarnings * payroll.ei.rate, payroll.ei.maxPremium);
-
-  return {
-    ei,
-    insurableEarnings,
-    inputs: {
-      employmentIncome,
-      maxInsurableEarnings: payroll.ei.maxInsurableEarnings,
-      rate: payroll.ei.rate,
-      maxPremium: payroll.ei.maxPremium
-    }
-  };
-}
-
-/** Normalize numeric input from form (may be string). */
-function num(input, field) {
-  const v = input[field];
-  if (v == null || v === '') return 0;
-  const n = Number(v);
-/**
  * Schedule 8-style CPP when income can include self-employment.
  *
  * The self-employed portion is the remaining employee-equivalent contribution
@@ -750,6 +750,43 @@ function calculateCPPForIncomeSources(employmentIncome, selfEmploymentIncome, pa
   };
 }
 
+/**
+ * Employer CPP for standard T4 employment: matched to employee CPP (same rates/caps).
+ * Reused by calculators that need to model owner salary as a corporate deduction.
+ */
+export function employerCppForT4Employment(employmentIncome, opts = {}) {
+  const dataCtx = buildDataContext(opts);
+  const income = Math.max(0, Number(employmentIncome) || 0);
+  return calculateCPP(income, dataCtx.payroll).cpp;
+}
+
+/**
+ * Calculate EI premium
+ * @param {number} employmentIncome - Employment income
+ * @param {Object} payroll - Payroll data (ei)
+ * @returns {Object} EI calculation
+ */
+function calculateEI(employmentIncome, payroll) {
+  const insurableEarnings = Math.min(employmentIncome, payroll.ei.maxInsurableEarnings);
+  const ei = Math.min(insurableEarnings * payroll.ei.rate, payroll.ei.maxPremium);
+
+  return {
+    ei,
+    insurableEarnings,
+    inputs: {
+      employmentIncome,
+      maxInsurableEarnings: payroll.ei.maxInsurableEarnings,
+      rate: payroll.ei.rate,
+      maxPremium: payroll.ei.maxPremium
+    }
+  };
+}
+
+/** Normalize numeric input from form (may be string). */
+function num(input, field) {
+  const v = input[field];
+  if (v == null || v === '') return 0;
+  const n = Number(v);
   return isNaN(n) ? 0 : n;
 }
 
@@ -771,6 +808,9 @@ function cloneInput(input) {
     fhsaDeduction: num(input, 'fhsaDeduction'),
     estimatedDeductions: num(input, 'estimatedDeductions'),
     taxPaid: num(input, 'taxPaid'),
+    age: input.age == null || input.age === '' ? null : num(input, 'age'),
+    eligiblePensionIncome: num(input, 'eligiblePensionIncome'),
+    oasBenefits: num(input, 'oasBenefits'),
   };
 }
 
@@ -875,6 +915,9 @@ function runFullCalculation(input, dataCtx, runOpts = {}) {
     rrspDeduction = 0,
     fhsaDeduction = 0,
     estimatedDeductions = 0,
+    age = null,
+    eligiblePensionIncome = 0,
+    oasBenefits = 0,
   } = input;
   const provinceCode = normalizeProvince(input.province);
   if (!provinceCode) throw new Error(`Unrecognized province "${input.province}".`);
@@ -905,14 +948,20 @@ function runFullCalculation(input, dataCtx, runOpts = {}) {
 
   const grossIncomeForTax = employmentIncome + selfEmploymentIncome + otherIncome +
     grossedUpEligible + grossedUpNonEligible + taxableCapitalGains;
-  const netIncome = Math.max(0,
+  const line23400 = Math.max(0,
     grossIncomeForTax - rrspDeduction - fhsaDeduction - estimatedDeductions - cppDeductible
   );
+  // OAS repayment is computed from line 23400, deducted to reach line 23600, and
+  // added to tax payable (line 42200). See tax.credits.js.
+  const oasRecoveryTax = computeOasRecovery(line23400, oasBenefits, dataCtx.federal?.oasRecovery);
+  const netIncome = Math.max(0, line23400 - oasRecoveryTax);
   const taxableIncome = netIncome;
 
   const calcOpts = {
     ...(runOpts.roundToDollar === false ? { roundToDollar: false } : {}),
-    netIncome
+    netIncome,
+    age,
+    eligiblePensionIncome
   };
   const federal = calculateFederalTax(
     taxableIncome, cppCreditable, ei, employmentIncome, dividends, dataCtx.federal, calcOpts
@@ -920,7 +969,7 @@ function runFullCalculation(input, dataCtx, runOpts = {}) {
   const provincial = (provinceCode === 'ON'
     ? calculateOntarioTax(taxableIncome, prov, dividends, cppCreditable, ei, calcOpts, taxYear)
     : calculateProvincialTaxGeneric(taxableIncome, prov, dividends, cppCreditable, ei, calcOpts));
-  const totalIncomeTax = federal.netTax + provincial.netTax;
+  const totalIncomeTax = federal.netTax + provincial.netTax + oasRecoveryTax;
   return {
     totalIncomeTax,
     totalIncome: employmentIncome + selfEmploymentIncome + otherIncome + eligibleDividends + nonEligibleDividends + capitalGains,
@@ -941,6 +990,8 @@ function runFullCalculation(input, dataCtx, runOpts = {}) {
     grossedUpNonEligible,
     capitalGainsInclusionRate,
     taxableCapitalGains,
+    oasRecoveryTax,
+    line23400,
   };
 }
 
@@ -958,7 +1009,13 @@ function runFullCalculation(input, dataCtx, runOpts = {}) {
  *   - rrspDeduction: RRSP deduction
  *   - fhsaDeduction: FHSA deduction
  *   - taxPaid: federal + provincial/territorial income tax already paid for the year (from slips or instalments). Do not include CPP or EI; those count only in total tax burden.
- * @param {Object} data - Pre-loaded tax data (optional, will load if not provided)
+ *   - age: optional. If >= 65, the age amount credit is applied when present in tax data.
+ *   - eligiblePensionIncome: optional. Qualifying pension/RRIF income for the pension income amount.
+ *   - oasBenefits: optional. OAS included in income; used only to compute OAS recovery tax.
+ * @param {Object} [opts]
+ * @param {Object} [opts.taxData] - Preferred explicit immutable tax-data bundle
+ * @param {Object} [opts.dataOverride] - Compatibility alias for opts.taxData
+ * @param {boolean} [opts.skipMarginalRateCalculation] - Internal probe optimization; preserves result shape with null marginal rates
  * @returns {Object} Complete tax calculation result
  */
 export function computePersonalTax(input, opts = {}) {
@@ -979,7 +1036,7 @@ export function computePersonalTax(input, opts = {}) {
     taxPaid = 0
   } = normalizedInput;
 
-  const dataCtx = buildDataContext(opts);
+  const dataCtx = buildDataContext(opts, year);
   // Allow unrounded net tax for threshold / next-dollar marginal analysis.
   // Display paths leave roundToDollar unset (default: round federal and provincial net tax to dollars).
   const result = runFullCalculation(
@@ -1004,11 +1061,13 @@ export function computePersonalTax(input, opts = {}) {
     dividendGrossUp,
     capitalGainsInclusionRate,
     taxableCapitalGains,
+    oasRecoveryTax = 0,
+    line23400,
   } = result;
 
   const federalTax = federal.netTax;
   const provTax = provincial.netTax;
-  const totalIncomeTax = federalTax + provTax;
+  const totalIncomeTax = federalTax + provTax + oasRecoveryTax;
   const totalBurden = totalIncomeTax + cpp + ei;
   const afterTaxIncome = totalIncome - totalIncomeTax;
   const takeHomeAfterPayroll = totalIncome - totalBurden;
@@ -1071,6 +1130,7 @@ export function computePersonalTax(input, opts = {}) {
       total: cpp,
       creditableBase: cppCreditable,
       deductibleEnhanced: cppDeductible,
+      selfEmploymentBaseDeductible: cppCalc.selfEmploymentBaseDeductible || 0,
       firstAdditional: cppCalc.cppFirstAdditionalDeductible,
       cpp2: cppCalc.cpp2Deductible,
     },
@@ -1108,6 +1168,8 @@ export function computePersonalTax(input, opts = {}) {
       avgRate,
       marginalRate,
       refundOrOwing,
+      oasRecoveryTax,
+      line23400,
     },
     breakdown: {
       federal: { ...federal, dtcApplied: federal.federalDividendCredits || 0 },
@@ -1115,9 +1177,9 @@ export function computePersonalTax(input, opts = {}) {
       dividends: { ...dividends, totalGrossUp: dividendGrossUp },
       capitalGains: { inclusionRate: capitalGainsInclusionRate, taxableCapitalGains },
       payroll: { cpp: cppCalc, ei: eiCalc },
+      oasRecovery: { amount: oasRecoveryTax },
       marginalRates,
     },
     auditBreakdown,
   };
 }
-      selfEmploymentBaseDeductible: cppCalc.selfEmploymentBaseDeductible || 0,

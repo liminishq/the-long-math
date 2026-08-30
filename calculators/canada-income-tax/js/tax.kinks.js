@@ -66,6 +66,29 @@ export function collectTaxIncomeKinks(taxData, provinceCode, incomeContext = {})
     if (resolved.phaseOutEnd > 0) add(resolved.phaseOutEnd, "Federal BPA phase-out end");
   }
 
+  const fedAge = federal?.credits?.ageAmount;
+  if (fedAge?.amount > 0) {
+    const start = Number(fedAge.phaseOutStart) || 0;
+    const rate = Number(fedAge.phaseOutRate) || 0.15;
+    if (start > 0) add(start, "Federal age amount phase-out start");
+    if (start > 0 && rate > 0) {
+      add(start + Number(fedAge.amount) / rate, "Federal age amount extinguishment");
+    }
+  }
+
+  const oasThreshold = Number(federal?.oasRecovery?.threshold) || 0;
+  if (oasThreshold > 0) add(oasThreshold, "OAS recovery tax threshold");
+
+  const provAge = prov?.credits?.ageAmount;
+  if (provAge?.amount > 0) {
+    const start = Number(provAge.phaseOutStart) || 0;
+    const rate = Number(provAge.phaseOutRate) || 0.15;
+    if (start > 0) add(start, `${code} age amount phase-out start`);
+    if (start > 0 && rate > 0) {
+      add(start + Number(provAge.amount) / rate, `${code} age amount extinguishment`);
+    }
+  }
+
   const provBpa = prov?.credits?.basicPersonalAmount;
   if (provBpa && (provBpa.minimum != null || provBpa.phaseOutStart != null)) {
     const resolved = resolveEnhancedBasicPersonalAmount(provBpa, 0, null);

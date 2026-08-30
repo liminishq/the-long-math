@@ -139,7 +139,7 @@
       <p>Step 2 — non-refundable credits (Schedule 1 style):</p>
       <ul>
         <li>Basic Personal Amount: BPA<sub>fed</sub> × c<sub>fed</sub></li>
-        <li>Canada Employment Amount (if E &gt; 0): CEA × c<sub>fed</sub></li>
+        <li>Canada Employment Amount (if E &gt; 0): min(E, CEA) × c<sub>fed</sub></li>
         <li>Base CPP credit (line 30800): CPP<sub>base</sub> × r<sub>CPP/EI,cred</sub></li>
         <li>EI credit: EI × r<sub>CPP/EI,cred</sub></li>
       </ul>
@@ -281,11 +281,11 @@
         <li>RRSP and FHSA inputs are treated strictly as deductions; contribution room, over-contribution penalties, and carry-forward rules are out of scope.</li>
         <li>Only common non-refundable credits are modeled (federal BPA, Canada Employment Amount, base CPP and EI credits, provincial BPAs and provincial base CPP/EI where configured, selected credits in data files).</li>
         <li>Enhanced CPP (first additional + CPP2) is deducted from net income (line 22215); payroll withholding calculators that do not model the return split may disagree with this calculator.</li>
-        <li>Additional credits and deductions (medical expenses, tuition, donations, prior-year loss carryforwards, etc.) are not modeled individually; they can be approximated via the “Estimated Additional Deductions” field.</li>
+        <li>Additional tax credits (medical expenses, tuition, donations) and some deductions (prior-year loss carryforwards, etc.) are not modeled individually. The “Estimated Additional Deductions” field reduces taxable income; it is not a credit calculator.</li>
         <li>Dividend gross-up and tax credit rates come from federal and provincial data tables for the selected year; province-specific nuances beyond the encoded schema are not modeled.</li>
         <li>Capital gains use a fixed 50% inclusion rate across all provinces in the current engine.</li>
-        <li>CPP and EI are modeled from the <strong>employee</strong> perspective on <strong>employment income only</strong>, using official annual maximums and rates. <strong>Self-employment income</strong> is included in income for tax brackets but does <strong>not</strong> generate CPP or EI in v1 (no Schedule 8 self-employment path). Employer contributions are not included.</li>
-        <li>Quebec (QPP/QPIP), multiple employers, and Schedule 8 overpayment are out of scope for v1; see <code>docs/SCOPE-v1.md</code>.</li>
+        <li>CPP on employment income uses the employee contribution. Outside Quebec, CPP on self-employment income uses a Schedule 8-style cash contribution: both halves are paid, one half of base CPP is creditable, and the other half of base CPP plus both halves of enhanced CPP are deductible. EI is modeled on employment income only. Employer contributions are not included in this standalone personal result.</li>
+        <li>Quebec QPP/QPIP, multiple employers, Schedule 8 overpayment, working-beneficiary elections, and partial-year proration are out of scope for v1; see <code>docs/SCOPE-v1.md</code>.</li>
         <li><strong>Display rounding:</strong> Federal and provincial net income tax are each rounded to the nearest dollar for display; total income tax shown is the sum of those two rounded amounts. Internal tests compare unrounded form-trace values.</li>
         <li>All amounts are in Canadian dollars; inflation, indexation beyond the configured year, and time value of money are not modeled in this calculator.</li>
         <li>All calculations use full floating-point precision internally; rounding occurs only where required to mirror CRA per-bracket rounding and at the display layer.</li>
@@ -305,7 +305,7 @@
 
       <h2>What This Calculator Does Not Include</h2>
       <ul>
-        <li>OAS clawback, GIS, and most benefit interactions.</li>
+        <li>The personal-tax UI on this page does not collect OAS benefits, so OAS recovery tax is $0 here. The shared engine can compute OAS clawback (recovery tax) when a caller supplies <code>oasBenefits</code> — that optional path is used by the RRSP Withdrawal Calculator. GIS and most other benefit interactions remain out of scope.</li>
         <li>Alternative minimum tax (AMT) and detailed trust or partnership rules.</li>
         <li>Quebec-specific return mechanics beyond what the selected provincial file encodes.</li>
         <li>Full RRSP/FHSA room history, carryforwards, and over-contribution penalties — covered by the <a href="/calculators/rrsp-contribution-room-tax-refund/" target="_blank" rel="noopener">RRSP Contribution Room &amp; Tax Refund Calculator</a>, <a href="/calculators/tfsa-room/" target="_blank" rel="noopener">TFSA Contribution Room Calculator</a>, <a href="/calculators/tfsa-over-contribution-penalty-calculator/" target="_blank" rel="noopener">TFSA Over-Contribution Penalty Calculator</a>, and (for FHSA alongside TFSA and RRSP) the <a href="/calculators/tfsa-rrsp-fhsa/" target="_blank" rel="noopener">TFSA vs RRSP vs FHSA Calculator</a>.</li>

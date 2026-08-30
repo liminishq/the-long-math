@@ -44,8 +44,8 @@ import { SUPPORTED_TAX_YEARS, computeDeductionTiming, parseMoney } from "./engin
 
   const TEXT = IS_FR
     ? {
-        incomeThisYear: (y) => `Revenu en ${y}`,
-        expectedIncomeIn: (y) => `Revenu prévu en ${y}`,
+        incomeThisYear: (y) => `Revenu d'emploi en ${y}`,
+        expectedIncomeIn: (y) => `Revenu d'emploi prévu en ${y}`,
         returnLabel: "Rendement annuel prévu (%)",
         debtLabel: "Taux d'intérêt de la dette (%)",
         returnHelp:
@@ -138,8 +138,8 @@ import { SUPPORTED_TAX_YEARS, computeDeductionTiming, parseMoney } from "./engin
         projectedTable: "Table projetée"
       }
     : {
-        incomeThisYear: (y) => `Income this year (${y})`,
-        expectedIncomeIn: (y) => `Expected income in ${y}`,
+        incomeThisYear: (y) => `Employment income this year (${y})`,
+        expectedIncomeIn: (y) => `Expected employment income in ${y}`,
         returnLabel: "Expected annual return (%)",
         debtLabel: "Interest rate on debt (%)",
         returnHelp:

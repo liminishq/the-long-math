@@ -577,7 +577,9 @@ function updateOutputs(data) {
     if (!summarySentence.querySelector('#summary_down_payment')) {
       summarySentence.innerHTML = '<div class="summary-title">With these inputs:</div><ul class="summary-list"><li><span id="summary_down_payment" class="summary-value">$–</span> <span class="summary-label">paid upfront as a down payment</span></li><li><span id="summary_principal" class="summary-value">$–</span> <span class="summary-label">repaid in mortgage principal</span></li><li><span id="summary_interest" class="summary-value">$–</span> <span class="summary-label">paid in mortgage interest</span></li><li><span id="summary_total" class="summary-value">$–</span> <span class="summary-label">total cost of the home</span></li><li class="summary-subtext"><span class="summary-label">(down payment + principal + interest)</span></li></ul>';
     }
-    summarySentence.innerHTML = '<span class="error-state">Payment does not amortize the loan at this rate.</span>';
+    const errorText = data.error || 'Payment does not amortize the loan at this rate.';
+    summarySentence.innerHTML = '<span class="error-state"></span>';
+    summarySentence.querySelector('.error-state').textContent = errorText;
     return;
   }
   
@@ -651,7 +653,7 @@ function updateTables(data) {
     return;
   }
   
-  // First 12 months table (first 12 payment periods)
+  // First 12 payments table
   const tbody12 = document.getElementById('table_12months_body');
   tbody12.innerHTML = '';
   
@@ -1066,7 +1068,7 @@ function setupEventListeners() {
     const button = document.getElementById('accordion_12months');
     const isOpen = content.classList.contains('open');
     content.classList.toggle('open');
-    button.textContent = isOpen ? '▼ First 12 months — monthly amortization' : '▲ First 12 months — monthly amortization';
+    button.textContent = isOpen ? '▼ First 12 payments — amortization' : '▲ First 12 payments — amortization';
     button.setAttribute('aria-expanded', !isOpen);
   });
   

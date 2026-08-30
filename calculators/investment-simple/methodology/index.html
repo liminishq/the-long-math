@@ -26,7 +26,7 @@
   <div class="wrap">
     <div class="methodology-content">
       <h1>Inspectable Arithmetic for the Simple Investment Calculator</h1>
-      <p class="methodology-meta">Version 1.1<br>Last verified: May 2026</p>
+      <p class="methodology-meta">Version 1.2<br>Last verified: August 2026</p>
 
       <p>
         Transparent arithmetic is the operating system of this calculator.
@@ -40,7 +40,7 @@
 
       <h2>Purpose</h2>
       <p>
-        This calculator models deterministic compound growth with periodic contributions and optional inflation adjustment under constant nominal return assumptions.
+        This calculator models deterministic compound growth with periodic contributions. Inflation adjustment, when enabled, is a display conversion into today's dollars and does not change the contribution path.
       </p>
 
       <h2>Definitions</h2>
@@ -71,11 +71,10 @@
       <p class="formula-meta"><strong>Rationale:</strong> Effective period rate from the annual return, then ordinary-annuity future value (contributions at end of each period). Equivalent to period-by-period simulation in the shared investment growth engine.</p>
       <p class="formula-meta"><strong>Limitation:</strong> Assumes constant return and deterministic compounding; does not model volatility, sequence-of-returns risk, or varying contribution schedules.</p>
 
-      <h3 id="inflation-adjustment">2. Inflation Adjustment (Real Value)</h3>
-      <div class="formula-block">r<sub>real</sub> = (1 + r) / (1 + i) − 1</div>
-      <div class="formula-block">FV<sub>real</sub> = FV(P, PMT, n, t, r<sub>real</sub>)</div>
-      <p class="formula-meta"><strong>Rationale:</strong> When the real-dollars toggle is on, growth uses the Fisher real return and contributions stay constant in today’s dollars (inflation-indexed nominal contributions).</p>
-      <p class="formula-meta"><strong>Limitation:</strong> Assumes steady inflation and does not model year-to-year CPI variability or regime changes.</p>
+      <h3 id="inflation-adjustment">2. Inflation Adjustment (Display Only)</h3>
+      <div class="formula-block">FV<sub>real</sub> = FV<sub>nominal</sub> / (1 + i)<sup>t</sup></div>
+      <p class="formula-meta"><strong>Rationale:</strong> The real-dollars checkbox is a display control. Contributions stay the entered dollar amount for the whole horizon. Inflation is used only to express that same nominal path in today's dollars. This is equivalent to simulating with the shared engine flag <code>indexContributionsToInflation: false</code> and displaying <code>finalBalanceReal</code>.</p>
+      <p class="formula-meta"><strong>Limitation:</strong> Assumes steady inflation and does not model year-to-year CPI variability. It also does not raise contributions with prices. The Inflation-Adjusted Investment Calculator indexes contributions instead.</p>
 
       <h3 id="irr">3. Internal Rate of Return (If Displayed)</h3>
       <div class="formula-block">NPV = Σ<sub>t=0</sub><sup>T</sup> CF<sub>t</sub> / (1 + r)<sup>t</sup> = 0</div>
@@ -87,7 +86,7 @@
         <li>Returns are modeled as constant and deterministic over the full investment horizon.</li>
         <li>Contributions are applied at the end of each contribution period unless explicitly stated otherwise on the calculator page.</li>
         <li>Compounding frequency matches the contribution frequency used in the calculation.</li>
-        <li>Inflation, when enabled, is modeled as a constant annual rate.</li>
+        <li>Inflation, when enabled, is a display assumption only: it converts the same fixed-contribution nominal path into today's dollars. Contributions are not indexed to inflation.</li>
         <li>No taxes, fees, transaction costs, or behavioral changes are applied unless explicitly included on the calculator page.</li>
         <li>Values may be rounded for display purposes; internal calculations use full numerical precision.</li>
       </ol>
@@ -97,7 +96,7 @@
         <li>Growth uses shared <code>InvestmentGrowthEngine.simulateInvestment()</code> in <code>/assets/js/investment-growth.engine.js</code>.</li>
         <li>The periodic rate is the effective rate <code>i = (1 + r)<sup>1/n</sup> − 1</code> (not r/n).</li>
         <li>Supported contribution frequencies include annual, monthly, biweekly (26), and weekly (52).</li>
-        <li>IRR (when displayed) is solved from the cash-flow series in the page script and annualized.</li>
+        <li>IRR (when displayed) is solved from the nominal cash-flow series in the page script and annualized. Toggling real display does not change the IRR.</li>
         <li>All computations are performed using floating-point arithmetic; rounding occurs only at the display layer.</li>
       </ul>
 

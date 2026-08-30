@@ -73,6 +73,9 @@
         <div id="provinceNote" style="display: none; margin-top: 8px; padding: 12px; border: 1px solid rgba(217,180,106,.35); border-radius: 10px; background: linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,.04)); font-size: 12px; color: var(--muted);">
           <strong style="color: var(--text);">Note:</strong> Alberta and Quebec administer corporate tax separately from the CRA. Rates used in this calculator are based on official provincial sources and provided for arithmetic comparison only.
         </div>
+        <div id="midYearRateNote" style="display: none; margin-top: 8px; padding: 12px; border: 1px solid rgba(217,180,106,.35); border-radius: 10px; background: linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,.04)); font-size: 12px; color: var(--muted);">
+          <strong style="color: var(--text);">2025 rate timing:</strong> Nova Scotia (April 1, 2025) and Prince Edward Island (July 1, 2025) changed some corporate rates mid-year. This calculator applies the post-change rates to the entire 2025 tax year and does not prorate by days. A calendar-year corporation would use a day-count blend under CRA rules.
+        </div>
 
         <div class="field">
           <label for="grossRevenue">Gross Corporate Revenue</label>
@@ -107,6 +110,7 @@
           <div class="field">
             <label for="eligibleDividends">Eligible Dividends Paid</label>
             <input type="text" inputmode="decimal" id="eligibleDividends" placeholder="0" value="">
+            <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Eligible vs non-eligible treatment is a user assumption. This calculator does not check GRIP or general-rate income capacity.</div>
           </div>
 
           <div class="field">
@@ -139,9 +143,9 @@
           </div>
 
           <div class="field">
-            <label for="personalDeductions">Personal Deductions</label>
+            <label for="personalDeductions">Other deductions from income</label>
             <input type="text" inputmode="decimal" id="personalDeductions" placeholder="0" value="">
-            <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Estimated personal deductions (medical, donations, etc.)</div>
+            <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amounts that reduce taxable income (for example union dues, childcare, moving expenses, or employment expenses). Do not enter tax credits such as medical expenses or charitable donations.</div>
           </div>
         </div>
 
@@ -154,6 +158,7 @@
           <div class="field">
             <label for="sh1EligibleDividends">Eligible Dividends Paid</label>
             <input type="text" inputmode="decimal" id="sh1EligibleDividends" placeholder="0" value="">
+            <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Eligible vs non-eligible treatment is a user assumption. GRIP is not checked.</div>
           </div>
           <div class="field">
             <label for="sh1NonEligibleDividends">Non-Eligible Dividends Paid</label>
@@ -180,8 +185,9 @@
             <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amount claimed this year. Contribution room is not modeled.</div>
           </div>
           <div class="field">
-            <label for="sh1Deductions">Personal Deductions</label>
+            <label for="sh1Deductions">Other deductions from income</label>
             <input type="text" inputmode="decimal" id="sh1Deductions" placeholder="0" value="">
+            <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amounts that reduce taxable income. Do not enter tax credits such as medical expenses or charitable donations.</div>
           </div>
 
           <h3 class="shareholder-heading">Shareholder 2</h3>
@@ -192,6 +198,7 @@
           <div class="field">
             <label for="sh2EligibleDividends">Eligible Dividends Paid</label>
             <input type="text" inputmode="decimal" id="sh2EligibleDividends" placeholder="0" value="">
+            <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Eligible vs non-eligible treatment is a user assumption. GRIP is not checked.</div>
           </div>
           <div class="field">
             <label for="sh2NonEligibleDividends">Non-Eligible Dividends Paid</label>
@@ -218,15 +225,16 @@
             <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amount claimed this year. Contribution room is not modeled.</div>
           </div>
           <div class="field">
-            <label for="sh2Deductions">Personal Deductions</label>
+            <label for="sh2Deductions">Other deductions from income</label>
             <input type="text" inputmode="decimal" id="sh2Deductions" placeholder="0" value="">
+            <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amounts that reduce taxable income. Do not enter tax credits such as medical expenses or charitable donations.</div>
           </div>
         </div>
 
         <div style="margin-top: 20px; padding: 14px; border: 1px solid rgba(217,180,106,.35); border-radius: 12px; background: linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,.04));">
           <p style="margin: 0; font-size: 13px; color: var(--text); font-weight: 600; margin-bottom: 8px;">Important Note:</p>
           <p style="margin: 0; font-size: 12px; color: var(--muted); line-height: 1.5;">
-            This calculator provides estimates based on simplified assumptions. It does not account for all tax planning strategies, associated corporations, passive income rules, or other complexities. Always confirm final numbers with your accountant.
+            This calculator provides estimates based on simplified assumptions. Salary and dividends are not limited to this year’s modeled corporate cash; amounts above current-year income or after-tax cash are treated as a hypothetical funded from resources not modeled here. Eligible-dividend treatment is a user assumption (GRIP is not tracked). The calculator does not account for associated corporations, passive income rules, or RDTOH. Always confirm final numbers with your accountant.
           </p>
         </div>
       </section>
@@ -241,6 +249,8 @@
           </div>
         </div>
 
+        <div id="fundingAssumptionNote" style="display: none; margin: 0 0 16px; padding: 12px; border: 1px solid rgba(217,180,106,.35); border-radius: 10px; background: linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,.04)); font-size: 12px; color: var(--muted);"></div>
+
         <div id="singleResultBlock" class="results">
           <div class="result">
             <p class="k">Corporate Taxable Income</p>
@@ -250,6 +260,11 @@
           <div class="result">
             <p class="k">Corporate Tax</p>
             <p class="v" id="corporateTax">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Employer CPP</p>
+            <p class="v" id="employerCpp">$–</p>
           </div>
 
           <div class="result">
@@ -263,8 +278,13 @@
           </div>
 
           <div class="result">
-            <p class="k">Personal Tax</p>
+            <p class="k">Personal Income Tax</p>
             <p class="v" id="personalTax">$–</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Employee CPP and EI</p>
+            <p class="v" id="employeeCppEi">$–</p>
           </div>
 
           <div class="result">
@@ -273,13 +293,15 @@
           </div>
 
           <div class="result prominent">
-            <p class="k">Total Tax Burden (Corp + Personal)</p>
+            <p class="k">Total income tax (corporate + personal)</p>
             <p class="v" id="totalTaxBurden">$–</p>
+            <p class="helper" style="margin: 6px 0 0; font-size: 11px; color: var(--muted);">Income tax only. Does not include employee CPP/EI or employer CPP.</p>
           </div>
 
           <div class="result prominent">
-            <p class="k">Effective Overall Tax Rate</p>
+            <p class="k">Effective overall income-tax rate</p>
             <p class="v" id="effectiveTaxRate">–%</p>
+            <p class="helper" style="margin: 6px 0 0; font-size: 11px; color: var(--muted);">Total income tax as a percentage of gross corporate revenue.</p>
           </div>
         </div>
 
@@ -293,6 +315,10 @@
             <p class="v" id="splitCorporateTax">$–</p>
           </div>
           <div class="result">
+            <p class="k">Employer CPP</p>
+            <p class="v" id="splitEmployerCpp">$–</p>
+          </div>
+          <div class="result">
             <p class="k">After-Tax Corporate Cash</p>
             <p class="v" id="splitAfterTaxCorporateCash">$–</p>
           </div>
@@ -301,7 +327,7 @@
             <p class="v" id="splitRetainedEarnings">$–</p>
           </div>
           <div class="result shareholder-result">
-            <p class="k">Shareholder 1 — Personal Tax</p>
+            <p class="k">Shareholder 1 — Personal Income Tax</p>
             <p class="v" id="sh1PersonalTax">$–</p>
           </div>
           <div class="result shareholder-result">
@@ -309,20 +335,26 @@
             <p class="v" id="sh1NetTakeHome">$–</p>
           </div>
           <div class="result shareholder-result">
-            <p class="k">Shareholder 2 — Personal Tax</p>
+            <p class="k">Shareholder 2 — Personal Income Tax</p>
             <p class="v" id="sh2PersonalTax">$–</p>
           </div>
           <div class="result shareholder-result">
             <p class="k">Shareholder 2 — Net Take-Home</p>
             <p class="v" id="sh2NetTakeHome">$–</p>
           </div>
-          <div class="result prominent">
-            <p class="k">Total Tax Burden (Corp + Personal)</p>
-            <p class="v" id="splitTotalTaxBurden">$–</p>
+          <div class="result">
+            <p class="k">Employee CPP and EI (both shareholders)</p>
+            <p class="v" id="splitEmployeeCppEi">$–</p>
           </div>
           <div class="result prominent">
-            <p class="k">Effective Overall Tax Rate</p>
+            <p class="k">Total income tax (corporate + personal)</p>
+            <p class="v" id="splitTotalTaxBurden">$–</p>
+            <p class="helper" style="margin: 6px 0 0; font-size: 11px; color: var(--muted);">Income tax only. Does not include employee CPP/EI or employer CPP.</p>
+          </div>
+          <div class="result prominent">
+            <p class="k">Effective overall income-tax rate</p>
             <p class="v" id="splitEffectiveTaxRate">–%</p>
+            <p class="helper" style="margin: 6px 0 0; font-size: 11px; color: var(--muted);">Total income tax as a percentage of gross corporate revenue.</p>
           </div>
         </div>
 
@@ -414,16 +446,17 @@
       const root = document.documentElement;
       const toggle = document.getElementById("theme_toggle");
       const label = document.getElementById("theme_label");
+      if (!toggle) return;
 
       const theme = root.getAttribute("data-theme") || "dark";
       toggle.checked = theme === "light";
-      label.textContent = theme === "light" ? "Light" : "Dark";
+      if (label) label.textContent = theme === "light" ? "Light" : "Dark";
 
       toggle.addEventListener("change", () => {
         const next = toggle.checked ? "light" : "dark";
         root.setAttribute("data-theme", next);
         localStorage.setItem("tlm_theme", next);
-        label.textContent = next === "light" ? "Light" : "Dark";
+        if (label) label.textContent = next === "light" ? "Light" : "Dark";
       });
     })();
   </script>

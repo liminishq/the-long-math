@@ -24,7 +24,7 @@
   <div class="wrap">
     <div class="methodology-content">
       <h1>Inspect the Arithmetic — TFSA Over-Contribution Penalty Calculator</h1>
-      <p class="methodology-meta">Version 1.1<br>Last verified: May 2026</p>
+      <p class="methodology-meta">Version 1.2<br>Last verified: August 2026</p>
 
       <p>
         Transparent arithmetic is the operating system of this calculator.
@@ -98,9 +98,16 @@
       </div>
 
       <h3 id="withdrawal">Withdrawal</h3>
-      <p>A withdrawal reduces current excess only. <strong>Withdrawals reduce excess from that point forward but do not restore same-year contribution room</strong> in this model. Room is only increased by room adjustments or by the annual Jan 1 room you specify.</p>
+      <p>A withdrawal reduces current excess when it occurs but does not restore contribution room in the same calendar year.</p>
       <div class="formula-block">
         excess = max(0, excess − withdrawal amount)
+      </div>
+      <p>On January 1 of the following year, the full withdrawal amount is restored as contribution room. Like other room additions, it first absorbs any excess carried into January; any remainder becomes available room.</p>
+      <div class="formula-block">
+        withdrawal add-back = total withdrawals made in the prior calendar year<br>
+        absorbed = min(excess, withdrawal add-back)<br>
+        excess = excess − absorbed<br>
+        room = room + (withdrawal add-back − absorbed)
       </div>
 
       <h3 id="room-adjustment">Room adjustment</h3>
@@ -115,8 +122,10 @@
       <h2>Timeline construction</h2>
       <ul>
         <li>All <strong>transactions</strong> you enter with dates inside the calculation range are included; transactions outside the range are ignored.</li>
+        <li>Withdrawals are totalled by calendar year. If the following January 1 is in range, the engine inserts a withdrawal-add-back event for that date.</li>
         <li>If you set <strong>annual new TFSA room (Jan 1)</strong> &gt; 0, the engine inserts a room-adjustment event on January 1 for each year that falls within the range.</li>
-        <li>Events are sorted by date and processed in order. For each calendar month, the engine records the highest excess reached during that month and applies the 1% formula.</li>
+        <li>Events are sorted by date and processed in order. On the same date, explicit and annual room adjustments are applied first, then withdrawal add-backs, withdrawals, and contributions. This makes restored room available to a contribution dated January 1.</li>
+        <li>For each calendar month, the engine records the highest excess reached during that month and applies the 1% formula.</li>
       </ul>
 
       <h2>Worked example</h2>
@@ -189,7 +198,8 @@
       <ol>
         <li>Penalty is 1% per month on the highest excess in each calendar month, consistent with CRA’s stated approach. Your actual assessment may depend on CRA’s records and filing details.</li>
         <li>Transactions outside the selected date range are ignored; the calculator does not load or assume events before the start date or after the end date.</li>
-        <li>Withdrawals reduce excess only; they do not add to contribution room in this model (room is increased only by room adjustments or the annual Jan 1 value you enter).</li>
+        <li>Withdrawals reduce excess when made and restore contribution room on January 1 of the following year.</li>
+        <li>Only withdrawals inside the selected date range are known to the model. To carry a prior-year withdrawal into January, the range must include both the withdrawal and the following January 1.</li>
         <li>Jan 1 room is applied only when “annual new TFSA room (Jan 1)” is greater than zero.</li>
         <li>All amounts are in CAD. Dates are in YYYY-MM-DD. Money math uses floating point; rounding is applied for display only.</li>
         <li>This is an educational estimate. CRA rules and your specific situation may differ. This is not tax advice.</li>
@@ -197,7 +207,7 @@
 
       <h2>Regression tests</h2>
       <p>
-        The engine includes a small regression harness. In the browser console (with the calculator page loaded) or in Node after loading the engine, run <code>TfsaOverContributionEngine.runRegressionTests()</code>. Test cases cover: no excess; single excess over multiple months; excess corrected mid-month; multiple contributions in one month; Jan 1 room eliminating excess; withdrawal after excess; room adjustment reducing excess.
+        The engine includes a small regression harness. In the browser console (with the calculator page loaded) or in Node after loading the engine, run <code>TfsaOverContributionEngine.runRegressionTests()</code>. The focused Node tests also cover prior-year withdrawal restoration and January 1 ordering.
       </p>
 
       <p style="margin-top: 2em; font-weight: 600;">

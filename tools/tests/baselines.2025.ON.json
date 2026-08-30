@@ -1,8 +1,8 @@
 {
   "eligibleDiv160k": {
-    "_source": "docs/form-traces/ON-eligible-dividends-160000-2025.md (Schedule 1 + ON428)",
-    "totalTax": 20260,
-    "federal": 13358,
+    "_source": "docs/form-traces/ON-eligible-dividends-160000-2025.md (Schedule 1 + ON428); federal includes enhanced BPA phase-out",
+    "totalTax": 20396,
+    "federal": 13494,
     "provincial": 6902,
     "taxableIncome": 220800,
     "toleranceTax": 2,

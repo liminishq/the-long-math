@@ -216,6 +216,8 @@
         principalPortion = balance;
       }
 
+      const actualPayment = interestPortion + principalPortion;
+
       balance -= principalPortion;
       totalInterest += interestPortion;
       cumulativeInterest += interestPortion;
@@ -226,7 +228,7 @@
 
       schedule.push({
         paymentNum,
-        paymentAmount,
+        paymentAmount: actualPayment,
         interestPortion,
         principalPortion,
         balance: Math.max(0, balance),

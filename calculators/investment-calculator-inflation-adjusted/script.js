@@ -78,7 +78,7 @@
       contributionPerPeriod: toNumber(monthlyContribution.value),
       years: toNumber(timeHorizon.value),
       nominalAnnualReturn: toNumber(expectedReturn.value) / 100,
-      inflationAnnual: Math.max(0, toNumber(inflationRate.value) / 100),
+      inflationAnnual: toNumber(inflationRate.value) / 100,
       contributionPeriodsPerYear: getContributionPeriodsPerYear(),
       contributionAtBeginning: contributionTiming.value === "beginning",
       indexContributionsToInflation: true,
@@ -92,6 +92,20 @@
   function updateDisplay() {
     var results = simulateInvestment();
     lastResults = results;
+
+    if (results.error) {
+      finalBalanceReal.textContent = results.error;
+      finalBalanceNominal.textContent = "—";
+      breakdownStarting.textContent = "—";
+      breakdownContributions.textContent = "—";
+      breakdownGrowth.textContent = "—";
+      barStarting.style.width = "0%";
+      barContributions.style.width = "0%";
+      barGrowth.style.width = "0%";
+      scheduleBody.innerHTML = "";
+      if (scheduleToggleButton) scheduleToggleButton.style.display = "none";
+      return;
+    }
 
     finalBalanceReal.textContent = fmtMoney(results.finalBalanceReal);
     finalBalanceNominal.textContent = fmtMoney(results.finalBalanceNominal);
@@ -118,6 +132,11 @@
   }
 
   function updateSchedule(results) {
+    if (!results || results.error) {
+      scheduleBody.innerHTML = "";
+      if (scheduleToggleButton) scheduleToggleButton.style.display = "none";
+      return;
+    }
     var isMonthly = scheduleViewRadios[1] && scheduleViewRadios[1].checked;
     var contribPeriodsPerYear = getContributionPeriodsPerYear();
     var scheduleData = (isMonthly && contribPeriodsPerYear === 12 && results.monthlySchedule.length > 0)
@@ -131,20 +150,22 @@
 
     if (isMonthly && contribPeriodsPerYear === 12 && results.monthlySchedule.length > 0) {
       rowsToRender.forEach(function (entry) {
+        var cashFlow = entry.netCashFlow != null ? entry.netCashFlow : entry.contributions;
         var row = document.createElement("tr");
         row.innerHTML =
           "<td>" + entry.period + "</td>" +
-          "<td>" + fmtMoney(entry.contributions) + "</td>" +
+          "<td>" + fmtMoney(cashFlow) + "</td>" +
           "<td>" + fmtMoney(entry.growth) + "</td>" +
           "<td>" + fmtMoney(entry.balance) + "</td>";
         scheduleBody.appendChild(row);
       });
     } else {
       rowsToRender.forEach(function (entry) {
+        var cashFlow = entry.netCashFlow != null ? entry.netCashFlow : entry.contributions;
         var row = document.createElement("tr");
         row.innerHTML =
           "<td>" + entry.year + "</td>" +
-          "<td>" + fmtMoney(entry.contributions) + "</td>" +
+          "<td>" + fmtMoney(cashFlow) + "</td>" +
           "<td>" + fmtMoney(entry.growth) + "</td>" +
           "<td>" + fmtMoney(entry.balance) + "</td>";
         scheduleBody.appendChild(row);
@@ -164,6 +185,7 @@
   function exportCSV() {
     var results = simulateInvestment();
     var inputs = readInputs();
+    if (results.error) return;
     var csv = "# Investment Calculator - Inflation Adjusted Results\n";
     csv += "# Generated: " + new Date().toLocaleString() + "\n";
     csv += "#\n";
@@ -183,8 +205,9 @@
     csv += "#\n";
     csv += "Year,Contributions (real),Growth (real),Ending Balance (real)\n";
     results.schedule.forEach(function (entry) {
+      var cashFlow = entry.netCashFlow != null ? entry.netCashFlow : entry.contributions;
       csv += entry.year + ",";
-      csv += fmtMoney(entry.contributions).replace(/[$,]/g, "") + ",";
+      csv += fmtMoney(cashFlow).replace(/[$,]/g, "") + ",";
       csv += fmtMoney(entry.growth).replace(/[$,]/g, "") + ",";
       csv += fmtMoney(entry.balance).replace(/[$,]/g, "") + "\n";
     });
@@ -227,7 +250,7 @@
 
   if (scheduleToggleButton) {
     scheduleToggleButton.addEventListener("click", function () {
-      if (!lastResults) return;
+      if (!lastResults || lastResults.error) return;
       showFullSchedule = !showFullSchedule;
       updateSchedule(lastResults);
     });

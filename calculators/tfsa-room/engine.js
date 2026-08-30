@@ -59,9 +59,8 @@ function calculateEstimatedRoom({
   limitsData,
   eligibilityStartYear,
   asOfYear,
-  lifetimeContributionsTotal,
+  totalContributionsThroughAsOfDate,
   withdrawalsPriorYearsTotal,
-  contributionsThisYear,
   withdrawalsThisYear
 }) {
   // Total entitlement from limits
@@ -72,14 +71,14 @@ function calculateEstimatedRoom({
   );
 
   // Available room this year
-  // = entitlement - lifetime contributions + prior withdrawals - this year contributions
+  // = entitlement - lifetime contributions through the as-of date + prior withdrawals
+  // totalContributionsThroughAsOfDate includes contributions made in the as-of year.
   // Note: prior withdrawals already added back in their following years historically
   // Note: this year withdrawals do NOT add to this year's room
   const availableRoomThisYear = 
     totalEntitlement - 
-    lifetimeContributionsTotal + 
-    withdrawalsPriorYearsTotal - 
-    contributionsThisYear;
+    totalContributionsThroughAsOfDate +
+    withdrawalsPriorYearsTotal;
 
   // Projected room next year (if no more contributions)
   // = this year's room + this year's limit (if asOfYear < current year limit exists) + this year's withdrawals
@@ -113,9 +112,8 @@ function calculateTFSARoom(inputs) {
     limitsData,
     eligibilityStartYear,
     asOfYear,
-    lifetimeContributionsTotal,
+    totalContributionsThroughAsOfDate,
     withdrawalsPriorYearsTotal,
-    contributionsThisYear,
     withdrawalsThisYear
   } = inputs;
 
@@ -136,16 +134,12 @@ function calculateTFSARoom(inputs) {
     return { error: "Eligibility start year cannot be after as-of year" };
   }
 
-  if (!Number.isFinite(lifetimeContributionsTotal) || lifetimeContributionsTotal < 0) {
-    return { error: "Invalid lifetime contributions (must be >= 0)" };
+  if (!Number.isFinite(totalContributionsThroughAsOfDate) || totalContributionsThroughAsOfDate < 0) {
+    return { error: "Invalid total contributions through the as-of date (must be >= 0)" };
   }
 
   if (!Number.isFinite(withdrawalsPriorYearsTotal) || withdrawalsPriorYearsTotal < 0) {
     return { error: "Invalid prior-year withdrawals (must be >= 0)" };
-  }
-
-  if (!Number.isFinite(contributionsThisYear) || contributionsThisYear < 0) {
-    return { error: "Invalid this-year contributions (must be >= 0)" };
   }
 
   if (!Number.isFinite(withdrawalsThisYear) || withdrawalsThisYear < 0) {
@@ -157,9 +151,8 @@ function calculateTFSARoom(inputs) {
     limitsData,
     eligibilityStartYear,
     asOfYear,
-    lifetimeContributionsTotal,
+    totalContributionsThroughAsOfDate,
     withdrawalsPriorYearsTotal,
-    contributionsThisYear,
     withdrawalsThisYear
   });
 

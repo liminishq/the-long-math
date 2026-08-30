@@ -78,7 +78,7 @@
           <label for="selfEmploymentIncome">Self-Employment Income</label>
           <input type="text" id="selfEmploymentIncome" placeholder="0" value="" inputmode="decimal">
           <div class="field-help">
-            Included in income for federal and provincial tax. This calculator does <strong>not</strong> compute self-employment CPP/QPP (lines 22200 / 31000) in the current version.
+            Included in income for federal and provincial tax. Outside Quebec, the calculator models self-employed CPP cash contributions and the related lines 22200 / 31000 deduction-and-credit split. Quebec QPP/QPIP remains outside the current version.
           </div>
         </div>
 
@@ -128,9 +128,9 @@
         <div style="margin-top: 20px; padding: 14px; border: 1px solid rgba(217,180,106,.35); border-radius: 12px; background: linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,.04));">
           <p style="margin: 0; font-size: 13px; color: var(--text); font-weight: 600; margin-bottom: 8px;">Important Note:</p>
           <p style="margin: 0 0 12px; font-size: 12px; color: var(--muted); line-height: 1.5;">
-            These calculations are <strong style="color: var(--text);">before</strong> individual deductions you may be eligible to claim, such as:
-            home office expenses, medical expenses, charitable donations, tuition and education credits, childcare expenses,
-            moving expenses, and other personal tax credits or deductions that may reduce your taxable income or tax payable.
+            These calculations are <strong style="color: var(--text);">before</strong> many individual items you may be eligible to claim.
+            Amounts that reduce taxable income (for example childcare, moving expenses, union dues, or employment expenses) belong in the deduction field below.
+            Medical expenses, charitable donations, and tuition are generally <strong style="color: var(--text);">tax credits</strong>, not deductions from income, and should not be entered there.
           </p>
           <p style="margin: 0; font-size: 12px; color: var(--muted); line-height: 1.5;">
             <strong style="color: var(--text);">This calculator cannot determine which deductions apply to you.</strong> If you have an estimate of your total deductions, you may include it below to see the impact on the results. Always confirm final numbers with your accountant or tax professional.
@@ -140,7 +140,7 @@
         <div class="field" style="margin-top: 16px;">
           <label for="estimatedDeductions">Estimated Additional Deductions</label>
           <input type="text" id="estimatedDeductions" placeholder="0" value="" inputmode="decimal">
-          <div class="helper" style="margin-top: 6px;">Optional: Enter your estimated total of additional deductions (medical, home office, donations, etc.)</div>
+          <div class="helper" style="margin-top: 6px;">Optional: amounts that reduce taxable income (for example union dues, childcare, moving expenses, or employment expenses). Do not enter tax credits such as medical expenses or charitable donations.</div>
         </div>
       </section>
 

@@ -36,7 +36,12 @@
       {
         "@type": "Question",
         "name": "Does the calculator include inflation?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Withdrawals can increase annually with inflation or remain fixed in nominal dollars. Separately, the display control can show projected balances in today’s dollars." }
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Withdrawals can adjust annually with inflation or remain fixed in nominal dollars. Separately, the display control can show projected balances in today’s dollars." }
+      },
+      {
+        "@type": "Question",
+        "name": "Why is the withdrawal rate capped at 50%?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Rate mode rejects an initial annual withdrawal rate above 50%. That cap is a model bound, not a claim about a safe or typical rate. Dollar-amount mode has no percentage cap." }
       },
       {
         "@type": "Question",
@@ -130,9 +135,10 @@
             <div id="rateModeFields" class="field hidden">
               <label for="withdrawalRate">Initial annual withdrawal rate</label>
               <div class="inline">
-                <input id="withdrawalRate" type="number" inputmode="decimal" min="0" step="any" value="4" />
+                <input id="withdrawalRate" type="number" inputmode="decimal" min="0" max="50" step="any" value="4" />
                 <span class="unit">%</span>
               </div>
+              <p class="help muted">This model caps the initial withdrawal rate at 50%.</p>
             </div>
 
             <div class="field">
@@ -147,10 +153,10 @@
             </div>
 
             <fieldset class="field rw-choice-group">
-              <legend>Withdrawal increases</legend>
+              <legend>Withdrawal adjustment</legend>
               <label class="rw-choice">
                 <span><input type="radio" name="withdrawalAdjustment" id="wa_inflation" value="inflation" checked /> With inflation</span>
-                <span class="help muted">Withdrawals increase with inflation each year to maintain approximately the same purchasing power.</span>
+                <span class="help muted">Withdrawals adjust with inflation each year (including a negative rate) to track purchasing power.</span>
               </label>
               <label class="rw-choice">
                 <span><input type="radio" name="withdrawalAdjustment" id="wa_fixed" value="fixed" /> No increase — fixed dollar amount</span>
@@ -270,7 +276,7 @@
         This calculator models a deterministic retirement drawdown. It applies a constant expected return, subtracts withdrawals at the selected frequency, and shows year-by-year balances, depletion timing, and ending value.
       </p>
       <p>
-        A withdrawal rate establishes the initial withdrawal from the starting portfolio. The initial dollar amount can then increase annually with inflation or remain fixed in nominal dollars. Separately, the display control can show future balances in today's dollars.
+        A withdrawal rate establishes the initial withdrawal from the starting portfolio. The initial dollar amount can then adjust annually with inflation or remain fixed in nominal dollars. Separately, the display control can show future balances in today's dollars.
       </p>
     </section>
 
@@ -323,7 +329,13 @@
         <details class="faq-accordion-item">
           <summary>Does the calculator include inflation?</summary>
           <div class="faq-accordion-body">
-            <p>Yes. Withdrawals can increase annually with inflation or remain fixed in nominal dollars. Separately, the display control can show projected balances in today’s dollars.</p>
+            <p>Yes. Withdrawals can adjust annually with inflation or remain fixed in nominal dollars. Separately, the display control can show projected balances in today’s dollars.</p>
+          </div>
+        </details>
+        <details class="faq-accordion-item">
+          <summary>Why is the withdrawal rate capped at 50%?</summary>
+          <div class="faq-accordion-body">
+            <p>Rate mode rejects an initial annual withdrawal rate above 50%. That cap is a model bound, not a claim about a safe or typical rate. Dollar-amount mode has no percentage cap.</p>
           </div>
         </details>
         <details class="faq-accordion-item">

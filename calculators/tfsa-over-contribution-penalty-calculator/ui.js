@@ -80,12 +80,14 @@
     const startDate = $("start_date").value || "";
     const endDate = $("end_date").value || "";
     const startingRoom = num($("starting_room").value);
+    const startingExcess = num($("starting_excess").value);
     const annualJan1Room = num($("annual_jan1_room").value);
     const transactions = readTransactions();
     return {
       startDate,
       endDate,
       startingRoom: Number.isFinite(startingRoom) && startingRoom >= 0 ? startingRoom : 0,
+      startingExcess: Number.isFinite(startingExcess) && startingExcess >= 0 ? startingExcess : 0,
       annualJan1Room: Number.isFinite(annualJan1Room) && annualJan1Room >= 0 ? annualJan1Room : 0,
       transactions
     };
@@ -320,7 +322,7 @@
       renderAdvanced();
     });
 
-    ["start_date", "end_date", "starting_room", "annual_jan1_room"].forEach(function (id) {
+    ["start_date", "end_date", "starting_room", "starting_excess", "annual_jan1_room"].forEach(function (id) {
       const el = $(id);
       el.addEventListener("input", renderAdvanced);
       el.addEventListener("change", renderAdvanced);

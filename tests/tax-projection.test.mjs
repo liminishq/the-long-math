@@ -154,6 +154,59 @@ test("BC projected brackets and basic personal credits stay frozen 2027–2030",
   );
 });
 
+test("BC projection resumes the existing indexation assumption in 2031", async () => {
+  const base = await loadOfficial(2026);
+  const paused = await resolveTaxDataForYear(2030, {
+    loadOfficialYear: loadOfficial,
+    federalInflationRate: 0.02,
+    defaultProvincialInflationRate: 0.02
+  });
+  const resumed = await resolveTaxDataForYear(2031, {
+    loadOfficialYear: loadOfficial,
+    federalInflationRate: 0.02,
+    defaultProvincialInflationRate: 0.02
+  });
+  const secondYear = await resolveTaxDataForYear(2032, {
+    loadOfficialYear: loadOfficial,
+    federalInflationRate: 0.02,
+    defaultProvincialInflationRate: 0.02
+  });
+
+  assert.equal(paused.provinces.BC.brackets[1].threshold, 50363);
+  assert.equal(
+    paused.provinces.BC.credits.ageAmount.amount,
+    base.provinces.BC.credits.ageAmount.amount
+  );
+  assert.equal(
+    paused.provinces.BC.credits.ageAmount.phaseOutStart,
+    base.provinces.BC.credits.ageAmount.phaseOutStart
+  );
+  assert.equal(
+    resumed.provinces.BC.brackets[1].threshold,
+    Math.round(50363 * 1.02)
+  );
+  assert.equal(
+    secondYear.provinces.BC.brackets[1].threshold,
+    Math.round(50363 * 1.02 ** 2)
+  );
+  assert.equal(
+    resumed.provinces.BC.credits.basicPersonalAmount.amount,
+    Math.round(base.provinces.BC.credits.basicPersonalAmount.amount * 1.02)
+  );
+  assert.equal(
+    resumed.provinces.BC.credits.ageAmount.amount,
+    Math.round(base.provinces.BC.credits.ageAmount.amount * 1.02)
+  );
+  assert.equal(
+    resumed.provinces.BC.credits.ageAmount.phaseOutStart,
+    Math.round(base.provinces.BC.credits.ageAmount.phaseOutStart * 1.02)
+  );
+  assert.equal(
+    resumed.provinces.BC.taxReduction.netIncomeThreshold,
+    Math.round(base.provinces.BC.taxReduction.netIncomeThreshold * 1.02)
+  );
+});
+
 test("PEI BPA floor stays $15,000 under projection", async () => {
   const resolved = await resolveTaxDataForYear(2028, {
     loadOfficialYear: loadOfficial,

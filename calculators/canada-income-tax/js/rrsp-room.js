@@ -80,12 +80,15 @@ export function computeRrspContributionRoom(inputs) {
   const availableRoomForDeduction = craOverrideEnabled
     ? craLimitOverride
     : estimatedAvailableRoom;
+  // Floor at 0 for contribution/excess math; negative estimates may still be shown as warnings.
+  const usableRoomForContribution = Math.max(0, availableRoomForDeduction);
 
   return {
     year,
     newRoom,
     estimatedAvailableRoom,
     availableRoomForDeduction,
+    usableRoomForContribution,
     dollarCap
   };
 }

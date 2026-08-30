@@ -41,7 +41,6 @@ function simulateRetirementWithdrawal(raw) {
   const periodsPerYear = raw.periodsPerYear;
   const withdrawalType = raw.withdrawalType;
   const withdrawalAdjustment = raw.withdrawalAdjustment;
-  const inflationRate = raw.inflationRate;
 
   if (!isFiniteNumber(startingPortfolio) || startingPortfolio < 0) {
     return { ok: false, error: "Enter a current portfolio value of $0 or more." };
@@ -64,8 +63,17 @@ function simulateRetirementWithdrawal(raw) {
   ) {
     return { ok: false, error: "Choose how withdrawals should change over time." };
   }
-  if (!isFiniteNumber(inflationRate) || inflationRate <= -0.999999) {
-    return { ok: false, error: "Inflation rate is too low. Enter a rate above -99.9%." };
+
+  const inflationUsed =
+    withdrawalAdjustment === WITHDRAWAL_ADJUSTMENTS.INFLATION ||
+    raw.showInflationAdjustedValues === true;
+  let inflationRate = raw.inflationRate;
+  if (inflationUsed) {
+    if (!isFiniteNumber(inflationRate) || inflationRate <= -0.999999) {
+      return { ok: false, error: "Inflation rate is too low. Enter a rate above -99.9%." };
+    }
+  } else if (!isFiniteNumber(inflationRate) || inflationRate <= -0.999999) {
+    inflationRate = 0;
   }
 
   const totalPeriods = Math.max(1, Math.round(requestedYears * periodsPerYear));
@@ -86,7 +94,7 @@ function simulateRetirementWithdrawal(raw) {
     }
     initialAnnualWithdrawal = initialPeriodicWithdrawal * periodsPerYear;
     initialWithdrawalRate =
-      startingPortfolio > 0 ? initialAnnualWithdrawal / startingPortfolio : 0;
+      startingPortfolio > 0 ? initialAnnualWithdrawal / startingPortfolio : null;
   } else {
     initialWithdrawalRate = raw.initialWithdrawalRate;
     if (!isFiniteNumber(initialWithdrawalRate) || initialWithdrawalRate < 0) {
@@ -165,12 +173,13 @@ function simulateRetirementWithdrawal(raw) {
       yearWithdrawals += periodicWithdrawal;
       balance = afterGrowth - periodicWithdrawal;
     } else {
-      if (periodicWithdrawal > 0) {
-        const periodFraction = clamp(afterGrowth / periodicWithdrawal, 0, 1);
-        yearGrowth += growth * periodFraction;
-        yearWithdrawals += periodicWithdrawal * periodFraction;
-      } else {
+      // Depletion period: record actual growth applied and withdraw the
+      // remaining balance so starting + growth − withdrawal = ending = 0.
+      if (afterGrowth > 0) {
         yearGrowth += growth;
+        yearWithdrawals += afterGrowth;
+      } else {
+        yearGrowth += -startingPeriodBalance;
       }
       balance = 0;
       depleted = true;
@@ -191,8 +200,16 @@ function simulateRetirementWithdrawal(raw) {
     closeYear(retirementYears);
   }
 
+  const HORIZON_EPS = 1e-9;
+  const hitZero = depleted;
+  const lastedFullHorizon =
+    !hitZero ||
+    (isFiniteNumber(depletionRetirementYears) &&
+      depletionRetirementYears >= retirementYears - HORIZON_EPS);
+  const prematureDepletion = hitZero && !lastedFullHorizon;
+
   let yearlyForOutput = yearly;
-  if (depleted && isFiniteNumber(depletionRetirementYears)) {
+  if (prematureDepletion && isFiniteNumber(depletionRetirementYears)) {
     const finalYear = Math.min(retirementYears, Math.ceil(depletionRetirementYears - 1e-9));
     yearlyForOutput = yearly.filter(function (row) {
       return row.year === 0 || row.year <= finalYear;
@@ -210,6 +227,7 @@ function simulateRetirementWithdrawal(raw) {
     inputs: {
       portfolio: startingPortfolio,
       rA: annualReturn,
+      requestedRetirementYears: requestedYears,
       retirementYears,
       ppy: periodsPerYear,
       withdrawalType,
@@ -224,9 +242,10 @@ function simulateRetirementWithdrawal(raw) {
     finalNominal: finalRow.ending,
     finalReal: finalRow.endingReal,
     totalWithdrawals,
-    depleted,
-    depletionRetirementYears,
-    fullHorizon: !depleted,
+    depleted: prematureDepletion,
+    depletionRetirementYears: hitZero ? depletionRetirementYears : null,
+    fullHorizon: lastedFullHorizon,
+    endsAtZero: finalRow.ending <= 1e-6,
     chart: {
       years: yearlyForOutput.map((row) => row.year),
       nominal: yearlyForOutput.map((row) => row.ending),

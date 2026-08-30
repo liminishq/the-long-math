@@ -91,7 +91,9 @@
       this.canvas = canvas;
       this.ctx = canvas.getContext("2d");
       this.data = null;
+      this.yMin = 0;
       this.yMax = null;
+      this.lockedYMin = null;
       this.lockedYMax = null; // Locked Y-max that doesn't change with slider
       this.resize();
       window.addEventListener("resize", () => this.resize());
@@ -112,11 +114,17 @@
 
     setData(series, horizonYears, isReal, shouldRecalculateScale = false) {
       this.data = { series, horizonYears, isReal };
-      if (shouldRecalculateScale || this.lockedYMax === null) {
+      if (
+        shouldRecalculateScale ||
+        this.lockedYMin === null ||
+        this.lockedYMax === null
+      ) {
         this.computeYMax();
+        this.lockedYMin = this.yMin;
         this.lockedYMax = this.yMax; // Lock the scale
       } else {
         // Use locked scale when slider changes
+        this.yMin = this.lockedYMin;
         this.yMax = this.lockedYMax;
       }
       this.draw();
@@ -125,12 +133,17 @@
     computeYMax() {
       if (!this.data) return;
       const { series } = this.data;
+      let min = 0;
       let max = 0;
       for (const point of series) {
-        max = Math.max(max, point.balance || 0, point.investValue || 0, point.netWorth || 0);
+        const balance = point.balance ?? 0;
+        const investValue = point.investValue ?? 0;
+        const netWorth = point.netWorth ?? 0;
+        min = Math.min(min, balance, investValue, netWorth);
+        max = Math.max(max, balance, investValue, netWorth);
       }
-      const padded = max * 1.1;
-      this.yMax = this.niceAxisMax(padded);
+      this.yMin = min < 0 ? -this.niceAxisMax(Math.abs(min) * 1.1) : 0;
+      this.yMax = this.niceAxisMax(max * 1.1);
     }
 
     niceAxisMax(value) {
@@ -146,7 +159,7 @@
     }
 
     draw() {
-      if (!this.data || !this.yMax) return;
+      if (!this.data || this.yMax == null) return;
       const { series, horizonYears } = this.data;
       const ctx = this.ctx;
       const rect = this.canvas.getBoundingClientRect();
@@ -159,16 +172,20 @@
       const chartWidth = width - padding.left - padding.right;
       const chartHeight = height - padding.top - padding.bottom;
       const xMax = horizonYears;
+      const yMin = this.yMin;
       const yMax = this.yMax;
+      const yRange = yMax - yMin;
+      if (!(yRange > 0)) return;
 
       const mapX = (x) => padding.left + (x / xMax) * chartWidth;
-      const mapY = (y) => padding.top + chartHeight - (y / yMax) * chartHeight;
+      const mapY = (y) =>
+        padding.top + chartHeight - ((y - yMin) / yRange) * chartHeight;
 
       // Draw grid
       ctx.strokeStyle = "rgba(255,255,255,0.1)";
       ctx.lineWidth = 1;
       for (let y = 0; y <= 5; y++) {
-        const value = (y / 5) * yMax;
+        const value = yMin + (y / 5) * yRange;
         const py = mapY(value);
         ctx.beginPath();
         ctx.moveTo(padding.left, py);
@@ -190,7 +207,9 @@
       ctx.beginPath();
       ctx.moveTo(padding.left, padding.top);
       ctx.lineTo(padding.left, height - padding.bottom);
-      ctx.lineTo(width - padding.right, height - padding.bottom);
+      const zeroY = mapY(Math.min(yMax, Math.max(yMin, 0)));
+      ctx.moveTo(padding.left, zeroY);
+      ctx.lineTo(width - padding.right, zeroY);
       ctx.stroke();
 
       // Draw series helper
@@ -230,7 +249,7 @@
       ctx.textAlign = "right";
       ctx.textBaseline = "middle";
       for (let y = 0; y <= 5; y++) {
-        const value = (y / 5) * yMax;
+        const value = yMin + (y / 5) * yRange;
         const py = mapY(value);
         ctx.fillText(fmtCAD(value), padding.left - 10, py);
       }
@@ -366,16 +385,59 @@
 
     const result = window.calculateMortgageVsInvest(inp);
 
+    const calculationError = $("calculation_error");
     if (result.error) {
       console.error("Calculation error:", result.error);
+      const errorMessage =
+        result.errorCode === "non_amortizing_payment"
+          ? "The mortgage payment (" +
+            fmtCAD(result.payment) +
+            ") must be greater than the first month's accrued interest (" +
+            fmtCAD(result.interestDue) +
+            ") under these assumptions. Increase the payment or change the mortgage assumptions."
+          : result.error;
+      calculationError.textContent = errorMessage;
+      calculationError.classList.remove("hidden");
+      [
+        "net_worth",
+        "invest_value",
+        "home_value",
+        "mortgage_balance",
+        "break_even_return",
+        "fact_100_mortgage",
+        "fact_100_invest",
+        "total_interest_paid",
+        "total_interest_earned"
+      ].forEach((id) => {
+        $(id).textContent = "—";
+      });
+      $("break_even_blurb").textContent = "";
+      $("fact_payoff_allocation_detail").textContent = "";
+      $("summary_sentence_text").textContent = errorMessage;
+      chart.setData([], inp.timeHorizon, inp.isReal, true);
       return;
     }
+    calculationError.textContent = "";
+    calculationError.classList.add("hidden");
 
-    // Apply inflation adjustment if real mode
+    // Apply inflation adjustment if real mode.
+    // Stocks at the horizon use the full-horizon factor.
+    // Chart points and interest flows are deflated to the month they occur.
     const inflationRate = inp.customInflationPct / 100;
+    const deflateAtMonth = (value, month) => {
+      if (!inp.isReal) return value;
+      return value / Math.pow(1 + inflationRate, (month || 0) / 12);
+    };
     const adjustForInflation = (value, isReal) => {
       if (!isReal) return value;
       return value / Math.pow(1 + inflationRate, inp.timeHorizon);
+    };
+    const realInterestSum = (key, nominalTotal) => {
+      if (!inp.isReal) return nominalTotal;
+      if (!Array.isArray(result.series)) return adjustForInflation(nominalTotal, true);
+      return result.series.reduce((sum, p) => {
+        return sum + deflateAtMonth(p[key] || 0, p.month);
+      }, 0);
     };
 
     // Update primary output
@@ -401,7 +463,7 @@
       $("break_even_blurb").textContent =
         "Shown as a gross annual % (same basis as the expected return field above). The investing path compounds at net return (gross minus your investment fee %). This value is the gross return at which " +
         tiePhrase +
-        " would tie at your horizon. Changing the fee input changes that gross hurdle. Home price growth does not move this tie point: both paths share the same ending home value, so it drops out of the comparison unless home equity is negative on one path.";
+        " would tie at your horizon. Changing the fee input changes that gross hurdle. Home price growth does not move this tie point: both paths share the same ending home value, so it drops out of the comparison.";
     } else {
       $("break_even_return").textContent = "—";
       if (result.breakEvenReason === "no_mortgage") {
@@ -411,6 +473,9 @@
           inp.inputMode === "lump"
             ? "Enter a lump sum greater than zero to see a break-even return between the two extreme allocation strategies."
             : "Add extra cash (above the regular mortgage payment) to see a break-even return between the two extreme allocation strategies.";
+      } else if (result.breakEvenReason === "non_amortizing_payment") {
+        $("break_even_blurb").textContent =
+          "The regular mortgage payment must exceed accrued monthly interest before the two strategies can be compared.";
       } else {
         $("break_even_blurb").textContent =
           "No break-even was found over a wide range of gross returns; with these inputs, one extreme strategy may always produce higher net worth at your horizon.";
@@ -420,8 +485,8 @@
     // Update key facts
     const fact100Mortgage = adjustForInflation(result.fact100Mortgage, inp.isReal);
     const fact100Invest = adjustForInflation(result.fact100Invest, inp.isReal);
-    const totalInterestPaid = adjustForInflation(result.totalInterestPaid, inp.isReal);
-    const totalInterestEarned = adjustForInflation(result.totalInterestEarned, inp.isReal);
+    const totalInterestPaid = realInterestSum("interestPaid", result.totalInterestPaid);
+    const totalInterestEarned = realInterestSum("interestEarned", result.totalInterestEarned);
     
     $("fact_100_mortgage").textContent = fmtCAD(fact100Mortgage);
     $("fact_100_invest").textContent = fmtCAD(fact100Invest);
@@ -549,9 +614,9 @@
     // Update chart
     const adjustedSeries = result.series.map(p => ({
       month: p.month,
-      balance: adjustForInflation(p.balance || 0, inp.isReal),
-      investValue: adjustForInflation(p.investValue || 0, inp.isReal),
-      netWorth: adjustForInflation(p.netWorth || 0, inp.isReal)
+      balance: deflateAtMonth(p.balance || 0, p.month),
+      investValue: deflateAtMonth(p.investValue || 0, p.month),
+      netWorth: deflateAtMonth(p.netWorth || 0, p.month)
     }));
     // Only recalculate scale when non-slider inputs change
     const isSliderChange = changeSource === 'slider';

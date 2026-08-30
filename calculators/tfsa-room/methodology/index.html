@@ -49,9 +49,8 @@
         <li>Y<sub>0</sub> = eligibility start year (first calendar year the person was eligible for a TFSA)</li>
         <li>Y = as-of year (the year for which room is being estimated)</li>
         <li>L(y) = CRA annual TFSA dollar limit for calendar year y</li>
-        <li>C<sub>life</sub> = lifetime TFSA contributions entered by the user</li>
+        <li>C<sub>total</sub> = all TFSA contributions made through the as-of date, including contributions made in year Y</li>
         <li>W<sub>prior</sub> = withdrawals made in years before Y (up to 31 December of Y − 1)</li>
-        <li>C<sub>Y</sub> = contributions made in year Y</li>
         <li>W<sub>Y</sub> = withdrawals made in year Y</li>
         <li>R<sub>Y</sub> = estimated available room in year Y</li>
         <li>R<sub>Y+1</sub> = projected room for year Y + 1 if no further contributions are made</li>
@@ -81,9 +80,9 @@
       </p>
 
       <h3 id="available-room">3. Available room this year</h3>
-      <div class="formula-block">R<sub>Y</sub> = total entitlement − C<sub>life</sub> + W<sub>prior</sub> − C<sub>Y</sub></div>
+      <div class="formula-block">R<sub>Y</sub> = total entitlement − C<sub>total</sub> + W<sub>prior</sub></div>
       <p class="formula-meta">
-        <strong>Rationale:</strong> Contributions reduce room. Withdrawals from prior years have already been added back on the following 1 January, so they increase the current-year estimate. Withdrawals in year Y are excluded from R<sub>Y</sub>.
+        <strong>Rationale:</strong> C<sub>total</sub> already includes contributions made in year Y, so it is subtracted once. Withdrawals from prior years have already been added back on the following 1 January, so they increase the current-year estimate. Withdrawals in year Y are excluded from R<sub>Y</sub>.
       </p>
       <p>
         The January 1 add-back is the rule this formula encodes. CRA states that amounts withdrawn from a TFSA in a year are added back to contribution room at the beginning of the following year, not immediately.
@@ -107,7 +106,7 @@
       <h2>Assumptions</h2>
       <ol>
         <li>Annual limits are the CRA dollar limits stored in <code>/assets/data/tfsa_limits.json</code> (2009 through the latest published year in that file).</li>
-        <li>The user-entered lifetime contribution and withdrawal totals are complete and correctly dated (prior-year vs this-year).</li>
+        <li>The user-entered contribution total includes every contribution through the as-of date, including the as-of year. The withdrawal totals are complete and correctly dated (prior-year vs this-year).</li>
         <li>Eligibility is a single start year. Partial-year residency, multiple non-resident periods, and successor-holder or exempt-contribution rules are not modeled.</li>
         <li>Investment growth, transfers, and qualifying transfers do not change contribution room in this estimate.</li>
         <li>Internal arithmetic uses floating point. Display rounding is to the nearest dollar.</li>

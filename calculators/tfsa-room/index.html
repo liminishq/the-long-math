@@ -62,25 +62,19 @@
           <div class="field">
             <label for="as_of_year">As of year</label>
             <select id="as_of_year"></select>
-            <div class="help-text">The year for which you want to calculate available room</div>
+            <div class="help-text">The year for which you want to calculate available room. Options are limited to years with published CRA annual limits in this calculator’s data.</div>
           </div>
 
           <div class="field">
-            <label for="lifetime_contributions_total">Total TFSA contributions made (lifetime) (CAD)</label>
-            <input id="lifetime_contributions_total" type="text" inputmode="decimal" placeholder="0" />
-            <div class="help-text">All contributions made since you became eligible</div>
+            <label for="total_contributions_through_as_of_date">Total TFSA contributions through the as-of date (CAD)</label>
+            <input id="total_contributions_through_as_of_date" type="text" inputmode="decimal" placeholder="0" />
+            <div class="help-text">Include every contribution made since you became eligible, including contributions made in the as-of year</div>
           </div>
 
           <div class="field">
             <label for="withdrawals_prior_years_total">TFSA withdrawals made in prior years (up to Dec 31 last year) (CAD)</label>
             <input id="withdrawals_prior_years_total" type="text" inputmode="decimal" placeholder="0" />
             <div class="help-text">Withdrawals from previous years (already added back to room in their following years)</div>
-          </div>
-
-          <div class="field">
-            <label for="contributions_this_year">TFSA contributions made this year (CAD)</label>
-            <input id="contributions_this_year" type="text" inputmode="decimal" placeholder="0" />
-            <div class="help-text">Contributions made in the "as of year"</div>
           </div>
 
           <div class="field">

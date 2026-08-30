@@ -78,15 +78,259 @@
     return contribInitialReal / Math.pow(1 + inflationAnnual, timeYears);
   }
 
+  function reportingRow(kind, index, startTime, endTime) {
+    var row = {
+      openingBalance: null,
+      startingBalance: null,
+      contributions: 0,
+      contributionsNominal: 0,
+      positiveContributions: 0,
+      positiveContributionsNominal: 0,
+      withdrawals: 0,
+      withdrawalsNominal: 0,
+      netCashFlow: 0,
+      netCashFlowNominal: 0,
+      growth: 0,
+      endingBalance: null,
+      balance: null,
+      startTimeYears: startTime,
+      endTimeYears: endTime,
+      _startTime: startTime,
+      _endTime: endTime,
+    };
+    if (kind === "year") row.year = index;
+    else {
+      row.period = index;
+      row.year = Math.floor((index - 1) / 12) + 1;
+      row.timeYears = endTime;
+    }
+    return row;
+  }
+
+  function addCashFlowToRow(row, amountReal, amountNominal) {
+    if (!row) return;
+    // Preserve the legacy signed `contributions` fields for existing
+    // consumers. Positive-only contributions and withdrawals are exposed
+    // separately, while netCashFlow is the explicit reconciliation field.
+    row.contributions += amountReal;
+    row.contributionsNominal += amountNominal;
+    if (amountReal < 0) {
+      row.withdrawals += -amountReal;
+      row.withdrawalsNominal += -amountNominal;
+    } else {
+      row.positiveContributions += amountReal;
+      row.positiveContributionsNominal += amountNominal;
+    }
+    row.netCashFlow += amountReal;
+    row.netCashFlowNominal += amountNominal;
+  }
+
+  function finalizeReportingRow(row, endingBalance) {
+    if (!row) return;
+    var opening = row.openingBalance != null ? row.openingBalance : endingBalance;
+    row.openingBalance = opening;
+    row.startingBalance = opening;
+    row.endingBalance = endingBalance;
+    row.balance = endingBalance;
+    row.growth = endingBalance - opening - row.netCashFlow;
+  }
+
+  /**
+   * Build interval-based reporting schedules without changing headline math.
+   * Contributions at a boundary belong to the period they are timed for:
+   * beginning cash flows go into the new period; end cash flows close the old one.
+   */
+  function buildSchedules(
+    P0,
+    years,
+    periodsPerYear,
+    contributionAtBeginning,
+    times,
+    contribPerPeriodReal,
+    inflation,
+    indexContributionsToInflation,
+    rRealAnnual,
+    finalBalanceReal
+  ) {
+    var annualRows = [];
+    var annualCount = Math.max(1, Math.ceil(years - TIME_EPS));
+    var y;
+    for (y = 1; y <= annualCount; y += 1) {
+      annualRows.push(reportingRow("year", y, y - 1, Math.min(y, years)));
+    }
+
+    var monthlyRows = [];
+    if (periodsPerYear === 12) {
+      var monthlyCount = Math.max(1, Math.ceil(years * 12 - TIME_EPS));
+      var p;
+      for (p = 1; p <= monthlyCount; p += 1) {
+        monthlyRows.push(
+          reportingRow("month", p, (p - 1) / 12, Math.min(p / 12, years))
+        );
+      }
+    }
+
+    annualRows[0].openingBalance = P0;
+    annualRows[0].startingBalance = P0;
+    if (monthlyRows.length > 0) {
+      monthlyRows[0].openingBalance = P0;
+      monthlyRows[0].startingBalance = P0;
+    }
+
+    var timeline = [0, years];
+    times.forEach(function (t) {
+      timeline.push(t);
+    });
+    annualRows.forEach(function (row) {
+      timeline.push(row._endTime);
+    });
+    monthlyRows.forEach(function (row) {
+      timeline.push(row._endTime);
+    });
+    timeline.sort(function (a, b) {
+      return a - b;
+    });
+
+    var points = [];
+    timeline.forEach(function (t) {
+      if (points.length === 0 || Math.abs(t - points[points.length - 1]) > TIME_EPS) {
+        points.push(t);
+      }
+    });
+
+    var balance = P0;
+    var prevT = 0;
+    var contributionIndex = 0;
+    var activeAnnual = 0;
+    var activeMonthly = monthlyRows.length > 0 ? 0 : -1;
+
+    function closeAndAdvance(rows, activeIndex, t) {
+      if (
+        activeIndex >= 0 &&
+        activeIndex < rows.length &&
+        Math.abs(rows[activeIndex]._endTime - t) <= TIME_EPS
+      ) {
+        finalizeReportingRow(rows[activeIndex], balance);
+        activeIndex += 1;
+        if (
+          activeIndex < rows.length &&
+          Math.abs(rows[activeIndex]._startTime - t) <= TIME_EPS
+        ) {
+          rows[activeIndex].openingBalance = balance;
+          rows[activeIndex].startingBalance = balance;
+        }
+      }
+      return activeIndex;
+    }
+
+    function closeRows(t) {
+      activeAnnual = closeAndAdvance(annualRows, activeAnnual, t);
+      activeMonthly = closeAndAdvance(monthlyRows, activeMonthly, t);
+    }
+
+    function applyCashFlow(t) {
+      while (
+        contributionIndex < times.length &&
+        Math.abs(times[contributionIndex] - t) <= TIME_EPS
+      ) {
+        var contribReal = contributionRealAtTime(
+          contribPerPeriodReal,
+          t,
+          inflation,
+          indexContributionsToInflation
+        );
+        var contribNominal = contribReal * Math.pow(1 + inflation, t);
+        addCashFlowToRow(annualRows[activeAnnual], contribReal, contribNominal);
+        addCashFlowToRow(monthlyRows[activeMonthly], contribReal, contribNominal);
+        balance += contribReal;
+        contributionIndex += 1;
+      }
+    }
+
+    points.forEach(function (t) {
+      var dt = t - prevT;
+      if (dt > TIME_EPS) {
+        balance *= growthFactor(rRealAnnual, dt);
+      }
+
+      if (contributionAtBeginning) {
+        if (t > TIME_EPS) closeRows(t);
+        applyCashFlow(t);
+      } else {
+        applyCashFlow(t);
+        if (t > TIME_EPS) closeRows(t);
+      }
+      prevT = t;
+    });
+
+    // Preserve the headline result exactly on the terminal reporting rows.
+    finalizeReportingRow(annualRows[annualRows.length - 1], finalBalanceReal);
+    if (monthlyRows.length > 0) {
+      finalizeReportingRow(monthlyRows[monthlyRows.length - 1], finalBalanceReal);
+    }
+
+    function publicRow(row) {
+      delete row._startTime;
+      delete row._endTime;
+      return row;
+    }
+
+    var yearZero = {
+      year: 0,
+      openingBalance: P0,
+      startingBalance: P0,
+      contributions: 0,
+      contributionsNominal: 0,
+      positiveContributions: 0,
+      positiveContributionsNominal: 0,
+      withdrawals: 0,
+      withdrawalsNominal: 0,
+      netCashFlow: 0,
+      netCashFlowNominal: 0,
+      growth: 0,
+      endingBalance: P0,
+      balance: P0,
+      startTimeYears: 0,
+      endTimeYears: 0,
+    };
+
+    return {
+      schedule: [yearZero].concat(annualRows.map(publicRow)),
+      monthlySchedule: monthlyRows.map(publicRow),
+    };
+  }
+
   function emptyResult(P0, rNomAnnual, inflation, yearsEffective, indexContributionsToInflation, contributionPeriodsPerYear) {
+    var yearZero = {
+      year: 0,
+      openingBalance: P0,
+      startingBalance: P0,
+      contributions: 0,
+      contributionsNominal: 0,
+      positiveContributions: 0,
+      positiveContributionsNominal: 0,
+      withdrawals: 0,
+      withdrawalsNominal: 0,
+      netCashFlow: 0,
+      netCashFlowNominal: 0,
+      growth: 0,
+      endingBalance: P0,
+      balance: P0,
+      startTimeYears: 0,
+      endTimeYears: 0,
+    };
     return {
       finalBalanceReal: P0,
       finalBalanceNominal: P0 * Math.pow(1 + inflation, yearsEffective),
       startingAmount: P0,
       totalContributions: 0,
       totalContributionsNominal: 0,
+      totalPositiveContributions: 0,
+      totalPositiveContributionsNominal: 0,
+      totalWithdrawals: 0,
+      totalWithdrawalsNominal: 0,
       growth: 0,
-      schedule: [{ year: 0, contributions: 0, contributionsNominal: 0, growth: 0, balance: P0 }],
+      schedule: [yearZero],
       monthlySchedule: [],
       contributionTimes: [],
       nominalAnnualReturn: rNomAnnual,
@@ -111,8 +355,16 @@
 
     var P0 = clampNonNeg(Number(startingAmount));
     var rNomAnnual = Number(nominalAnnualReturn);
-    var inflation = clampNonNeg(Number(inflationAnnual));
+    var inflationRaw = Number(inflationAnnual);
+    var inflation = Number.isFinite(inflationRaw) ? inflationRaw : 0;
     var contribPerPeriodReal = Number(contributionPerPeriod);
+
+    if (!Number.isFinite(rNomAnnual) || rNomAnnual <= -1) {
+      return { error: "Annual return must be greater than -100%." };
+    }
+    if (inflation <= -1) {
+      return { error: "Inflation must be greater than -100%." };
+    }
 
     var yearsInput = Number(years);
     if (!Number.isFinite(yearsInput) || yearsInput < 0) yearsInput = 0;
@@ -127,23 +379,11 @@
     var balanceReal = P0;
     var totalContributionsReal = 0;
     var totalContributionsNominal = 0;
+    var totalPositiveContributionsReal = 0;
+    var totalPositiveContributionsNominal = 0;
+    var totalWithdrawalsReal = 0;
+    var totalWithdrawalsNominal = 0;
     var prevT = 0;
-    var monthlySchedule = [];
-    var yearMap = {};
-    var scheduleYearCount = Math.max(1, Math.ceil(yearsInput - TIME_EPS));
-
-    function ensureYear(yearNum) {
-      if (!yearMap[yearNum]) {
-        yearMap[yearNum] = {
-          year: yearNum,
-          contributions: 0,
-          contributionsNominal: 0,
-          growth: 0,
-          endingBalance: 0,
-        };
-      }
-      return yearMap[yearNum];
-    }
 
     function applyGrowth(toTime) {
       var dt = toTime - prevT;
@@ -151,8 +391,6 @@
       var before = balanceReal;
       balanceReal *= growthFactor(rRealAnnual, dt);
       var growth = balanceReal - before;
-      var yearNum = Math.min(scheduleYearCount, Math.max(1, Math.ceil(toTime - TIME_EPS)));
-      ensureYear(yearNum).growth += growth;
       prevT = toTime;
       return growth;
     }
@@ -172,50 +410,31 @@
       balanceReal += contribReal;
       totalContributionsReal += contribReal;
       totalContributionsNominal += contribNominal;
-
-      var yearNum = Math.min(scheduleYearCount, Math.max(1, Math.ceil(t - TIME_EPS) || 1));
-      if (t <= TIME_EPS) yearNum = 1;
-      var yd = ensureYear(yearNum);
-      yd.contributions += contribReal;
-      yd.contributionsNominal += contribNominal;
-      yd.endingBalance = balanceReal;
-
-      if (contributionPeriodsPerYear === 12) {
-        monthlySchedule.push({
-          period: i + 1,
-          year: yearNum,
-          timeYears: t,
-          contributions: contribReal,
-          contributionsNominal: contribNominal,
-          growth: 0,
-          balance: balanceReal,
-        });
+      if (contribReal < 0) {
+        totalWithdrawalsReal += -contribReal;
+        totalWithdrawalsNominal += -contribNominal;
+      } else {
+        totalPositiveContributionsReal += contribReal;
+        totalPositiveContributionsNominal += contribNominal;
       }
     }
 
     // Grow from last contribution (or t=0) to the exact terminal horizon Y.
     applyGrowth(yearsInput);
-    var finalYear = ensureYear(scheduleYearCount);
-    finalYear.endingBalance = balanceReal;
-
-    var schedule = [{ year: 0, contributions: 0, contributionsNominal: 0, growth: 0, balance: P0 }];
-    var y;
-    for (y = 1; y <= scheduleYearCount; y += 1) {
-      var row = yearMap[y] || {
-        year: y,
-        contributions: 0,
-        contributionsNominal: 0,
-        growth: 0,
-        endingBalance: balanceReal,
-      };
-      schedule.push({
-        year: y,
-        contributions: row.contributions,
-        contributionsNominal: row.contributionsNominal,
-        growth: row.growth,
-        balance: row.endingBalance || balanceReal,
-      });
-    }
+    var schedules = inputs._skipScheduleGeneration
+      ? { schedule: [], monthlySchedule: [] }
+      : buildSchedules(
+          P0,
+          yearsInput,
+          contributionPeriodsPerYear,
+          contributionAtBeginning,
+          times,
+          contribPerPeriodReal,
+          inflation,
+          indexContributionsToInflation,
+          rRealAnnual,
+          balanceReal
+        );
 
     var inflationFactor = Math.pow(1 + inflation, yearsInput);
     var finalBalanceNominal = balanceReal * inflationFactor;
@@ -227,9 +446,13 @@
       startingAmount: P0,
       totalContributions: totalContributionsReal,
       totalContributionsNominal: totalContributionsNominal,
+      totalPositiveContributions: totalPositiveContributionsReal,
+      totalPositiveContributionsNominal: totalPositiveContributionsNominal,
+      totalWithdrawals: totalWithdrawalsReal,
+      totalWithdrawalsNominal: totalWithdrawalsNominal,
       growth: growthReal,
-      schedule: schedule,
-      monthlySchedule: monthlySchedule,
+      schedule: schedules.schedule,
+      monthlySchedule: schedules.monthlySchedule,
       contributionTimes: times.slice(),
       nominalAnnualReturn: rNomAnnual,
       realAnnualReturn: rRealAnnual,
@@ -242,12 +465,20 @@
   }
 
   function endingRealAtReturn(simInputs, nominalReturn) {
-    return simulateInvestment(Object.assign({}, simInputs, { nominalAnnualReturn: nominalReturn })).finalBalanceReal;
+    var sim = simulateInvestment(Object.assign({}, simInputs, {
+      nominalAnnualReturn: nominalReturn,
+      _skipScheduleGeneration: true,
+    }));
+    if (sim.error || !Number.isFinite(sim.finalBalanceReal)) return NaN;
+    return sim.finalBalanceReal;
   }
 
   function packSolveResult(nominalReturn, simInputs, target, opts) {
     opts = opts || {};
-    var sim = simulateInvestment(Object.assign({}, simInputs, { nominalAnnualReturn: nominalReturn }));
+    var sim = simulateInvestment(Object.assign({}, simInputs, {
+      nominalAnnualReturn: nominalReturn,
+      _skipScheduleGeneration: false,
+    }));
     var realReturn = calculateRealReturn(nominalReturn, simInputs.inflationAnnual || 0);
     return {
       nominalAnnualReturn: nominalReturn,
@@ -291,7 +522,11 @@
       return { error: "Invalid target balance" };
     }
 
-    var atZero = simulateInvestment(Object.assign({}, simInputs, { nominalAnnualReturn: 0 }));
+    var atZero = simulateInvestment(Object.assign({}, simInputs, {
+      nominalAnnualReturn: 0,
+      _skipScheduleGeneration: true,
+    }));
+    if (atZero.error) return { error: atZero.error };
     var endingAtZero = atZero.finalBalanceReal;
 
     // Already at/above target with 0% nominal: solve for a (possibly negative) return.

@@ -106,6 +106,7 @@ function attachEventListeners() {
         personalTaxData = personalBundle;
         corporateDataLoaded = true;
         personalDataLoaded = true;
+        updateProvinceNote();
         calculate();
       } catch (error) {
         if (requestSeq !== taxDataRequestSeq) return;
@@ -161,17 +162,19 @@ function toggleIncomeSplitting(enabled) {
 }
 
 /**
- * Update province note visibility for AB/QC
+ * Update province notes for AB/QC administration and 2025 NS/PEI mid-year rates.
  */
 function updateProvinceNote() {
   const province = document.getElementById('province').value;
+  const year = parseInt(document.getElementById('year')?.value, 10);
   const noteEl = document.getElementById('provinceNote');
+  const midYearEl = document.getElementById('midYearRateNote');
   if (noteEl) {
-    if (province === 'AB' || province === 'QC') {
-      noteEl.style.display = 'block';
-    } else {
-      noteEl.style.display = 'none';
-    }
+    noteEl.style.display = (province === 'AB' || province === 'QC') ? 'block' : 'none';
+  }
+  if (midYearEl) {
+    const showMidYear = year === 2025 && (province === 'NS' || province === 'PE');
+    midYearEl.style.display = showMidYear ? 'block' : 'none';
   }
 }
 
@@ -179,7 +182,9 @@ function updateProvinceNote() {
  * Reset all input fields to default/empty values
  */
 function resetAllInputs() {
-  document.getElementById('year').value = '2026';
+  const yearSelect = document.getElementById('year');
+  const yearChanged = yearSelect?.value !== '2026';
+  if (yearSelect) yearSelect.value = '2026';
   setDefaultCorporateTaxYearStart(2026);
   document.getElementById('province').value = '';
   document.getElementById('grossRevenue').value = '';
@@ -223,6 +228,9 @@ function resetAllInputs() {
   if (pb2) pb2.innerHTML = '';
 
   updateProvinceNote();
+  if (yearChanged && yearSelect) {
+    yearSelect.dispatchEvent(new Event('change', { bubbles: true }));
+  }
 }
 
 /**
@@ -303,29 +311,60 @@ function calculate() {
   }
 }
 
+function renderFundingNotes(notes) {
+  const el = document.getElementById('fundingAssumptionNote');
+  if (!el) return;
+  if (!notes || !notes.length) {
+    el.style.display = 'none';
+    el.innerHTML = '';
+    return;
+  }
+  const paragraphs = notes.map((n) => {
+    if (n.code === 'salary_exceeds_current_year_income') {
+      return `Salary plus employer CPP (${formatCurrency(n.compensationCost)}) exceeds this year’s modeled corporate income before compensation (${formatCurrency(n.corporateIncomeBeforeCompensation)}). Corporate taxable income is floored at $0, but the salary is still taxed as paid. The illustration assumes other corporate resources (for example prior cash) fund the difference. Opening cash is not modeled.`;
+    }
+    if (n.code === 'dividends_exceed_current_year_cash') {
+      return `Dividends (${formatCurrency(n.dividendDistributions)}) exceed this year’s after-tax corporate cash (${formatCurrency(n.afterTaxCorporateCash)}). Retained earnings are shown as $0. The extra amount is an implicit prior-cash assumption. GRIP and RDTOH are not tracked.`;
+    }
+    return '';
+  }).filter(Boolean);
+  el.innerHTML = '<p style="margin:0 0 8px;font-weight:600;color:var(--text);">Funding assumption</p>' +
+    paragraphs.map((p) => `<p style="margin:0 0 8px;line-height:1.5;">${p}</p>`).join('');
+  el.style.display = 'block';
+}
+
 /**
  * Render main results
  */
 function renderResults(result) {
   const { corporate, personal, personal1, personal2, combined, incomeSplitting } = result;
+  renderFundingNotes(combined.fundingNotes);
 
   if (incomeSplitting) {
     document.getElementById('splitCorporateTaxableIncome').textContent = formatCurrency(corporate.taxableIncome);
     document.getElementById('splitCorporateTax').textContent = formatCurrency(corporate.totalCorporateTax);
+    const splitEmployerCpp = document.getElementById('splitEmployerCpp');
+    if (splitEmployerCpp) splitEmployerCpp.textContent = formatCurrency(combined.employerCppExpense || 0);
     document.getElementById('splitAfterTaxCorporateCash').textContent = formatCurrency(corporate.afterTaxCash);
     document.getElementById('splitRetainedEarnings').textContent = formatCurrency(combined.retainedEarnings);
     document.getElementById('sh1PersonalTax').textContent = formatCurrency(personal1.totalIncomeTax);
     document.getElementById('sh1NetTakeHome').textContent = formatCurrency(personal1.takeHomeAfterPayroll);
     document.getElementById('sh2PersonalTax').textContent = formatCurrency(personal2.totalIncomeTax);
     document.getElementById('sh2NetTakeHome').textContent = formatCurrency(personal2.takeHomeAfterPayroll);
+    const splitEmployeeCppEi = document.getElementById('splitEmployeeCppEi');
+    if (splitEmployeeCppEi) splitEmployeeCppEi.textContent = formatCurrency(combined.employeeCppEi || 0);
     document.getElementById('splitTotalTaxBurden').textContent = formatCurrency(combined.totalTaxBurden);
     document.getElementById('splitEffectiveTaxRate').textContent = formatPercent(combined.effectiveTaxRate);
   } else {
     document.getElementById('corporateTaxableIncome').textContent = formatCurrency(corporate.taxableIncome);
     document.getElementById('corporateTax').textContent = formatCurrency(corporate.totalCorporateTax);
+    const employerCpp = document.getElementById('employerCpp');
+    if (employerCpp) employerCpp.textContent = formatCurrency(combined.employerCppExpense || 0);
     document.getElementById('afterTaxCorporateCash').textContent = formatCurrency(corporate.afterTaxCash);
     document.getElementById('retainedEarnings').textContent = formatCurrency(combined.retainedEarnings);
     document.getElementById('personalTax').textContent = formatCurrency(personal.totalIncomeTax);
+    const employeeCppEi = document.getElementById('employeeCppEi');
+    if (employeeCppEi) employeeCppEi.textContent = formatCurrency(combined.employeeCppEi || 0);
     document.getElementById('netPersonalTakeHome').textContent = formatCurrency(combined.netPersonalTakeHome);
     document.getElementById('totalTaxBurden').textContent = formatCurrency(combined.totalTaxBurden);
     document.getElementById('effectiveTaxRate').textContent = formatPercent(combined.effectiveTaxRate);
@@ -446,10 +485,10 @@ function renderPersonalBreakdown(personal, container) {
     <h4>Personal Tax Summary</h4>
     <p>Federal Tax: ${formatCurrency(personal.federalTax)}</p>
     <p>Provincial Tax: ${formatCurrency(personal.provTax)}</p>
-    <p>Total Personal Tax: ${formatCurrency(personal.totalIncomeTax)}</p>
+    <p>Total Personal Income Tax: ${formatCurrency(personal.totalIncomeTax)}</p>
     <p>CPP: ${formatCurrency(personal.cpp)}</p>
     <p>EI: ${formatCurrency(personal.ei)}</p>
-    <p>Total Burden: ${formatCurrency(personal.totalBurden)}</p>
+    <p>Income tax + employee CPP/EI: ${formatCurrency(personal.totalBurden)}</p>
   `;
 
   el.appendChild(div);
@@ -467,6 +506,12 @@ function clearResults() {
   document.getElementById('netPersonalTakeHome').textContent = '$–';
   document.getElementById('totalTaxBurden').textContent = '$–';
   document.getElementById('effectiveTaxRate').textContent = '–%';
+  const extraIds = ['employerCpp', 'employeeCppEi', 'splitEmployerCpp', 'splitEmployeeCppEi'];
+  extraIds.forEach((id) => {
+    const extra = document.getElementById(id);
+    if (extra) extra.textContent = '$–';
+  });
+  renderFundingNotes([]);
 
   const splitIds = ['splitCorporateTaxableIncome', 'splitCorporateTax', 'splitAfterTaxCorporateCash', 'splitRetainedEarnings', 'sh1PersonalTax', 'sh1NetTakeHome', 'sh2PersonalTax', 'sh2NetTakeHome', 'splitTotalTaxBurden', 'splitEffectiveTaxRate'];
   splitIds.forEach(id => {
@@ -505,9 +550,11 @@ function buildSharePayload() {
     brand: 'The Long Math',
     headline: 'CCPC Income Tax Estimate',
     mainValue: formatCurrency(combined.totalTaxBurden || 0),
-    subline: 'Combined corporate + personal tax burden',
+    subline: 'Corporate + personal income tax',
     contextLines: [
-      'Effective overall tax rate: ' + formatPercent(combined.effectiveTaxRate || 0),
+      'Effective overall income-tax rate (% of gross revenue): ' + formatPercent(combined.effectiveTaxRate || 0),
+      'Employee CPP and EI: ' + formatCurrency(combined.employeeCppEi || 0),
+      'Employer CPP: ' + formatCurrency(combined.employerCppExpense || 0),
       'Net personal take-home: ' + formatCurrency(combined.netPersonalTakeHome || 0),
       'Retained earnings: ' + formatCurrency(combined.retainedEarnings || 0),
       'Mode: ' + (incomeSplitting ? 'Two-shareholder split' : 'Single shareholder'),
@@ -515,7 +562,7 @@ function buildSharePayload() {
       'Province/territory: ' + provinceLabel
     ],
     footer: 'Run your own numbers at TheLongMath.com',
-    shareText: 'CCPC estimate: total tax burden ' + formatCurrency(combined.totalTaxBurden || 0),
+    shareText: 'CCPC estimate: total income tax ' + formatCurrency(combined.totalTaxBurden || 0),
     url: window.location.href
   };
 }
@@ -534,10 +581,12 @@ function exportCsv() {
     'Metric,Value',
     'Corporate taxable income,' + (corporate.taxableIncome || 0),
     'Corporate tax,' + (corporate.totalCorporateTax || 0),
+    'Employer CPP,' + (combined.employerCppExpense || 0),
     'After-tax corporate cash,' + (corporate.afterTaxCash || 0),
     'Retained earnings,' + (combined.retainedEarnings || 0),
-    'Total tax burden,' + (combined.totalTaxBurden || 0),
-    'Effective overall tax rate,' + ((combined.effectiveTaxRate || 0) * 100).toFixed(3) + '%'
+    'Total income tax (corporate + personal),' + (combined.totalTaxBurden || 0),
+    'Employee CPP and EI,' + (combined.employeeCppEi || 0),
+    'Effective overall income-tax rate (% of gross revenue),' + ((combined.effectiveTaxRate || 0) * 100).toFixed(3) + '%'
   ];
   if (incomeSplitting) {
     rows.push('Shareholder 1 personal tax,' + (personal1.totalIncomeTax || 0));

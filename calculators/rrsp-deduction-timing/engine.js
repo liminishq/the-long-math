@@ -140,7 +140,10 @@ function futureValueOfRefund(refund, years, annualRate) {
       contributionAtBeginning: false,
       indexContributionsToInflation: false
     });
-    return result.finalBalanceNominal;
+    if (result && !result.error && Number.isFinite(result.finalBalanceNominal)) {
+      return result.finalBalanceNominal;
+    }
+    return null;
   }
 
   return amount * Math.pow(1 + rate, horizon);

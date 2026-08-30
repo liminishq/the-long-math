@@ -13,10 +13,31 @@
   const MANIFEST_URL = "/data/cpi/countries.json";
   const countryDataCache = new Map(); // code -> { meta, cpi }
 
+  const EUROZONE_CODES = {
+    AUT: 1, BEL: 1, CYP: 1, DEU: 1, ESP: 1, EST: 1, FIN: 1, FRA: 1,
+    GRC: 1, HRV: 1, IRL: 1, ITA: 1, LTU: 1, LUX: 1, LVA: 1, MLT: 1,
+    NLD: 1, PRT: 1, SVK: 1, SVN: 1, EUR: 1, EMU: 1
+  };
+
   function formatMoneyInt(n) {
     if (n == null || !Number.isFinite(n)) return "–";
     const rounded = Math.round(n);
     return rounded.toLocaleString("en-CA", { maximumFractionDigits: 0 });
+  }
+
+  function currencySymbolFor(country) {
+    if (country && country.currencySymbol) return country.currencySymbol;
+    const code = country && (country.currencyCode || country.code);
+    if (!code) return "$";
+    const upper = String(code).toUpperCase();
+    if (country.currencyCode === "GBP" || upper === "GBP" || upper === "GBR" || upper === "UK") return "£";
+    if (country.currencyCode === "EUR" || EUROZONE_CODES[upper]) return "€";
+    return "$";
+  }
+
+  function formatMoneyIntWithCurrency(n, country) {
+    if (n == null || !Number.isFinite(n)) return "–";
+    return currencySymbolFor(country) + formatMoneyInt(n);
   }
 
   function computeRatio(cpiMap, startYear, endYear) {
@@ -50,7 +71,16 @@
     const end = Number(countryMeta.endYear);
     const s = Number(startYear);
     const e = Number(endYear);
-    return s >= start && e <= end;
+    if (!Number.isFinite(start) || !Number.isFinite(end) || !Number.isFinite(s) || !Number.isFinite(e)) {
+      return false;
+    }
+    const lo = Math.min(s, e);
+    const hi = Math.max(s, e);
+    return lo >= start && hi <= end;
+  }
+
+  function isRangeAvailable(countryMeta, startYear, endYear) {
+    return availability(countryMeta, startYear, endYear);
   }
 
   async function loadManifest() {
@@ -79,12 +109,15 @@
 
   global.InflationTimeMachine = global.InflationTimeMachine || {};
   global.InflationTimeMachine.formatMoneyInt = formatMoneyInt;
+  global.InflationTimeMachine.currencySymbolFor = currencySymbolFor;
+  global.InflationTimeMachine.formatMoneyIntWithCurrency = formatMoneyIntWithCurrency;
   global.InflationTimeMachine.computeRatio = computeRatio;
   global.InflationTimeMachine.computeConverted = computeConverted;
   global.InflationTimeMachine.computeAnnualizedRate = computeAnnualizedRate;
   global.InflationTimeMachine.computePercentChangeMagnitude = computePercentChangeMagnitude;
   global.InflationTimeMachine.availability = availability;
+  global.InflationTimeMachine.isRangeAvailable = isRangeAvailable;
   global.InflationTimeMachine.loadManifest = loadManifest;
   global.InflationTimeMachine.loadCountryData = loadCountryData;
   global.InflationTimeMachine.getCachedCountryData = getCachedCountryData;
-})(typeof window !== "undefined" ? window : this);
+})(typeof globalThis !== "undefined" ? globalThis : this);

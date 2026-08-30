@@ -39,6 +39,44 @@ function rrspContributionAsCurrentYearDeduction(source) {
   return Math.max(0, Number(source.rrspDeduction) || 0);
 }
 
+const FUNDING_EPS = 0.005;
+
+/**
+ * Salary/dividends may exceed this year's modeled corporate cash.
+ * That is allowed as a hypothetical; callers should disclose the implicit prior-resource assumption.
+ */
+function compensationFundingNotes({
+  salaryExpense,
+  employerCppExpense,
+  corporateIncomeBeforeCompensation,
+  dividendDistributions,
+  afterTaxCorporateCash
+}) {
+  const notes = [];
+  const compensationCost = (Number(salaryExpense) || 0) + (Number(employerCppExpense) || 0);
+  const incomeBefore = Number(corporateIncomeBeforeCompensation) || 0;
+  const dividends = Number(dividendDistributions) || 0;
+  const cash = Number(afterTaxCorporateCash) || 0;
+
+  if (compensationCost > incomeBefore + FUNDING_EPS) {
+    notes.push({
+      code: 'salary_exceeds_current_year_income',
+      salaryExpense: Number(salaryExpense) || 0,
+      employerCppExpense: Number(employerCppExpense) || 0,
+      compensationCost,
+      corporateIncomeBeforeCompensation: incomeBefore
+    });
+  }
+  if (dividends > cash + FUNDING_EPS) {
+    notes.push({
+      code: 'dividends_exceed_current_year_cash',
+      dividendDistributions: dividends,
+      afterTaxCorporateCash: cash
+    });
+  }
+  return notes;
+}
+
 /**
  * Calculate complete CCPC tax scenario (single or income-splitting)
  * @param {Object} input - Input object with:
@@ -119,6 +157,18 @@ export function computeCCPCTax(input, personalTaxOpts = {}) {
     const totalTaxBurden = corporate.totalCorporateTax + totalPersonalTax;
     const effectiveTaxRate = grossRevenue > 0 ? totalTaxBurden / grossRevenue : 0;
     const netPersonalTakeHome = personal1.totals.takeHomeAfterPayroll + personal2.totals.takeHomeAfterPayroll;
+    const employeeCppEi =
+      (personal1.totals.cpp || 0) +
+      (personal1.totals.ei || 0) +
+      (personal2.totals.cpp || 0) +
+      (personal2.totals.ei || 0);
+    const fundingNotes = compensationFundingNotes({
+      salaryExpense,
+      employerCppExpense,
+      corporateIncomeBeforeCompensation,
+      dividendDistributions,
+      afterTaxCorporateCash
+    });
 
     return {
       incomeSplitting: true,
@@ -143,10 +193,13 @@ export function computeCCPCTax(input, personalTaxOpts = {}) {
       },
       combined: {
         totalTaxBurden,
+        employeeCppEi,
+        employerCppExpense,
         effectiveTaxRate,
         netPersonalTakeHome,
         retainedEarnings,
-        afterTaxCorporateCash
+        afterTaxCorporateCash,
+        fundingNotes
       }
     };
   }
@@ -192,6 +245,14 @@ export function computeCCPCTax(input, personalTaxOpts = {}) {
   const netPersonalTakeHome = personal.totals.takeHomeAfterPayroll;
   const dividendDistributions = eligibleDividends + nonEligibleDividends;
   const retainedEarnings = Math.max(0, afterTaxCorporateCash - dividendDistributions);
+  const employeeCppEi = (personal.totals.cpp || 0) + (personal.totals.ei || 0);
+  const fundingNotes = compensationFundingNotes({
+    salaryExpense,
+    employerCppExpense,
+    corporateIncomeBeforeCompensation,
+    dividendDistributions,
+    afterTaxCorporateCash
+  });
 
   return {
     incomeSplitting: false,
@@ -213,10 +274,13 @@ export function computeCCPCTax(input, personalTaxOpts = {}) {
     personal2: null,
     combined: {
       totalTaxBurden,
+      employeeCppEi,
+      employerCppExpense,
       effectiveTaxRate,
       netPersonalTakeHome,
       retainedEarnings,
-      afterTaxCorporateCash
+      afterTaxCorporateCash,
+      fundingNotes
     }
   };
 }

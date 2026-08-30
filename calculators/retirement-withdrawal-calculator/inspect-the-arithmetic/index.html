@@ -31,7 +31,7 @@
       {
         "@type": "Question",
         "name": "Does inflation change the withdrawal amount?",
-        "acceptedAnswer": { "@type": "Answer", "text": "It depends on the withdrawal-adjustment setting. With inflation selected, the initial withdrawal increases at the start of each retirement year. With fixed selected, the nominal withdrawal does not change. The real-dollar display remains a separate control." }
+        "acceptedAnswer": { "@type": "Answer", "text": "It depends on the withdrawal-adjustment setting. With inflation selected, the initial withdrawal is multiplied by (1 + inflation) at the start of each retirement year. With fixed selected, the nominal withdrawal does not change. The real-dollar display remains a separate control." }
       },
       {
         "@type": "Question",
@@ -111,7 +111,7 @@
             </tr>
             <tr>
               <td>Retirement withdrawal period</td>
-              <td>The number of years to model withdrawals.</td>
+              <td>The number of years to model withdrawals. The engine rounds this to a whole number of withdrawal periods (requested years × periods per year, then rounded), and the displayed horizon is that effective length.</td>
             </tr>
             <tr>
               <td>Withdrawal type</td>
@@ -123,11 +123,11 @@
             </tr>
             <tr>
               <td>Withdrawal adjustment</td>
-              <td>Whether the initial withdrawal increases annually with inflation or remains fixed in nominal dollars.</td>
+              <td>Whether the initial withdrawal adjusts annually with inflation or remains fixed in nominal dollars.</td>
             </tr>
             <tr>
               <td>Inflation rate</td>
-              <td>Used to escalate withdrawals when selected and to convert displayed future balances into today’s dollars.</td>
+              <td>Used to escalate or reduce withdrawals when inflation adjustment is selected, and to convert displayed future balances into today’s dollars when the real-dollar display is on. Not required when withdrawals are fixed and that display is off.</td>
             </tr>
           </tbody>
         </table>
@@ -191,6 +191,9 @@
       <div class="formula-block">
         Starting withdrawal rate = initial annual withdrawal ÷ portfolio at withdrawal start
       </div>
+      <p>
+        If the starting portfolio is $0, the starting withdrawal rate is undefined and is shown as N/A rather than 0%.
+      </p>
 
       <h3>Withdrawal rate mode</h3>
       <p>
@@ -203,7 +206,7 @@
         <strong>Example:</strong> $500,000 × 4% = $20,000 per year
       </p>
       <p>
-        The calculator does not recalculate the percentage from later portfolio balances. It converts the initial annual amount into the selected withdrawal frequency, then follows the selected withdrawal-adjustment rule.
+        The calculator does not recalculate the percentage from later portfolio balances. It converts the initial annual amount into the selected withdrawal frequency, then follows the selected withdrawal-adjustment rule. Rate mode rejects an initial annual rate above 50%; that cap is a model bound, not a claim about a safe rate.
       </p>
       <div class="formula-block">
         Initial periodic withdrawal = initial annual withdrawal ÷ periods per year
@@ -214,7 +217,7 @@
 
       <h2>Step 4: Apply the withdrawal adjustment</h2>
       <p>
-        With inflation selected, every withdrawal in the first retirement year uses the initial periodic amount. At the start of each later retirement year, the periodic amount increases by the inflation rate.
+        With inflation selected, every withdrawal in the first retirement year uses the initial periodic amount. At the start of each later retirement year, the periodic amount is multiplied by (1 + inflation rate), which can raise or lower it.
       </p>
       <div class="formula-block">
         Next year’s withdrawal = previous year’s withdrawal × (1 + inflation rate)
@@ -244,25 +247,26 @@
         <li>The portfolio balance reaches zero.</li>
       </ol>
       <p>
-        If the balance reaches zero before the end of the selected retirement period, the calculator reports the estimated depletion timing.
-        If a period would end below zero, the implementation treats depletion as occurring partway through that period (a practical approximation for the scheduled withdrawal).
+        If the balance reaches zero before the last scheduled withdrawal is fully funded, the calculator reports premature depletion and the estimated timing.
+        If a period cannot fund the full scheduled withdrawal, depletion is timed partway through that period, but the yearly row records the growth actually applied and withdraws the remaining balance so starting + growth − withdrawals = ending = 0.
+        If the final scheduled withdrawal is fully funded and the balance ends at about $0 at the horizon, that is treated as lasting the full period, not as premature depletion.
       </p>
 
       <h2>Step 6: Estimate how long the money lasts</h2>
       <p>
         The calculator tracks the portfolio balance after each withdrawal period.
-        If the portfolio remains above zero through the full retirement period, the calculator reports that the portfolio lasts for the full period.
+        If the portfolio remains above zero through the full retirement period, or funds every scheduled withdrawal and ends at about $0 at the horizon, the calculator reports that the portfolio lasts for the full period.
       </p>
       <p>
-        If the portfolio reaches zero during the modelled period, the calculator reports the approximate time until depletion, such as: “depleted after approximately 24.6 years”.
+        If the portfolio is depleted before the horizon (the last scheduled withdrawal is not fully funded), the calculator reports the approximate time until depletion, such as: “depleted after approximately 24.6 years”.
       </p>
 
       <h2>Step 7: Calculate the ending balance</h2>
       <p>
-        If the portfolio lasts through the full selected retirement period, the calculator reports the estimated ending balance as the balance after the final modelled period.
+        If the portfolio lasts through the full selected retirement period — including the case where the last withdrawal is funded and the ending balance is about $0 — the calculator reports the estimated ending balance as the balance after the final modelled period.
       </p>
       <p>
-        If the portfolio is depleted before the end of the period, the ending balance is shown as $0, and the calculator reports when depletion occurs.
+        If the portfolio is depleted before the horizon, the ending balance is shown as $0, and the calculator reports when depletion occurs.
       </p>
 
       <h2>Step 8: Calculate inflation-adjusted display values</h2>
@@ -330,7 +334,7 @@
         <details class="faq-accordion-item">
           <summary>Does inflation change the withdrawal amount?</summary>
           <div class="faq-accordion-body">
-            <p>It depends on the withdrawal-adjustment setting. With inflation selected, the initial withdrawal increases at the start of each retirement year. With fixed selected, the nominal withdrawal does not change. The real-dollar display remains a separate control.</p>
+            <p>It depends on the withdrawal-adjustment setting. With inflation selected, the initial withdrawal is multiplied by (1 + inflation) at the start of each retirement year. With fixed selected, the nominal withdrawal does not change. The real-dollar display remains a separate control. Rate mode also caps the initial withdrawal rate at 50%.</p>
           </div>
         </details>
         <details class="faq-accordion-item">

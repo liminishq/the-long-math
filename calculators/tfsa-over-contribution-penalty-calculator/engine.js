@@ -10,7 +10,7 @@
 
    KEY RULES MODELED:
    - Contribution: uses available room first; overflow becomes excess.
-   - Withdrawal: reduces current excess only (does not create room).
+   - Withdrawal: reduces current excess and is restored as room the next Jan 1.
    - Room adjustment: increases room; can reduce excess.
    - Jan 1 room: optional annual room added each January 1 in range.
    - Each month: monthly penalty = 1% × highest excess reached in that month.
@@ -18,7 +18,7 @@
    ASSUMPTIONS (document in assumptions array in result):
    - All amounts in CAD; dates in YYYY-MM-DD.
    - Transactions outside [startDate, endDate] are ignored.
-   - Withdrawals do not add back to contribution room in this model.
+   - Withdrawals outside [startDate, endDate] are unknown and cannot be added back.
    - This is an educational estimate; CRA rules may vary.
 */
 
@@ -137,15 +137,20 @@
    * Same-date event priority (lower = processed first).
    * Ensures e.g. Jan 1 room is applied before a same-day contribution,
    * so room is available and no phantom excess appears.
-   * 1. room_adjustment  2. withdrawal  3. contribution
+   * 1. room_adjustment  2. withdrawal_addback  3. withdrawal  4. contribution
    */
-  const EVENT_PRIORITY = { room_adjustment: 0, withdrawal: 1, contribution: 2 };
+  const EVENT_PRIORITY = {
+    room_adjustment: 0,
+    withdrawal_addback: 1,
+    withdrawal: 2,
+    contribution: 3
+  };
 
   /**
-   * Build sorted list of events in range: user transactions (in range) plus
-   * Jan 1 room_adjustment for each year crossed if annualJan1Room > 0.
+   * Build sorted list of events in range: user transactions, next-Jan-1
+   * withdrawal add-backs, and annual Jan 1 room adjustments.
    * Sorted by date, then by explicit priority so same-day events are deterministic:
-   * room_adjustment first, then withdrawal, then contribution.
+   * room adjustment, withdrawal add-back, withdrawal, contribution.
    */
   function buildEventTimeline(inputs) {
     const { startDate, endDate, startingRoom, annualJan1Room, transactions } = inputs;
@@ -154,12 +159,33 @@
     if (!start || !end || start.getTime() > end.getTime()) return [];
 
     const events = [];
+    const withdrawalsByYear = {};
 
     // User transactions in range
     for (let i = 0; i < (transactions || []).length; i++) {
       const t = transactions[i];
       const norm = normalizeTransaction(t, startDate, endDate);
-      if (norm) events.push(norm);
+      if (norm) {
+        events.push(norm);
+        if (norm.type === "withdrawal") {
+          const year = norm.dateObj.getFullYear();
+          withdrawalsByYear[year] = (withdrawalsByYear[year] || 0) + norm.amount;
+        }
+      }
+    }
+
+    // Each year's withdrawals restore contribution room on the following Jan 1.
+    for (const [yearText, amount] of Object.entries(withdrawalsByYear)) {
+      const jan1 = String(Number(yearText) + 1) + "-01-01";
+      const jan1Obj = parseDate(jan1);
+      if (jan1Obj && dateInRange(jan1Obj, start, end)) {
+        events.push({
+          date: jan1,
+          dateObj: jan1Obj,
+          type: "withdrawal_addback",
+          amount
+        });
+      }
     }
 
     // Jan 1 room additions for each year in range (if annualJan1Room > 0)
@@ -194,8 +220,8 @@
    * Apply one event to state. State is { room, excess }.
    * Returns new state (no mutation).
    *
-   * room_adjustment semantics (single application, no double-counting):
-   * The adjustment is applied once. It first absorbs current excess (reduces excess).
+   * room_adjustment and withdrawal_addback semantics (single application):
+   * The added room first absorbs current excess (reduces excess).
    * Only the remainder after absorbing excess is added to available room.
    * So: absorbed = min(excess, amount); excess -= absorbed; room += (amount - absorbed).
    */
@@ -213,7 +239,8 @@
       case "withdrawal":
         excess = Math.max(0, excess - amount);
         break;
-      case "room_adjustment": {
+      case "room_adjustment":
+      case "withdrawal_addback": {
         let remainingAdjustment = amount;
         const absorbed = Math.min(excess, remainingAdjustment);
         excess = excess - absorbed;
@@ -232,6 +259,7 @@
    */
   function runTfsaOverContributionPenaltyEstimate(inputs) {
     const { startDate, endDate, startingRoom, annualJan1Room, transactions } = inputs;
+    const startingExcessRaw = inputs.startingExcess ?? inputs.starting_excess ?? 0;
 
     const start = parseDate(startDate);
     const end = parseDate(endDate);
@@ -245,6 +273,11 @@
     const room0 = Number(startingRoom);
     if (!Number.isFinite(room0) || room0 < 0) {
       return { error: "Starting room must be a non-negative number." };
+    }
+
+    const excess0 = Number(startingExcessRaw);
+    if (!Number.isFinite(excess0) || excess0 < 0) {
+      return { error: "Starting excess must be a non-negative number." };
     }
 
     const annualRoom = Number(annualJan1Room);
@@ -267,7 +300,7 @@
     }
 
     let room = room0;
-    let excess = 0;
+    let excess = excess0;
     let totalPenalty = 0;
     let monthsWithPenalty = 0;
     let peakExcess = 0;
@@ -276,8 +309,18 @@
 
     for (const monthKey of monthsInRange) {
       const roomAtStartOfMonth = room;
-      let highestExcessInMonth = excess;
       const monthEvents = eventsByMonth[monthKey] || [];
+      const firstDay = monthKey + "-01";
+      const beginsWithJan1RoomEvent = monthEvents.some(
+        (event) =>
+          event.date === firstDay &&
+          (event.type === "room_adjustment" ||
+            event.type === "withdrawal_addback")
+      );
+      // Jan 1 statutory room and prior-year withdrawal add-backs apply before
+      // the month's excess is measured. In every other month, carried excess
+      // exists at the start of the month and is part of that month's peak.
+      let highestExcessInMonth = beginsWithJan1RoomEvent ? 0 : excess;
 
       for (const ev of monthEvents) {
         const stateBefore = { room, excess };
@@ -313,7 +356,8 @@
     const assumptions = [
       "Penalty is 1% per month on the highest excess amount in each calendar month.",
       "Transactions outside the selected date range are ignored.",
-      "Withdrawals reduce excess only; they do not add to contribution room in this model.",
+      "Withdrawals reduce excess when made and restore contribution room on January 1 of the following year.",
+      "Only withdrawals inside the selected date range can be restored by the model.",
       "Jan 1 room is added only when 'annual new TFSA room (Jan 1)' is greater than zero.",
       "This is an educational estimate; CRA rules and your specific situation may differ."
     ];

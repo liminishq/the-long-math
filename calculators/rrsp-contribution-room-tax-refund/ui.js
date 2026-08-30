@@ -163,10 +163,10 @@ import { computeScenario, parseNumber } from "./engine.js";
     const refundNote = document.getElementById("out_refund_method_note");
     if (inputs.refundMethod === "marginal") {
       refundNote.textContent =
-        "Refund is estimated as deductible contribution × combined marginal tax rate at your starting taxable income.";
+        "Income-tax saving estimated as deductible contribution × combined marginal tax rate at your starting taxable income — not a CRA refund cheque.";
     } else {
       refundNote.textContent =
-        "Refund is estimated by recalculating tax before and after the RRSP deduction using federal and provincial brackets.";
+        "Income-tax saving estimated by recalculating tax before and after the RRSP deduction using federal and provincial brackets — not a CRA refund cheque.";
     }
   }
 

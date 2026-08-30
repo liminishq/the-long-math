@@ -132,6 +132,7 @@
   function applyCompoundScenarioFromQuery() {
     const ps = new URLSearchParams(window.location.search || "");
     if (!ps.toString()) return false;
+    if (!ps.has("rate") || !ps.has("years")) return false;
     const rateRaw = Number(ps.get("rate"));
     const yearsRaw = Number(ps.get("years"));
     if (!Number.isFinite(rateRaw) || !Number.isFinite(yearsRaw)) return false;

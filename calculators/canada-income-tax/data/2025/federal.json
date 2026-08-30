@@ -24,7 +24,24 @@
     },
     "cppEiCredit": {
       "rate": 0.15
+    },
+    "ageAmount": {
+      "amount": 9028,
+      "phaseOutStart": 45522,
+      "phaseOutRate": 0.15,
+      "minimumAge": 65,
+      "_note": "CRA 2025 line 30100 / indexation table. Claim $9,028 if net income ≤ $45,522; reduced by 15% of net income above that threshold (ITA 118(2))."
+    },
+    "pensionIncomeAmount": {
+      "amount": 2000,
+      "_note": "Federal pension income amount (line 31400) is $2,000. Not CPI-indexed. Eligibility of the income is determined by the caller."
     }
+  },
+  "oasRecovery": {
+    "rate": 0.15,
+    "threshold": 93454,
+    "_source": "CRA indexation table: Old age security repayment threshold 2025. canada.ca recovery-tax page.",
+    "_note": "Repay 15% of line 23400 above the threshold, not exceeding OAS received."
   },
   "rrspRoomRate": 0.18,
   "rrspDollarMax": 32490,

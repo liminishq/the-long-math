@@ -30,6 +30,10 @@ function effectiveRate(config, fallbackRate, taxationYearStartDate) {
  * @returns {Object} Corporate tax breakdown
  */
 export function calculateCorporateTax(taxableIncome, province, opts = {}) {
+  const income = Number(taxableIncome);
+  // Public boundary: non-finite or negative taxable income is treated as $0.
+  taxableIncome = Number.isFinite(income) && income >= 0 ? income : 0;
+
   const federal = getFederalCorporateData();
   const prov = getProvincialCorporateData(province);
 

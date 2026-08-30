@@ -97,6 +97,17 @@ import { simulateRetirementWithdrawal } from "./engine.js";
     return rounded.toFixed(1) + " years";
   }
 
+  function formatEffectiveYears(years) {
+    if (!Number.isFinite(years)) return "—";
+    if (Math.abs(years - Math.round(years)) < 1e-9) return String(Math.round(years));
+    return String(Number(years.toFixed(4)));
+  }
+
+  function shareNum(x, digits) {
+    if (!Number.isFinite(x)) return "";
+    return String(Number(Number(x).toFixed(digits)));
+  }
+
   function periodsPerYearFromSelect() {
     return Math.max(1, Math.round(toNumber(frequency.value)));
   }
@@ -157,7 +168,8 @@ import { simulateRetirementWithdrawal } from "./engine.js";
       periodicWithdrawal: toNumber(withdrawalAmount.value),
       initialWithdrawalRate: toNumber(withdrawalRate.value) / 100,
       withdrawalAdjustment: readWithdrawalAdjustment(),
-      inflationRate: toNumber(inflationRate.value) / 100
+      inflationRate: toNumber(inflationRate.value) / 100,
+      showInflationAdjustedValues: Boolean(realToggle && realToggle.checked)
     });
   }
 
@@ -166,17 +178,22 @@ import { simulateRetirementWithdrawal } from "./engine.js";
       v: 2,
       sver: SCRIPT_VER,
       p: String(Math.round(sim.inputs.portfolio)),
-      r: String((sim.inputs.rA * 100).toFixed(3)),
-      y: String(sim.inputs.retirementYears),
+      r: shareNum(sim.inputs.rA * 100, 6),
+      y: shareNum(
+        Number.isFinite(sim.inputs.requestedRetirementYears)
+          ? sim.inputs.requestedRetirementYears
+          : sim.inputs.retirementYears,
+        6
+      ),
       f: String(sim.inputs.ppy),
       t: sim.inputs.withdrawalType === "rate" ? "r" : "d",
       w:
         sim.inputs.withdrawalType === "rate"
-          ? String(toNumber(withdrawalRate.value).toFixed(3))
-          : String(toNumber(withdrawalAmount.value).toFixed(2)),
+          ? shareNum(toNumber(withdrawalRate.value), 6)
+          : shareNum(toNumber(withdrawalAmount.value), 4),
       wa: sim.inputs.withdrawalAdjustment === "fixed" ? "f" : "i",
       i: realToggle.checked ? "1" : "0",
-      ir: String(toNumber(inflationRate.value).toFixed(3))
+      ir: shareNum(toNumber(inflationRate.value), 6)
     };
   }
 
@@ -187,18 +204,19 @@ import { simulateRetirementWithdrawal } from "./engine.js";
     const inflPct = toNumber(inflationRate.value).toFixed(1) + "%";
 
     var primaryLine;
+    const horizonLabel = formatEffectiveYears(sim.inputs.retirementYears);
     if (sim.depleted) {
       primaryLine = "Portfolio depleted after approximately " + fmtYearsApprox(sim.depletionRetirementYears);
     } else {
       primaryLine =
-        "Projected portfolio left after " + sim.inputs.retirementYears + " years: " + fmtMoney(Math.max(0, sim.finalNominal));
+        "Projected portfolio left after " + horizonLabel + " years: " + fmtMoney(Math.max(0, sim.finalNominal));
     }
 
     const contextLines = [
       "Starting portfolio at retirement: " + fmtMoney(sim.portfolioAtStart),
       "Initial annual withdrawal: " + fmtMoney(sim.inputs.annualWithdrawal),
       "Withdrawal adjustment: " +
-        (sim.inputs.withdrawalAdjustment === "inflation" ? "increases with inflation" : "fixed nominal dollars"),
+        (sim.inputs.withdrawalAdjustment === "inflation" ? "adjusts with inflation" : "fixed nominal dollars"),
       "Return: " + (sim.inputs.rA * 100).toFixed(1) + "%"
     ];
     if (realToggle.checked) {
@@ -298,13 +316,17 @@ import { simulateRetirementWithdrawal } from "./engine.js";
     if (lblPortfolio) lblPortfolio.textContent = "Starting portfolio";
     if (outPortfolio) outPortfolio.textContent = fmtMoney(sim.portfolioAtStart);
     if (outAnnualW) outAnnualW.textContent = fmtMoney(sim.inputs.annualWithdrawal);
-    if (outStartWR) outStartWR.textContent = fmtPct(sim.inputs.startingWR, 2);
+    if (outStartWR) {
+      outStartWR.textContent =
+        sim.inputs.startingWR == null ? "—" : fmtPct(sim.inputs.startingWR, 2);
+    }
 
+    const horizonLabel = formatEffectiveYears(sim.inputs.retirementYears);
     if (outDepletion) {
       if (sim.depleted) {
         outDepletion.textContent = "Depleted after approximately " + fmtYearsApprox(sim.depletionRetirementYears);
       } else {
-        outDepletion.textContent = "Lasts full " + sim.inputs.retirementYears + "-year period";
+        outDepletion.textContent = "Lasts full " + horizonLabel + "-year period";
       }
     }
 
@@ -321,7 +343,7 @@ import { simulateRetirementWithdrawal } from "./engine.js";
       if (sim.depleted) {
         resultSummary.textContent =
           "Based on these assumptions, the portfolio is depleted after approximately " + fmtYearsApprox(sim.depletionRetirementYears) +
-          ". The selected withdrawal amount does not last for the full " + sim.inputs.retirementYears + "-year period.";
+          ". The selected withdrawal amount does not last for the full " + horizonLabel + "-year period.";
       } else if (realToggle.checked) {
         resultSummary.textContent =
           "Based on these assumptions, the portfolio lasts the full retirement period and ends with an estimated balance of " + endBal +
@@ -330,14 +352,14 @@ import { simulateRetirementWithdrawal } from "./engine.js";
         resultSummary.textContent =
           "Based on these assumptions, the portfolio lasts the full retirement period and ends with an estimated balance of " + endBal + ".";
       }
-      if (sim.inputs.withdrawalType === "rate") {
+      if (sim.inputs.withdrawalType === "rate" && sim.inputs.startingWR != null) {
         resultSummary.textContent +=
           " An initial withdrawal rate of " + fmtPct(sim.inputs.startingWR, 2) + " equals approximately " +
           fmtMoney(sim.inputs.annualWithdrawal) + " in the first year, or " + fmtMoney2(sim.inputs.periodicWithdrawal) +
           " per period, based on the starting portfolio value at retirement.";
       }
       resultSummary.textContent += sim.inputs.withdrawalAdjustment === "inflation"
-        ? " That initial withdrawal increases with inflation at the start of each retirement year."
+        ? " That initial withdrawal adjusts with inflation at the start of each retirement year."
         : " That withdrawal remains fixed in nominal dollars.";
     }
 
@@ -383,6 +405,8 @@ import { simulateRetirementWithdrawal } from "./engine.js";
     ctx.clearRect(0, 0, wCss, hCss);
 
     if (!sim || !sim.chart || !sim.chart.years.length) {
+      chartCanvas._rwMeta = null;
+      if (chartTooltip) chartTooltip.style.display = "none";
       ctx.fillStyle = "rgba(238,242,247,0.7)";
       ctx.font = "14px system-ui, -apple-system, Segoe UI, Roboto, Arial";
       ctx.fillText("Enter valid inputs to see the chart.", 12, 24);
@@ -509,7 +533,10 @@ import { simulateRetirementWithdrawal } from "./engine.js";
     rows.push("Annual return (nominal): " + (sim.inputs.rA * 100).toFixed(3) + "%");
     rows.push("Periods per year: " + String(sim.inputs.ppy));
     rows.push("Initial annual withdrawal: " + sim.inputs.annualWithdrawal.toFixed(2));
-    rows.push("Starting withdrawal rate: " + (sim.inputs.startingWR * 100).toFixed(3) + "%");
+    rows.push(
+      "Starting withdrawal rate: " +
+        (sim.inputs.startingWR == null ? "N/A" : (sim.inputs.startingWR * 100).toFixed(3) + "%")
+    );
     rows.push("Withdrawal adjustment: " + sim.inputs.withdrawalAdjustment);
     rows.push("Inflation: " + (sim.inputs.infl * 100).toFixed(3) + "%");
     rows.push("Inflation-adjusted display: " + (realToggle.checked ? "on" : "off"));

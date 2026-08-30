@@ -98,9 +98,18 @@
       aumFeePct = DEFAULTS.aum_fee_pct / 100;
     }
 
-    const feeInflationOn = $("fee_inflation_on").checked || $("fee_inflation_on_hourly").checked;
-    let feeIncreasePct = num($("fee_increase_pct").value) || num($("fee_increase_pct_hourly").value);
-    if (!Number.isFinite(feeIncreasePct)) feeIncreasePct = DEFAULTS.fee_increase_pct;
+    let feeInflationOn = false;
+    let feeIncreasePct = 0;
+    if (feeModel === "flat") {
+      feeInflationOn = $("fee_inflation_on").checked;
+      feeIncreasePct = num($("fee_increase_pct").value);
+    } else if (feeModel === "hourly") {
+      feeInflationOn = $("fee_inflation_on_hourly").checked;
+      feeIncreasePct = num($("fee_increase_pct_hourly").value);
+    }
+    if (feeModel !== "aum" && !Number.isFinite(feeIncreasePct)) {
+      feeIncreasePct = DEFAULTS.fee_increase_pct;
+    }
 
     return {
       startingBalance: clamp(num($("starting_balance").value), 0, 10000000),
@@ -400,13 +409,32 @@
           monthly_contribution: Math.round(inp.monthlyContribution),
           horizon_years: Number(inp.horizonYears.toFixed(2)),
           annual_return: Number((inp.annualReturn * 100).toFixed(4)),
-          flat_fee: Math.round(inp.flatFee),
-          hourly_rate: Math.round(inp.hourlyRate),
-          hours_per_year: Math.round(inp.hoursPerYear),
-          aum_fee_pct: Number((inp.aumFeePct * 100).toFixed(4)),
-          fee_inflation: inp.feeInflationOn ? 1 : 0,
-          fee_increase_pct: Number(inp.feeIncreasePct.toFixed(4)),
         };
+        if (inp.feeModel === "flat") {
+          scenario.flat_fee = Math.round(inp.flatFee);
+          scenario.fee_inflation = inp.feeInflationOn ? 1 : 0;
+          scenario.fee_increase_pct = Number(inp.feeIncreasePct.toFixed(4));
+        } else if (inp.feeModel === "hourly") {
+          scenario.hourly_rate = Math.round(inp.hourlyRate);
+          scenario.hours_per_year = Math.round(inp.hoursPerYear);
+          scenario.fee_inflation = inp.feeInflationOn ? 1 : 0;
+          scenario.fee_increase_pct = Number(inp.feeIncreasePct.toFixed(4));
+        } else {
+          scenario.aum_fee_pct = Number((inp.aumFeePct * 100).toFixed(4));
+        }
+        const modelLines =
+          inp.feeModel === "flat"
+            ? ["Fee model: flat fee", "Flat fee: " + fmtCAD(inp.flatFee)]
+            : inp.feeModel === "hourly"
+              ? [
+                  "Fee model: hourly",
+                  "Hourly work: " +
+                    inp.hoursPerYear +
+                    " hours at " +
+                    fmtCAD(inp.hourlyRate) +
+                    "/hour",
+                ]
+              : ["Fee model: AUM", "AUM fee: " + fmtPct(inp.aumFeePct)];
         return {
           scenario: scenario,
           card: {
@@ -417,10 +445,7 @@
               "Starting balance: " + fmtCAD(inp.startingBalance),
               "Monthly contribution: " + fmtCAD(inp.monthlyContribution),
               "Annual growth: " + fmtPct(inp.annualReturn),
-              "Flat fee: " + fmtCAD(inp.flatFee),
-              "Hourly work: " + inp.hoursPerYear + " hours at " + fmtCAD(inp.hourlyRate) + "/hour",
-              "AUM comparison: " + fmtPct(inp.aumFeePct),
-            ],
+            ].concat(modelLines),
             shareText:
               "Estimated total fee cost over " +
               years +

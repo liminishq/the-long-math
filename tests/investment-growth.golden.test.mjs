@@ -12,6 +12,24 @@ await import(engineUrl);
 const Engine = globalThis.InvestmentGrowthEngine;
 assert.ok(Engine, "InvestmentGrowthEngine should be on globalThis");
 
+function assertApprox(actual, expected, tolerance = 1e-9, label = "value") {
+  assert.ok(
+    Math.abs(actual - expected) <= tolerance,
+    `${label}: expected ${expected}, got ${actual}`
+  );
+}
+
+function assertRowReconciles(row, label) {
+  assertApprox(
+    row.openingBalance + row.netCashFlow + row.growth,
+    row.endingBalance,
+    1e-9,
+    `${label} reconciliation`
+  );
+  assert.equal(row.balance, row.endingBalance, `${label} balance compatibility alias`);
+  assert.equal(row.startingBalance, row.openingBalance, `${label} starting compatibility alias`);
+}
+
 test("zero return: ending equals starting plus contributions (real, indexed)", () => {
   const result = Engine.simulateInvestment({
     startingAmount: 10000,
@@ -201,4 +219,158 @@ test("real mode matches closed form at Fisher real return", () => {
   });
   const expected = closedFormFv(25000, 500, 12, 15, rReal);
   assert.ok(Math.abs(result.finalBalanceReal - expected) < 1e-4);
+});
+
+test("headline balances remain unchanged while schedules are generated", () => {
+  const common = {
+    startingAmount: 1000,
+    contributionPerPeriod: 100,
+    years: 2,
+    nominalAnnualReturn: 0.12,
+    inflationAnnual: 0,
+    contributionPeriodsPerYear: 12,
+    indexContributionsToInflation: true,
+  };
+  const end = Engine.simulateInvestment(Object.assign({}, common, {
+    contributionAtBeginning: false,
+  }));
+  const beginning = Engine.simulateInvestment(Object.assign({}, common, {
+    contributionAtBeginning: true,
+  }));
+
+  assertApprox(end.finalBalanceReal, 3935.457556570879, 1e-12, "end headline");
+  assertApprox(beginning.finalBalanceReal, 3960.8975565708793, 1e-12, "begin headline");
+  assert.equal(end.finalBalanceReal, end.startingAmount + end.totalContributions + end.growth);
+  assert.equal(
+    beginning.finalBalanceReal,
+    beginning.startingAmount + beginning.totalContributions + beginning.growth
+  );
+});
+
+test("annual boundary contributions follow beginning and end timing", () => {
+  for (const contributionAtBeginning of [false, true]) {
+    const result = Engine.simulateInvestment({
+      startingAmount: 0,
+      contributionPerPeriod: 100,
+      years: 2,
+      nominalAnnualReturn: 0,
+      inflationAnnual: 0,
+      contributionPeriodsPerYear: 1,
+      contributionAtBeginning,
+      indexContributionsToInflation: true,
+    });
+    const [year1, year2] = result.schedule.slice(1);
+    assert.equal(year1.contributions, 100);
+    assert.equal(year2.contributions, 100);
+    assert.equal(year1.withdrawals, 0);
+    assert.equal(year2.withdrawals, 0);
+    assertRowReconciles(year1, `year 1 (${contributionAtBeginning ? "begin" : "end"})`);
+    assertRowReconciles(year2, `year 2 (${contributionAtBeginning ? "begin" : "end"})`);
+    assert.equal(year1.endingBalance, year2.openingBalance);
+    assert.equal(year2.endingBalance, result.finalBalanceReal);
+  }
+});
+
+test("monthly schedules report growth and reconcile with annual rows", () => {
+  for (const contributionAtBeginning of [false, true]) {
+    const result = Engine.simulateInvestment({
+      startingAmount: 1000,
+      contributionPerPeriod: 100,
+      years: 1.1,
+      nominalAnnualReturn: 0.12,
+      inflationAnnual: 0,
+      contributionPeriodsPerYear: 12,
+      contributionAtBeginning,
+      indexContributionsToInflation: true,
+    });
+
+    assert.equal(result.monthlySchedule.length, 14, "includes the partial terminal month");
+    assert.ok(result.monthlySchedule.some((row) => row.growth !== 0));
+    result.monthlySchedule.forEach((row, index) => {
+      assertRowReconciles(row, `month ${index + 1}`);
+      if (index > 0) {
+        assert.equal(row.openingBalance, result.monthlySchedule[index - 1].endingBalance);
+      }
+    });
+    result.schedule.slice(1).forEach((row) => assertRowReconciles(row, `year ${row.year}`));
+
+    const annualContributions = result.schedule
+      .slice(1)
+      .reduce((sum, row) => sum + row.contributions, 0);
+    const monthlyContributions = result.monthlySchedule
+      .reduce((sum, row) => sum + row.contributions, 0);
+    const annualGrowth = result.schedule.slice(1).reduce((sum, row) => sum + row.growth, 0);
+    const monthlyGrowth = result.monthlySchedule.reduce((sum, row) => sum + row.growth, 0);
+    assert.equal(annualContributions, monthlyContributions);
+    assertApprox(annualGrowth, monthlyGrowth, 1e-9, "annual/monthly growth");
+    assert.equal(
+      result.monthlySchedule.at(-1).endingBalance,
+      result.finalBalanceReal
+    );
+  }
+});
+
+test("withdrawals preserve an exact zero annual balance", () => {
+  const result = Engine.simulateInvestment({
+    startingAmount: 100,
+    contributionPerPeriod: -100,
+    years: 2,
+    nominalAnnualReturn: 0,
+    inflationAnnual: 0,
+    contributionPeriodsPerYear: 1,
+    contributionAtBeginning: false,
+    indexContributionsToInflation: true,
+  });
+  const year1 = result.schedule[1];
+  const year2 = result.schedule[2];
+
+  assert.equal(year1.contributions, -100, "legacy signed contribution field remains compatible");
+  assert.equal(year1.positiveContributions, 0);
+  assert.equal(year1.withdrawals, 100);
+  assert.equal(year1.netCashFlow, -100);
+  assert.equal(year1.endingBalance, 0);
+  assert.equal(year1.balance, 0);
+  assert.equal(year2.openingBalance, 0);
+  assert.equal(result.totalContributions, -200, "legacy signed total remains compatible");
+  assert.equal(result.totalWithdrawals, 200);
+  assertRowReconciles(year1, "zero-balance year");
+  assertRowReconciles(year2, "post-zero year");
+});
+
+test("annual and monthly rows retain consumer-compatible field names", () => {
+  const result = Engine.simulateInvestment({
+    startingAmount: 1000,
+    contributionPerPeriod: 100,
+    years: 1,
+    nominalAnnualReturn: 0.05,
+    inflationAnnual: 0.02,
+    contributionPeriodsPerYear: 12,
+    contributionAtBeginning: false,
+    indexContributionsToInflation: true,
+  });
+  const annual = result.schedule[1];
+  const monthly = result.monthlySchedule[0];
+
+  for (const field of [
+    "openingBalance",
+    "startingBalance",
+    "contributions",
+    "contributionsNominal",
+    "positiveContributions",
+    "positiveContributionsNominal",
+    "withdrawals",
+    "withdrawalsNominal",
+    "netCashFlow",
+    "netCashFlowNominal",
+    "growth",
+    "endingBalance",
+    "balance",
+  ]) {
+    assert.ok(Object.hasOwn(annual, field), `annual row has ${field}`);
+    assert.ok(Object.hasOwn(monthly, field), `monthly row has ${field}`);
+  }
+  assert.ok(Object.hasOwn(annual, "year"));
+  assert.ok(Object.hasOwn(monthly, "period"));
+  assert.ok(Object.hasOwn(monthly, "year"));
+  assert.ok(Object.hasOwn(monthly, "timeYears"));
 });
