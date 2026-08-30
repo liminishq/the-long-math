@@ -15,10 +15,35 @@
 
   function num(x) {
     if (x == null) return NaN;
-    const s = String(x).trim().replace(/,/g, "");
+    const s = String(x).trim();
     if (s === "") return NaN;
+    if (!/^[+-]?(?:\d+(?:\.\d+)?|\.\d+)$/.test(s)) return NaN;
     const n = Number(s);
     return Number.isFinite(n) ? n : NaN;
+  }
+
+  function getLang() {
+    if (window.TLM && window.TLM.i18n && typeof window.TLM.i18n.getLang === "function") {
+      return window.TLM.i18n.getLang() === "fr" ? "fr" : "en";
+    }
+    return document.documentElement && document.documentElement.lang === "fr" ? "fr" : "en";
+  }
+
+  function localizedNum(x) {
+    if (x == null) return NaN;
+    const s = String(x).trim();
+    if (s === "") return NaN;
+    const decimal = getLang() === "fr" ? "," : ".";
+    const escapedDecimal = decimal === "." ? "\\." : decimal;
+    const pattern = new RegExp("^[+-]?(?:\\d+(?:" + escapedDecimal + "\\d+)?|" + escapedDecimal + "\\d+)$");
+    if (!pattern.test(s)) return NaN;
+    const n = Number(decimal === "," ? s.replace(",", ".") : s);
+    return Number.isFinite(n) ? n : NaN;
+  }
+
+  function localizedInputValue(n) {
+    const s = String(n);
+    return getLang() === "fr" ? s.replace(".", ",") : s;
   }
 
   function clamp(n, lo, hi) {
@@ -68,16 +93,9 @@
 
   // Slider config (percent units)
   const AR = { min: 0, max: 15, step: 0.25 };
-  var latestSharePayload = null;
+  var latestShareBundle = null;
   var hasUserInteracted = false;
   var sharedScenarioLoaded = false;
-
-  function setShareStatus(message, isError) {
-    var statusEl = document.getElementById("result_share_status");
-    if (!statusEl) return;
-    statusEl.textContent = message || "";
-    statusEl.style.color = isError ? "#e7b4b4" : "";
-  }
 
   function markShareReady() {
     if (hasUserInteracted) return;
@@ -130,7 +148,7 @@
 
     var returnPct = num(params.get("return"));
     if (Number.isFinite(returnPct)) {
-      $("annual_return").value = String(clamp(returnPct, AR.min, AR.max));
+      $("annual_return").value = localizedInputValue(clamp(returnPct, AR.min, AR.max));
       hasSupportedParam = true;
     }
 
@@ -141,7 +159,7 @@
       hasSupportedParam = true;
     }
     if (Number.isFinite(feePct)) {
-      $("custom_advisor_fee").value = String(clamp(feePct, 0, 15));
+      $("custom_advisor_fee").value = localizedInputValue(clamp(feePct, 0, 15));
       if (useDefaultParam === null) $("use_default_fee").checked = false;
       hasSupportedParam = true;
     }
@@ -153,7 +171,7 @@
       hasSupportedParam = true;
     }
     if (Number.isFinite(merPct)) {
-      $("mer_pct").value = String(clamp(merPct, 0, 15));
+      $("mer_pct").value = localizedInputValue(clamp(merPct, 0, 15));
       if (includeMerParam === null) $("include_mer").checked = true;
       hasSupportedParam = true;
     }
@@ -169,12 +187,12 @@
     return true;
   }
 
-  function buildSharePayload(result, inputs) {
-    if (!result || !window.TLM || !window.TLM.shareCard) return null;
+  function buildShareBundle(result, inputs) {
+    if (!result) return null;
 
     var horizonYears = clamp(num($("horizon_years").value), 1, 50);
     var totalCost = Number(result.total_calculated_cost);
-    if (!window.TLM.shareCard.isFiniteNumber(totalCost)) return null;
+    if (!Number.isFinite(totalCost)) return null;
 
     var scenario = {
       initial: Math.round(inputs.starting_balance),
@@ -188,24 +206,22 @@
       mer: Number(inputs.mer_pct.toFixed(2)),
     };
 
-    var shareUrl = window.TLM.shareCard.buildResultUrl(window.location.href, scenario);
-
     return {
-      calculatorName: "advisor-fee",
-      title: "The Long Math calculator result",
-      headline: "Projected cost of fees and lost compounding",
-      mainValue: fmtCAD(totalCost),
-      subline: "Over a " + fmtYears(horizonYears) + "-year investing horizon",
-      contextLines: [
-        "Starting balance: " + fmtCAD(inputs.starting_balance),
-        "Monthly contribution: " + fmtCAD(inputs.monthly_contribution),
-        "Gross return: " + fmtPct(inputs.annual_return),
-        "Advisor fee model: " + (inputs.use_default_fee ? "default blended schedule" : inputs.custom_advisor_fee_pct.toFixed(2) + "% custom fee"),
-        "MER included: " + (inputs.include_mer ? inputs.mer_pct.toFixed(2) + "%" : "no"),
-      ],
-      footer: "Run your own numbers at TheLongMath.com",
-      shareText: "Estimated fee drag over " + fmtYears(horizonYears) + " years: " + fmtCAD(totalCost) + ". Run your own numbers:",
-      url: shareUrl,
+      scenario: scenario,
+      card: {
+        title: "The Long Math calculator result",
+        headline: "Projected cost of fees and lost compounding",
+        mainValue: fmtCAD(totalCost),
+        subline: "Over a " + fmtYears(horizonYears) + "-year investing horizon",
+        contextLines: [
+          "Starting balance: " + fmtCAD(inputs.starting_balance),
+          "Monthly contribution: " + fmtCAD(inputs.monthly_contribution),
+          "Gross return: " + fmtPct(inputs.annual_return),
+          "Advisor fee model: " + (inputs.use_default_fee ? "default blended schedule" : inputs.custom_advisor_fee_pct.toFixed(2) + "% custom fee"),
+          "MER included: " + (inputs.include_mer ? inputs.mer_pct.toFixed(2) + "%" : "no"),
+        ],
+        shareText: "Estimated fee drag over " + fmtYears(horizonYears) + " years: " + fmtCAD(totalCost) + ". Run your own numbers:",
+      },
     };
   }
 
@@ -216,18 +232,18 @@
     const include_mer = $("include_mer").checked;
 
     // MER: if checked but blank/invalid, fallback to DEFAULTS.mer_pct (2)
-    let merPct = num($("mer_pct").value);
+    let merPct = localizedNum($("mer_pct").value);
     if (!Number.isFinite(merPct)) merPct = DEFAULTS.mer_pct;
 
     // Advisor fee override: only relevant when default schedule unchecked.
-    let advisorFeePct = num($("custom_advisor_fee").value);
+    let advisorFeePct = localizedNum($("custom_advisor_fee").value);
     if (!Number.isFinite(advisorFeePct)) advisorFeePct = DEFAULTS.advisor_fee_pct;
 
     return {
       starting_balance: clamp(num($("starting_balance").value), 0, 10000000),
       monthly_contribution: clamp(num($("monthly_contribution").value), 0, 50000),
       horizon_years: clamp(num($("horizon_years").value), 1, 50),
-      annual_return: clamp(num($("annual_return").value), AR.min, AR.max) / 100,
+      annual_return: clamp(localizedNum($("annual_return").value), AR.min, AR.max) / 100,
 
       use_default_fee: $("use_default_fee").checked,
       custom_advisor_fee_pct: clamp(advisorFeePct, 0, 15),
@@ -271,14 +287,14 @@
 
     $("out_breakeven").textContent = fmtPct(result.break_even_return);
 
-    latestSharePayload = buildSharePayload(result, inp);
+    latestShareBundle = buildShareBundle(result, inp);
   }
 
   // -----------------------------
   // UI sync bits
   // -----------------------------
   function syncSliderFromAnnualReturn() {
-    const n = num($("annual_return").value);
+    const n = localizedNum($("annual_return").value);
     if (!Number.isFinite(n)) return;
     const snapped = Math.round(n / AR.step) * AR.step;
     const clamped = clamp(snapped, AR.min, AR.max);
@@ -290,7 +306,7 @@
     const n = num($("annual_return_slider").value);
     if (!Number.isFinite(n)) return;
     const clamped = clamp(n, AR.min, AR.max);
-    $("annual_return").value = String(clamped);
+    $("annual_return").value = localizedInputValue(clamped);
     $("annual_return_label").textContent = (window.TLM && window.TLM.format) ? window.TLM.format.percent(clamped / 100, { decimals: 2 }, window.TLM.i18n && window.TLM.i18n.getLang && window.TLM.i18n.getLang()) : clamped.toFixed(2) + "%";
   }
 
@@ -300,8 +316,8 @@
 
     // If turning ON and the box is blank, seed it to 2.0
     if (on) {
-      const cur = num($("mer_pct").value);
-      if (!Number.isFinite(cur)) $("mer_pct").value = String(DEFAULTS.mer_pct);
+      const cur = localizedNum($("mer_pct").value);
+      if (!Number.isFinite(cur)) $("mer_pct").value = localizedInputValue(DEFAULTS.mer_pct);
     }
   }
 
@@ -311,8 +327,8 @@
 
     // If switching to override and blank, seed it to 1.0
     if (!useDefault) {
-      const cur = num($("custom_advisor_fee").value);
-      if (!Number.isFinite(cur)) $("custom_advisor_fee").value = String(DEFAULTS.advisor_fee_pct);
+      const cur = localizedNum($("custom_advisor_fee").value);
+      if (!Number.isFinite(cur)) $("custom_advisor_fee").value = localizedInputValue(DEFAULTS.advisor_fee_pct);
     }
   }
 
@@ -326,14 +342,14 @@
     $("starting_balance").value = String(p.starting_balance);
     $("monthly_contribution").value = String(p.monthly_contribution);
     $("horizon_years").value = String(p.horizon_years);
-    $("annual_return").value = String(p.annual_return_pct);
+    $("annual_return").value = localizedInputValue(p.annual_return_pct);
 
     // Keep preferred defaults
     $("use_default_fee").checked = true;
-    $("custom_advisor_fee").value = String(DEFAULTS.advisor_fee_pct);
+    $("custom_advisor_fee").value = localizedInputValue(DEFAULTS.advisor_fee_pct);
 
     $("include_mer").checked = true;
-    $("mer_pct").value = String(DEFAULTS.mer_pct); // <-- critical fix: seed to 2%
+    $("mer_pct").value = localizedInputValue(DEFAULTS.mer_pct); // <-- critical fix: seed to 2%
 
     // Slider + label
     $("annual_return_slider").min = String(AR.min);
@@ -399,52 +415,9 @@
       render();
     });
 
-    var shareBtn = document.getElementById("share_result_btn");
-    var downloadBtn = document.getElementById("download_result_btn");
-    var copyBtn = document.getElementById("copy_result_link_btn");
-
-    if (shareBtn && downloadBtn && copyBtn && window.TLM && window.TLM.shareCard) {
-      shareBtn.addEventListener("click", async function () {
-        if (!latestSharePayload) return;
-        setShareStatus("Preparing image...");
-        window.TLM.shareCard.track("calculator_result_share_clicked", { calculator_name: latestSharePayload.calculatorName });
-        try {
-          var result = await window.TLM.shareCard.shareResultCard(latestSharePayload);
-          if (result && result.mode === "download-and-copy-fallback") {
-            if (result.copied) {
-              setShareStatus("Shared via fallback: calculation image opened/saved and scenario link copied.");
-            } else {
-              setShareStatus("Calculation image opened/saved. Copy shareable link manually if needed.");
-            }
-          } else if (result && result.mode === "native-share-link") {
-            setShareStatus("Share dialog opened with result summary and scenario link.");
-          } else {
-            setShareStatus("Share dialog opened with image, summary, and scenario link.");
-          }
-        } catch (_err) {
-          setShareStatus("Share cancelled or unavailable. Try Save this calculation instead.", true);
-        }
-      });
-
-      downloadBtn.addEventListener("click", async function () {
-        if (!latestSharePayload) return;
-        setShareStatus("Preparing image...");
-        try {
-          await window.TLM.shareCard.downloadResultCard(latestSharePayload);
-          setShareStatus("Calculation image saved.");
-        } catch (_err) {
-          setShareStatus("Could not prepare image. Please try again.", true);
-        }
-      });
-
-      copyBtn.addEventListener("click", async function () {
-        if (!latestSharePayload) return;
-        try {
-          await window.TLM.shareCard.copyResultLink(latestSharePayload);
-          setShareStatus("Shareable link copied.");
-        } catch (_err) {
-          setShareStatus("Could not copy link on this browser.", true);
-        }
+    if (window.TLM && window.TLM.shareCard && window.TLM.shareCard.wireCalculatorShare) {
+      window.TLM.shareCard.wireCalculatorShare("advisor-fee", function () {
+        return latestShareBundle;
       });
     }
   }
@@ -459,9 +432,9 @@
   if (!loadedFromSharedUrl) {
     applyPreset("mid");
   } else {
-    if (!Number.isFinite(num($("annual_return").value))) $("annual_return").value = String(DEFAULTS.annual_return_pct);
-    if (!Number.isFinite(num($("custom_advisor_fee").value))) $("custom_advisor_fee").value = String(DEFAULTS.advisor_fee_pct);
-    if (!Number.isFinite(num($("mer_pct").value))) $("mer_pct").value = String(DEFAULTS.mer_pct);
+    if (!Number.isFinite(localizedNum($("annual_return").value))) $("annual_return").value = localizedInputValue(DEFAULTS.annual_return_pct);
+    if (!Number.isFinite(localizedNum($("custom_advisor_fee").value))) $("custom_advisor_fee").value = localizedInputValue(DEFAULTS.advisor_fee_pct);
+    if (!Number.isFinite(localizedNum($("mer_pct").value))) $("mer_pct").value = localizedInputValue(DEFAULTS.mer_pct);
     syncSliderFromAnnualReturn();
     setAdvisorOverrideEnabledUI();
     setMEREnabledUI();
