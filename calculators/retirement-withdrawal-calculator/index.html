@@ -4,12 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Retirement Withdrawal Calculator | How Long Will Savings Last?</title>
-  <meta name="description" content="Use this retirement withdrawal calculator to estimate how long your retirement savings may last under fixed withdrawals, a fixed return, and optional inflation adjustment." />
+  <meta name="description" content="Use this retirement withdrawal calculator to estimate how long savings may last with fixed or inflation-adjusted withdrawals and a fixed return." />
   <link rel="canonical" href="https://www.thelongmath.com/calculators/retirement-withdrawal-calculator/" />
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Retirement Withdrawal Calculator | How Long Will Savings Last?" />
-  <meta property="og:description" content="Use this retirement withdrawal calculator to estimate how long your retirement savings may last under fixed withdrawals, a fixed return, and optional inflation adjustment." />
+  <meta property="og:description" content="Use this retirement withdrawal calculator to estimate how long savings may last with fixed or inflation-adjusted withdrawals and a fixed return." />
   <meta property="og:url" content="https://www.thelongmath.com/calculators/retirement-withdrawal-calculator/" />
 
   <script type="application/ld+json">
@@ -20,7 +20,7 @@
     "applicationCategory": "FinanceApplication",
     "operatingSystem": "Web",
     "url": "https://www.thelongmath.com/calculators/retirement-withdrawal-calculator/",
-    "description": "Estimate how long retirement savings may last under fixed withdrawals, a fixed return, and optional inflation adjustment."
+    "description": "Estimate how long retirement savings may last with fixed or inflation-adjusted withdrawals and a fixed return."
   }
   </script>
   <script type="application/ld+json">
@@ -36,7 +36,7 @@
       {
         "@type": "Question",
         "name": "Does the calculator include inflation?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes, but only as a display adjustment. When the inflation toggle is turned on, the calculator shows the estimated portfolio balance in today’s dollars. It does not automatically increase withdrawals each year." }
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Withdrawals can increase annually with inflation or remain fixed in nominal dollars. Separately, the display control can show projected balances in today’s dollars." }
       },
       {
         "@type": "Question",
@@ -78,7 +78,7 @@
     <header class="rw-hero">
       <h1>Retirement Withdrawal Calculator</h1>
       <p class="lead">How long will your retirement savings last?</p>
-      <p class="rw-intro">Estimate how long a starting retirement portfolio may last under fixed withdrawals, a fixed return, and optional inflation adjustment.</p>
+      <p class="rw-intro">Estimate how long a starting retirement portfolio may last under an initial withdrawal, a fixed return, and your chosen inflation treatment.</p>
     </header>
 
     <div class="card rw-calc">
@@ -86,7 +86,7 @@
         <h2 class="section-title">Calculate Your Retirement Withdrawals</h2>
         <a href="/calculators/retirement-withdrawal-calculator/inspect-the-arithmetic/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">Inspect the arithmetic</a>
       </div>
-      <p class="rw-subhead">Fixed withdrawals. Fixed return. Year-by-year drawdown results.</p>
+      <p class="rw-subhead">Fixed return. Adjustable withdrawals. Year-by-year drawdown results.</p>
 
       <div id="errorBanner" class="rw-error hidden" role="alert"></div>
 
@@ -118,17 +118,17 @@
               <div>Withdrawal type</div>
               <div class="rw-toggle-row" role="radiogroup" aria-label="Withdrawal type">
                 <label><input type="radio" name="withdrawalType" id="wt_dollar" value="dollar" checked /> Dollar amount</label>
-                <label><input type="radio" name="withdrawalType" id="wt_rate" value="rate" /> Withdrawal rate</label>
+                <label><input type="radio" name="withdrawalType" id="wt_rate" value="rate" /> Initial withdrawal rate</label>
               </div>
             </div>
 
             <div id="dollarModeFields" class="field">
-              <label for="withdrawalAmount">Withdrawal amount</label>
+              <label for="withdrawalAmount">Initial withdrawal amount</label>
               <input id="withdrawalAmount" type="number" inputmode="decimal" min="0" step="any" value="2000" />
             </div>
 
             <div id="rateModeFields" class="field hidden">
-              <label for="withdrawalRate">Annual withdrawal rate</label>
+              <label for="withdrawalRate">Initial annual withdrawal rate</label>
               <div class="inline">
                 <input id="withdrawalRate" type="number" inputmode="decimal" min="0" step="any" value="4" />
                 <span class="unit">%</span>
@@ -146,26 +146,38 @@
               </select>
             </div>
 
-          <div class="field">
-            <label for="retirementYears">Retirement withdrawal period (years)</label>
-            <input id="retirementYears" type="number" inputmode="decimal" min="1" step="any" value="30" />
-          </div>
+            <fieldset class="field rw-choice-group">
+              <legend>Withdrawal increases</legend>
+              <label class="rw-choice">
+                <span><input type="radio" name="withdrawalAdjustment" id="wa_inflation" value="inflation" checked /> With inflation</span>
+                <span class="help muted">Withdrawals increase with inflation each year to maintain approximately the same purchasing power.</span>
+              </label>
+              <label class="rw-choice">
+                <span><input type="radio" name="withdrawalAdjustment" id="wa_fixed" value="fixed" /> No increase — fixed dollar amount</span>
+                <span class="help muted">Withdrawals remain the same in nominal dollars, so their purchasing power declines over time.</span>
+              </label>
+            </fieldset>
+
+            <div class="field">
+              <label for="retirementYears">Retirement withdrawal period (years)</label>
+              <input id="retirementYears" type="number" inputmode="decimal" min="1" step="any" value="30" />
+            </div>
           </article>
 
           <article class="panel">
-            <h3>Inflation Adjustment</h3>
-            <div class="field checkbox">
-              <input id="realToggle" type="checkbox" checked />
-              <label for="realToggle">Show inflation-adjusted values</label>
-            </div>
-            <div id="inflationFieldWrap" class="field">
+            <h3>Inflation and Display</h3>
+            <div class="field">
               <label for="inflationRate">Inflation rate</label>
               <div class="inline">
                 <input id="inflationRate" type="number" inputmode="decimal" step="any" value="2.5" />
                 <span class="unit">%</span>
               </div>
-              <p class="help muted">Shows balances in today's dollars. Does not increase withdrawals.</p>
             </div>
+            <div class="field checkbox">
+              <input id="realToggle" type="checkbox" checked />
+              <label for="realToggle">Show inflation-adjusted values</label>
+            </div>
+            <p class="help muted">Shows results in today's dollars using the inflation rate above.</p>
           </article>
         </div>
 
@@ -183,7 +195,7 @@
             </div>
             <!-- Row 2: annual withdrawal | starting withdrawal rate -->
             <div class="rw-out-card">
-              <p class="rw-out-label">Annual withdrawal</p>
+              <p class="rw-out-label">Initial annual withdrawal</p>
               <p class="rw-out-value" id="out_annualW">$—</p>
             </div>
             <div class="rw-out-card">
@@ -232,14 +244,14 @@
       <div class="rw-table" style="margin-top: 16px;">
         <details class="field">
           <summary>Year-by-year table</summary>
-          <p class="help muted" style="margin: 8px 0 10px;">Each retirement year is a rollup of the selected withdrawal frequency. Investment growth and withdrawals are shown as totals for the year.</p>
+          <p class="help muted" style="margin: 8px 0 10px;">Each retirement year is a rollup of the selected withdrawal frequency. Withdrawals are the actual nominal cash amounts modelled; the optional real-dollar column applies only to ending balances.</p>
           <div class="table-scroll">
             <table class="schedule-table">
               <thead id="yearTableHead">
                 <tr>
                   <th>Year</th>
                   <th>Starting balance</th>
-                  <th>Withdrawals</th>
+                  <th>Nominal withdrawals</th>
                   <th>Investment growth</th>
                   <th>Ending balance</th>
                   <th data-rw-col="real">Inflation-adjusted ending balance</th>
@@ -255,10 +267,10 @@
     <section class="card rw-below">
       <h2>What This Calculator Shows</h2>
       <p>
-        This calculator models a fixed-withdrawal retirement drawdown. It applies a constant expected return, subtracts withdrawals at the selected frequency, and shows year-by-year balances, depletion timing, and ending value.
+        This calculator models a deterministic retirement drawdown. It applies a constant expected return, subtracts withdrawals at the selected frequency, and shows year-by-year balances, depletion timing, and ending value.
       </p>
       <p>
-        When inflation adjustment is turned on, the calculator also shows each future balance in today's dollars. Inflation changes the displayed purchasing power, not the withdrawal schedule.
+        A withdrawal rate establishes the initial withdrawal from the starting portfolio. The initial dollar amount can then increase annually with inflation or remain fixed in nominal dollars. Separately, the display control can show future balances in today's dollars.
       </p>
     </section>
 
@@ -280,7 +292,6 @@
     </section>
 
 
-    
       <aside class="article-calc-callout calc-article-callout" aria-labelledby="calc-article-callout-heading">
   <h2 id="calc-article-callout-heading" class="article-calc-callout__heading">Want the walkthrough?</h2>
   <p class="article-calc-callout__action">Read <a href="/articles/investing-and-financial-literacy/safe-withdrawal-rate/">Safe Withdrawal Rate</a>.</p>
@@ -312,7 +323,7 @@
         <details class="faq-accordion-item">
           <summary>Does the calculator include inflation?</summary>
           <div class="faq-accordion-body">
-            <p>Yes, but only as a display adjustment. When the inflation toggle is turned on, the calculator shows the estimated portfolio balance in today’s dollars. It does not automatically increase withdrawals each year.</p>
+            <p>Yes. Withdrawals can increase annually with inflation or remain fixed in nominal dollars. Separately, the display control can show projected balances in today’s dollars.</p>
           </div>
         </details>
         <details class="faq-accordion-item">
@@ -369,6 +380,6 @@
   <div id="footerMount"></div>
 
   <script defer src="/assets/js/calculator-share.js?v=20260426"></script>
-  <script defer src="/calculators/retirement-withdrawal-calculator/retirement-withdrawal.js?v=20260426"></script>
+  <script type="module" src="/calculators/retirement-withdrawal-calculator/retirement-withdrawal.js?v=20260830"></script>
 </body>
 </html>

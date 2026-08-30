@@ -50,6 +50,36 @@
 .rw-toggle-row label { cursor: pointer; }
 .rw-toggle-row input { margin-right: 0.35rem; }
 
+.rw-choice-group {
+  min-width: 0;
+  margin-inline: 0;
+  padding: 0;
+  border: 0;
+}
+
+.rw-choice-group legend {
+  margin-bottom: 0.5rem;
+}
+
+.rw-choice {
+  display: block;
+  margin-bottom: 0.65rem;
+  cursor: pointer;
+}
+
+.rw-choice:last-child {
+  margin-bottom: 0;
+}
+
+.rw-choice input {
+  margin-right: 0.35rem;
+}
+
+.rw-choice .help {
+  display: block;
+  margin: 0.2rem 0 0 1.55rem;
+}
+
 .rw-calc .inline {
   display: flex;
   align-items: center;

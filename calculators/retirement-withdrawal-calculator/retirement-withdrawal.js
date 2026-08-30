@@ -1,3 +1,5 @@
+import { simulateRetirementWithdrawal } from "./engine.js";
+
 (function () {
   "use strict";
 
@@ -14,9 +16,10 @@
   const frequency = $("frequency");
   const dollarModeWrap = $("dollarModeFields");
   const rateModeWrap = $("rateModeFields");
+  const waInflation = $("wa_inflation");
+  const waFixed = $("wa_fixed");
   const realToggle = $("realToggle");
   const inflationRate = $("inflationRate");
-  const inflationFieldWrap = $("inflationFieldWrap");
 
   // Outputs
   const errorBanner = $("errorBanner");
@@ -49,7 +52,7 @@
   const resultShareStatus = $("result_share_status");
 
   const CALC_NAME = "retirement-withdrawal";
-  const SCRIPT_VER = "20260426";
+  const SCRIPT_VER = "20260830";
 
   var latestSim = null;
   var latestSharePayload = null;
@@ -124,214 +127,43 @@
     return "dollar";
   }
 
+  function readWithdrawalAdjustment() {
+    if (waFixed && waFixed.checked) return "fixed";
+    return "inflation";
+  }
+
   function applyWithdrawalTypeUI() {
     const t = readWithdrawalType();
     if (dollarModeWrap) dollarModeWrap.classList.toggle("hidden", t !== "dollar");
     if (rateModeWrap) rateModeWrap.classList.toggle("hidden", t !== "rate");
   }
 
-  function applyInflationUI() {
-    if (inflationFieldWrap) inflationFieldWrap.classList.toggle("hidden", !realToggle.checked);
-    if (outRealCard) outRealCard.classList.toggle("hidden", !realToggle.checked);
+  function applyDisplayUI() {
+    const showReal = Boolean(realToggle && realToggle.checked);
+    if (outRealCard) outRealCard.classList.toggle("hidden", !showReal);
     if (yearTableHead) {
       const thReal = yearTableHead.querySelector("[data-rw-col='real']");
-      if (thReal) thReal.classList.toggle("hidden", !realToggle.checked);
+      if (thReal) thReal.classList.toggle("hidden", !showReal);
     }
-  }
-
-  function annualToPeriodic(annual, ppy) {
-    const base = 1 + annual;
-    if (!Number.isFinite(base) || base <= 0) return NaN;
-    return Math.pow(base, 1 / ppy) - 1;
   }
 
   function simulate() {
-    const p0 = toNumber(portfolio.value);
-    const rA = toNumber(annualReturn.value) / 100;
-    const requestedYears = Math.max(1, toNumber(retirementYears.value));
-    const ppy = periodsPerYearFromSelect();
-    const totalPeriods = Math.max(1, Math.round(requestedYears * ppy));
-    const years = totalPeriods / ppy;
-    const wType = readWithdrawalType();
-    const inflOn = realToggle.checked;
-    const infl = toNumber(inflationRate.value) / 100;
-
-    if (!Number.isFinite(p0) || p0 < 0) {
-      return { ok: false, error: "Enter a current portfolio value of $0 or more." };
-    }
-    if (!Number.isFinite(rA) || rA <= -0.999999) {
-      return { ok: false, error: "Expected return is too low for this model. Enter a return above -99.9%." };
-    }
-    if (!Number.isFinite(years) || years < 1) {
-      return { ok: false, error: "Enter a retirement withdrawal period of at least 1 year." };
-    }
-    if (inflOn && (!Number.isFinite(infl) || infl <= -0.999999)) {
-      return { ok: false, error: "Inflation rate is too low. Enter a rate above -99.9%, or turn inflation adjustment off." };
-    }
-
-    const portfolioAtStart = p0;
-    if (!Number.isFinite(portfolioAtStart) || portfolioAtStart < 0) {
-      return { ok: false, error: "Could not compute the portfolio value at withdrawal start. Check your inputs." };
-    }
-
-    const rPeriod = annualToPeriodic(rA, ppy);
-    if (!Number.isFinite(rPeriod)) {
-      return { ok: false, error: "Could not compute a periodic return from the annual return. Check your inputs." };
-    }
-
-    // Withdrawals
-    var periodicW = 0;
-    var annualW = 0;
-    var startWR = 0;
-
-    if (wType === "dollar") {
-      const wd = toNumber(withdrawalAmount.value);
-      if (!Number.isFinite(wd) || wd < 0) {
-        return { ok: false, error: "Withdrawal amount must be $0 or more." };
-      }
-      periodicW = wd;
-      annualW = periodicW * ppy;
-      startWR = portfolioAtStart > 0 ? annualW / portfolioAtStart : 0;
-    } else {
-      const wr = toNumber(withdrawalRate.value) / 100;
-      if (!Number.isFinite(wr) || wr < 0) {
-        return { ok: false, error: "Withdrawal rate must be 0% or more." };
-      }
-      if (wr > 0.5) {
-        return { ok: false, error: "Withdrawal rate looks unrealistically high for this model (cap: 50%)." };
-      }
-      annualW = portfolioAtStart * wr;
-      periodicW = annualW / ppy;
-      startWR = wr;
-    }
-
-    const yearly = [];
-    yearly.push({
-      year: 0,
-      starting: portfolioAtStart,
-      withdrawals: 0,
-      growth: 0,
-      ending: portfolioAtStart,
-      endingReal: inflOn ? portfolioAtStart : null
+    return simulateRetirementWithdrawal({
+      startingPortfolio: toNumber(portfolio.value),
+      annualReturn: toNumber(annualReturn.value) / 100,
+      retirementYears: toNumber(retirementYears.value),
+      periodsPerYear: periodsPerYearFromSelect(),
+      withdrawalType: readWithdrawalType(),
+      periodicWithdrawal: toNumber(withdrawalAmount.value),
+      initialWithdrawalRate: toNumber(withdrawalRate.value) / 100,
+      withdrawalAdjustment: readWithdrawalAdjustment(),
+      inflationRate: toNumber(inflationRate.value) / 100
     });
-
-    var bal = portfolioAtStart;
-    var depleted = false;
-    var depletionRetirementYears = null;
-
-    var yStart = portfolioAtStart;
-    var yW = 0;
-    var yG = 0;
-
-    function closeYear(yNum) {
-      const ending = bal;
-      const endingReal = inflOn ? ending / Math.pow(1 + infl, yNum) : null;
-      yearly.push({
-        year: yNum,
-        starting: yStart,
-        withdrawals: yW,
-        growth: yG,
-        ending: ending,
-        endingReal: endingReal
-      });
-      yStart = ending;
-      yW = 0;
-      yG = 0;
-    }
-
-    for (var p = 0; p < totalPeriods; p += 1) {
-      if (depleted) {
-        if ((p + 1) % ppy === 0) {
-          closeYear((p + 1) / ppy);
-        }
-        continue;
-      }
-
-      if (bal <= 0) {
-        depleted = true;
-        depletionRetirementYears = p / ppy;
-        if ((p + 1) % ppy === 0) {
-          closeYear((p + 1) / ppy);
-        }
-        continue;
-      }
-
-      const b0 = bal;
-      const growth = b0 * rPeriod;
-      const afterG = b0 * (1 + rPeriod);
-
-      if (afterG > periodicW) {
-        yG += growth;
-        yW += periodicW;
-        bal = afterG - periodicW;
-      } else {
-        if (periodicW > 0) {
-          const frac = clamp(afterG / periodicW, 0, 1);
-          yG += growth * frac;
-          yW += periodicW * frac;
-        } else {
-          yG += growth;
-        }
-        bal = 0;
-        depleted = true;
-        depletionRetirementYears = (p + (periodicW > 0 ? clamp(afterG / periodicW, 0, 1) : 1)) / ppy;
-      }
-
-      if ((p + 1) % ppy === 0) {
-        closeYear((p + 1) / ppy);
-      }
-    }
-
-    if (totalPeriods % ppy !== 0) {
-      closeYear(years);
-    }
-
-    var yearlyForUi = yearly;
-    if (depleted && depletionRetirementYears != null && Number.isFinite(depletionRetirementYears)) {
-      const yCut = Math.min(years, Math.ceil(depletionRetirementYears - 1e-9));
-      yearlyForUi = yearly.filter(function (row) {
-        return row.year === 0 || row.year <= yCut;
-      });
-    }
-
-    const last = yearlyForUi[yearlyForUi.length - 1];
-    const finalNominal = last.ending;
-    const finalReal = inflOn ? last.endingReal : null;
-    const fullHorizon = !depleted;
-
-    // Chart
-    const chartYears = yearlyForUi.map((r) => r.year);
-    const chartNom = yearlyForUi.map((r) => r.ending);
-    const chartReal = inflOn ? yearlyForUi.map((r) => (r.endingReal == null ? 0 : r.endingReal)) : null;
-
-    return {
-      ok: true,
-      inputs: {
-        portfolio: p0,
-        rA: rA,
-        retirementYears: years,
-        ppy: ppy,
-        withdrawalType: wType,
-        periodicWithdrawal: periodicW,
-        annualWithdrawal: annualW,
-        startingWR: startWR,
-        inflOn: inflOn,
-        infl: infl
-      },
-      portfolioAtStart: portfolioAtStart,
-      yearly: yearlyForUi,
-      finalNominal: finalNominal,
-      finalReal: finalReal,
-      depleted: depleted,
-      depletionRetirementYears: depletionRetirementYears,
-      fullHorizon: fullHorizon,
-      chart: { years: chartYears, nominal: chartNom, real: chartReal }
-    };
   }
 
   function buildQueryParams(sim) {
     return {
-      v: 1,
+      v: 2,
       sver: SCRIPT_VER,
       p: String(Math.round(sim.inputs.portfolio)),
       r: String((sim.inputs.rA * 100).toFixed(3)),
@@ -342,8 +174,9 @@
         sim.inputs.withdrawalType === "rate"
           ? String(toNumber(withdrawalRate.value).toFixed(3))
           : String(toNumber(withdrawalAmount.value).toFixed(2)),
-      i: sim.inputs.inflOn ? "1" : "0",
-      ir: sim.inputs.inflOn ? String(toNumber(inflationRate.value).toFixed(3)) : "0"
+      wa: sim.inputs.withdrawalAdjustment === "fixed" ? "f" : "i",
+      i: realToggle.checked ? "1" : "0",
+      ir: String(toNumber(inflationRate.value).toFixed(3))
     };
   }
 
@@ -363,13 +196,15 @@
 
     const contextLines = [
       "Starting portfolio at retirement: " + fmtMoney(sim.portfolioAtStart),
-      "Annual withdrawal: " + fmtMoney(sim.inputs.annualWithdrawal),
+      "Initial annual withdrawal: " + fmtMoney(sim.inputs.annualWithdrawal),
+      "Withdrawal adjustment: " +
+        (sim.inputs.withdrawalAdjustment === "inflation" ? "increases with inflation" : "fixed nominal dollars"),
       "Return: " + (sim.inputs.rA * 100).toFixed(1) + "%"
     ];
-    if (sim.inputs.inflOn) {
+    if (realToggle.checked) {
       contextLines.push("Today’s-dollar ending value: " + (sim.finalReal == null ? "—" : fmtMoney(sim.finalReal)));
-      contextLines.push("Inflation assumption: " + inflPct);
     }
+    contextLines.push("Inflation assumption: " + inflPct);
 
     return {
       calculatorName: CALC_NAME,
@@ -389,6 +224,7 @@
     try {
       const u = new URL(window.location.href);
       if (u.searchParams.get("v") == null) return;
+      const queryVersion = toNumber(u.searchParams.get("v"));
       if (u.searchParams.get("p") != null && Number.isFinite(toNumber(u.searchParams.get("p")))) {
         portfolio.value = String(toNumber(u.searchParams.get("p")));
       }
@@ -413,6 +249,13 @@
         if (u.searchParams.get("t") === "r") withdrawalRate.value = String(wq);
         else withdrawalAmount.value = String(wq);
       }
+      if (u.searchParams.get("wa") === "f" || (queryVersion === 1 && u.searchParams.get("wa") == null)) {
+        if (waFixed) waFixed.checked = true;
+        if (waInflation) waInflation.checked = false;
+      } else if (u.searchParams.get("wa") === "i") {
+        if (waInflation) waInflation.checked = true;
+        if (waFixed) waFixed.checked = false;
+      }
       if (u.searchParams.get("i") === "0") {
         if (realToggle) realToggle.checked = false;
       } else if (u.searchParams.get("i") === "1") {
@@ -430,7 +273,7 @@
   function update() {
     setError("");
     applyWithdrawalTypeUI();
-    applyInflationUI();
+    applyDisplayUI();
 
     const sim = simulate();
     latestSim = sim.ok ? sim : null;
@@ -469,7 +312,7 @@
       outEnding.textContent = fmtMoney(Math.max(0, sim.finalNominal));
     }
     if (outRealEnding) {
-      outRealEnding.textContent = sim.inputs.inflOn && sim.finalReal != null ? fmtMoney(sim.finalReal) : "—";
+      outRealEnding.textContent = realToggle.checked && sim.finalReal != null ? fmtMoney(sim.finalReal) : "—";
     }
 
     if (resultSummary) {
@@ -479,7 +322,7 @@
         resultSummary.textContent =
           "Based on these assumptions, the portfolio is depleted after approximately " + fmtYearsApprox(sim.depletionRetirementYears) +
           ". The selected withdrawal amount does not last for the full " + sim.inputs.retirementYears + "-year period.";
-      } else if (sim.inputs.inflOn) {
+      } else if (realToggle.checked) {
         resultSummary.textContent =
           "Based on these assumptions, the portfolio lasts the full retirement period and ends with an estimated balance of " + endBal +
           ", equal to about " + fmtMoney(sim.finalReal) + " in today’s dollars using " + inflPct + " inflation.";
@@ -489,10 +332,13 @@
       }
       if (sim.inputs.withdrawalType === "rate") {
         resultSummary.textContent +=
-          " A " + fmtPct(toNumber(withdrawalRate.value) / 100, 2) + " withdrawal rate equals approximately " +
-          fmtMoney(sim.inputs.annualWithdrawal) + " per year, or " + fmtMoney2(sim.inputs.periodicWithdrawal) +
+          " An initial withdrawal rate of " + fmtPct(sim.inputs.startingWR, 2) + " equals approximately " +
+          fmtMoney(sim.inputs.annualWithdrawal) + " in the first year, or " + fmtMoney2(sim.inputs.periodicWithdrawal) +
           " per period, based on the starting portfolio value at retirement.";
       }
+      resultSummary.textContent += sim.inputs.withdrawalAdjustment === "inflation"
+        ? " That initial withdrawal increases with inflation at the start of each retirement year."
+        : " That withdrawal remains fixed in nominal dollars.";
     }
 
     renderTable(sim);
@@ -505,13 +351,14 @@
   function renderTable(sim) {
     if (!yearTableBody) return;
     yearTableBody.innerHTML = "";
+    const showReal = realToggle.checked;
     for (const row of sim.yearly) {
       const tr = document.createElement("tr");
-      const realCell = sim.inputs.inflOn ? "<td>" + fmtMoney(row.endingReal) + "</td>" : "";
+      const realCell = showReal ? "<td>" + fmtMoney(row.endingReal) + "</td>" : "";
       tr.innerHTML = `
         <td>${row.year}</td>
         <td>${fmtMoney(row.starting)}</td>
-        <td>${fmtMoney(row.withdrawals)}</td>
+        <td>${fmtMoney2(row.withdrawals)}</td>
         <td>${fmtMoney(row.growth)}</td>
         <td>${fmtMoney(row.ending)}</td>
         ${realCell}
@@ -545,7 +392,7 @@
     const years = sim.chart.years;
     const nom = sim.chart.nominal;
     const real = sim.chart.real;
-    const showReal = sim.inputs.inflOn && real && real.length === nom.length;
+    const showReal = realToggle.checked && real && real.length === nom.length;
     if (chartLegendReal) chartLegendReal.classList.toggle("hidden", !showReal);
 
     const maxY = Math.max(1, ...nom.map((x) => Math.max(0, x)), showReal ? Math.max(0, ...real) : 0);
@@ -661,25 +508,26 @@
     rows.push("Starting portfolio at retirement: " + String(Math.round(sim.portfolioAtStart)));
     rows.push("Annual return (nominal): " + (sim.inputs.rA * 100).toFixed(3) + "%");
     rows.push("Periods per year: " + String(sim.inputs.ppy));
-    rows.push("Annual withdrawal: " + String(Math.round(sim.inputs.annualWithdrawal)));
+    rows.push("Initial annual withdrawal: " + sim.inputs.annualWithdrawal.toFixed(2));
     rows.push("Starting withdrawal rate: " + (sim.inputs.startingWR * 100).toFixed(3) + "%");
-    if (sim.inputs.inflOn) {
-      rows.push("Inflation (display only): " + (sim.inputs.infl * 100).toFixed(3) + "%");
-    }
+    rows.push("Withdrawal adjustment: " + sim.inputs.withdrawalAdjustment);
+    rows.push("Inflation: " + (sim.inputs.infl * 100).toFixed(3) + "%");
+    rows.push("Inflation-adjusted display: " + (realToggle.checked ? "on" : "off"));
+    rows.push("Total nominal withdrawals: " + sim.totalWithdrawals.toFixed(2));
     rows.push("");
-    if (sim.inputs.inflOn) {
-      rows.push("Year,Starting balance,Withdrawals,Investment growth,Ending balance,Inflation-adjusted ending balance");
+    if (realToggle.checked) {
+      rows.push("Year,Starting balance,Nominal withdrawals,Investment growth,Ending balance,Inflation-adjusted ending balance");
     } else {
-      rows.push("Year,Starting balance,Withdrawals,Investment growth,Ending balance");
+      rows.push("Year,Starting balance,Nominal withdrawals,Investment growth,Ending balance");
     }
     for (const r of sim.yearly) {
-      if (sim.inputs.inflOn) {
+      if (realToggle.checked) {
         rows.push(
-          r.year + "," + Math.round(r.starting) + "," + Math.round(r.withdrawals) + "," + Math.round(r.growth) + "," + Math.round(r.ending) + "," + Math.round(r.endingReal)
+          r.year + "," + r.starting.toFixed(2) + "," + r.withdrawals.toFixed(2) + "," + r.growth.toFixed(2) + "," + r.ending.toFixed(2) + "," + r.endingReal.toFixed(2)
         );
       } else {
         rows.push(
-          r.year + "," + Math.round(r.starting) + "," + Math.round(r.withdrawals) + "," + Math.round(r.growth) + "," + Math.round(r.ending)
+          r.year + "," + r.starting.toFixed(2) + "," + r.withdrawals.toFixed(2) + "," + r.growth.toFixed(2) + "," + r.ending.toFixed(2)
         );
       }
     }
@@ -744,7 +592,7 @@
   function wire() {
     [
       portfolio, annualReturn, retirementYears, withdrawalAmount, withdrawalRate, frequency, inflationRate,
-      wtDollar, wtRate, realToggle
+      wtDollar, wtRate, waInflation, waFixed, realToggle
     ].forEach((elx) => {
       if (!elx) return;
       elx.addEventListener("input", update);
