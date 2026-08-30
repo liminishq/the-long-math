@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Inspect the Arithmetic – Canada Capital Gains Tax Calculator | The Long Math</title>
-  <meta name="description" content="Formulae, computational structure, and assumptions for the Canada Capital Gains Tax Calculator." />
+  <meta name="description" content="Formulae, computational structure, and assumptions for the Canada Capital Gains Tax Calculator — progressive incremental tax primary model, optional manual marginal-rate sensitivity." />
   <link rel="canonical" href="https://www.thelongmath.com/calculators/capital-gains-tax-canada/methodology/" />
 
   <script src="/assets/js/theme-init.js"></script>
@@ -27,7 +27,7 @@
   <div class="wrap">
     <div class="methodology-content">
       <h1>Inspect the Arithmetic — Canada Capital Gains Tax Calculator</h1>
-      <p class="methodology-meta">Version 1.1<br>Last verified: May 2026</p>
+      <p class="methodology-meta">Version 2.0<br>Last verified: August 2026</p>
 
       <p>
         Transparent arithmetic is the operating system of this calculator.
@@ -41,166 +41,181 @@
 
       <h2>Purpose</h2>
       <p>
-        This calculator estimates capital gains tax on the sale of a single asset for Canadian tax purposes. It uses user-supplied proceeds,
-        adjusted cost base (ACB), an inclusion rate, and a marginal tax rate to compute:
-        capital gain or loss, taxable capital gain, estimated tax owing, and after-tax proceeds.
+        This calculator answers: how much additional income tax will this capital gain cause, given income before the gain?
       </p>
       <p>
-        It is an educational tool only. It does not replicate the full T1 return or CRA rules for loss carryovers, reserves, or special elections.
+        <strong>Primary model (default):</strong> progressive incremental personal tax. The calculator runs the shared Canada personal-tax engine twice —
+        once without the capital gain and once with it — then reports additional tax as tax after minus tax before.
       </p>
       <p>
-        This simplified version does not subtract outlays and expenses of disposition (such as selling commissions or legal fees); users should reflect those manually in their inputs if they want a closer estimate.
+        <strong>Optional model:</strong> manual marginal-rate estimate. Taxable (included) gain × one combined marginal rate you enter.
+        That path is labelled as a sensitivity check; it does not walk brackets.
+      </p>
+      <p>
+        It is an educational tool only. It does not replicate every CRA rule for loss carryovers, reserves, special elections, or full T1 detail.
+      </p>
+      <p>
+        This version does not subtract outlays and expenses of disposition (such as selling commissions or legal fees); users should reflect those
+        manually in their gross gain inputs if they want a closer estimate.
       </p>
 
       <h2>Definitions</h2>
       <p>Let:</p>
       <ul>
-        <li>P = proceeds of disposition (CAD)</li>
-        <li>A = adjusted cost base (ACB) of the asset (CAD)</li>
-        <li>r<sub>incl</sub> = capital gains inclusion rate (0–100, percent; default 50)</li>
-        <li>t<sub>marg</sub> = combined marginal tax rate on taxable income (0–100, percent)</li>
-        <li>Gain = capital gain (can be negative for a loss)</li>
-        <li>TaxableGain = portion of Gain that is taxable</li>
-        <li>TaxOwing = estimated capital gains tax owing</li>
-        <li>AfterTaxProceeds = net proceeds after subtracting estimated tax owing</li>
-        <li>PRE = principal residence exemption flag (true/false)</li>
+        <li>Y = tax year (2025 or 2026 in the published data set)</li>
+        <li>Prov = province or territory code</li>
+        <li>I<sub>before</sub> = taxable income before the capital gain (CAD) — source-neutral; not employment income</li>
+        <li>G = gross capital gain (CAD; may be negative for a loss)</li>
+        <li>r<sub>incl</sub> = capital gains inclusion rate (progressive mode: fixed 50% from the shared engine constant)</li>
+        <li>G<sub>taxable</sub> = included (taxable) portion of the gain</li>
+        <li>Tax<sub>before</sub> = total personal income tax with capital gains = 0</li>
+        <li>Tax<sub>after</sub> = total personal income tax with the gain included</li>
+        <li>ΔTax = additional tax attributable to the gain</li>
+        <li>PRE = principal residence exemption flag (true/false; educational toggle)</li>
+        <li>t<sub>marg</sub> = combined marginal tax rate (0–100, percent) — manual mode only</li>
       </ul>
 
-      <h2>Core Equations</h2>
+      <h2>Primary Model: Progressive Incremental Tax</h2>
 
-      <h3 id="gain">1. Capital Gain or Loss</h3>
-      <p>The starting point is the difference between what you received and your adjusted cost base:</p>
+      <h3 id="gain">1. Gross Capital Gain</h3>
+      <p>
+        The primary input is gross capital gain G. Optionally, proceeds P and adjusted cost base A can fill G as:
+      </p>
       <div class="formula-block">
-        Gain = P − A
+        G = P − A
       </div>
       <p>
-        If Gain &le; 0, the calculator treats the result as a capital loss for this simplified view. No taxable gain is generated
-        and estimated tax owing is set to 0. The raw loss is still shown as the “Capital gain / loss” output.
+        If G ≤ 0, the calculator treats the result as a capital loss for this simplified view: included amount = 0 and additional tax = 0.
+        Loss carryovers are not modelled.
       </p>
 
       <h3 id="primary-residence">2. Principal Residence Exemption (Educational Toggle)</h3>
       <p>
-        The “Principal residence exemption (educational only)” toggle is a simple switch to illustrate how the exemption affects tax:
-      </p>
-      <ul>
-        <li>If PRE is checked, then TaxableGain = 0 and TaxOwing = 0, regardless of Gain.</li>
-        <li>The calculator still shows Gain and AfterTaxProceeds = P (no tax deducted).</li>
-      </ul>
-      <p class="formula-meta">
-        Real eligibility for the principal residence exemption depends on CRA rules and your facts; this toggle does not test or enforce those rules.
-        It just shows the arithmetic effect of exempting the entire gain.
+        If PRE is checked and G &gt; 0, included taxable gain and additional tax are set to 0. The gross gain is still shown.
+        Real eligibility depends on CRA rules; the toggle does not test those rules.
       </p>
 
-      <h3 id="inclusion">3. Inclusion Rate and Taxable Capital Gain</h3>
+      <h3 id="inclusion">3. Inclusion Rate (Progressive Mode)</h3>
       <p>
-        When there is a positive gain and PRE is not enabled, the calculator applies the user-supplied inclusion rate to determine the taxable amount:
+        Progressive mode uses the shared engine constant <code>CAPITAL_GAINS_INCLUSION_RATE = 0.5</code> (50%).
+        It is not user-editable in that mode.
       </p>
       <div class="formula-block">
-        If Gain &le; 0 or PRE is true:<br>
-        &nbsp;&nbsp;TaxableGain = 0<br>
+        If G ≤ 0 or PRE is true:<br>
+        &nbsp;&nbsp;G<sub>taxable</sub> = 0<br>
         Else:<br>
-        &nbsp;&nbsp;TaxableGain = Gain × (r<sub>incl</sub> / 100)
+        &nbsp;&nbsp;G<sub>taxable</sub> = G × 0.5
+      </div>
+
+      <h3 id="income-model">4. Taxable Income Before the Gain</h3>
+      <p>
+        I<sub>before</sub> is the user’s taxable income before this capital gain. It is passed to
+        <code>computePersonalTax</code> as source-neutral <code>otherIncome</code> (not employment income),
+        with employment and self-employment incomes set to 0. The shared engine therefore does not generate
+        CPP or EI premiums/credits or the Canada Employment Amount from I<sub>before</sub> alone.
+        Ordinary federal/provincial brackets, the basic personal amount, and other generally applicable mechanics still apply.
+      </p>
+      <p>
+        This is intentionally an approximation of the pre-gain tax position. It does not reproduce every
+        source-specific credit or deduction that could appear on a T1. The calculator answers how much
+        additional income tax the capital gain creates given that starting taxable-income level.
+      </p>
+
+      <h3 id="incremental">5. Additional Tax = Tax After − Tax Before</h3>
+      <p>
+        Two personal-tax runs share the same year, province, and I<sub>before</sub>:
+      </p>
+      <div class="formula-block">
+        Tax<sub>before</sub> = totalIncomeTax(otherIncome = I<sub>before</sub>, capitalGains = 0)<br>
+        Tax<sub>after</sub> = totalIncomeTax(otherIncome = I<sub>before</sub>, capitalGains = max(0, G) when PRE is false and G &gt; 0; else 0)<br>
+        ΔTax = Tax<sub>after</sub> − Tax<sub>before</sub>
       </div>
       <p class="formula-meta">
-        For 2025 and 2026, the default rule of thumb in public materials is still a 50% inclusion rate for most personal capital gains; the input defaults to 50 but can be adjusted to explore policy
-        changes or hypothetical scenarios. Always confirm statutory inclusion rules for your situation and tax year.
+        The shared engine applies inclusion and brackets internally. This calculator’s primary headline figure is ΔTax — not
+        “one marginal rate × the whole gain.” A large gain can cross brackets; credits and bracket stacking are reflected in the two full runs.
       </p>
 
-      <h3 id="tax-owing">4. Estimated Tax Owing</h3>
+      <h3 id="effective">6. Effective Rate on Gross Gain</h3>
+      <div class="formula-block">
+        If G &gt; 0:<br>
+        &nbsp;&nbsp;EffectiveRate<sub>gross</sub> = ΔTax / G<br>
+        Else:<br>
+        &nbsp;&nbsp;EffectiveRate<sub>gross</sub> = 0
+      </div>
+      <p class="formula-meta">
+        When shown, “marginal rate after the gain” is the engine’s marginal rate at the after-gain income level — the rate on the next dollar —
+        not a rate applied to the entire gain.
+      </p>
+
+      <h2>Optional Model: Manual Marginal-Rate Estimate</h2>
       <p>
-        The calculator does not re-run the entire income tax system. Instead, it uses the user’s combined marginal tax rate t<sub>marg</sub>
-        (federal + provincial) as a single percentage applied to the taxable gain:
+        Manual mode is a labelled sensitivity. It does not use province brackets or the shared progressive run for the tax figure.
+        Combined marginal rate and inclusion rate must be between 0% and 100%; values outside that range throw a clear validation error rather than producing silent nonsense.
       </p>
       <div class="formula-block">
-        If TaxableGain = 0:<br>
-        &nbsp;&nbsp;TaxOwing = 0<br>
+        If G ≤ 0 or PRE is true:<br>
+        &nbsp;&nbsp;TaxableGain = 0; TaxOwing = 0<br>
         Else:<br>
+        &nbsp;&nbsp;TaxableGain = G × (r<sub>incl</sub> / 100)<br>
         &nbsp;&nbsp;TaxOwing = TaxableGain × (t<sub>marg</sub> / 100)
       </div>
       <p class="formula-meta">
-        The marginal rate is user-supplied. The calculator does not compute it from brackets or credits; instead, it expects you to bring in your own
-        marginal rate from a full income tax calculation (for example, using the <a href="/calculators/canada-income-tax/" target="_blank" rel="noopener">Canada Personal Income Tax Calculator</a>).
-      </p>
-
-      <h3 id="after-tax">5. After-Tax Proceeds</h3>
-      <p>
-        After-tax proceeds are simply proceeds minus the estimated tax owing:
-      </p>
-      <div class="formula-block">
-        AfterTaxProceeds = P − TaxOwing
-      </div>
-      <p class="formula-meta">
-        When Gain &le; 0 or PRE is enabled, TaxOwing = 0 and AfterTaxProceeds = P.
-      </p>
-
-      <h2>How This Fits with Your Full Tax Picture</h2>
-      <p>
-        In Canada, capital gains are added to your other income via the inclusion rate and are then taxed at the same marginal rates that apply
-        to your employment, business, and other income. This calculator mirrors that behavior in a compressed way:
-      </p>
-      <ul>
-        <li>It converts your gain into a taxable gain using r<sub>incl</sub>.</li>
-        <li>It treats t<sub>marg</sub> as your combined marginal rate on that taxable gain.</li>
-        <li>It multiplies the two to estimate the incremental tax attributable to the gain.</li>
-      </ul>
-      <p>
-        It does <em>not</em> model the rest of your return (credits, other deductions, loss carryforwards, alternative minimum tax, etc.).
-        Those effects are implicitly rolled into the marginal rate you provide.
+        Inclusion rate and marginal rate are user-supplied in this mode. Useful for “what if my combined rate were X%.”
+        Not a substitute for the progressive incremental estimate when brackets matter.
       </p>
 
       <h2>Inputs, Parsing, and Edge Cases</h2>
       <ul>
         <li>
-          All numeric inputs are parsed by stripping commas and whitespace; blank inputs are treated as 0. Invalid numbers fall back to 0 or the
-          documented default (e.g., 50% inclusion).
+          Numeric inputs are parsed by stripping commas and whitespace; blank money fields are treated as 0 where applicable.
         </li>
         <li>
-          Proceeds and ACB are treated as whole-dollar CAD values; the calculator does not model transaction fees, commissions, or foreign exchange.
+          Progressive mode requires a province/territory. Changing tax year reloads an immutable tax-data bundle via
+          <code>getTaxDataBundle(year, { basePath: '/calculators/canada-income-tax/data' })</code>.
         </li>
         <li>
-          If A &gt; P (a capital loss), the calculator shows a negative Gain but sets TaxableGain and TaxOwing both to 0. It does not model loss
-          carryovers or how losses offset gains in other parts of your return.
+          Bracket tables on the calculator page are reference displays only; progressive math already uses the selected year and province.
         </li>
         <li>
-          Inclusion rate and marginal rate are constrained conceptually between 0 and 100; extremely high or low values may produce unrealistic
-          outputs but are allowed for “what if” scenarios.
+          Shareable links use versioned query parameters (<code>v</code>, <code>mode</code>, <code>year</code>, <code>prov</code>,
+          <code>income</code>, <code>gain</code>, <code>pre</code>, and when relevant <code>incl</code>, <code>mtr</code>,
+          <code>proceeds</code>, <code>acb</code>).
         </li>
       </ul>
 
       <h2>Implementation Notes</h2>
       <ul>
         <li>
-          The core arithmetic lives in a pure engine function <code>CapitalGainsTaxCanada.calculate()</code>, which accepts a simple inputs object and
-          returns the derived values and a <code>mathSteps</code> object with the exact numbers used.
+          Core progressive and manual arithmetic live in <code>calculators/capital-gains-tax-canada/engine.js</code>
+          (<code>calculateProgressiveCapitalGainsTax</code>, <code>calculateManualMarginalRateEstimate</code>).
         </li>
         <li>
-          The “Show the math” section on the calculator page reads <code>mathSteps</code> and renders each step (Gain, TaxableGain, TaxOwing,
-          AfterTaxProceeds) directly from these values.
+          Progressive tax uses <code>computePersonalTax</code> from the Canada personal income tax engine with an explicit immutable
+          <code>taxData</code> bundle.
         </li>
         <li>
-          The separate “How capital gains use your marginal tax rate” card uses static bracket data to display current federal and provincial
-          marginal rates for reference only; it does not feed back into the core calculation above.
+          The UI is an ES module (<code>ui.js</code>) that imports the engine and <code>getTaxDataBundle</code>; it does not rely on a separate
+          non-module engine script tag.
         </li>
         <li>
-          All calculations are performed with JavaScript’s standard floating‑point arithmetic; any rounding is applied only at the display layer.
+          “Show the math” renders tax after − tax before for progressive mode, and the flat taxable-gain × rate formula for manual mode.
+        </li>
+        <li>
+          Display rounding is applied at the presentation layer (whole CAD dollars); engine arithmetic uses floating-point numbers.
         </li>
       </ul>
 
       <p style="margin-top: 2em; font-weight: 600;">
-        If any discrepancy is identified between this documentation and the live calculator engine, the engine&apos;s arithmetic
-        (<code>CapitalGainsTaxCanada.calculate()</code>) is the source of truth. This page will be updated to match the engine.
+        If any discrepancy is identified between this documentation and the live calculator engine, the engine’s arithmetic
+        (<code>calculateProgressiveCapitalGainsTax</code> / <code>calculateManualMarginalRateEstimate</code>) is the source of truth.
+        This page will be updated to match the engine.
       </p>
 
       <h2>Sources and References</h2>
       <ul class="methodology-sources">
         <li><a href="https://www.canada.ca/en/revenue-agency.html" target="_blank" rel="noopener noreferrer">Canada Revenue Agency (CRA)</a></li>
         <li><a href="https://www.canada.ca/en.html" target="_blank" rel="noopener noreferrer">Government of Canada</a></li>
-        <li><a href="https://www.statcan.gc.ca/" target="_blank" rel="noopener noreferrer">Statistics Canada</a></li>
-        <li><a href="https://www.bankofcanada.ca/" target="_blank" rel="noopener noreferrer">Bank of Canada</a></li>
-        <li><a href="https://www.cmhc-schl.gc.ca/" target="_blank" rel="noopener noreferrer">CMHC</a> (housing and mortgage context, where relevant)</li>
-        <li><a href="https://www.osfi-bsif.gc.ca/" target="_blank" rel="noopener noreferrer">OSFI</a> (financial institution supervision, where relevant)</li>
-        <li><a href="https://www.spglobal.com/spdji/en/spiva/article/spiva-canada/" target="_blank" rel="noopener noreferrer">SPIVA Canada</a> (long-horizon fund performance context, where relevant)</li>
-        <li><a href="http://www.econ.yale.edu/~shiller/data.htm" target="_blank" rel="noopener noreferrer">Robert Shiller — historical data</a> (market and long-horizon data context, where relevant)</li>
+        <li><a href="/calculators/canada-income-tax/methodology/">Canada Personal Income Tax Calculator — methodology</a> (shared engine)</li>
       </ul>
 
     </div>
@@ -210,4 +225,3 @@
   </div>
 </body>
 </html>
-

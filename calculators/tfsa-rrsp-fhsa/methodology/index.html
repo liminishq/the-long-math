@@ -27,7 +27,7 @@
   <div class="wrap">
     <div class="methodology-content">
       <h1>Inspectable Arithmetic for the TFSA vs RRSP vs FHSA Calculator (Canada)</h1>
-      <p class="methodology-meta">Version 1.2<br>Last verified: June 2026</p>
+      <p class="methodology-meta">Version 1.4<br>Last verified: August 2026</p>
 
       <p>
         Transparent arithmetic is the operating system of this calculator.
@@ -42,8 +42,9 @@
       <h2>Purpose</h2>
       <p>
         This calculator compares the after-tax future value of contributing a fixed cash amount to different Canadian registered accounts:
-        TFSA, RRSP, and FHSA. It models recurring or lump-sum contributions, simple net investment growth, and explicit tax treatment on
-        contribution and withdrawal under marginal tax rates you set or that are estimated from your inputs.
+        TFSA, RRSP, and FHSA. It models recurring or lump-sum contributions and simple net investment growth.
+        Contribution-year RRSP/FHSA tax savings use the shared progressive personal-tax engine on the contribution-year income you model
+        (current, next year, or hypothetical). Retirement taxation remains a planning assumption (expected retirement income and/or a constant t<sub>ret</sub>).
       </p>
 
       <h2>Definitions</h2>
@@ -54,8 +55,8 @@
         <li>r = expected annual return before fees (percent)</li>
         <li>f = annual fee drag (percent)</li>
         <li>i = annual inflation rate (percent, optional)</li>
-        <li>t<sub>now</sub> = current marginal tax rate on contributions (percent)</li>
-        <li>t<sub>ret</sub> = marginal tax rate at withdrawal (percent)</li>
+        <li>t<sub>now</sub> = displayed next-dollar combined marginal rate at contribution-year income (informational; does not set the refund)</li>
+        <li>t<sub>ret</sub> = assumed marginal tax rate at withdrawal (percent)</li>
         <li>r<sub>net</sub> = (r − f)/100 (net nominal annual return, decimal)</li>
         <li>i<sub>d</sub> = i/100 (annual inflation in decimal form)</li>
         <li>r<sub>m</sub> = monthly nominal rate</li>
@@ -64,12 +65,20 @@
         <li>B<sub>refund,t</sub> = refund bucket balance at month t (when refunds are reinvested)</li>
       </ul>
 
-      <h3 id="marginal-rates">Marginal rates (t<sub>now</sub> and t<sub>ret</sub>)</h3>
+      <h3 id="marginal-rates">Contribution-year tax benefit and t<sub>ret</sub></h3>
       <p>
-        Unless manual override is enabled, t<sub>now</sub> and t<sub>ret</sub> come from the shared
+        Contribution-year RRSP/FHSA refunds use the shared
         <a href="/calculators/canada-income-tax/methodology/">Canada Personal Income Tax</a> engine:
-        province plus current and retirement taxable income, using the same $100 finite-difference marginal estimate
-        (not a $1 bump on dollar-rounded tax). Those rates feed RRSP/FHSA refund math and therefore account-priority ranking when reinvest is enabled.
+      </p>
+      <div class="formula-block">
+        taxBenefit = tax(income, deductions=0) − tax(income, deductions=RRSP+FHSA)
+      </div>
+      <p>
+        Deductions are cumulative within each tax year (January resets the year trackers). Incremental deposits
+        use benefitForIncrement(prev, add) so the sum of increments reconciles with the full-year tax delta
+        within a cent. Displayed t<sub>now</sub> is the starting next-dollar marginal rate from contribution-year
+        income (informational); it does <strong>not</strong> set the refund. Withdrawal taxation still uses a
+        constant t<sub>ret</sub> (from expected retirement income, or a manual override).
       </p>
 
       <h2>Core Equations</h2>
@@ -96,6 +105,9 @@
         \((1+r_{\text{net}})/(1+i_d)-1\) — equivalently \((1+r_{\text{net}})/(1+i/100)-1\) when \(i\) is your inflation input as a percent —
         then that annual rate is converted to a monthly rate with the 12th-root step above.
       </p>
+      <p>
+        Contribution, room, and refund dollar amounts stay at the entered figures. Combined with a real return, that treats saving effort and statutory room as constant in today's dollars (nominal deposits and room would rise with inflation in a fully nominal simulation).
+      </p>
       <p class="formula-meta">
         The engine uses a single monthly rate for all accounts. There is no asset-location modeling (no different returns per account).
       </p>
@@ -113,9 +125,13 @@
       </ul>
 
       <h3 id="refund">3. Refund arithmetic</h3>
-      <p>For any RRSP or FHSA deposit d in a month, the modeled refund is:</p>
+      <p>For an RRSP or FHSA deposit in a contribution year, the modeled refund is the progressive tax reduction from that increment (given prior deductible deposits in the same tax year):</p>
       <div class="formula-block">
-        refund = d × t<sub>now</sub>/100
+        refund = max(0, tax(prevRrsp, prevFhsa) − tax(prevRrsp+addRrsp, prevFhsa+addFhsa))
+      </div>
+      <p>Equivalently over a full tax year:</p>
+      <div class="formula-block">
+        yearBenefit = tax(0, 0) − tax(yearRrsp, yearFhsa)
       </div>
       <p>Refund handling modes:</p>
       <ul>
@@ -123,16 +139,16 @@
         <li><strong>Reinvest refund:</strong> refund is added to a global refund bucket B<sub>refund</sub> for that strategy in the month it occurs and compounds at the same monthly rate as other balances.</li>
       </ul>
       <p class="formula-meta">
-        There is one refund bucket per strategy. The calculator does not separately label which portion of B<sub>refund</sub> originated from RRSP vs FHSA contributions.
+        Refunds are not contribution × t<sub>now</sub>. A large deduction that crosses brackets has a lower average benefit rate than the starting marginal rate. There is one refund bucket per strategy. Per-account year-1 attribution is recorded in meta when deposits are RRSP-only or FHSA-only increments.
       </p>
 
       <h3 id="evolution">4. Monthly evolution (per strategy)</h3>
       <p>For each month t = 0,…,N−1, the engine:</p>
       <ol>
-        <li>If t ∈ {12, 24, …} (first month of simulation years 2, 3, …), increases remaining TFSA and RRSP room per the TFSA/RRSP multi-year rules above, before allocating that month’s contribution.</li>
+        <li>If t ∈ {12, 24, …} (first month of simulation years 2, 3, …), resets that tax year’s cumulative RRSP/FHSA deduction trackers (so each year starts from tax(income, 0)), then increases remaining TFSA and RRSP room per the TFSA/RRSP multi-year rules above, before allocating that month’s contribution.</li>
         <li>Computes the intended gross contribution G<sub>t</sub> for that month based on mode (monthly, annual/12, or lump at t = 0).</li>
         <li>Allocates G<sub>t</sub> between TFSA, RRSP, and FHSA according to the strategy and room constraints (TFSA/RRSP remaining room, plus FHSA rules in the next section).</li>
-        <li>Applies refunds on RRSP/FHSA deposits into the refund bucket when “reinvest refund” is selected.</li>
+        <li>Applies progressive tax-benefit refunds on RRSP/FHSA deposits into the refund bucket when “reinvest refund” is selected.</li>
         <li>Applies growth to all balances using the monthly rate.</li>
       </ol>
       <p>Growth step (using either r<sub>m</sub> or r<sub>m,real</sub>):</p>
@@ -315,9 +331,9 @@
         <li>TFSA opening room is user-entered. RRSP opening room defaults to min(18% of current taxable income, indexed dollar cap) plus optional unused carry-forward (same formula as the RRSP Contribution Room calculator); edit the total to override. From simulation year 2, each January adds your specified new TFSA amount and RRSP room equal to min(18% of current taxable income, indexed dollar cap); unused room carries forward until used.</li>
         <li>Investment returns, fees, and (optionally) inflation are modeled as constant over the full horizon.</li>
         <li>RRSP and FHSA refunds are either treated as immediately spent (default) or reinvested in a TFSA-like bucket; actual tax timing and withholding are more complex in practice.</li>
-        <li>Tax rates t<sub>now</sub> and t<sub>ret</sub> are either estimated from modeled employment income and province using the same tax engine as the <a href="/calculators/canada-income-tax/" target="_blank" rel="noopener">Canada Personal Income Tax Calculator</a>, or set directly via manual override; they are held constant over the horizon.</li>
+        <li>Contribution-year RRSP/FHSA refunds are the progressive tax delta from the shared personal-tax engine. Displayed t<sub>now</sub> is informational. Withdrawal tax uses a constant t<sub>ret</sub> (from expected retirement income, or a manual override) over the horizon.</li>
         <li>FHSA modeling enforces the annual room you specify (default $8,000) and a $40,000 lifetime contribution cap per person; growth inside the FHSA does not count toward that cap. Contribution carry-forward and detailed withdrawal conditions beyond the home-qualified toggle are not modeled.</li>
-        <li>Non-registered (taxable) accounts are not included in this version; it is an account-to-account comparison between registered options.</li>
+        <li>Direct contributions are allocated among TFSA, RRSP, and FHSA (then leftover cash to non-registered). Reinvested refunds go to TFSA first, then non-registered overflow. Non-registered tax drag is not modeled.</li>
         <li>All results are rounded for display; internal calculations use full floating-point precision.</li>
       </ol>
 

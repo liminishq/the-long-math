@@ -108,22 +108,12 @@
   color: var(--accent);
 }
 
-/* Make lower-priority outputs slightly smaller than the main ones */
-.results .result-row:nth-child(1) .value,
-.results .result-row:nth-child(2) .value {
+.results .result-row .value {
   font-size: 15px;
 }
 
-/* Make after-tax proceeds (4th row) visually prominent, but secondary to estimated tax */
-.results .result-row:nth-child(4) {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--accent2);
-}
-
-.results .result-row:nth-child(4) .value {
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--accent2);
+.results .result-row.highlight .value.highlight-value {
+  font-size: 26px;
 }
 
 .capital-loss-message,

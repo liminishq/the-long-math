@@ -5,6 +5,14 @@
  * Designed for both browser (via ES module import) and Node (for tests).
  */
 
+import {
+  RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP,
+  computeRrspNewAnnualRoom
+} from "../canada-income-tax/js/rrsp-room.js";
+import { computePersonalTax } from "../canada-income-tax/js/tax.engine.js";
+
+export { RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP, computeRrspNewAnnualRoom };
+
 /**
  * Clamp numeric value into [min, max]. If not finite, returns fallback.
  */
@@ -14,16 +22,80 @@ function clamp(n, min, max, fallback = min) {
 }
 
 /**
- * Build monthly return rate from annual return, fees, and optional inflation.
+ * Progressive contribution-year tax benefit for RRSP/FHSA deductions.
  *
- * r, f, i are PERCENT values (e.g. 7 for 7%).
+ * benefit = tax(income, deductions=0) − tax(income, deductions=rrsp+fhsa)
+ * Incremental deposits within a tax year use the cumulative deduction so far.
+ *
+ * @param {{ year: number, province: string, employmentIncome: number, taxData: object }} opts
  */
-import {
-  RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP,
-  computeRrspNewAnnualRoom
-} from "../canada-income-tax/js/rrsp-room.js";
+export function createProgressiveDeductionBenefit({
+  year,
+  province,
+  employmentIncome,
+  taxData
+}) {
+  const income = Math.max(0, Number(employmentIncome) || 0);
+  const taxYear = Number(year) || 2025;
+  const cache = new Map();
 
-export { RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP, computeRrspNewAnnualRoom };
+  function cacheKey(rrspDeduction, fhsaDeduction) {
+    return `${rrspDeduction}|${fhsaDeduction}`;
+  }
+
+  function totalIncomeTax(rrspDeduction, fhsaDeduction) {
+    const rrsp = Math.max(0, Number(rrspDeduction) || 0);
+    const fhsa = Math.max(0, Number(fhsaDeduction) || 0);
+    const key = cacheKey(rrsp, fhsa);
+    if (cache.has(key)) return cache.get(key);
+
+    const result = computePersonalTax(
+      {
+        year: taxYear,
+        province,
+        employmentIncome: income,
+        selfEmploymentIncome: 0,
+        otherIncome: 0,
+        eligibleDividends: 0,
+        nonEligibleDividends: 0,
+        capitalGains: 0,
+        rrspDeduction: rrsp,
+        fhsaDeduction: fhsa,
+        estimatedDeductions: 0,
+        taxPaid: 0
+      },
+      {
+        taxData,
+        roundToDollar: false,
+        skipMarginalRateCalculation: true
+      }
+    );
+    const tax = result?.totals?.totalIncomeTax ?? 0;
+    cache.set(key, tax);
+    return tax;
+  }
+
+  function benefitForIncrement(prevRrsp, prevFhsa, addRrsp, addFhsa) {
+    const prevR = Math.max(0, Number(prevRrsp) || 0);
+    const prevF = Math.max(0, Number(prevFhsa) || 0);
+    const addR = Math.max(0, Number(addRrsp) || 0);
+    const addF = Math.max(0, Number(addFhsa) || 0);
+    if (addR <= 0 && addF <= 0) return 0;
+    const taxPrev = totalIncomeTax(prevR, prevF);
+    const taxNext = totalIncomeTax(prevR + addR, prevF + addF);
+    return Math.max(0, taxPrev - taxNext);
+  }
+
+  function totalBenefit(rrsp, fhsa) {
+    return Math.max(0, totalIncomeTax(0, 0) - totalIncomeTax(rrsp, fhsa));
+  }
+
+  return {
+    benefitForIncrement,
+    totalBenefit,
+    totalIncomeTax
+  };
+}
 
 /**
  * When FHSA is eligible, these are the six distinct permutations of
@@ -117,12 +189,14 @@ function runStrategy(baseInputs, strategyKey) {
     fhsaLifetimeCap,
     tfsaNewAnnualRoom,
     currentTaxableIncomeForRrsp,
-    rrspAnnualNewRoomCap
+    rrspAnnualNewRoomCap,
+    progressiveBenefit
   } = baseInputs;
 
   const months = Math.max(1, Math.round(horizonYears * 12));
   const tNow = clamp(t_now_pct / 100, 0, 1, 0);
   const tRet = clamp(t_ret_pct / 100, 0, 1, 0);
+  const useProgressive = progressiveBenefit && typeof progressiveBenefit.benefitForIncrement === "function";
 
   // Pre-compute gross contribution per month (before any tax or allocation)
   let grossPerMonth = 0;
@@ -159,6 +233,14 @@ function runStrategy(baseInputs, strategyKey) {
     nonRegFromRefund: 0
   };
 
+  // Per tax-year cumulative deductible deposits (reset each January).
+  let yearRrspDeduction = 0;
+  let yearFhsaDeduction = 0;
+  let yearIncrementalRefundSum = 0;
+  let year1ProgressiveRefund = 0;
+  let year1ProgressiveRefundRrsp = 0;
+  let year1ProgressiveRefundFhsa = 0;
+
   // FHSA room per year (index 0..T-1). Values are in contribution dollars.
   const years = Math.ceil(horizonYears);
   const fhsaRoomByYear = [];
@@ -191,16 +273,47 @@ function runStrategy(baseInputs, strategyKey) {
     return used;
   }
 
+  function applyDeductionRefund(addRrsp, addFhsa, monthIndex) {
+    if (addRrsp <= 0 && addFhsa <= 0) return 0;
+    let refund;
+    if (useProgressive) {
+      refund = progressiveBenefit.benefitForIncrement(
+        yearRrspDeduction,
+        yearFhsaDeduction,
+        addRrsp,
+        addFhsa
+      );
+      yearRrspDeduction += addRrsp;
+      yearFhsaDeduction += addFhsa;
+      yearIncrementalRefundSum += refund;
+      if (monthIndex >= 0 && monthIndex < 12) {
+        year1ProgressiveRefund += refund;
+        if (addRrsp > 0 && addFhsa <= 0) year1ProgressiveRefundRrsp += refund;
+        else if (addFhsa > 0 && addRrsp <= 0) year1ProgressiveRefundFhsa += refund;
+        else {
+          // Mixed increment (rare): attribute proportionally by dollars.
+          const total = addRrsp + addFhsa;
+          year1ProgressiveRefundRrsp += refund * (addRrsp / total);
+          year1ProgressiveRefundFhsa += refund * (addFhsa / total);
+        }
+      }
+    } else {
+      // Legacy flat-rate fallback for older tests without taxData.
+      refund = (addRrsp + addFhsa) * tNow;
+    }
+    if (refundMode === "reinvest" && refund > 0) {
+      B_refund += refund;
+    }
+    return refund;
+  }
+
   function depositRrsp(amount, monthIndex = -1) {
     if (amount <= 0) return 0;
     const used = Math.min(amount, rrspRoomRemaining);
     rrspRoomRemaining -= used;
     B_rrsp += used;
     recordYear1("rrspDirect", used, monthIndex);
-    const refund = used * tNow;
-    if (refundMode === "reinvest") {
-      B_refund += refund;
-    }
+    applyDeductionRefund(used, 0, monthIndex);
     return used;
   }
 
@@ -211,10 +324,7 @@ function runStrategy(baseInputs, strategyKey) {
       fhsaLifetimeContributed += amount;
     }
     recordYear1("fhsaDirect", amount, monthIndex);
-    const refund = amount * tNow;
-    if (refundMode === "reinvest") {
-      B_refund += refund;
-    }
+    applyDeductionRefund(0, amount, monthIndex);
     return amount;
   }
 
@@ -295,8 +405,22 @@ function runStrategy(baseInputs, strategyKey) {
   }
 
   for (let m = 0; m < months; m++) {
-    // January (simulation years 2+): add legislated new room on top of any unused carry-forward.
+    // January (simulation years 2+): new tax year — reset deduction trackers; add legislated room.
     if (m > 0 && m % 12 === 0) {
+      if (useProgressive && (yearRrspDeduction > 0 || yearFhsaDeduction > 0)) {
+        const reconciled = progressiveBenefit.totalBenefit(yearRrspDeduction, yearFhsaDeduction);
+        if (Math.abs(reconciled - yearIncrementalRefundSum) > 0.01) {
+          // Soft assert for tests/devtools; do not throw in production UI paths.
+          if (typeof console !== "undefined" && console.warn) {
+            console.warn(
+              `Progressive refund reconciliation drift: incremental=${yearIncrementalRefundSum} totalBenefit=${reconciled}`
+            );
+          }
+        }
+      }
+      yearRrspDeduction = 0;
+      yearFhsaDeduction = 0;
+      yearIncrementalRefundSum = 0;
       tfsaRoomRemaining += tfsaJanuaryBump;
       rrspRoomRemaining += rrspJanuaryBump;
     }
@@ -346,6 +470,12 @@ function runStrategy(baseInputs, strategyKey) {
     ? (fhsaAnnualRoomStart || annualRoom) - (fhsaRoomByYear[0] ?? 0)
     : 0;
 
+  // Final-year reconciliation (last incomplete or complete tax year in the loop).
+  let yearRefundReconciled = null;
+  if (useProgressive && (yearRrspDeduction > 0 || yearFhsaDeduction > 0)) {
+    yearRefundReconciled = progressiveBenefit.totalBenefit(yearRrspDeduction, yearFhsaDeduction);
+  }
+
   return {
     finalAfterTax,
     breakdown: {
@@ -358,6 +488,12 @@ function runStrategy(baseInputs, strategyKey) {
     meta: {
       fhsaUsedYear1,
       year1Allocation,
+      year1ProgressiveRefund,
+      year1ProgressiveRefundRrsp,
+      year1ProgressiveRefundFhsa,
+      usedProgressiveRefund: useProgressive,
+      yearRefundReconciled,
+      yearIncrementalRefundSum,
       fhsaLifetimeContributed,
       fhsaLifetimeCap: lifeCap > 0 ? lifeCap : null,
       remainingTfsaRoom: tfsaRoomRemaining,
@@ -391,8 +527,11 @@ function runStrategy(baseInputs, strategyKey) {
  *  - fhsaAnnualRoomStart: number (optional; default fhsaAnnualRoom)
  *  - fhsaLifetimeCap: number (default 40000; cumulative contribution limit; 0 disables)
  *  - tfsaNewAnnualRoom: number (default 7000; added each Jan from simulation year 2 onward)
- *  - currentTaxableIncome: number (for RRSP 18% annual room top-up; same field as tax section)
+ *  - currentTaxableIncome: number (contribution-year income: RRSP 18% room + progressive refund base)
  *  - rrspAnnualNewRoomCap: number (optional; default RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP)
+ *  - taxYear / taxProvince / taxData / taxContext: when taxData + province + income are present,
+ *    contribution-year refunds use progressive tax(income,0) − tax(income, rrsp+fhsa).
+ *    t_now is then display/info only and does not drive refunds.
  */
 export function runAccountStrategySimulation(rawInputs) {
   if (!rawInputs || typeof rawInputs !== "object") {
@@ -420,7 +559,13 @@ export function runAccountStrategySimulation(rawInputs) {
     fhsaLifetimeCap = 40000,
     tfsaNewAnnualRoom = 7000,
     currentTaxableIncome = 0,
-    rrspAnnualNewRoomCap
+    rrspAnnualNewRoomCap,
+    taxYear,
+    taxProvince,
+    taxData,
+    taxContext,
+    contributionYearIncome,
+    progressiveBenefit: progressiveBenefitInput
   } = rawInputs;
 
   // Basic validation / clamping
@@ -435,6 +580,36 @@ export function runAccountStrategySimulation(rawInputs) {
     inflationPct: safeInflation,
     useRealDollars: !!useRealDollars
   });
+
+  const resolvedTaxCtx = taxContext && typeof taxContext === "object" ? taxContext : {};
+  const resolvedTaxData = taxData || resolvedTaxCtx.taxData || null;
+  const resolvedProvince =
+    taxProvince || resolvedTaxCtx.province || resolvedTaxCtx.taxProvince || null;
+  const resolvedYear = Number(taxYear || resolvedTaxCtx.year || resolvedTaxCtx.taxYear) || 2025;
+  const contributionIncome = Math.max(
+    0,
+    Number(
+      contributionYearIncome ??
+        resolvedTaxCtx.contributionYearIncome ??
+        resolvedTaxCtx.employmentIncome ??
+        currentTaxableIncome
+    ) || 0
+  );
+
+  let progressiveBenefit = progressiveBenefitInput || null;
+  if (
+    !progressiveBenefit &&
+    resolvedTaxData &&
+    resolvedProvince &&
+    Number.isFinite(contributionIncome)
+  ) {
+    progressiveBenefit = createProgressiveDeductionBenefit({
+      year: resolvedYear,
+      province: resolvedProvince,
+      employmentIncome: contributionIncome,
+      taxData: resolvedTaxData
+    });
+  }
 
   const baseInputs = {
     contributionMode,
@@ -458,7 +633,8 @@ export function runAccountStrategySimulation(rawInputs) {
     currentTaxableIncomeForRrsp: Math.max(0, Number(currentTaxableIncome) || 0),
     rrspAnnualNewRoomCap: Number.isFinite(Number(rrspAnnualNewRoomCap))
       ? Math.max(0, Number(rrspAnnualNewRoomCap))
-      : RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP
+      : RRSP_ANNUAL_NEW_ROOM_DOLLAR_CAP,
+    progressiveBenefit
   };
 
   // Strategies to simulate
@@ -614,6 +790,119 @@ function buildAllocationSummary(baseInputs, strategyResult, remainderDestination
     },
     remainderDestination,
     noteText
+  };
+}
+
+function paramGet(params, key) {
+  if (!params) return null;
+  if (typeof params.get === "function") {
+    return typeof params.has === "function" && !params.has(key) ? null : params.get(key);
+  }
+  if (Object.prototype.hasOwnProperty.call(params, key) && params[key] != null && params[key] !== "") {
+    return String(params[key]);
+  }
+  return null;
+}
+
+const TFSA_SHARE_KEYS = [
+  "contribution_mode",
+  "contribution_amount",
+  "horizon_years",
+  "annual_return",
+  "annual_fees",
+  "inflation",
+  "use_real",
+  "tax_province",
+  "tax_year",
+  "current_taxable_income",
+  "retirement_taxable_income",
+  "manual_rate_override",
+  "t_now",
+  "t_ret",
+  "refund_mode",
+  "tfsa_remaining_room",
+  "rrsp_remaining_room",
+  "rrsp_unused_carryforward",
+  "fhsa_eligible",
+  "fhsa_home_qualified",
+  "fhsa_annual_room",
+  "fhsa_lifetime_cap",
+  "tfsa_new_annual_room"
+];
+
+/**
+ * Share/query scenario from simulation inputs (stable keys for URL restore).
+ */
+export function buildTfsaShareScenario(inputs) {
+  return {
+    contribution_mode: inputs.contributionMode,
+    contribution_amount: String(inputs.contributionAmount),
+    horizon_years: String(inputs.horizonYears),
+    annual_return: String(inputs.annualReturn),
+    annual_fees: String(inputs.annualFees),
+    inflation: String(inputs.inflation),
+    use_real: inputs.useRealDollars ? "1" : "0",
+    tax_province: inputs.taxProvince,
+    tax_year: String(inputs.taxYear),
+    current_taxable_income: String(Math.round(inputs.currentTaxableIncome)),
+    retirement_taxable_income: String(Math.round(inputs.retirementTaxableIncome)),
+    manual_rate_override: inputs.manualRateOverride ? "1" : "0",
+    t_now: String(inputs.t_now),
+    t_ret: String(inputs.t_ret),
+    refund_mode: inputs.refundMode,
+    tfsa_remaining_room: String(Math.round(inputs.tfsaRemainingRoom)),
+    rrsp_remaining_room: String(Math.round(inputs.rrspRemainingRoom)),
+    rrsp_unused_carryforward: String(Math.round(inputs.rrspUnusedCarryforward || 0)),
+    fhsa_eligible: inputs.fhsaEligible ? "1" : "0",
+    fhsa_home_qualified: inputs.fhsaHomeQualified ? "1" : "0",
+    fhsa_annual_room: String(Math.round(inputs.fhsaAnnualRoom)),
+    fhsa_lifetime_cap: String(inputs.fhsaLifetimeCap ?? 40000),
+    tfsa_new_annual_room: String(Math.round(inputs.tfsaNewAnnualRoom))
+  };
+}
+
+/**
+ * Parse share/query params. Returns null if none of the known keys are present.
+ */
+export function parseTfsaShareQuery(params) {
+  if (!TFSA_SHARE_KEYS.some((k) => paramGet(params, k) != null)) return null;
+
+  const flag = (key) => {
+    const v = paramGet(params, key);
+    return v === "1" || v === "true";
+  };
+  const numOrNull = (key) => {
+    const v = paramGet(params, key);
+    if (v == null) return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  };
+
+  return {
+    contributionMode: paramGet(params, "contribution_mode"),
+    contributionAmount: numOrNull("contribution_amount"),
+    horizonYears: numOrNull("horizon_years"),
+    annualReturn: numOrNull("annual_return"),
+    annualFees: numOrNull("annual_fees"),
+    inflation: numOrNull("inflation"),
+    useRealDollars: paramGet(params, "use_real") != null ? flag("use_real") : null,
+    taxProvince: paramGet(params, "tax_province"),
+    taxYear: numOrNull("tax_year"),
+    currentTaxableIncome: numOrNull("current_taxable_income"),
+    retirementTaxableIncome: numOrNull("retirement_taxable_income"),
+    manualRateOverride: paramGet(params, "manual_rate_override") != null ? flag("manual_rate_override") : null,
+    t_now: numOrNull("t_now"),
+    t_ret: numOrNull("t_ret"),
+    refundMode: paramGet(params, "refund_mode"),
+    tfsaRemainingRoom: numOrNull("tfsa_remaining_room"),
+    rrspRemainingRoom: numOrNull("rrsp_remaining_room"),
+    rrspUnusedCarryforward: numOrNull("rrsp_unused_carryforward"),
+    fhsaEligible: paramGet(params, "fhsa_eligible") != null ? flag("fhsa_eligible") : null,
+    fhsaHomeQualified: paramGet(params, "fhsa_home_qualified") != null ? flag("fhsa_home_qualified") : null,
+    fhsaAnnualRoom: numOrNull("fhsa_annual_room"),
+    fhsaLifetimeCap: numOrNull("fhsa_lifetime_cap"),
+    tfsaNewAnnualRoom: numOrNull("tfsa_new_annual_room"),
+    rrspRemainingRoomSpecified: paramGet(params, "rrsp_remaining_room") != null
   };
 }
 

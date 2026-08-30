@@ -988,7 +988,7 @@
     "type": "calculator",
     "title": "Canada Capital Gains Tax Calculator",
     "url": "/calculators/capital-gains-tax-canada/",
-    "desc": "Estimate Canadian capital gains tax using ACB, proceeds, inclusion rate, and marginal tax rate. Educational calculator with inspectable arithmetic.",
+    "desc": "Estimate additional Canadian income tax from a capital gain given income before the gain. Progressive brackets by default; optional one-rate sensitivity.",
     "keywords": [
       "Canada Capital Gains Tax Calculator (Estimate Your Tax Owing)",
       "Canada Capital Gains Tax Calculator",
@@ -1842,7 +1842,7 @@
     "type": "calculator",
     "title": "TFSA vs RRSP vs FHSA Calculator (Canada)",
     "url": "/calculators/tfsa-rrsp-fhsa/",
-    "desc": "Compare TFSA, RRSP, and FHSA outcomes using explicit assumptions and after-tax results.",
+    "desc": "Compare after-tax TFSA, RRSP, and FHSA outcomes, including progressive contribution-year refunds and optional refund reinvestment.",
     "keywords": [
       "TFSA vs RRSP vs FHSA Calculator (Canada)",
       "tfsa rrsp fhsa",

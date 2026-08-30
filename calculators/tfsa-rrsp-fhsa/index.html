@@ -527,6 +527,8 @@
       <h1>TFSA vs RRSP vs FHSA Calculator (Canada)</h1>
       <p class="lead">
         Compare TFSA, RRSP, and FHSA outcomes using explicit assumptions and after-tax results.
+        Contribution-year RRSP/FHSA tax savings use progressive personal tax on the income you model
+        (current, next year, or hypothetical). Retirement tax remains a planning assumption.
       </p>
       <p class="tagline" style="margin-top: 8px; font-size: 13px; color: var(--muted);">
         <em>No opinions. No hidden assumptions. Just arithmetic.</em>
@@ -612,6 +614,9 @@
           <div class="field checkbox">
             <input id="realToggle" type="checkbox" />
             <label for="realToggle">Show results in real (inflation-adjusted) dollars</label>
+            <p class="help-inline">
+              Uses a real (after-inflation) return. Contribution, room, and refund dollar amounts stay at the figures you entered, so those amounts are treated as constant in today's dollars.
+            </p>
           </div>
 
           <div id="inflationWrap" class="field hidden">
@@ -629,6 +634,15 @@
           <hr class="sep" />
 
           <h2 class="section-title">Tax rate source</h2>
+
+          <div class="field">
+            <label for="taxYear">Tax year (contribution-year tables)</label>
+            <select id="taxYear">
+              <option value="2025">2025</option>
+              <option value="2026" selected>2026</option>
+            </select>
+            <p class="help-inline">Loads official federal/provincial bracket files for progressive contribution-year refunds. Defaults to the latest published year in this calculator.</p>
+          </div>
 
           <div class="field">
             <label for="taxProvince">Province/Territory of residence</label>
@@ -650,7 +664,7 @@
           </div>
 
           <div class="field">
-            <label for="currentTaxableIncome">Current taxable income (for t_now estimate)</label>
+            <label for="currentTaxableIncome">Contribution-year employment income (progressive RRSP/FHSA refund + RRSP room)</label>
             <div class="input-with-unit numeric-combo">
               <span class="unit-prefix" aria-hidden="true">$</span>
               <input id="currentTaxableIncome" type="number" inputmode="decimal" min="0" step="1000" value="120000" />
@@ -684,7 +698,7 @@
 
           <div id="manualRateFields" class="hidden">
             <div class="field">
-              <label for="tNow">Current marginal tax rate (t_now)</label>
+              <label for="tNow">Current next-dollar rate (t_now, display)</label>
               <div class="input-with-unit numeric-combo">
                 <input id="tNow" type="number" inputmode="decimal" step="0.5" value="40" />
                 <span class="unit-suffix" aria-hidden="true">%</span>
@@ -707,7 +721,9 @@
               </div>
             </div>
             <p class="help-inline">
-              Rate estimates are based on employment income and the selected province. Use manual override if you want to set custom rates directly.
+              Contribution-year refunds always use progressive tax on contribution-year income (not × t_now).
+              Manual t_now is display-only; manual t_ret still sets the retirement withdrawal rate.
+              Without override, both displayed rates are derived from the incomes above.
             </p>
           </div>
 
@@ -797,6 +813,14 @@
           </div>
 
           <div id="fhsaFields" class="hidden">
+            <div class="field checkbox">
+              <input id="fhsaHomeQualified" type="checkbox" checked />
+              <label for="fhsaHomeQualified">Assume qualifying first-home withdrawal (tax-free exit)</label>
+            </div>
+            <p class="help-inline">
+              Eligibility alone does not make withdrawals tax-free. Uncheck if you want the model to tax FHSA withdrawals at t_ret like an RRSP-style exit.
+            </p>
+
             <div class="field">
               <label for="fhsaAnnualRoom">FHSA annual contribution room</label>
               <div class="input-with-unit numeric-combo">
@@ -810,7 +834,7 @@
             </div>
 
             <p class="help-inline">
-              This model assumes FHSA savings are used for a qualifying first-home withdrawal (tax-free exit). Under current rules the FHSA allows up to <strong>$8,000</strong> per year in contributions (you can adjust the annual room input if limits change), and up to <strong>$40,000</strong> per person in lifetime contributions. Investment growth inside the FHSA does not count toward that lifetime limit.
+              Under current rules the FHSA allows up to <strong>$8,000</strong> per year in contributions (you can adjust the annual room input if limits change), and up to <strong>$40,000</strong> per person in lifetime contributions. Investment growth inside the FHSA does not count toward that lifetime limit. Qualifying home withdrawal is controlled separately above.
             </p>
           </div>
 
@@ -859,7 +883,7 @@
               <div class="kv-compact">
                 <span class="kv-k">Initial investment</span>
                 <span class="kv-v" id="year1Initial">$—</span>
-                <span class="kv-k">Est. RRSP/FHSA refund</span>
+                <span class="kv-k">Est. RRSP/FHSA refund (progressive)</span>
                 <span class="kv-v" id="year1Refund">$—</span>
                 <span class="kv-k">Refunds reinvested?</span>
                 <span class="kv-v" id="year1RefundMode">—</span>
@@ -909,7 +933,7 @@
             </table>
           </div>
           <p class="help-inline" style="margin: 0 0 14px;">
-            RRSP balances are taxed at t_ret on withdrawal; FHSA uses your home-qualified assumption; RRSP/FHSA refunds follow the reinvest toggle.
+            RRSP balances are taxed at t_ret on withdrawal; FHSA uses your home-qualified assumption; contribution-year RRSP/FHSA refunds are progressive (not × t_now) and follow the reinvest toggle.
           </p>
 
           <hr class="sep" />
@@ -956,8 +980,9 @@
           <li><span class="muted">Refund default:</span> RRSP/FHSA refund is modeled as spent unless you toggle reinvestment.</li>
           <li><span class="muted">Room constraints:</span> Opening TFSA room is user-entered. Opening RRSP room defaults to 18% of current taxable income (prior-year earned-income proxy) plus optional carry-forward, using the same formula as the RRSP Contribution Room calculator; edit the total to override. From simulation year 2, each January adds your specified new TFSA amount and RRSP room equal to min(18% of current taxable income, indexed dollar cap from tax data). Unused room carries forward until used; overflow goes to non-registered.</li>
           <li><span class="muted">Returns:</span> same net return and fee structure for all accounts; no asset-location modeling.</li>
-          <li><span class="muted">Tax rates:</span> t_now and t_ret are constant over the horizon.</li>
-          <li><span class="muted">FHSA:</span> annual room (user input; default $8,000) and a $40,000 lifetime contribution cap are enforced; growth does not count toward the lifetime cap. Contribution carry-forward is not modeled.</li>
+          <li><span class="muted">Tax rates:</span> Contribution-year RRSP/FHSA refunds equal the progressive tax delta tax(income, deductions=0) − tax(income, deductions=RRSP+FHSA) from the shared personal-tax engine (cumulative within each tax year). Contribution-year income is modelled as employment income (CPP, EI, and Canada Employment Amount apply where the engine does). Displayed t_now is the starting next-dollar rate for information; it does not set the refund. Withdrawals still use a constant t_ret. Select the tax year above to load the matching official tables.</li>
+          <li><span class="muted">Real dollars:</span> when enabled, growth uses a real return while contribution and room amounts stay at the figures you entered (constant in today's dollars).</li>
+          <li><span class="muted">FHSA:</span> annual room (user input; default $8,000) and a $40,000 lifetime contribution cap are enforced; growth does not count toward the lifetime cap. Contribution carry-forward is not modeled. Qualifying first-home withdrawal is a separate toggle from FHSA eligibility.</li>
           <li><span class="muted">Non-registered:</span> only refund overflow can be routed to a non-registered bucket; non-registered tax drag is not modeled in this version.</li>
         </ul>
       </div>

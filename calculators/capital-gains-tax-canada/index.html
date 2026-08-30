@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Canada Capital Gains Tax Calculator (Estimate Your Tax Owing) – The Long Math</title>
-  <meta name="description" content="Estimate Canadian capital gains tax using ACB, proceeds, inclusion rate, and marginal tax rate. Educational calculator with inspectable arithmetic." />
+  <title>Canada Capital Gains Tax Calculator (Incremental Tax) – The Long Math</title>
+  <meta name="description" content="Estimate how much additional Canadian income tax a capital gain causes, given income before the gain. Progressive brackets by default; optional one-rate sensitivity. Inspectable arithmetic." />
   <link rel="canonical" href="https://www.thelongmath.com/calculators/capital-gains-tax-canada/" />
 
   <script src="/assets/js/theme-init.js"></script>
@@ -73,6 +73,56 @@
       color: var(--muted);
       line-height: 1.5;
     }
+    .calc-mode-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 12px 0 16px;
+    }
+    .calc-mode-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      cursor: pointer;
+    }
+    .calc-mode-option:has(input:checked) {
+      border-color: var(--accent);
+      background: rgba(255,255,255,0.05);
+    }
+    .calc-mode-option input {
+      width: auto;
+      margin-top: 3px;
+    }
+    .calc-mode-option span {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .calc-mode-option .mode-sub {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .marginal-after-note {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .calc-error {
+      margin-top: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--error, #c44);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
   </style>
 
   <script type="application/ld+json">
@@ -82,7 +132,7 @@
     "name": "Canada Capital Gains Tax Calculator",
     "applicationCategory": "FinanceApplication",
     "operatingSystem": "Web",
-    "description": "Estimate Canadian capital gains tax using ACB, proceeds, inclusion rate, and marginal tax rate. Shows taxable gain, tax owing, and after-tax proceeds with inspectable arithmetic."
+    "description": "Estimate how much additional Canadian income tax a capital gain causes given income before the gain, using progressive federal and provincial brackets. Optional manual marginal-rate sensitivity mode."
   }
   </script>
 
@@ -102,8 +152,10 @@
     <header>
       <h1>Canada Capital Gains Tax Calculator</h1>
       <p class="lead">
-        Estimate capital gains tax on a Canadian asset sale. Enter proceeds, adjusted cost base (ACB),
-        inclusion rate, and marginal tax rate to see taxable gain, estimated tax owing, and after-tax proceeds.
+        How much additional income tax will this capital gain cause, given income before the gain?
+      </p>
+      <p class="lead">
+        Default mode runs the gain through progressive federal and provincial brackets via the shared personal-tax engine (50% inclusion). An optional manual mode multiplies the taxable portion by one combined marginal rate you enter — a sensitivity check, not the default.
       </p>
       <p class="lead">Amounts in CAD. Whole dollars. No opinions. Just arithmetic.</p>
     </header>
@@ -113,31 +165,92 @@
         <article class="panel">
           <h2 class="section-title">Inputs</h2>
 
-          <div class="field">
-            <label for="proceeds">Proceeds of disposition (CAD)</label>
-            <input id="proceeds" type="text" inputmode="decimal" value="150000" placeholder="0" aria-label="Proceeds of disposition" />
-            <div class="help-text">Amount you received (or will receive) when you sold the asset</div>
+          <fieldset class="field" style="border:0;padding:0;margin:0;">
+            <legend class="section-title" style="font-size:14px;margin-bottom:8px;">Calculation mode</legend>
+            <div class="calc-mode-group" role="radiogroup" aria-label="Calculation mode">
+              <label class="calc-mode-option">
+                <input type="radio" name="calc_mode" value="progressive" checked aria-label="Progressive incremental tax" />
+                <span>
+                  Progressive incremental tax
+                  <span class="mode-sub">Tax after the gain minus tax before the gain (default)</span>
+                </span>
+              </label>
+              <label class="calc-mode-option">
+                <input type="radio" name="calc_mode" value="manual" aria-label="Manual marginal-rate estimate" />
+                <span>
+                  Manual marginal-rate estimate
+                  <span class="mode-sub">Sensitivity: taxable gain × one combined rate you enter</span>
+                </span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="field" data-mode-panel="progressive">
+            <label for="tax_year">Tax year</label>
+            <select id="tax_year" aria-label="Tax year">
+              <option value="2025" selected>2025</option>
+              <option value="2026">2026</option>
+            </select>
+          </div>
+
+          <div class="field" data-mode-panel="progressive">
+            <label for="province">Province or territory</label>
+            <select id="province" aria-label="Province or territory" required>
+              <option value="AB">Alberta</option>
+              <option value="BC">British Columbia</option>
+              <option value="MB">Manitoba</option>
+              <option value="NB">New Brunswick</option>
+              <option value="NL">Newfoundland and Labrador</option>
+              <option value="NS">Nova Scotia</option>
+              <option value="NT">Northwest Territories</option>
+              <option value="NU">Nunavut</option>
+              <option value="ON" selected>Ontario</option>
+              <option value="PE">Prince Edward Island</option>
+              <option value="QC">Quebec</option>
+              <option value="SK">Saskatchewan</option>
+              <option value="YT">Yukon</option>
+            </select>
+            <div class="help-text">Required for progressive mode. Also updates the bracket reference tables below.</div>
+          </div>
+
+          <div class="field" data-mode-panel="progressive">
+            <label for="income_before_gain">Taxable income before capital gain (CAD)</label>
+            <input id="income_before_gain" type="text" inputmode="decimal" value="50000" placeholder="0" aria-label="Taxable income before capital gain" />
+            <div class="help-text">
+              Your taxable income for the year before adding this capital gain. Sets your starting position in the progressive brackets.
+              This is not employment income: CPP, EI, and the Canada Employment Amount are not generated from this field.
+              Source-specific credits and deductions beyond ordinary bracket tax and general credits (such as the BPA) are not modelled.
+            </div>
           </div>
 
           <div class="field">
-            <label for="acb">Adjusted Cost Base (ACB) (CAD)</label>
-            <input id="acb" type="text" inputmode="decimal" value="100000" placeholder="0" aria-label="Adjusted cost base" />
-            <div class="help-text">Your cost to acquire (plus improvements), averaged for identical properties</div>
+            <label for="capital_gain">Capital gain — gross (CAD)</label>
+            <input id="capital_gain" type="text" inputmode="decimal" value="200000" placeholder="0" aria-label="Capital gain gross" />
+            <div class="help-text">Cash capital gain before inclusion. Negative = capital loss for this calculator.</div>
           </div>
 
           <div class="field">
+            <label for="proceeds">Proceeds of disposition (optional)</label>
+            <input id="proceeds" type="text" inputmode="decimal" value="" placeholder="Optional" aria-label="Proceeds of disposition" />
+          </div>
+
+          <div class="field">
+            <label for="acb">Adjusted Cost Base / ACB (optional)</label>
+            <input id="acb" type="text" inputmode="decimal" value="" placeholder="Optional" aria-label="Adjusted cost base" />
+            <div class="help-text">If you edit proceeds and ACB, capital gain is filled as proceeds − ACB.</div>
+          </div>
+
+          <div class="field" data-mode-panel="manual" hidden>
             <label for="inclusion_rate">Capital gains inclusion rate (%)</label>
             <input id="inclusion_rate" type="text" inputmode="decimal" value="50" placeholder="50" aria-label="Inclusion rate" />
-            <div class="help-text">Portion of the gain that is taxable. Default is 50%.</div>
+            <div class="help-text">Manual mode only. Progressive mode uses the engine’s fixed 50% inclusion.</div>
           </div>
 
-          <div class="field">
-            <label for="marginal_tax_rate">Marginal tax rate (%)</label>
+          <div class="field" data-mode-panel="manual" hidden>
+            <label for="marginal_tax_rate">Combined marginal tax rate (%)</label>
             <input id="marginal_tax_rate" type="text" inputmode="decimal" value="40" placeholder="0" aria-label="Marginal tax rate" />
             <div class="help-text">
-              Your combined federal + provincial marginal rate on taxable income — applied to the taxable portion of your capital gain.
-              To estimate your marginal rate based on your total projected income, you can use the
-              <a href="/calculators/canada-income-tax/">Canada Personal Income Tax Calculator</a>.
+              Applied to the entire taxable portion of the gain in manual mode (0–100%). Rates outside that range are rejected with an error. Large gains can cross brackets; this sensitivity still uses one rate.
             </div>
           </div>
 
@@ -146,10 +259,11 @@
               <input id="primary_residence_exemption" type="checkbox" aria-label="Primary residence exemption" />
               <span>Primary residence exemption (educational only)</span>
             </label>
-            <div class="help-text">When enabled, taxable gain = 0 and tax owing = 0. Raw gain still shown. Real eligibility depends on CRA rules; this toggle is not advice.</div>
+            <div class="help-text">When enabled, included amount and incremental tax = $0. Raw gain still shown. Real eligibility depends on CRA rules; this toggle is not advice.</div>
           </div>
 
           <button id="reset_button" class="reset-button" type="button">Reset</button>
+          <div id="calc_error" class="calc-error" style="display:none;" role="alert"></div>
         </article>
 
         <article class="panel">
@@ -157,24 +271,62 @@
             <h2 class="section-title">Results</h2>
             <a href="/calculators/capital-gains-tax-canada/methodology/" class="inspect-arithmetic-btn">Inspect the Arithmetic</a>
           </div>
-          <div class="results">
+
+          <div class="results" data-results-panel="progressive">
+            <div class="result-row">
+              <div class="label">Taxable income before gain</div>
+              <div class="value" id="out_taxable_income_before">$–</div>
+            </div>
+            <div class="result-row">
+              <div class="label">Tax before gain</div>
+              <div class="value" id="out_tax_before">$–</div>
+            </div>
+            <div class="result-row">
+              <div class="label">Gross capital gain</div>
+              <div class="value" id="out_gross_gain">$–</div>
+            </div>
+            <div class="result-row">
+              <div class="label">Taxable (included) portion</div>
+              <div class="value" id="out_taxable_included">$–</div>
+            </div>
+            <div class="result-row">
+              <div class="label">Taxable income after gain</div>
+              <div class="value" id="out_taxable_income_after">$–</div>
+            </div>
+            <div class="result-row">
+              <div class="label">Tax after gain</div>
+              <div class="value" id="out_tax_after">$–</div>
+            </div>
+            <div class="result-row highlight">
+              <div class="label">Additional tax from the gain</div>
+              <div class="value highlight-value" id="out_additional_tax">$–</div>
+            </div>
+            <div class="result-row">
+              <div class="label">Effective tax rate on gross gain</div>
+              <div class="value" id="out_effective_rate">–</div>
+            </div>
+            <p id="out_marginal_after_note" class="marginal-after-note" hidden></p>
+          </div>
+
+          <div class="results" data-results-panel="manual" hidden>
             <div class="result-row">
               <div class="label">Capital gain / loss</div>
-              <div class="value" id="out_gain">$–</div>
+              <div class="value" id="out_manual_gain">$–</div>
             </div>
             <div class="result-row">
               <div class="label">Taxable capital gain</div>
-              <div class="value" id="out_taxable_gain">$–</div>
+              <div class="value" id="out_manual_taxable">$–</div>
             </div>
             <div class="result-row highlight">
-              <div class="label">Estimated tax owing</div>
-              <div class="value highlight-value" id="out_tax_owing">$–</div>
+              <div class="label">Estimated tax at entered marginal rate</div>
+              <div class="value highlight-value" id="out_manual_tax">$–</div>
             </div>
             <div class="result-row">
-              <div class="label">After-tax proceeds</div>
-              <div class="value" id="out_after_tax">$–</div>
+              <div class="label">Effective tax rate on gross gain</div>
+              <div class="value" id="out_manual_effective">–</div>
             </div>
           </div>
+
           <div id="out_capital_loss_message" class="capital-loss-message" style="display: none;"></div>
           <div id="out_exemption_message" class="exemption-message" style="display: none;"></div>
 
@@ -194,80 +346,52 @@
       </div>
     </div>
 
-    <!-- Full-width card: how capital gains use your marginal rate + brackets reference -->
     <div class="card" style="margin-top: 24px;">
       <article class="panel">
-        <h2 class="section-title">How capital gains use your marginal tax rate</h2>
+        <h2 class="section-title">How progressive incremental tax works</h2>
         <p>
-          Capital gains are not taxed at a flat rate. The taxable portion of your gain (proceeds − ACB × inclusion rate)
-          is added to your other income for the year, and your marginal rate applies to the combined total. A large
-          capital gain can push you into a higher bracket than your employment or other income alone would suggest.
+          In Canada, the included portion of a capital gain is added to your other income and taxed through ordinary federal and provincial brackets.
+          A large gain can cross brackets, so the extra tax is not “taxable gain × the rate that applied before the sale.”
         </p>
         <p>
-          Select the reference tax year and your province or territory below to see the federal and provincial bracket rates as a quick reference. This does
-          <em>not</em> change the calculator's math — you still enter your combined marginal rate in the field above. To estimate
-          your marginal rate based on your total projected income, use the
+          <strong>Default mode</strong> computes personal tax twice — once without the gain and once with it — then reports
+          <em>additional tax = tax after − tax before</em>. Inclusion is fixed at 50% in that path. Taxable income before the gain is modelled as source-neutral other income (not employment income).
+        </p>
+        <p>
+          <strong>Manual mode</strong> is an optional sensitivity: taxable gain × one combined marginal rate you enter. It does not re-run brackets.
+          Use it to probe “what if my combined rate were X%,” not as a substitute for the progressive estimate.
+        </p>
+        <p>
+          The federal and provincial bracket tables below are for reference only. Progressive mode already uses the selected tax year and province in the calculation.
+          For a fuller personal-tax run (other income types, deductions, credits detail), use the
           <a href="/calculators/canada-income-tax/">Canada Personal Income Tax Calculator</a>.
         </p>
 
-        <div class="field" style="margin-top: 12px;">
-          <label for="bracket-year">Reference tax year (for tables below)</label>
-          <select id="bracket-year" aria-label="Tax year for bracket tables">
-            <option value="2026" selected>2026</option>
-            <option value="2025">2025</option>
-          </select>
-        </div>
-
-        <div class="field" style="margin-top: 12px;">
-          <label for="province">Province or territory</label>
-          <select id="province" aria-label="Province or territory">
-            <option value="">Select to see tax brackets</option>
-            <option value="AB">Alberta</option>
-            <option value="BC">British Columbia</option>
-            <option value="MB">Manitoba</option>
-            <option value="NB">New Brunswick</option>
-            <option value="NL">Newfoundland and Labrador</option>
-            <option value="NS">Nova Scotia</option>
-            <option value="NT">Northwest Territories</option>
-            <option value="NU">Nunavut</option>
-            <option value="ON">Ontario</option>
-            <option value="PE">Prince Edward Island</option>
-            <option value="QC">Quebec</option>
-            <option value="SK">Saskatchewan</option>
-            <option value="YT">Yukon</option>
-          </select>
-          <div class="help-text">
-            Select the reference year and your province or territory to display federal and provincial income tax brackets. This
-            does not change the calculation — enter your combined marginal rate in the field above.
-          </div>
-
-          <div class="bracket-reference" id="bracketReference">
-            <div class="bracket-reference-title" id="bracketReferenceTitle"></div>
-            <div class="bracket-tables-wrap">
-              <div class="bracket-table-block">
-                <h4 id="cg-fed-bracket-heading">Federal</h4>
-                <table class="bracket-table">
-                  <thead><tr><th>Income over</th><th>Rate</th></tr></thead>
-                  <tbody id="federalBracketBody"></tbody>
-                </table>
-              </div>
-              <div class="bracket-table-block">
-                <h4 id="provBracketHeader"></h4>
-                <table class="bracket-table">
-                  <thead><tr><th>Income over</th><th>Rate</th></tr></thead>
-                  <tbody id="provBracketBody"></tbody>
-                </table>
-              </div>
+        <div class="bracket-reference" id="bracketReference">
+          <div class="bracket-reference-title" id="bracketReferenceTitle"></div>
+          <div class="bracket-tables-wrap">
+            <div class="bracket-table-block">
+              <h4 id="cg-fed-bracket-heading">Federal</h4>
+              <table class="bracket-table">
+                <thead><tr><th>Income over</th><th>Rate</th></tr></thead>
+                <tbody id="federalBracketBody"></tbody>
+              </table>
             </div>
-            <p class="bracket-reference-note">
-              These are marginal rates by bracket — not your effective (average) rate. Your combined marginal rate is the
-              federal rate plus the provincial rate that applies at your income level. For a full calculation including
-              credits and deductions, use the
-              <a href="/calculators/canada-income-tax/">Canada Personal Income Tax Calculator</a>
-              or see the
-              <a href="/tools/income-tax-brackets-canada/">Canada Income Tax Brackets reference page</a>.
-            </p>
+            <div class="bracket-table-block">
+              <h4 id="provBracketHeader"></h4>
+              <table class="bracket-table">
+                <thead><tr><th>Income over</th><th>Rate</th></tr></thead>
+                <tbody id="provBracketBody"></tbody>
+              </table>
+            </div>
           </div>
+          <p class="bracket-reference-note">
+            These are marginal rates by bracket — not your effective (average) rate, and not a single rate applied to the whole gain.
+            For a full calculation including credits and deductions, use the
+            <a href="/calculators/canada-income-tax/">Canada Personal Income Tax Calculator</a>
+            or see the
+            <a href="/tools/income-tax-brackets-canada/">Canada Income Tax Brackets reference page</a>.
+          </p>
         </div>
       </article>
     </div>
@@ -303,31 +427,30 @@
       <details class="faq-accordion-item">
         <summary>What is "Adjusted Cost Base (ACB)"?</summary>
         <div class="faq-accordion-body">
-          <p>Adjusted Cost Base (ACB) is generally what you paid to acquire an asset, plus the cost of improvements, minus any returns of capital. For identical properties (e.g., shares of the same stock bought at different times), you must average the cost of all identical units to determine the ACB per unit. ACB is used to calculate your capital gain or loss when you sell.</p>
+          <p>Adjusted Cost Base (ACB) is generally what you paid to acquire an asset, plus the cost of improvements, minus any returns of capital. For identical properties (e.g., shares of the same stock bought at different times), you must average the cost of all identical units to determine the ACB per unit. ACB is used to calculate your capital gain or loss when you sell. Optional proceeds and ACB fields here can fill the gross capital gain as proceeds − ACB.</p>
         </div>
       </details>
 
       <details class="faq-accordion-item">
         <summary>What is the capital gains inclusion rate?</summary>
         <div class="faq-accordion-body">
-          <p>The capital gains inclusion rate is the percentage of a capital gain that is taxable. In Canada, 50% of a capital gain is typically included in income (the inclusion rate is 50%). This means only half of the gain is added to your taxable income and taxed at your marginal rate. The inclusion rate can change by law; this calculator lets you adjust it.</p>
+          <p>The capital gains inclusion rate is the percentage of a capital gain that is taxable. In progressive mode this calculator uses a fixed 50% inclusion from the shared engine. Manual mode lets you change the inclusion percentage for sensitivity checks. Always confirm statutory inclusion rules for your situation and tax year.</p>
         </div>
       </details>
 
       <details class="faq-accordion-item">
         <summary>What is marginal tax rate, and how does it apply to capital gains?</summary>
         <div class="faq-accordion-body">
-          <p>Your marginal tax rate is the rate of tax you pay on your next dollar of taxable income. It combines federal and provincial/territorial rates and increases as your income rises through successive tax brackets.</p>
-          <p>Capital gains are not taxed at a separate flat rate. Instead, the taxable portion of your gain — calculated as your total gain multiplied by the inclusion rate — is added to your other income for the year (employment income, investment income, RRSP withdrawals, etc.). Your marginal rate is then applied to that combined total.</p>
-          <p>This matters because a significant capital gain can push your total income into a higher bracket than your other income alone would reach. For example, if your employment income puts you at a 33% marginal rate but a large capital gain pushes your total income higher, part of that gain may be taxed at 43% or more, depending on your province.</p>
-          <p>To find the bracket thresholds and combined federal + provincial rates that apply to your situation, see the <a href="/tools/income-tax-brackets-canada/">Canada Income Tax Brackets — Federal and Provincial</a> reference page. To estimate your marginal rate based on your total projected income, use the <a href="/calculators/canada-income-tax/">Canada Personal Income Tax Calculator</a>.</p>
+          <p>Your marginal tax rate is the rate of tax on the next dollar of taxable income. It combines federal and provincial/territorial rates and can change as income moves through brackets.</p>
+          <p><strong>Default (progressive) mode</strong> does not multiply the whole gain by one marginal rate. It computes tax before and after adding the included gain, then reports the difference. The “marginal rate after the gain” figure (when shown) describes the rate on the next dollar — not a rate applied to the entire gain.</p>
+          <p><strong>Manual mode</strong> is optional: estimated tax = taxable gain × one combined rate you enter. That is a sensitivity estimate, useful for “what if,” not a T1.</p>
         </div>
       </details>
 
       <details class="faq-accordion-item">
         <summary>What happens if I have a capital loss?</summary>
         <div class="faq-accordion-body">
-          <p>If your proceeds are less than your ACB, you have a capital loss. Capital losses do not reduce tax on a per-sale basis; instead, they can be used to offset capital gains in the same year or carried back or forward to other years under CRA rules. This calculator treats a loss as: taxable gain = 0, tax owing = 0, and after-tax proceeds = proceeds (you keep the full amount you received).</p>
+          <p>If the gross capital gain is zero or negative, this calculator sets the included taxable amount and incremental tax to $0. Capital losses can offset gains in the same year or be carried back or forward under CRA rules; those carryovers are not modelled here.</p>
         </div>
       </details>
 
@@ -398,10 +521,12 @@
     }
 
     async function refreshBracketReference() {
-      const code = document.getElementById('province').value;
-      const yearEl = document.getElementById('bracket-year');
-      const year = yearEl ? parseInt(yearEl.value, 10) || 2026 : 2026;
+      const provinceEl = document.getElementById('province');
+      const yearEl = document.getElementById('tax_year');
+      const code = provinceEl ? provinceEl.value : '';
+      const year = yearEl ? parseInt(yearEl.value, 10) || 2025 : 2025;
       const panel = document.getElementById('bracketReference');
+      if (!panel) return;
 
       if (!code) {
         panel.classList.remove('visible');
@@ -420,7 +545,7 @@
         if (fedHeading) fedHeading.textContent = 'Federal (' + year + ')';
 
         document.getElementById('bracketReferenceTitle').textContent =
-          year + ' income tax brackets — Federal + ' + (provData.name || code);
+          year + ' income tax brackets — Federal + ' + (provData.name || code) + ' (reference)';
         document.getElementById('provBracketHeader').textContent =
           (provData.name || code) + ' (' + year + ')';
         renderRows(document.getElementById('federalBracketBody'), data.federal.brackets);
@@ -431,19 +556,18 @@
       }
     }
 
-    document.getElementById('province').addEventListener('change', function() {
+    window.refreshBracketReference = refreshBracketReference;
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var provinceEl = document.getElementById('province');
+      var yearEl = document.getElementById('tax_year');
+      if (provinceEl) provinceEl.addEventListener('change', refreshBracketReference);
+      if (yearEl) yearEl.addEventListener('change', refreshBracketReference);
       refreshBracketReference();
     });
-    var bracketYearEl = document.getElementById('bracket-year');
-    if (bracketYearEl) {
-      bracketYearEl.addEventListener('change', function() {
-        refreshBracketReference();
-      });
-    }
   </script>
 
   <script defer src="/assets/js/calculator-share.js?v=20260426"></script>
-  <script src="/calculators/capital-gains-tax-canada/engine.js"></script>
-  <script src="/calculators/capital-gains-tax-canada/ui.js"></script>
+  <script type="module" src="/calculators/capital-gains-tax-canada/ui.js"></script>
 </body>
 </html>
