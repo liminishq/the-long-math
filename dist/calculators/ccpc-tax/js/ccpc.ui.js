@@ -5,18 +5,30 @@
 
 import { computeCCPCTax } from './ccpc.bridge.js';
 import { loadCorporateTaxData } from './corporate.data.js';
-import { loadTaxData } from '../../canada-income-tax/js/tax.data.js';
+import { getTaxDataBundle } from '../../canada-income-tax/js/tax.data.js';
 import { formatCurrency, formatPercent, parseInput } from './format.js';
 
 let corporateDataLoaded = false;
 let personalDataLoaded = false;
+let personalTaxData = null;
+let taxDataRequestSeq = 0;
 let latestInputs = null;
 let latestResult = null;
 
+const MAX_SHAREHOLDERS = 5;
+let visibleShareholderCount = 2;
+
 const PERSONAL_TAX_DATA_BASE = '/calculators/canada-income-tax/data';
 
+function setDefaultCorporateTaxYearStart(year) {
+  const startEl = document.getElementById('corporateTaxYearStart');
+  if (startEl) {
+    startEl.value = `${year}-01-01`;
+  }
+}
+
 function loadPersonalTaxData(year) {
-  return loadTaxData(year, { basePath: PERSONAL_TAX_DATA_BASE });
+  return getTaxDataBundle(year, { basePath: PERSONAL_TAX_DATA_BASE });
 }
 
 // Province codes in alphabetical order
@@ -51,13 +63,15 @@ export async function initUI() {
 
   // Set default year
   document.getElementById('year').value = '2026';
+  setDefaultCorporateTaxYearStart(2026);
 
   // Load tax data
   try {
-    await Promise.all([
+    const [, personalBundle] = await Promise.all([
       loadCorporateTaxData(2026),
       loadPersonalTaxData(2026)
     ]);
+    personalTaxData = personalBundle;
     corporateDataLoaded = true;
     personalDataLoaded = true;
   } catch (error) {
@@ -69,6 +83,8 @@ export async function initUI() {
   // Attach event listeners
   attachEventListeners();
   wireShareButtons();
+  wireAddShareholderSelects();
+  updateShareholderInputPanels();
 
   // Show/hide province note based on selection
   updateProvinceNote();
@@ -82,21 +98,30 @@ function attachEventListeners() {
   if (yearSelect) {
     yearSelect.addEventListener('change', async () => {
       const y = parseInt(yearSelect.value, 10) || 2026;
+      const requestSeq = ++taxDataRequestSeq;
+      setDefaultCorporateTaxYearStart(y);
       try {
         corporateDataLoaded = false;
         personalDataLoaded = false;
-        await Promise.all([loadCorporateTaxData(y), loadPersonalTaxData(y)]);
+        const [, personalBundle] = await Promise.all([
+          loadCorporateTaxData(y),
+          loadPersonalTaxData(y)
+        ]);
+        if (requestSeq !== taxDataRequestSeq) return;
+        personalTaxData = personalBundle;
         corporateDataLoaded = true;
         personalDataLoaded = true;
+        updateProvinceNote();
         calculate();
       } catch (error) {
+        if (requestSeq !== taxDataRequestSeq) return;
         console.error('Failed to load tax data for year', y, error);
         showError('Failed to load tax data for the selected year. Please try again.');
       }
     });
   }
 
-  const inputs = document.querySelectorAll('input[type="text"], select:not(#year)');
+  const inputs = document.querySelectorAll('input[type="text"], input[type="date"], select:not(#year)');
   inputs.forEach(input => {
     input.addEventListener('input', () => {
       updateProvinceNote();
@@ -123,6 +148,54 @@ function attachEventListeners() {
   }
 }
 
+function readShareholderInput(index) {
+  return {
+    salary: parseInput(document.getElementById(`sh${index}Salary`)?.value),
+    eligibleDividends: parseInput(document.getElementById(`sh${index}EligibleDividends`)?.value),
+    nonEligibleDividends: parseInput(document.getElementById(`sh${index}NonEligibleDividends`)?.value),
+    otherIncome: parseInput(document.getElementById(`sh${index}OtherIncome`)?.value),
+    capitalGains: parseInput(document.getElementById(`sh${index}CapitalGains`)?.value),
+    rrspContribution: parseInput(document.getElementById(`sh${index}RrspContribution`)?.value),
+    fhsaDeduction: parseInput(document.getElementById(`sh${index}FhsaDeduction`)?.value),
+    deductions: parseInput(document.getElementById(`sh${index}Deductions`)?.value)
+  };
+}
+
+function setVisibleShareholderCount(count) {
+  visibleShareholderCount = Math.min(MAX_SHAREHOLDERS, Math.max(2, count));
+  updateShareholderInputPanels();
+}
+
+function updateShareholderInputPanels() {
+  const splitting = document.getElementById('incomeSplitting')?.checked;
+  if (!splitting) return;
+
+  for (let n = 3; n <= MAX_SHAREHOLDERS; n++) {
+    const panel = document.getElementById(`shPanel${n}`);
+    if (panel) panel.hidden = visibleShareholderCount < n;
+  }
+
+  for (let n = 2; n < MAX_SHAREHOLDERS; n++) {
+    const addField = document.getElementById(`addShareholderAfter${n}`);
+    if (addField) addField.hidden = visibleShareholderCount !== n;
+  }
+}
+
+function wireAddShareholderSelects() {
+  for (let n = 2; n < MAX_SHAREHOLDERS; n++) {
+    const select = document.getElementById(`addShareholderSelect${n}`);
+    if (!select) continue;
+    select.addEventListener('change', () => {
+      const nextCount = parseInt(select.value, 10);
+      if (nextCount > visibleShareholderCount) {
+        setVisibleShareholderCount(nextCount);
+      }
+      select.value = '';
+      calculate();
+    });
+  }
+}
+
 function toggleIncomeSplitting(enabled) {
   const singleBlock = document.getElementById('singleShareholderBlock');
   const splitBlock = document.getElementById('incomeSplittingBlock');
@@ -134,25 +207,33 @@ function toggleIncomeSplitting(enabled) {
 
   if (singleBlock) singleBlock.style.display = enabled ? 'none' : 'block';
   if (splitBlock) splitBlock.style.display = enabled ? 'block' : 'none';
-  if (singleResult) singleResult.style.display = enabled ? 'none' : 'grid';
-  if (splitResult) splitResult.style.display = enabled ? 'grid' : 'none';
+  if (singleResult) singleResult.style.display = enabled ? 'none' : 'flex';
+  if (splitResult) splitResult.style.display = enabled ? 'flex' : 'none';
   if (singlePersonalDetail) singlePersonalDetail.style.display = enabled ? 'none' : 'block';
   if (personal1Detail) personal1Detail.style.display = enabled ? 'block' : 'none';
   if (personal2Detail) personal2Detail.style.display = enabled ? 'block' : 'none';
+
+  if (enabled) {
+    setVisibleShareholderCount(visibleShareholderCount);
+  } else {
+    updateShareholderInputPanels();
+  }
 }
 
 /**
- * Update province note visibility for AB/QC
+ * Update province notes for AB/QC administration and 2025 NS/PEI mid-year rates.
  */
 function updateProvinceNote() {
   const province = document.getElementById('province').value;
+  const year = parseInt(document.getElementById('year')?.value, 10);
   const noteEl = document.getElementById('provinceNote');
+  const midYearEl = document.getElementById('midYearRateNote');
   if (noteEl) {
-    if (province === 'AB' || province === 'QC') {
-      noteEl.style.display = 'block';
-    } else {
-      noteEl.style.display = 'none';
-    }
+    noteEl.style.display = (province === 'AB' || province === 'QC') ? 'block' : 'none';
+  }
+  if (midYearEl) {
+    const showMidYear = year === 2025 && (province === 'NS' || province === 'PE');
+    midYearEl.style.display = showMidYear ? 'block' : 'none';
   }
 }
 
@@ -160,7 +241,10 @@ function updateProvinceNote() {
  * Reset all input fields to default/empty values
  */
 function resetAllInputs() {
-  document.getElementById('year').value = '2026';
+  const yearSelect = document.getElementById('year');
+  const yearChanged = yearSelect?.value !== '2026';
+  if (yearSelect) yearSelect.value = '2026';
+  setDefaultCorporateTaxYearStart(2026);
   document.getElementById('province').value = '';
   document.getElementById('grossRevenue').value = '';
   document.getElementById('expenses').value = '';
@@ -171,18 +255,38 @@ function resetAllInputs() {
   document.getElementById('eligibleDividends').value = '';
   document.getElementById('nonEligibleDividends').value = '';
   document.getElementById('personalOtherIncome').value = '';
+  document.getElementById('capitalGains').value = '';
+  document.getElementById('rrspContribution').value = '';
+  document.getElementById('fhsaDeduction').value = '';
   document.getElementById('personalDeductions').value = '';
 
   document.getElementById('sh1Salary').value = '';
   document.getElementById('sh1EligibleDividends').value = '';
   document.getElementById('sh1NonEligibleDividends').value = '';
   document.getElementById('sh1OtherIncome').value = '';
+  document.getElementById('sh1CapitalGains').value = '';
+  document.getElementById('sh1RrspContribution').value = '';
+  document.getElementById('sh1FhsaDeduction').value = '';
   document.getElementById('sh1Deductions').value = '';
   document.getElementById('sh2Salary').value = '';
   document.getElementById('sh2EligibleDividends').value = '';
   document.getElementById('sh2NonEligibleDividends').value = '';
   document.getElementById('sh2OtherIncome').value = '';
+  document.getElementById('sh2CapitalGains').value = '';
+  document.getElementById('sh2RrspContribution').value = '';
+  document.getElementById('sh2FhsaDeduction').value = '';
   document.getElementById('sh2Deductions').value = '';
+  for (let n = 3; n <= MAX_SHAREHOLDERS; n++) {
+    document.getElementById(`sh${n}Salary`).value = '';
+    document.getElementById(`sh${n}EligibleDividends`).value = '';
+    document.getElementById(`sh${n}NonEligibleDividends`).value = '';
+    document.getElementById(`sh${n}OtherIncome`).value = '';
+    document.getElementById(`sh${n}CapitalGains`).value = '';
+    document.getElementById(`sh${n}RrspContribution`).value = '';
+    document.getElementById(`sh${n}FhsaDeduction`).value = '';
+    document.getElementById(`sh${n}Deductions`).value = '';
+  }
+  setVisibleShareholderCount(2);
 
   clearResults();
 
@@ -190,10 +294,15 @@ function resetAllInputs() {
   document.getElementById('personalBreakdown').innerHTML = '';
   const pb1 = document.getElementById('personal1Breakdown');
   const pb2 = document.getElementById('personal2Breakdown');
+  const extraBreakdowns = document.getElementById('splitPersonalBreakdowns');
   if (pb1) pb1.innerHTML = '';
   if (pb2) pb2.innerHTML = '';
+  if (extraBreakdowns) extraBreakdowns.innerHTML = '';
 
   updateProvinceNote();
+  if (yearChanged && yearSelect) {
+    yearSelect.dispatchEvent(new Event('change', { bubbles: true }));
+  }
 }
 
 /**
@@ -203,6 +312,7 @@ function getInputs() {
   const incomeSplitting = document.getElementById('incomeSplitting').checked;
   const base = {
     year: parseInt(document.getElementById('year').value) || 2026,
+    corporateTaxYearStart: document.getElementById('corporateTaxYearStart').value,
     province: document.getElementById('province').value,
     grossRevenue: parseInput(document.getElementById('grossRevenue').value),
     expenses: parseInput(document.getElementById('expenses').value),
@@ -210,25 +320,21 @@ function getInputs() {
   };
 
   if (incomeSplitting) {
-    base.shareholder1 = {
-      salary: parseInput(document.getElementById('sh1Salary').value),
-      eligibleDividends: parseInput(document.getElementById('sh1EligibleDividends').value),
-      nonEligibleDividends: parseInput(document.getElementById('sh1NonEligibleDividends').value),
-      otherIncome: parseInput(document.getElementById('sh1OtherIncome').value),
-      deductions: parseInput(document.getElementById('sh1Deductions').value)
-    };
-    base.shareholder2 = {
-      salary: parseInput(document.getElementById('sh2Salary').value),
-      eligibleDividends: parseInput(document.getElementById('sh2EligibleDividends').value),
-      nonEligibleDividends: parseInput(document.getElementById('sh2NonEligibleDividends').value),
-      otherIncome: parseInput(document.getElementById('sh2OtherIncome').value),
-      deductions: parseInput(document.getElementById('sh2Deductions').value)
-    };
+    const shareholders = [];
+    for (let i = 1; i <= visibleShareholderCount; i++) {
+      shareholders.push(readShareholderInput(i));
+    }
+    base.shareholders = shareholders;
+    base.shareholder1 = shareholders[0];
+    base.shareholder2 = shareholders[1];
   } else {
     base.salary = parseInput(document.getElementById('salary').value);
     base.eligibleDividends = parseInput(document.getElementById('eligibleDividends').value);
     base.nonEligibleDividends = parseInput(document.getElementById('nonEligibleDividends').value);
     base.personalOtherIncome = parseInput(document.getElementById('personalOtherIncome').value);
+    base.capitalGains = parseInput(document.getElementById('capitalGains').value);
+    base.rrspContribution = parseInput(document.getElementById('rrspContribution').value);
+    base.fhsaDeduction = parseInput(document.getElementById('fhsaDeduction').value);
     base.personalDeductions = parseInput(document.getElementById('personalDeductions').value);
   }
 
@@ -252,7 +358,7 @@ function calculate() {
       return;
     }
 
-    const result = computeCCPCTax(inputs);
+    const result = computeCCPCTax(inputs, { taxData: personalTaxData });
     latestInputs = inputs;
     latestResult = result;
 
@@ -264,32 +370,150 @@ function calculate() {
   }
 }
 
+function renderFundingNotes(notes) {
+  const el = document.getElementById('fundingAssumptionNote');
+  if (!el) return;
+  if (!notes || !notes.length) {
+    el.style.display = 'none';
+    el.innerHTML = '';
+    return;
+  }
+  const paragraphs = notes.map((n) => {
+    if (n.code === 'salary_exceeds_current_year_income') {
+      return `Salary plus employer CPP (${formatCurrency(n.compensationCost)}) exceeds this year’s modeled corporate income before compensation (${formatCurrency(n.corporateIncomeBeforeCompensation)}). Corporate taxable income is floored at $0, but the salary is still taxed as paid. The illustration assumes other corporate resources (for example prior cash) fund the difference. Opening cash is not modeled.`;
+    }
+    if (n.code === 'dividends_exceed_current_year_cash') {
+      return `Dividends (${formatCurrency(n.dividendDistributions)}) exceed this year’s after-tax corporate cash (${formatCurrency(n.afterTaxCorporateCash)}). Retained earnings are shown as $0. The extra amount is an implicit prior-cash assumption. GRIP and RDTOH are not tracked.`;
+    }
+    return '';
+  }).filter(Boolean);
+  el.innerHTML = '<p style="margin:0 0 8px;font-weight:600;color:var(--text);">Funding assumption</p>' +
+    paragraphs.map((p) => `<p style="margin:0 0 8px;line-height:1.5;">${p}</p>`).join('');
+  el.style.display = 'block';
+}
+
+function payrollAmountIsNonZero(amount) {
+  return (Number(amount) || 0) > 0.005;
+}
+
+function setNonZeroResultRow(valueEl, rowEl, amount) {
+  if (!valueEl || !rowEl) return;
+  const n = Number(amount) || 0;
+  const show = payrollAmountIsNonZero(n);
+  valueEl.textContent = formatCurrency(n);
+  rowEl.hidden = !show;
+}
+
+function shareholderCppEi(totals) {
+  return (totals?.cpp || 0) + (totals?.ei || 0);
+}
+
+function shareholderResultMetric(label, value) {
+  return `
+    <div class="panel-metric">
+      <p class="k">${label}</p>
+      <p class="v">${value}</p>
+    </div>
+  `;
+}
+
+function renderSplitShareholderResults(shareholders) {
+  const container = document.getElementById('splitShareholderResults');
+  if (!container) return;
+  container.innerHTML = '';
+
+  shareholders.forEach((sh, idx) => {
+    const cppEi = shareholderCppEi(sh);
+    const metrics = [
+      shareholderResultMetric('Personal Income Tax Rate', formatPercent(sh.avgRate || 0)),
+      shareholderResultMetric('Personal Income Tax', formatCurrency(sh.totalIncomeTax)),
+      shareholderResultMetric('Net Take-Home', formatCurrency(sh.takeHomeAfterPayroll))
+    ];
+
+    const cppFooter = payrollAmountIsNonZero(cppEi)
+      ? `
+        <div class="panel-inline-subcard">
+          <span class="k">Employee CPP and EI</span>
+          <span class="v">${formatCurrency(cppEi)}</span>
+        </div>
+      `
+      : '';
+
+    const panel = document.createElement('div');
+    panel.className = 'shareholder-result-panel';
+    panel.innerHTML = `
+      <h4 class="panel-title">Shareholder ${idx + 1}</h4>
+      <div class="panel-metrics">${metrics.join('')}</div>
+      ${cppFooter}
+    `;
+    container.appendChild(panel);
+  });
+}
+
 /**
  * Render main results
  */
 function renderResults(result) {
-  const { corporate, personal, personal1, personal2, combined, incomeSplitting } = result;
+  const { corporate, personal, combined, incomeSplitting, shareholders } = result;
+  renderFundingNotes(combined.fundingNotes);
 
   if (incomeSplitting) {
     document.getElementById('splitCorporateTaxableIncome').textContent = formatCurrency(corporate.taxableIncome);
     document.getElementById('splitCorporateTax').textContent = formatCurrency(corporate.totalCorporateTax);
+    setNonZeroResultRow(
+      document.getElementById('splitEmployerCpp'),
+      document.getElementById('splitEmployerCppRow'),
+      combined.employerCppExpense || 0
+    );
     document.getElementById('splitAfterTaxCorporateCash').textContent = formatCurrency(corporate.afterTaxCash);
     document.getElementById('splitRetainedEarnings').textContent = formatCurrency(combined.retainedEarnings);
-    document.getElementById('sh1PersonalTax').textContent = formatCurrency(personal1.totalIncomeTax);
-    document.getElementById('sh1NetTakeHome').textContent = formatCurrency(personal1.takeHomeAfterPayroll);
-    document.getElementById('sh2PersonalTax').textContent = formatCurrency(personal2.totalIncomeTax);
-    document.getElementById('sh2NetTakeHome').textContent = formatCurrency(personal2.takeHomeAfterPayroll);
+    renderSplitShareholderResults(shareholders || []);
     document.getElementById('splitTotalTaxBurden').textContent = formatCurrency(combined.totalTaxBurden);
     document.getElementById('splitEffectiveTaxRate').textContent = formatPercent(combined.effectiveTaxRate);
+    document.getElementById('splitSummaryTotalTakeHome').textContent = formatCurrency(combined.netPersonalTakeHome);
   } else {
     document.getElementById('corporateTaxableIncome').textContent = formatCurrency(corporate.taxableIncome);
     document.getElementById('corporateTax').textContent = formatCurrency(corporate.totalCorporateTax);
+    setNonZeroResultRow(
+      document.getElementById('employerCpp'),
+      document.getElementById('employerCppRow'),
+      combined.employerCppExpense || 0
+    );
     document.getElementById('afterTaxCorporateCash').textContent = formatCurrency(corporate.afterTaxCash);
     document.getElementById('retainedEarnings').textContent = formatCurrency(combined.retainedEarnings);
     document.getElementById('personalTax').textContent = formatCurrency(personal.totalIncomeTax);
-    document.getElementById('netPersonalTakeHome').textContent = formatCurrency(combined.netPersonalTakeHome);
+    setNonZeroResultRow(
+      document.getElementById('employeeCppEi'),
+      document.getElementById('employeeCppEiRow'),
+      combined.employeeCppEi || 0
+    );
     document.getElementById('totalTaxBurden').textContent = formatCurrency(combined.totalTaxBurden);
     document.getElementById('effectiveTaxRate').textContent = formatPercent(combined.effectiveTaxRate);
+    document.getElementById('summaryTotalTakeHome').textContent = formatCurrency(combined.netPersonalTakeHome);
+  }
+}
+
+function renderSplitPersonalBreakdowns(shareholders) {
+  const extraContainer = document.getElementById('splitPersonalBreakdowns');
+  if (shareholders[0]) {
+    renderPersonalBreakdown(shareholders[0], document.getElementById('personal1Breakdown'));
+  }
+  if (shareholders[1]) {
+    renderPersonalBreakdown(shareholders[1], document.getElementById('personal2Breakdown'));
+  }
+  if (extraContainer) {
+    extraContainer.innerHTML = '';
+    for (let i = 2; i < shareholders.length; i++) {
+      const n = i + 1;
+      const details = document.createElement('details');
+      details.className = 'method-item method-item-split';
+      details.innerHTML = `
+        <summary><strong>Personal Tax — Shareholder ${n}</strong></summary>
+        <div class="breakdown-content"></div>
+      `;
+      extraContainer.appendChild(details);
+      renderPersonalBreakdown(shareholders[i], details.querySelector('.breakdown-content'));
+    }
   }
 }
 
@@ -299,8 +523,7 @@ function renderResults(result) {
 function renderBreakdown(result) {
   renderCorporateBreakdown(result.corporate);
   if (result.incomeSplitting) {
-    renderPersonalBreakdown(result.personal1, document.getElementById('personal1Breakdown'));
-    renderPersonalBreakdown(result.personal2, document.getElementById('personal2Breakdown'));
+    renderSplitPersonalBreakdowns(result.shareholders || []);
   } else {
     renderPersonalBreakdown(result.personal, document.getElementById('personalBreakdown'));
   }
@@ -383,7 +606,8 @@ function renderCorporateBreakdown(corporate) {
       </tbody>
     </table>
     <p><strong>Total Corporate Tax:</strong> ${formatCurrency(corporate.totalCorporateTax)}</p>
-    <p><strong>SBD Limit:</strong> ${formatCurrency(corporate.breakdown.federal.sbdLimit)}</p>
+    <p><strong>Federal SBD Limit:</strong> ${formatCurrency(corporate.breakdown.federal.sbdLimit)}</p>
+    <p><strong>Provincial SBD Limit:</strong> ${formatCurrency(corporate.breakdown.provincial.sbdLimit)}</p>
   `;
 
   container.appendChild(div);
@@ -406,10 +630,10 @@ function renderPersonalBreakdown(personal, container) {
     <h4>Personal Tax Summary</h4>
     <p>Federal Tax: ${formatCurrency(personal.federalTax)}</p>
     <p>Provincial Tax: ${formatCurrency(personal.provTax)}</p>
-    <p>Total Personal Tax: ${formatCurrency(personal.totalIncomeTax)}</p>
+    <p>Total Personal Income Tax: ${formatCurrency(personal.totalIncomeTax)}</p>
     <p>CPP: ${formatCurrency(personal.cpp)}</p>
     <p>EI: ${formatCurrency(personal.ei)}</p>
-    <p>Total Burden: ${formatCurrency(personal.totalBurden)}</p>
+    <p>Income tax + employee CPP/EI: ${formatCurrency(personal.totalBurden)}</p>
   `;
 
   el.appendChild(div);
@@ -424,15 +648,24 @@ function clearResults() {
   document.getElementById('afterTaxCorporateCash').textContent = '$–';
   document.getElementById('retainedEarnings').textContent = '$–';
   document.getElementById('personalTax').textContent = '$–';
-  document.getElementById('netPersonalTakeHome').textContent = '$–';
   document.getElementById('totalTaxBurden').textContent = '$–';
   document.getElementById('effectiveTaxRate').textContent = '–%';
+  document.getElementById('summaryTotalTakeHome').textContent = '$–';
+  setNonZeroResultRow(document.getElementById('employerCpp'), document.getElementById('employerCppRow'), 0);
+  setNonZeroResultRow(document.getElementById('employeeCppEi'), document.getElementById('employeeCppEiRow'), 0);
+  renderFundingNotes([]);
 
-  const splitIds = ['splitCorporateTaxableIncome', 'splitCorporateTax', 'splitAfterTaxCorporateCash', 'splitRetainedEarnings', 'sh1PersonalTax', 'sh1NetTakeHome', 'sh2PersonalTax', 'sh2NetTakeHome', 'splitTotalTaxBurden', 'splitEffectiveTaxRate'];
+  const splitIds = [
+    'splitCorporateTaxableIncome', 'splitCorporateTax', 'splitAfterTaxCorporateCash', 'splitRetainedEarnings',
+    'splitTotalTaxBurden', 'splitEffectiveTaxRate', 'splitSummaryTotalTakeHome'
+  ];
   splitIds.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.textContent = id.includes('Effective') ? '–%' : '$–';
   });
+  setNonZeroResultRow(document.getElementById('splitEmployerCpp'), document.getElementById('splitEmployerCppRow'), 0);
+  const splitShareholders = document.getElementById('splitShareholderResults');
+  if (splitShareholders) splitShareholders.innerHTML = '';
   latestInputs = null;
   latestResult = null;
 }
@@ -465,43 +698,51 @@ function buildSharePayload() {
     brand: 'The Long Math',
     headline: 'CCPC Income Tax Estimate',
     mainValue: formatCurrency(combined.totalTaxBurden || 0),
-    subline: 'Combined corporate + personal tax burden',
+    subline: 'Corporate + personal income tax',
     contextLines: [
-      'Effective overall tax rate: ' + formatPercent(combined.effectiveTaxRate || 0),
+      'Effective overall income-tax rate (% of gross revenue): ' + formatPercent(combined.effectiveTaxRate || 0),
+      'Employee CPP and EI: ' + formatCurrency(combined.employeeCppEi || 0),
+      'Employer CPP: ' + formatCurrency(combined.employerCppExpense || 0),
       'Net personal take-home: ' + formatCurrency(combined.netPersonalTakeHome || 0),
       'Retained earnings: ' + formatCurrency(combined.retainedEarnings || 0),
-      'Mode: ' + (incomeSplitting ? 'Two-shareholder split' : 'Single shareholder'),
+      'Mode: ' + (incomeSplitting
+        ? `${latestResult.shareholderCount || 2}-shareholder split`
+        : 'Single shareholder'),
+      'Corporate tax year start: ' + (latestInputs.corporateTaxYearStart || 'Not specified'),
       'Province/territory: ' + provinceLabel
     ],
     footer: 'Run your own numbers at TheLongMath.com',
-    shareText: 'CCPC estimate: total tax burden ' + formatCurrency(combined.totalTaxBurden || 0),
+    shareText: 'CCPC estimate: total income tax ' + formatCurrency(combined.totalTaxBurden || 0),
     url: window.location.href
   };
 }
 
 function exportCsv() {
   if (!latestResult || !latestInputs) return;
-  const { corporate, combined, personal, personal1, personal2, incomeSplitting } = latestResult;
+  const { corporate, combined, personal, shareholders, incomeSplitting } = latestResult;
   const rows = [
     'CCPC Income Tax Calculator (export)',
     'Generated,' + new Date().toISOString(),
     'Income splitting mode,' + (incomeSplitting ? 'Yes' : 'No'),
+    'Corporate tax year start,' + (latestInputs.corporateTaxYearStart || ''),
     'Gross corporate revenue,' + (latestInputs.grossRevenue || 0),
     'Business expenses,' + (latestInputs.expenses || 0),
     '',
     'Metric,Value',
     'Corporate taxable income,' + (corporate.taxableIncome || 0),
     'Corporate tax,' + (corporate.totalCorporateTax || 0),
+    'Employer CPP,' + (combined.employerCppExpense || 0),
     'After-tax corporate cash,' + (corporate.afterTaxCash || 0),
     'Retained earnings,' + (combined.retainedEarnings || 0),
-    'Total tax burden,' + (combined.totalTaxBurden || 0),
-    'Effective overall tax rate,' + ((combined.effectiveTaxRate || 0) * 100).toFixed(3) + '%'
+    'Total income tax (corporate + personal),' + (combined.totalTaxBurden || 0),
+    'Employee CPP and EI,' + (combined.employeeCppEi || 0),
+    'Effective overall income-tax rate (% of gross revenue),' + ((combined.effectiveTaxRate || 0) * 100).toFixed(3) + '%'
   ];
-  if (incomeSplitting) {
-    rows.push('Shareholder 1 personal tax,' + (personal1.totalIncomeTax || 0));
-    rows.push('Shareholder 1 net take-home,' + (personal1.takeHomeAfterPayroll || 0));
-    rows.push('Shareholder 2 personal tax,' + (personal2.totalIncomeTax || 0));
-    rows.push('Shareholder 2 net take-home,' + (personal2.takeHomeAfterPayroll || 0));
+  if (incomeSplitting && shareholders) {
+    shareholders.forEach((sh, idx) => {
+      rows.push(`Shareholder ${idx + 1} personal tax,${sh.totalIncomeTax || 0}`);
+      rows.push(`Shareholder ${idx + 1} net take-home,${sh.takeHomeAfterPayroll || 0}`);
+    });
   } else if (personal) {
     rows.push('Personal tax,' + (personal.totalIncomeTax || 0));
     rows.push('Net personal take-home,' + (combined.netPersonalTakeHome || 0));

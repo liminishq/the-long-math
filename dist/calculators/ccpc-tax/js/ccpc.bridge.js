@@ -12,15 +12,111 @@ import { computePersonalTax, employerCppForT4Employment } from './tax.engine.js'
  * @param {number[]} salaries
  * @returns {{ salaryExpense: number, employerCppExpense: number }}
  */
-function sumCompensationCorporateDeductions(salaries) {
+function sumCompensationCorporateDeductions(salaries, personalTaxOpts = {}) {
   let salaryExpense = 0;
   let employerCppExpense = 0;
   for (const raw of salaries) {
     const s = Math.max(0, Number(raw) || 0);
     salaryExpense += s;
-    employerCppExpense += employerCppForT4Employment(s);
+    employerCppExpense += employerCppForT4Employment(s, personalTaxOpts);
   }
   return { salaryExpense, employerCppExpense };
+}
+
+/**
+ * Map user-entered RRSP contribution to the personal engine's RRSP deduction.
+ * Assumption: the full contribution is claimed as a deduction in the current tax year
+ * (unused contribution carry-forward and contribution room are not modeled).
+ * Accepts legacy `rrspDeduction` when `rrspContribution` is absent.
+ * @param {{ rrspContribution?: number, rrspDeduction?: number }} source
+ * @returns {number}
+ */
+function rrspContributionAsCurrentYearDeduction(source) {
+  if (!source || typeof source !== 'object') return 0;
+  if (Object.prototype.hasOwnProperty.call(source, 'rrspContribution')) {
+    return Math.max(0, Number(source.rrspContribution) || 0);
+  }
+  return Math.max(0, Number(source.rrspDeduction) || 0);
+}
+
+/**
+ * @param {Object} sh - shareholder input slice
+ * @returns {Object}
+ */
+function computeShareholderPersonalTax(sh, year, personalProv, personalTaxOpts) {
+  return computePersonalTax({
+    year,
+    province: personalProv,
+    employmentIncome: sh.salary || 0,
+    eligibleDividends: sh.eligibleDividends || 0,
+    nonEligibleDividends: sh.nonEligibleDividends || 0,
+    otherIncome: sh.otherIncome || 0,
+    capitalGains: sh.capitalGains || 0,
+    rrspDeduction: rrspContributionAsCurrentYearDeduction(sh),
+    fhsaDeduction: sh.fhsaDeduction || 0,
+    estimatedDeductions: sh.deductions || 0,
+    taxPaid: 0
+  }, personalTaxOpts);
+}
+
+/**
+ * Resolve 2–5 shareholders from input (array or legacy shareholder1/2).
+ * @param {Object} input
+ * @returns {Object[]|null}
+ */
+function normalizeShareholderInputs(input) {
+  if (Array.isArray(input.shareholders) && input.shareholders.length >= 2) {
+    return input.shareholders.slice(0, 5);
+  }
+  if (input.shareholder1 != null && input.shareholder2 != null) {
+    return [input.shareholder1, input.shareholder2];
+  }
+  return null;
+}
+
+function mapShareholderTotals(personalResult) {
+  return {
+    ...personalResult.totals,
+    breakdown: personalResult.breakdown
+  };
+}
+
+const FUNDING_EPS = 0.005;
+
+/**
+ * Salary/dividends may exceed this year's modeled corporate cash.
+ * That is allowed as a hypothetical; callers should disclose the implicit prior-resource assumption.
+ */
+function compensationFundingNotes({
+  salaryExpense,
+  employerCppExpense,
+  corporateIncomeBeforeCompensation,
+  dividendDistributions,
+  afterTaxCorporateCash
+}) {
+  const notes = [];
+  const compensationCost = (Number(salaryExpense) || 0) + (Number(employerCppExpense) || 0);
+  const incomeBefore = Number(corporateIncomeBeforeCompensation) || 0;
+  const dividends = Number(dividendDistributions) || 0;
+  const cash = Number(afterTaxCorporateCash) || 0;
+
+  if (compensationCost > incomeBefore + FUNDING_EPS) {
+    notes.push({
+      code: 'salary_exceeds_current_year_income',
+      salaryExpense: Number(salaryExpense) || 0,
+      employerCppExpense: Number(employerCppExpense) || 0,
+      compensationCost,
+      corporateIncomeBeforeCompensation: incomeBefore
+    });
+  }
+  if (dividends > cash + FUNDING_EPS) {
+    notes.push({
+      code: 'dividends_exceed_current_year_cash',
+      dividendDistributions: dividends,
+      afterTaxCorporateCash: cash
+    });
+  }
+  return notes;
 }
 
 /**
@@ -28,77 +124,73 @@ function sumCompensationCorporateDeductions(salaries) {
  * @param {Object} input - Input object with:
  *   - year, province, grossRevenue, expenses
  *   - incomeSplitting: boolean
- *   - If single: salary, eligibleDividends, nonEligibleDividends, personalOtherIncome, personalDeductions
- *   - If splitting: shareholder1: { salary, eligibleDividends, nonEligibleDividends, otherIncome, deductions }, shareholder2: same
+ *   - If single: salary, eligibleDividends, nonEligibleDividends, personalOtherIncome, capitalGains, rrspContribution, fhsaDeduction, personalDeductions
+ *   - If splitting: shareholder1/2: { salary, eligibleDividends, nonEligibleDividends, otherIncome, capitalGains, rrspContribution, fhsaDeduction, deductions }
  * @returns {Object} Complete CCPC tax calculation result
  */
-export function computeCCPCTax(input) {
+export function computeCCPCTax(input, personalTaxOpts = {}) {
   const {
     year = 2025,
     province,
     grossRevenue = 0,
     expenses = 0,
+    corporateTaxYearStart = `${year}-01-01`,
     incomeSplitting = false
   } = input;
 
   const personalProv = input.personalProvince || province;
+  const corporateOpts = { taxationYearStartDate: corporateTaxYearStart };
 
-  if (incomeSplitting && input.shareholder1 != null && input.shareholder2 != null) {
-    const sh1 = input.shareholder1;
-    const sh2 = input.shareholder2;
-    const salary1 = sh1.salary || 0;
-    const salary2 = sh2.salary || 0;
-    const elig1 = sh1.eligibleDividends || 0;
-    const elig2 = sh2.eligibleDividends || 0;
-    const nonElig1 = sh1.nonEligibleDividends || 0;
-    const nonElig2 = sh2.nonEligibleDividends || 0;
+  if (incomeSplitting) {
+    const shareholderInputs = normalizeShareholderInputs(input);
+    if (!shareholderInputs || shareholderInputs.length < 2) {
+      throw new Error('Income splitting requires at least two shareholders.');
+    }
 
-    const { salaryExpense, employerCppExpense } = sumCompensationCorporateDeductions([salary1, salary2]);
+    const salaries = shareholderInputs.map((sh) => sh.salary || 0);
+    const { salaryExpense, employerCppExpense } = sumCompensationCorporateDeductions(
+      salaries,
+      personalTaxOpts
+    );
     const corporateIncomeBeforeCompensation = Math.max(0, grossRevenue - expenses);
     const corporateTaxableIncome = Math.max(
       0,
       corporateIncomeBeforeCompensation - salaryExpense - employerCppExpense
     );
 
-    const corporate = calculateCorporateTax(corporateTaxableIncome, province);
+    const corporate = calculateCorporateTax(corporateTaxableIncome, province, corporateOpts);
     const afterTaxCorporateCash = corporate.afterTaxCash;
 
-    const dividendDistributions = elig1 + nonElig1 + elig2 + nonElig2;
+    const dividendDistributions = shareholderInputs.reduce(
+      (sum, sh) => sum + (sh.eligibleDividends || 0) + (sh.nonEligibleDividends || 0),
+      0
+    );
     const retainedEarnings = Math.max(0, afterTaxCorporateCash - dividendDistributions);
 
-    const personal1 = computePersonalTax({
-      year,
-      province: personalProv,
-      employmentIncome: salary1,
-      eligibleDividends: elig1,
-      nonEligibleDividends: nonElig1,
-      otherIncome: sh1.otherIncome || 0,
-      rrspDeduction: 0,
-      fhsaDeduction: 0,
-      estimatedDeductions: sh1.deductions || 0,
-      taxPaid: 0
-    });
+    const personalResults = shareholderInputs.map((sh) =>
+      computeShareholderPersonalTax(sh, year, personalProv, personalTaxOpts)
+    );
+    const shareholders = personalResults.map(mapShareholderTotals);
 
-    const personal2 = computePersonalTax({
-      year,
-      province: personalProv,
-      employmentIncome: salary2,
-      eligibleDividends: elig2,
-      nonEligibleDividends: nonElig2,
-      otherIncome: sh2.otherIncome || 0,
-      rrspDeduction: 0,
-      fhsaDeduction: 0,
-      estimatedDeductions: sh2.deductions || 0,
-      taxPaid: 0
-    });
-
-    const totalPersonalTax = personal1.totals.totalIncomeTax + personal2.totals.totalIncomeTax;
+    const totalPersonalTax = shareholders.reduce((sum, sh) => sum + sh.totalIncomeTax, 0);
     const totalTaxBurden = corporate.totalCorporateTax + totalPersonalTax;
     const effectiveTaxRate = grossRevenue > 0 ? totalTaxBurden / grossRevenue : 0;
-    const netPersonalTakeHome = personal1.totals.takeHomeAfterPayroll + personal2.totals.takeHomeAfterPayroll;
+    const netPersonalTakeHome = shareholders.reduce((sum, sh) => sum + sh.takeHomeAfterPayroll, 0);
+    const employeeCppEi = shareholders.reduce(
+      (sum, sh) => sum + (sh.cpp || 0) + (sh.ei || 0),
+      0
+    );
+    const fundingNotes = compensationFundingNotes({
+      salaryExpense,
+      employerCppExpense,
+      corporateIncomeBeforeCompensation,
+      dividendDistributions,
+      afterTaxCorporateCash
+    });
 
     return {
       incomeSplitting: true,
+      shareholderCount: shareholders.length,
       corporate: {
         ...corporate,
         grossRevenue,
@@ -110,20 +202,18 @@ export function computeCCPCTax(input) {
         distributions: dividendDistributions
       },
       personal: null,
-      personal1: {
-        ...personal1.totals,
-        breakdown: personal1.breakdown
-      },
-      personal2: {
-        ...personal2.totals,
-        breakdown: personal2.breakdown
-      },
+      shareholders,
+      personal1: shareholders[0] || null,
+      personal2: shareholders[1] || null,
       combined: {
         totalTaxBurden,
+        employeeCppEi,
+        employerCppExpense,
         effectiveTaxRate,
         netPersonalTakeHome,
         retainedEarnings,
-        afterTaxCorporateCash
+        afterTaxCorporateCash,
+        fundingNotes
       }
     };
   }
@@ -132,16 +222,22 @@ export function computeCCPCTax(input) {
   const eligibleDividends = input.eligibleDividends || 0;
   const nonEligibleDividends = input.nonEligibleDividends || 0;
   const personalOtherIncome = input.personalOtherIncome || 0;
+  const capitalGains = input.capitalGains || 0;
+  const rrspDeduction = rrspContributionAsCurrentYearDeduction(input);
+  const fhsaDeduction = input.fhsaDeduction || 0;
   const personalDeductions = input.personalDeductions || 0;
 
-  const { salaryExpense, employerCppExpense } = sumCompensationCorporateDeductions([salary]);
+  const { salaryExpense, employerCppExpense } = sumCompensationCorporateDeductions(
+    [salary],
+    personalTaxOpts
+  );
   const corporateIncomeBeforeCompensation = Math.max(0, grossRevenue - expenses);
   const corporateTaxableIncome = Math.max(
     0,
     corporateIncomeBeforeCompensation - salaryExpense - employerCppExpense
   );
 
-  const corporate = calculateCorporateTax(corporateTaxableIncome, province);
+  const corporate = calculateCorporateTax(corporateTaxableIncome, province, corporateOpts);
   const afterTaxCorporateCash = corporate.afterTaxCash;
 
   const personal = computePersonalTax({
@@ -151,17 +247,26 @@ export function computeCCPCTax(input) {
     eligibleDividends,
     nonEligibleDividends,
     otherIncome: personalOtherIncome,
-    rrspDeduction: 0,
-    fhsaDeduction: 0,
+    capitalGains,
+    rrspDeduction,
+    fhsaDeduction,
     estimatedDeductions: personalDeductions,
     taxPaid: 0
-  });
+  }, personalTaxOpts);
 
   const totalTaxBurden = corporate.totalCorporateTax + personal.totals.totalIncomeTax;
   const effectiveTaxRate = grossRevenue > 0 ? totalTaxBurden / grossRevenue : 0;
   const netPersonalTakeHome = personal.totals.takeHomeAfterPayroll;
   const dividendDistributions = eligibleDividends + nonEligibleDividends;
   const retainedEarnings = Math.max(0, afterTaxCorporateCash - dividendDistributions);
+  const employeeCppEi = (personal.totals.cpp || 0) + (personal.totals.ei || 0);
+  const fundingNotes = compensationFundingNotes({
+    salaryExpense,
+    employerCppExpense,
+    corporateIncomeBeforeCompensation,
+    dividendDistributions,
+    afterTaxCorporateCash
+  });
 
   return {
     incomeSplitting: false,
@@ -183,10 +288,13 @@ export function computeCCPCTax(input) {
     personal2: null,
     combined: {
       totalTaxBurden,
+      employeeCppEi,
+      employerCppExpense,
       effectiveTaxRate,
       netPersonalTakeHome,
       retainedEarnings,
-      afterTaxCorporateCash
+      afterTaxCorporateCash,
+      fundingNotes
     }
   };
 }

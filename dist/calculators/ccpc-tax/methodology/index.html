@@ -4,12 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Inspect the Arithmetic – CCPC Income Tax Calculator | The Long Math</title>
-  <meta name="description" content="Formulae, computational structure, and assumptions for the CCPC Income Tax Calculator (2025)." />
-  <link rel="canonical" href="https://thelongmath.com/calculators/ccpc-tax/methodology/" />
+  <meta name="description" content="Formulae, computational structure, and assumptions for the CCPC Income Tax Calculator." />
+  <link rel="canonical" href="https://www.thelongmath.com/calculators/ccpc-tax/methodology/" />
 
   <script src="/assets/js/theme-init.40fc21015f.js"></script>
-  <link rel="stylesheet" href="/assets/css/styles.a9bfe05385.css" />
-  <script defer src="/assets/js/site.4fbf708cdd.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.5e4b64579a.css" />
+  <script defer src="/assets/js/site.9a3c008ae4.js"></script>
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
@@ -27,7 +27,7 @@
   <div class="wrap">
     <div class="methodology-content">
       <h1>Inspect the Arithmetic — CCPC Income Tax Calculator</h1>
-      <p class="methodology-meta">Version 1.1<br>Last verified: May 2026</p>
+      <p class="methodology-meta">Version 1.2<br>Last verified: August 2026</p>
 
       <p>
         Transparent arithmetic is the operating system of this calculator.
@@ -41,20 +41,20 @@
 
       <h2>Purpose</h2>
       <p>
-        This calculator estimates the combined tax burden for a Canadian Controlled Private Corporation (CCPC) and its shareholder(s) for the 2025 tax year.
+        This calculator estimates combined corporate and personal income tax for a Canadian-Controlled Private Corporation (CCPC) and its shareholder(s) for the 2025 or 2026 tax year.
         It models:
       </p>
       <ul>
         <li>Corporate taxable income and corporate tax (federal and provincial) on active business income.</li>
         <li>After-tax cash inside the corporation and retained earnings after distributions.</li>
         <li>Personal income tax, CPP, and EI for one or two shareholders receiving salary and/or dividends.</li>
-        <li>The combined corporate + personal tax burden and an effective overall tax rate on gross corporate revenue.</li>
+        <li>The combined corporate + personal income tax and an effective income-tax rate on gross corporate revenue. Employee CPP/EI and employer CPP are shown separately.</li>
       </ul>
 
       <h2>Definitions</h2>
       <p>Let:</p>
       <ul>
-        <li>Y = tax year (fixed at 2025 in this version)</li>
+        <li>Y = tax year (2025 or 2026)</li>
         <li>P<sub>corp</sub> = province/territory of incorporation (for corporate tax)</li>
         <li>P<sub>pers</sub> = province/territory of residence for shareholders (for personal tax; assumed equal to P<sub>corp</sub> unless overridden later)</li>
         <li>R = gross corporate revenue</li>
@@ -62,7 +62,8 @@
         <li>P<sub>pre</sub> = max(0, R − X), corporate income before owner compensation (salary and employer CPP)</li>
         <li>CPP<sub>emp</sub> = employer CPP on T4 salary (matched to employee CPP in the payroll model, per employment)</li>
         <li>I<sub>corp</sub> = corporate taxable income after salary and employer CPP</li>
-        <li>SBDLimit = federal small business deduction limit (typically $500,000), applied for the chosen province using the corporate tax data files.</li>
+        <li>FedSBDLimit = federal small business deduction limit (typically $500,000)</li>
+        <li>ProvSBDLimit = provincial or territorial small business deduction limit from the corporate tax data files</li>
         <li>r<sub>fed,SBD</sub>, r<sub>fed,gen</sub> = federal SBD and general corporate tax rates</li>
         <li>r<sub>prov,SBD</sub>, r<sub>prov,gen</sub> = provincial SBD and general corporate tax rates</li>
         <li>Tax<sub>fed,corp</sub> = federal corporate tax</li>
@@ -75,6 +76,9 @@
           <li>D<sub>elig</sub> = eligible dividends paid</li>
           <li>D<sub>ne</sub> = non‑eligible dividends paid</li>
           <li>O<sub>pers</sub> = other personal income</li>
+          <li>G = capital gains (cash amount; 50% inclusion applied by the personal engine)</li>
+          <li>R<sub>RRSP</sub> = RRSP contribution this year (treated as a current‑year deduction)</li>
+          <li>R<sub>FHSA</sub> = FHSA contribution deduction claimed this year</li>
           <li>D<sub>pers</sub> = personal deductions (user‑entered estimate)</li>
         </ul>
         <li>For two shareholders (income splitting):</li>
@@ -83,6 +87,9 @@
           <li>D<sub>elig,1</sub>, D<sub>elig,2</sub> = eligible dividends to each shareholder</li>
           <li>D<sub>ne,1</sub>, D<sub>ne,2</sub> = non‑eligible dividends to each shareholder</li>
           <li>O<sub>pers,1</sub>, O<sub>pers,2</sub> = other personal income</li>
+          <li>G<sub>1</sub>, G<sub>2</sub> = capital gains for each shareholder</li>
+          <li>R<sub>RRSP,1</sub>, R<sub>RRSP,2</sub> = RRSP contribution this year for each shareholder (treated as a current‑year deduction)</li>
+          <li>R<sub>FHSA,1</sub>, R<sub>FHSA,2</sub> = FHSA deduction claimed this year for each shareholder</li>
           <li>D<sub>pers,1</sub>, D<sub>pers,2</sub> = personal deductions</li>
         </ul>
         <li>CPP, EI = employee CPP contributions and EI premiums on salary (per shareholder)</li>
@@ -111,25 +118,25 @@
 
       <h3 id="corp-brackets">2. Federal and Provincial Corporate Tax</h3>
       <p>
-        The engine applies a simple two‑tier structure based on the small business deduction limit SBDLimit:
+        The engine applies a simple two‑tier structure. Federal tax uses the federal small business deduction limit, while provincial or territorial tax uses that jurisdiction's own limit where it differs from the federal limit:
       </p>
       <div class="formula-block">
-        If I<sub>corp</sub> ≤ SBDLimit:<br>
+        If income is within the applicable SBD limit:<br>
         &nbsp;&nbsp;All income taxed at SBD rates.<br><br>
         Else:<br>
-        &nbsp;&nbsp;Income up to SBDLimit taxed at SBD rates.<br>
-        &nbsp;&nbsp;Income above SBDLimit taxed at general rates.
+        &nbsp;&nbsp;Income up to the applicable SBD limit taxed at SBD rates.<br>
+        &nbsp;&nbsp;Income above the applicable SBD limit taxed at general rates.
       </div>
       <p>Federal side:</p>
       <div class="formula-block">
-        FedSBDIncome = min(I<sub>corp</sub>, SBDLimit)<br>
-        FedGenIncome = max(0, I<sub>corp</sub> − SBDLimit)<br>
+        FedSBDIncome = min(I<sub>corp</sub>, FedSBDLimit)<br>
+        FedGenIncome = max(0, I<sub>corp</sub> − FedSBDLimit)<br>
         Tax<sub>fed,corp</sub> = FedSBDIncome × r<sub>fed,SBD</sub> + FedGenIncome × r<sub>fed,gen</sub>
       </div>
       <p>Provincial side (using province‑specific rates and SBD limit where applicable):</p>
       <div class="formula-block">
-        ProvSBDIncome = min(I<sub>corp</sub>, SBDLimit)<br>
-        ProvGenIncome = max(0, I<sub>corp</sub> − SBDLimit)<br>
+        ProvSBDIncome = min(I<sub>corp</sub>, ProvSBDLimit)<br>
+        ProvGenIncome = max(0, I<sub>corp</sub> − ProvSBDLimit)<br>
         Tax<sub>prov,corp</sub> = ProvSBDIncome × r<sub>prov,SBD</sub> + ProvGenIncome × r<sub>prov,gen</sub>
       </div>
       <p>Total corporate tax and after‑tax cash:</p>
@@ -149,8 +156,7 @@
         RetEarn = max(0, Cash<sub>after</sub> − Dist<sub>single</sub>)
       </div>
       <p>
-        If modeled dividends exceed after‑tax corporate cash, retained earnings are clipped to zero rather than displaying negative corporate equity. The corporate side does not enforce balance‑sheet constraints beyond this max‑zero clipping; over‑distributions relative to Cash<sub>after</sub>
-        are not flagged separately in this version.
+        If modeled dividends exceed after‑tax corporate cash, retained earnings are clipped to zero rather than displaying negative corporate equity. Salary plus employer CPP that exceeds this year’s income before compensation likewise floors corporate taxable income at zero while still treating the salary as paid on the personal side. Those cases are allowed as tax illustrations; they imply funding from resources not modeled here (for example prior corporate cash). The UI flags them. The corporate side does not enforce a full balance sheet, opening cash, GRIP, or RDTOH.
       </p>
 
       <h3 id="split-shareholder">4. Two‑Shareholder (Income Splitting) Scenario</h3>
@@ -172,8 +178,10 @@
         <li>Employment income = salary from the corporation (S, S<sub>1</sub>, or S<sub>2</sub>).</li>
         <li>Eligible and non‑eligible dividends = dividends from the corporation.</li>
         <li>Other income = O<sub>pers</sub>, O<sub>pers,1</sub>, or O<sub>pers,2</sub>.</li>
-        <li>RRSP and FHSA deductions = 0 in this CCPC calculator.</li>
-        <li>Estimated deductions = D<sub>pers</sub>, D<sub>pers,1</sub>, or D<sub>pers,2</sub>.</li>
+        <li>Capital gains = G, G<sub>1</sub>, or G<sub>2</sub> (cash amount; taxable capital gains use the personal engine’s 50% inclusion rate).</li>
+        <li>RRSP contribution = R<sub>RRSP</sub>, R<sub>RRSP,1</sub>, or R<sub>RRSP,2</sub> (user‑entered contribution this year; assumed claimed in full as a current‑year deduction).</li>
+        <li>FHSA deduction = R<sub>FHSA</sub>, R<sub>FHSA,1</sub>, or R<sub>FHSA,2</sub> (user‑entered amount claimed this year).</li>
+        <li>Estimated deductions = D<sub>pers</sub>, D<sub>pers,1</sub>, or D<sub>pers,2</sub> (amounts that reduce taxable income, not tax credits such as medical expenses or charitable donations).</li>
         <li>Tax already paid = 0 (no modeled source deductions in this tool).</li>
       </ul>
       <p>
@@ -185,32 +193,32 @@
       <p>From each personal tax run, the bridge reads:</p>
       <ul>
         <li>Total income tax (federal + provincial) for each shareholder.</li>
-        <li>CPP and EI contributions (implicitly included in the total burden in the personal engine).</li>
+        <li>CPP and EI contributions (employee amounts). These are shown separately and are subtracted in take‑home pay. They are not added into the headline total income tax.</li>
         <li>Take‑home income after income tax + CPP + EI.</li>
       </ul>
       <p>
-        The CCPC UI surfaces a simplified summary for each shareholder: total personal tax, total burden, and net take‑home pay.
+        The CCPC UI surfaces a simplified summary for each shareholder: personal income tax, employee CPP/EI, and net take‑home pay.
       </p>
 
-      <h2>Combined Burden and Effective Rate</h2>
+      <h2>Combined Income Tax and Effective Rate</h2>
 
       <h3 id="combined-single">7. Single‑Shareholder Combined View</h3>
       <p>For a single shareholder, the bridge computes:</p>
       <div class="formula-block">
         Tax<sub>pers</sub> = output of personal engine (total income tax)<br>
         Tax<sub>corp</sub> = total corporate tax (federal + provincial)<br>
-        Burden<sub>total</sub> = Tax<sub>corp</sub> + Tax<sub>pers</sub><br>
+        IncomeTax<sub>total</sub> = Tax<sub>corp</sub> + Tax<sub>pers</sub><br>
         Rate<sub>eff</sub> = 
           \[
             \begin{cases}
               0, & \text{if } R = 0 \\
-              \dfrac{Burden\_{total}}{R}, & \text{otherwise}
+              \dfrac{IncomeTax\_{total}}{R}, & \text{otherwise}
             \end{cases}
           \]<br>
         NetPersonalTakeHome = take‑home income from personal engine
       </div>
       <p>
-        The effective rate is expressed relative to gross corporate revenue (R), not corporate profit. This shows the combined corporate + personal tax burden relative to the total income generated by the business.
+        The headline combined figure is corporate plus personal <strong>income tax</strong>. Employee CPP and EI are payroll deductions, not income tax; they appear as their own result rows and in take‑home. Employer CPP is a deductible corporate expense and is also shown separately. The effective rate is income tax divided by gross corporate revenue (R), not corporate profit.
       </p>
 
       <h3 id="combined-split">8. Two‑Shareholder Combined View</h3>
@@ -218,12 +226,12 @@
       <div class="formula-block">
         Tax<sub>pers,1</sub>, Tax<sub>pers,2</sub> = total income tax for each shareholder<br>
         Tax<sub>corp</sub> = total corporate tax<br>
-        Burden<sub>total</sub> = Tax<sub>corp</sub> + Tax<sub>pers,1</sub> + Tax<sub>pers,2</sub><br>
+        IncomeTax<sub>total</sub> = Tax<sub>corp</sub> + Tax<sub>pers,1</sub> + Tax<sub>pers,2</sub><br>
         Rate<sub>eff</sub> = 
           \[
             \begin{cases}
               0, & \text{if } R = 0 \\
-              \dfrac{Burden\_{total}}{R}, & \text{otherwise}
+              \dfrac{IncomeTax\_{total}}{R}, & \text{otherwise}
             \end{cases}
           \]<br>
         NetPersonalTakeHome = take‑home<sub>1</sub> + take‑home<sub>2</sub>
@@ -235,11 +243,14 @@
 
       <h2>Assumptions and Limitations</h2>
       <ol>
-        <li>Tax year is fixed at 2025; corporate and personal parameters are loaded from JSON data files for that year only.</li>
+        <li>Tax year can be 2025 or 2026; corporate and personal parameters are loaded from year-specific JSON data files.</li>
+        <li>For 2025 Nova Scotia and Prince Edward Island, the stored provincial corporate rates are the post-change rates applied to the entire tax year. The calculator does not prorate those mid-year changes by days. Corporate tax year start is used for Quebec-style effective-rate selection where encoded; it is not a day-count proration engine.</li>
+        <li>Eligible vs non-eligible dividend treatment is a user assumption. GRIP and general-rate income capacity are not tracked.</li>
+        <li>Salary and dividends are not constrained to this year’s modeled corporate cash. Amounts above current-year income or after-tax cash imply other resources (for example prior cash) and are flagged in the UI.</li>
         <li>The calculator models active business income only; investment income, passive income rules, and refundable taxes on investment income are not included.</li>
         <li>No associated‑corporation rules or grind‑downs of the SBD limit are modeled; the small business limit is applied as‑is from the data files.</li>
         <li>Loss carryforwards, loss carrybacks, and integration with previous or future years are out of scope.</li>
-        <li>RRSP, FHSA, and other registered‑account interactions for shareholders are not modeled; the CCPC calculator passes zero for those fields into the personal engine.</li>
+        <li>RRSP contribution is user‑entered and mapped to the personal engine as a current‑year RRSP deduction (full contribution claimed this year). FHSA deduction is user‑entered the same way. Contribution room, unused‑contribution carry‑forward, over‑contribution penalties, and first‑60‑days timing rules are not modeled. Capital gains are entered as the cash amount; the personal engine applies the 50% inclusion rate.</li>
         <li>Source deductions (withholding at source) and installments are not modeled; tax paid is treated as 0 and the focus is on the structural burden rather than balances owing or refunds.</li>
         <li>Shareholder province of residence is assumed to match the corporate province for personal tax purposes in this version.</li>
         <li>All amounts are in Canadian dollars, and bracket thresholds and rates are taken directly from the data files; any corrections to those data sources will flow through to this calculator.</li>
@@ -248,7 +259,7 @@
 
       <h2>Implementation Notes</h2>
       <ul>
-        <li>The corporate engine <code>calculateCorporateTax()</code> is pure and deterministic: given taxable income and province, it returns tax and a full breakdown, including SBD limit and per‑tier amounts.</li>
+        <li>The corporate engine <code>calculateCorporateTax()</code> is pure and deterministic: given taxable income, province, and corporate tax year start date, it returns tax and a full breakdown, including federal/provincial SBD limits and per‑tier amounts.</li>
         <li>The personal engine <code>computePersonalTax()</code> is shared with the <a href="/calculators/canada-income-tax/" target="_blank" rel="noopener">Canada Personal Income Tax Calculator</a> and is validated separately via known‑answer tests.</li>
         <li>The bridge <code>computeCCPCTax()</code> combines these outputs and is responsible only for mapping inputs, summing taxes, and computing combined metrics.</li>
         <li>The “Show the Math” section on the CCPC calculator page reads directly from these engine outputs to render bracket tables and summary lines; this methodology page describes the underlying steps.</li>
@@ -262,6 +273,9 @@
       <h2>What This Calculator Does Not Include</h2>
       <ul>
         <li>Part I / Part IV refundable tax on aggregate investment income and RDTOH pools.</li>
+        <li>GRIP / eligible-dividend capacity ledgers.</li>
+        <li>Opening corporate cash or a multi-year balance sheet.</li>
+        <li>Day-count proration of mid-year provincial corporate rate changes (including 2025 Nova Scotia and Prince Edward Island).</li>
         <li>Associated corporations, SBD grind-downs, and complex corporate groups.</li>
         <li>Quebec-specific corporate tax schedules beyond the encoded provincial data.</li>
         <li>AMT, trust rules, and professional corporation governance nuances.</li>

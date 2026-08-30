@@ -19,7 +19,7 @@
   "BC": {
     "name": "British Columbia",
     "brackets": [
-      { "threshold": 0, "rate": 0.0506 },
+      { "threshold": 0, "rate": 0.056 },
       { "threshold": 50363, "rate": 0.077 },
       { "threshold": 100728, "rate": 0.105 },
       { "threshold": 115648, "rate": 0.1229 },
@@ -28,7 +28,7 @@
       { "threshold": 265545, "rate": 0.205 }
     ],
     "credits": {
-      "basicPersonalAmount": { "amount": 13216, "rate": 0.0506 }
+      "basicPersonalAmount": { "amount": 13216, "rate": 0.056 }
     },
     "surtaxes": [],
     "premiums": []
@@ -148,7 +148,8 @@
       { "threshold": 33928, "rate": 0.1347 },
       { "threshold": 65820, "rate": 0.166 },
       { "threshold": 106890, "rate": 0.1762 },
-      { "threshold": 142250, "rate": 0.19 }
+      { "threshold": 142520, "rate": 0.19 },
+      { "threshold": 200000, "rate": 0.2 }
     ],
     "credits": {
       "basicPersonalAmount": { "amount": 15000, "rate": 0.095 }

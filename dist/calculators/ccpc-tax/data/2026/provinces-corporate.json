@@ -151,15 +151,27 @@
     "sbd": {
       "rate": 0.032,
       "limit": 500000,
-      "_note": "Quebec small business rate: 3.20% on first $500,000 (2025). Combined with federal 9% SBD rate = approximately 12.20% total."
+      "effectiveRates": [
+        {
+          "start": "2026-01-01",
+          "rate": 0.032,
+          "_note": "For taxation years beginning before April 30, 2026, the Quebec minimum small business rate remains 3.2%."
+        },
+        {
+          "start": "2026-04-30",
+          "rate": 0.022,
+          "_note": "For taxation years beginning after April 29, 2026, Revenu Quebec increased the SBD rate to 9.3%, reducing the minimum small business rate to 2.2%."
+        }
+      ],
+      "_note": "Quebec small business rate depends on taxation year start date in 2026. Combined with federal 9% SBD rate = 12.20% before April 30 starts, or 11.20% for starts after April 29."
     },
     "general": {
       "rate": 0.115,
       "_note": "Quebec general corporate rate: 11.50%. Combined with federal 15% general rate = 26.50% provincial+federal component before surtaxes."
     },
-    "_source": "Revenu Québec corporate tax documentation / public budget summaries",
-    "_lastVerified": "2026-05-16",
-    "_note": "Quebec administers corporate tax separately from CRA. 2026 provincial budget materials indicated no change to these headline CCPC rates; provincial small business rate 3.2% on first $500,000 remains standard in public summaries (confirm remuneration-hour tests on your T2)."
+    "_source": "Revenu Quebec corporate tax documentation and Revenu Quebec tax news: Increase in the Small Business Deduction Rate, published May 4, 2026.",
+    "_lastVerified": "2026-07-21",
+    "_note": "Quebec administers corporate tax separately from CRA. For taxation years beginning after April 29, 2026, the Quebec SBD rate increases from 8.3% to 9.3%, reducing the minimum eligible small-business rate from 3.2% to 2.2%. Other SBD conditions, including remunerated-hours rules, remain out of scope."
   },
   "YT": {
     "name": "Yukon",
