@@ -54,3 +54,141 @@ test("payoff search uses the same Canadian monthly rate as payment calculation",
   });
   assert.equal(payoffMonth, 300);
 });
+
+test("underwater homes use signed equity in net worth and strategy comparisons", () => {
+  const inputs = {
+    mortgagePayment: 2_806,
+    monthlyBudget: 3_306,
+    extraCash: 500,
+    allocationPercent: 50,
+    expectedReturn: 7,
+    fees: 0,
+    timeHorizon: 5,
+    homeGrowthRate: 0,
+    useCalculator: false,
+    currentBalance: 480_000,
+    currentRate: 5,
+    currentHomePrice: 400_000,
+  };
+
+  const underwater = engine.calculateMortgageVsInvest(inputs);
+  const aboveWater = engine.calculateMortgageVsInvest({
+    ...inputs,
+    currentHomePrice: 1_000_000,
+  });
+
+  assert.equal(underwater.series[0].netWorth, -80_000);
+  assertApprox(aboveWater.netWorth - underwater.netWorth, 600_000, 1e-8);
+  assertApprox(aboveWater.fact100Mortgage - underwater.fact100Mortgage, 600_000, 1e-8);
+  assertApprox(aboveWater.fact100Invest - underwater.fact100Invest, 600_000, 1e-8);
+  assertApprox(
+    underwater.breakEvenGrossReturnPercent,
+    aboveWater.breakEvenGrossReturnPercent,
+    1e-12,
+  );
+
+  const atBreakEven = engine.calculateMortgageVsInvest({
+    ...inputs,
+    expectedReturn: underwater.breakEvenGrossReturnPercent,
+  });
+  assertApprox(atBreakEven.fact100Mortgage, atBreakEven.fact100Invest, 1);
+});
+
+test("$480k at 5% with a $1000 monthly payment is rejected as non-amortizing", () => {
+  const monthlyInterest = 480_000 * engine.canadianMortgagePeriodicRate(5, 12);
+  assert.ok(monthlyInterest > 1_000);
+
+  const simulation = engine.simulate({
+    initialMortgageBalance: 480_000,
+    mortgagePaymentPerPeriod: 1_000,
+    extraCashPerPeriod: 0,
+    allocationPercent: 100,
+    annualRate: 5,
+    horizonMonths: 12,
+    monthlyReturn: 0,
+    homePrice: 400_000,
+    homeGrowthRate: 0,
+  });
+  assert.equal(simulation.errorCode, "non_amortizing_payment");
+  assertApprox(simulation.interestDue, monthlyInterest);
+  assert.equal(simulation.payment, 1_000);
+
+  const payoffMonth = engine.findMortgagePayoffMonth({
+    initialMortgageBalance: 480_000,
+    mortgagePaymentPerPeriod: 1_000,
+    extraCashPerPeriod: 0,
+    allocationPercent: 100,
+    annualRate: 5,
+  });
+  assert.equal(payoffMonth, null);
+
+  const result = engine.calculateMortgageVsInvest({
+    mortgagePayment: 1_000,
+    monthlyBudget: 1_000,
+    extraCash: 0,
+    allocationPercent: 100,
+    expectedReturn: 7,
+    fees: 0,
+    timeHorizon: 5,
+    homeGrowthRate: 0,
+    useCalculator: false,
+    currentBalance: 480_000,
+    currentRate: 5,
+    currentHomePrice: 400_000,
+  });
+  assert.equal(result.errorCode, "non_amortizing_payment");
+  assertApprox(result.interestDue, monthlyInterest);
+});
+
+test("a start-of-horizon lump sum can fully clear the mortgage", () => {
+  const payoffMonth = engine.findMortgagePayoffMonth({
+    initialMortgageBalance: 100_000,
+    mortgagePaymentPerPeriod: 0,
+    extraCashPerPeriod: 0,
+    allocationPercent: 0,
+    annualRate: 5,
+    lumpSumAtStart: 100_000,
+  });
+  assert.equal(payoffMonth, 1);
+});
+
+test("mortgage cash paid equals principal plus interest actually paid", () => {
+  const result = engine.simulate({
+    initialMortgageBalance: 480_000,
+    mortgagePaymentPerPeriod: 2_806,
+    extraCashPerPeriod: 0,
+    allocationPercent: 100,
+    annualRate: 5,
+    horizonMonths: 1,
+    monthlyReturn: 0,
+    homePrice: 600_000,
+    homeGrowthRate: 0,
+  });
+
+  assertApprox(
+    result.totalMortgageCashPaid,
+    result.totalPrincipalPaid + result.totalInterestPaid,
+  );
+  assertApprox(result.totalMortgageCashPaid, 2_806);
+  assertApprox(480_000 - result.finalBalance, result.totalPrincipalPaid, 1e-9);
+});
+
+test("full monthly budget is still invested after payoff", () => {
+  const result = engine.simulate({
+    initialMortgageBalance: 1_000,
+    mortgagePaymentPerPeriod: 600,
+    extraCashPerPeriod: 400,
+    allocationPercent: 100,
+    annualRate: 0,
+    horizonMonths: 3,
+    monthlyReturn: 0,
+    homePrice: 1_000,
+    homeGrowthRate: 0,
+  });
+
+  assert.equal(result.payoffMonth, 2);
+  assert.equal(result.finalBalance, 0);
+  assert.equal(result.finalInvestValue, 2_000);
+  assert.equal(result.series[2].investValue, 1_000);
+  assert.equal(result.series[3].investValue, 2_000);
+});

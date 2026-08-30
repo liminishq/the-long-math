@@ -11,6 +11,10 @@
      * 0% slider = 100% of that cash → mortgage
      * 100% slider = 100% → investing
    - After mortgage payoff: entire budget goes to investing
+   - Recurring cash timing is end-of-period and symmetric:
+     mortgage interest accrues, then payment/extra principal;
+     investment balance earns the period return, then the contribution is added.
+   - Initial lump sums at t=0 are applied immediately (before that month's interest/growth).
 */
 
 /* ============================================================
@@ -71,6 +75,20 @@ function monthlyReturnFromAnnual(rAnnualNet) {
    ============================================================ */
 const MAX_PAYOFF_SEARCH_MONTHS = 1200; // 100 years
 const MORTGAGE_BALANCE_EPSILON = 1e-6;
+const PAYMENT_EPSILON = 1e-9;
+const NON_AMORTIZING_PAYMENT_ERROR = "Mortgage payment must exceed the accrued monthly interest under these assumptions.";
+
+function getNonAmortizingPaymentError(balance, payment, annualRate) {
+  if (!Number.isFinite(balance) || balance <= MORTGAGE_BALANCE_EPSILON) return null;
+  const interestDue = balance * canadianMortgagePeriodicRate(annualRate, 12);
+  if (payment > interestDue + PAYMENT_EPSILON) return null;
+  return {
+    error: NON_AMORTIZING_PAYMENT_ERROR,
+    errorCode: "non_amortizing_payment",
+    interestDue,
+    payment
+  };
+}
 
 function findMortgagePayoffMonth({
   initialMortgageBalance,
@@ -93,13 +111,20 @@ function findMortgagePayoffMonth({
       const lumpToPrincipal = Math.min(Math.max(0, lumpMortgage), balance);
       balance -= lumpToPrincipal;
       if (balance < 0) balance = 0;
+      if (balance <= MORTGAGE_BALANCE_EPSILON) {
+        return period;
+      }
     }
     const interestDue = balance * periodRate;
     const intendedMortgagePayment = mortgagePaymentPerPeriod + extraToMortgage;
+    if (intendedMortgagePayment <= interestDue + PAYMENT_EPSILON) {
+      return null;
+    }
     const maxNeededToClose = interestDue + balance;
     const actualMortgagePayment = Math.min(intendedMortgagePayment, maxNeededToClose);
     const actualMortgagePaymentClamped = Math.max(0, actualMortgagePayment);
-    const principalPaid = Math.max(0, actualMortgagePaymentClamped - interestDue);
+    const interestPaid = Math.min(actualMortgagePaymentClamped, interestDue);
+    const principalPaid = actualMortgagePaymentClamped - interestPaid;
     balance = balance - principalPaid;
     if (balance < MORTGAGE_BALANCE_EPSILON) balance = 0;
     if (balance <= 0) {
@@ -132,19 +157,23 @@ function simulate({
   let investValue = 0;
   let totalInterestPaid = 0;
   let totalInterestEarned = 0;
+  let totalPrincipalPaid = 0;
+  let totalMortgageCashPaid = 0;
   let payoffPeriod = null;
   
   const series = [];
   
   // Record initial state (month 0)
   const initialHomeValue = homePrice;
-  const initialEquity = Math.max(0, initialHomeValue - balance);
+  const initialEquity = initialHomeValue - balance;
   const initialNetWorth = initialEquity + investValue;
   series.push({
     month: 0,
     balance,
     investValue,
-    netWorth: initialNetWorth
+    netWorth: initialNetWorth,
+    interestPaid: 0,
+    interestEarned: 0
   });
   
   // Calculate allocation amounts
@@ -172,19 +201,23 @@ function simulate({
       const lumpToPrincipal = Math.min(Math.max(0, lumpMortgage), balance);
       balance -= lumpToPrincipal;
       if (balance < 0) balance = 0;
+      totalPrincipalPaid += lumpToPrincipal;
+      totalMortgageCashPaid += lumpToPrincipal;
       const mortgageOverflow = lumpMortgage - lumpToPrincipal;
       investValue += lumpInvest + mortgageOverflow;
     }
     
+    let monthInterestPaid = 0;
+    let monthInterestEarned = 0;
+
     if (balance <= 0) {
-      // Mortgage paid off - entire budget goes to investing
-      // Beginning of period: add contribution first, then compound
-      // Interest is earned on the balance AFTER adding the contribution
-      const balanceAfterContribution = investValue + totalBudgetPerPeriod;
-      const interestEarned = balanceAfterContribution * periodReturn;
-      investValue = balanceAfterContribution * (1 + periodReturn);
+      // Mortgage paid off - entire budget goes to investing at end of period:
+      // existing balance earns this period's return, then the contribution is added.
+      const interestEarned = investValue * periodReturn;
+      investValue = investValue * (1 + periodReturn) + totalBudgetPerPeriod;
       if (investValue < 0) investValue = 0;
       totalInterestEarned += interestEarned;
+      monthInterestEarned = interestEarned;
     } else {
       // Calculate interest due for this period
       const interestDue = balance * periodRate;
@@ -200,18 +233,28 @@ function simulate({
       // Actual mortgage payment (cannot exceed what's needed)
       const actualMortgagePayment = Math.min(intendedMortgagePayment, maxNeededToClose);
       const actualMortgagePaymentClamped = Math.max(0, actualMortgagePayment);
+
+      const paymentError = getNonAmortizingPaymentError(
+        balance,
+        actualMortgagePaymentClamped,
+        annualRate
+      );
+      if (paymentError) {
+        return paymentError;
+      }
       
-      // Principal paid
-      const principalPaid = Math.max(0, actualMortgagePaymentClamped - interestDue);
+      // Cash paid is split explicitly between interest and principal.
+      const interestPaid = Math.min(actualMortgagePaymentClamped, interestDue);
+      const principalPaid = actualMortgagePaymentClamped - interestPaid;
       
       // Update balance
       balance = balance - principalPaid;
       if (balance < MORTGAGE_BALANCE_EPSILON) balance = 0;
       
-      // Track interest paid
-      if (actualMortgagePaymentClamped > 0) {
-        totalInterestPaid += interestDue;
-      }
+      // Track the actual cash components paid.
+      totalInterestPaid += interestPaid;
+      totalPrincipalPaid += principalPaid;
+      totalMortgageCashPaid += actualMortgagePaymentClamped;
       
       // Track payoff period
       if (payoffPeriod === null && balance <= 0) {
@@ -223,15 +266,17 @@ function simulate({
       const remainderFromMortgage = intendedMortgagePayment - actualMortgagePaymentClamped;
       const investContribution = extraToInvest + remainderFromMortgage;
       
-      // Update investment value (beginning of period: add contribution first, then compound)
-      // Interest is earned on the balance AFTER adding the contribution
-      const balanceAfterContribution = investValue + investContribution;
-      const interestEarned = balanceAfterContribution * periodReturn;
-      investValue = balanceAfterContribution * (1 + periodReturn);
+      // End-of-period investment: existing balance earns this period's return,
+      // then the recurring contribution is added (symmetric with mortgage extra
+      // applied after interest accrues).
+      const interestEarned = investValue * periodReturn;
+      investValue = investValue * (1 + periodReturn) + investContribution;
       if (investValue < 0) investValue = 0;
       
       // Track interest earned
       totalInterestEarned += interestEarned;
+      monthInterestPaid = interestPaid;
+      monthInterestEarned = interestEarned;
     }
     
     // Record series data at the end of each calendar month
@@ -241,7 +286,7 @@ function simulate({
       const homeValue = homePrice * Math.pow(1 + homeGrowthRate / 100, currentMonth / 12);
       
       // Calculate equity
-      const equity = Math.max(0, homeValue - balance);
+      const equity = homeValue - balance;
       
       // Net worth = equity + investments
       const netWorth = equity + investValue;
@@ -250,7 +295,9 @@ function simulate({
         month: currentMonth,
         balance,
         investValue,
-        netWorth
+        netWorth,
+        interestPaid: monthInterestPaid,
+        interestEarned: monthInterestEarned
       });
       
       lastRecordedMonth = currentMonth;
@@ -265,6 +312,8 @@ function simulate({
     finalInvestValue: investValue,
     totalInterestPaid,
     totalInterestEarned,
+    totalPrincipalPaid,
+    totalMortgageCashPaid,
     payoffMonth: payoffMonth !== null ? Math.ceil(payoffMonth) : null,
     series
   };
@@ -275,7 +324,7 @@ function simulate({
    (must match logic in calculateMortgageVsInvest for final row)
    ============================================================ */
 function finalNetWorthAtHorizon(sim, finalHomeValue) {
-  const finalEquity = Math.max(0, finalHomeValue - sim.finalBalance);
+  const finalEquity = finalHomeValue - sim.finalBalance;
   return finalEquity + sim.finalInvestValue;
 }
 
@@ -301,6 +350,9 @@ function findBreakEvenGrossReturnPercent({
   }
   if (extraCashPerPeriod <= 1e-9 && (!lumpSumAtStart || lumpSumAtStart <= 1e-9)) {
     return { value: null, reason: "no_extra" };
+  }
+  if (getNonAmortizingPaymentError(initialMortgageBalance, mortgagePaymentPerPeriod, annualRate)) {
+    return { value: null, reason: "non_amortizing_payment" };
   }
 
   const finalHomeValue = homePrice * Math.pow(1 + homeGrowthRate / 100, timeHorizon);
@@ -459,8 +511,12 @@ function calculateMortgageVsInvest(inputs) {
     const ppy = 12;
     actualMortgagePayment = calculateMortgagePayment(initialMortgageBalance, annualRate, amortYears, ppy);
   } else {
-    // Use direct inputs
-    initialMortgageBalance = clamp(Number.isFinite(currentBalance) ? currentBalance : 480000, 0, 10000000);
+    // Use direct inputs. Explicit 0 means debt-free; missing/blank is not zero.
+    if (Number.isFinite(currentBalance)) {
+      initialMortgageBalance = clamp(currentBalance, 0, 10000000);
+    } else {
+      initialMortgageBalance = 480000;
+    }
     annualRate = clamp(Number.isFinite(currentRate) ? currentRate : 5, 0, 20);
   }
   
@@ -481,14 +537,12 @@ function calculateMortgageVsInvest(inputs) {
     ? calcHomePrice
     : (Number.isFinite(currentHomePrice) && currentHomePrice > 0 ? currentHomePrice : 600000);
   
-  // If we don't have initial balance, estimate from payment
-  if (initialMortgageBalance <= 0 && !useCalculator) {
-    // Rough estimate: assume 25 year amortization at 5%
-    // This is not ideal but allows calculator to work
+  // Missing/blank balance (not an explicit 0): estimate principal from payment.
+  // Explicit currentBalance === 0 is debt-free and must not invent a mortgage.
+  if (!useCalculator && !Number.isFinite(currentBalance)) {
     const estAmortYears = 25;
     const estRate = 5;
-    const estPpy = 12; // Always monthly
-    // Reverse calculate: payment * (1 - (1+r)^-n) / r = principal
+    const estPpy = 12;
     const estPeriodRate = canadianMortgagePeriodicRate(estRate, estPpy);
     const estNumPayments = estAmortYears * estPpy;
     if (estPeriodRate > 0) {
@@ -497,6 +551,18 @@ function calculateMortgageVsInvest(inputs) {
       initialMortgageBalance = actualMortgagePayment * estNumPayments;
     }
     annualRate = estRate;
+  }
+
+  // Every result compares against the all-invest path, where only the regular
+  // mortgage payment services the original balance. Reject assumptions that
+  // would require negative amortization instead of silently dropping interest.
+  const paymentError = getNonAmortizingPaymentError(
+    initialMortgageBalance,
+    mortgagePaymentMonthly,
+    annualRate
+  );
+  if (paymentError) {
+    return paymentError;
   }
   
   // Simulate with current allocation
@@ -512,6 +578,7 @@ function calculateMortgageVsInvest(inputs) {
     homeGrowthRate: homeGrowth,
     lumpSumAtStart
   });
+  if (currentResult.error) return currentResult;
   
   // Simulate 100% mortgage (for key facts)
   const result100Mortgage = simulate({
@@ -526,6 +593,7 @@ function calculateMortgageVsInvest(inputs) {
     homeGrowthRate: homeGrowth,
     lumpSumAtStart
   });
+  if (result100Mortgage.error) return result100Mortgage;
   
   // Simulate 100% invest (for key facts)
   const result100Invest = simulate({
@@ -540,12 +608,13 @@ function calculateMortgageVsInvest(inputs) {
     homeGrowthRate: homeGrowth,
     lumpSumAtStart
   });
+  if (result100Invest.error) return result100Invest;
   
   // Final home value
   const finalHomeValue = homePrice * Math.pow(1 + homeGrowth / 100, timeHorizon);
   
   // Final net worth
-  const finalEquity = Math.max(0, finalHomeValue - currentResult.finalBalance);
+  const finalEquity = finalHomeValue - currentResult.finalBalance;
   const finalNetWorth = finalEquity + currentResult.finalInvestValue;
 
   // True payoff timing (not limited to the chart / net-worth time horizon)
@@ -606,6 +675,7 @@ function calculateMortgageVsInvest(inputs) {
 window.PayOffMortgageVsInvestEngine = {
   canadianMortgagePeriodicRate,
   calculateMortgagePayment,
+  getNonAmortizingPaymentError,
   findMortgagePayoffMonth,
   monthlyReturnFromAnnual,
   simulate,

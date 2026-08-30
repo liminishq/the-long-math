@@ -102,9 +102,21 @@
 
       <h2 id="mode-b">Mode B: Mortgage Payment Entered Manually</h2>
       <p>If <strong>Use mortgage calculator</strong> is disabled, the user supplies: B<sub>0</sub> (current mortgage balance), r (Canadian nominal annual mortgage rate), P (monthly payment). The payoff time becomes whatever amortizes under those values.</p>
-      <p class="formula-meta">Fallback: If B<sub>0</sub> ≤ 0 in manual mode, the engine estimates a principal from payment using a rough default (25 years, 5% Canadian nominal annual mortgage rate). This is a non-ideal fallback intended to keep the calculator functioning.</p>
+      <p class="formula-meta">If the current mortgage balance is entered as 0, the engine treats the household as debt-free and does not reverse-calculate a principal from the payment. If the balance field is blank or missing, the engine estimates a principal from the payment using a rough default (25 years, 5% Canadian nominal annual mortgage rate). That fallback is non-ideal and is only used when a balance was not supplied.</p>
 
       <h2 id="core-simulation">Core Simulation (Monthly Recurrence)</h2>
+      <p>
+        Recurring monthly cash flows use <strong>symmetric end-of-period timing</strong> on both sides.
+        Mortgage interest accrues on the opening balance, then the scheduled payment and any extra principal
+        are applied. The investment balance earns that month’s return on the opening portfolio, then the
+        recurring contribution is added. A new recurring dollar does not earn investment growth in a month
+        where the equivalent mortgage prepayment did not yet reduce interest.
+      </p>
+      <p>
+        An initial lump sum available at time zero is different: it is applied immediately at the start of
+        month 1 (against the mortgage and/or into the portfolio) before that month’s interest and growth,
+        so both strategies receive equal time-zero treatment.
+      </p>
       <p>The simulation advances month-by-month for t = 1, 2, …, N. State at the end of month t is written B<sub>t</sub>, V<sub>t</sub>; month 0 records initial B<sub>0</sub>, V<sub>0</sub> = 0.</p>
 
       <h3 id="lump-pre-step">Lump-sum pre-step (only month t = 1, only if S &gt; 0)</h3>
@@ -145,16 +157,16 @@
       <p>The investment contribution has two parts: the allocated investing portion of extra cash E<sub>I</sub>, and any remainder from an over-large intended mortgage payment in the final payoff month:</p>
       <div class="formula-block">Remainder<sub>t</sub> = M<sub>t</sub><sup>intended</sup> − M<sub>t</sub><sup>actual</sup><br>C<sub>t</sub> = E<sub>I</sub> + Remainder<sub>t</sub></div>
 
-      <p><strong>Step 5 — Investment update (contribution first, then compound)</strong></p>
-      <div class="formula-block">V<sub>t</sub>′ = V<sub>t−1</sub> + C<sub>t</sub><br>InterestEarned<sub>t</sub> = V<sub>t</sub>′ · μ<br>V<sub>t</sub> = V<sub>t</sub>′ · (1 + μ)</div>
-      <p class="formula-meta">Investment value is clamped to never go below zero. For t = 1 with S &gt; 0, V<sub>t−1</sub> is the portfolio already increased by the lump pre-step (S<sub>I</sub> + Overflow).</p>
+      <p><strong>Step 5 — Investment update (compound first, then end-of-period contribution)</strong></p>
+      <div class="formula-block">InterestEarned<sub>t</sub> = V<sub>t−1</sub> · μ<br>V<sub>t</sub> = V<sub>t−1</sub> · (1 + μ) + C<sub>t</sub></div>
+      <p class="formula-meta">Investment value is clamped to never go below zero. For t = 1 with S &gt; 0, V<sub>t−1</sub> is the portfolio already increased by the lump pre-step (S<sub>I</sub> + Overflow), so the lump receives month-1 growth while the recurring C<sub>1</sub> does not.</p>
 
       <h3 id="case-2">Case 2: Mortgage Paid Off (B<sub>t−1</sub> ≤ 0)</h3>
       <p>Once the mortgage balance reaches zero (including after the lump pre-step), the engine invests the entire monthly budget:</p>
       <div class="formula-block">C<sub>t</sub> = Budget = P + E</div>
       <p class="formula-meta">In lump mode, E = 0, so each post-payoff contribution is C<sub>t</sub> = P.</p>
-      <p>Then applies the same “contribution first, then compound” update:</p>
-      <div class="formula-block">V<sub>t</sub>′ = V<sub>t−1</sub> + C<sub>t</sub><br>InterestEarned<sub>t</sub> = V<sub>t</sub>′ · μ<br>V<sub>t</sub> = V<sub>t</sub>′ · (1 + μ)</div>
+      <p>Then applies the same end-of-period update (growth on the opening balance, then contribution):</p>
+      <div class="formula-block">InterestEarned<sub>t</sub> = V<sub>t−1</sub> · μ<br>V<sub>t</sub> = V<sub>t−1</sub> · (1 + μ) + C<sub>t</sub></div>
 
       <h2 id="reported-outputs">Reported Outputs</h2>
       <p>At the end of the horizon t = N, the calculator reports:</p>
