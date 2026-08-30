@@ -12,13 +12,13 @@ import { computePersonalTax, employerCppForT4Employment } from './tax.engine.js'
  * @param {number[]} salaries
  * @returns {{ salaryExpense: number, employerCppExpense: number }}
  */
-function sumCompensationCorporateDeductions(salaries) {
+function sumCompensationCorporateDeductions(salaries, personalTaxOpts = {}) {
   let salaryExpense = 0;
   let employerCppExpense = 0;
   for (const raw of salaries) {
     const s = Math.max(0, Number(raw) || 0);
     salaryExpense += s;
-    employerCppExpense += employerCppForT4Employment(s);
+    employerCppExpense += employerCppForT4Employment(s, personalTaxOpts);
   }
   return { salaryExpense, employerCppExpense };
 }
@@ -48,7 +48,7 @@ function rrspContributionAsCurrentYearDeduction(source) {
  *   - If splitting: shareholder1/2: { salary, eligibleDividends, nonEligibleDividends, otherIncome, capitalGains, rrspContribution, fhsaDeduction, deductions }
  * @returns {Object} Complete CCPC tax calculation result
  */
-export function computeCCPCTax(input) {
+export function computeCCPCTax(input, personalTaxOpts = {}) {
   const {
     year = 2025,
     province,
@@ -71,7 +71,10 @@ export function computeCCPCTax(input) {
     const nonElig1 = sh1.nonEligibleDividends || 0;
     const nonElig2 = sh2.nonEligibleDividends || 0;
 
-    const { salaryExpense, employerCppExpense } = sumCompensationCorporateDeductions([salary1, salary2]);
+    const { salaryExpense, employerCppExpense } = sumCompensationCorporateDeductions(
+      [salary1, salary2],
+      personalTaxOpts
+    );
     const corporateIncomeBeforeCompensation = Math.max(0, grossRevenue - expenses);
     const corporateTaxableIncome = Math.max(
       0,
@@ -96,7 +99,7 @@ export function computeCCPCTax(input) {
       fhsaDeduction: sh1.fhsaDeduction || 0,
       estimatedDeductions: sh1.deductions || 0,
       taxPaid: 0
-    });
+    }, personalTaxOpts);
 
     const personal2 = computePersonalTax({
       year,
@@ -110,7 +113,7 @@ export function computeCCPCTax(input) {
       fhsaDeduction: sh2.fhsaDeduction || 0,
       estimatedDeductions: sh2.deductions || 0,
       taxPaid: 0
-    });
+    }, personalTaxOpts);
 
     const totalPersonalTax = personal1.totals.totalIncomeTax + personal2.totals.totalIncomeTax;
     const totalTaxBurden = corporate.totalCorporateTax + totalPersonalTax;
@@ -157,7 +160,10 @@ export function computeCCPCTax(input) {
   const fhsaDeduction = input.fhsaDeduction || 0;
   const personalDeductions = input.personalDeductions || 0;
 
-  const { salaryExpense, employerCppExpense } = sumCompensationCorporateDeductions([salary]);
+  const { salaryExpense, employerCppExpense } = sumCompensationCorporateDeductions(
+    [salary],
+    personalTaxOpts
+  );
   const corporateIncomeBeforeCompensation = Math.max(0, grossRevenue - expenses);
   const corporateTaxableIncome = Math.max(
     0,
@@ -179,7 +185,7 @@ export function computeCCPCTax(input) {
     fhsaDeduction,
     estimatedDeductions: personalDeductions,
     taxPaid: 0
-  });
+  }, personalTaxOpts);
 
   const totalTaxBurden = corporate.totalCorporateTax + personal.totals.totalIncomeTax;
   const effectiveTaxRate = grossRevenue > 0 ? totalTaxBurden / grossRevenue : 0;

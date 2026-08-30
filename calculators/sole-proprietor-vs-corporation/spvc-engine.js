@@ -5,8 +5,11 @@
  * Formula transparency: see runComparison output breakdown and inspect-the-arithmetic page.
  */
 
-import { computePersonalTax } from "../canada-income-tax/js/tax.engine.js";
-import { loadTaxData, getFederalData } from "../canada-income-tax/js/tax.data.js";
+import {
+  computePersonalTax,
+  employerCppForT4Employment,
+} from "../canada-income-tax/js/tax.engine.js";
+import { getTaxDataBundle } from "../canada-income-tax/js/tax.data.js";
 
 const TAX_BASE = "/calculators/canada-income-tax/data";
 const CORP_BASE = "/calculators/ccpc-tax/data";
@@ -55,12 +58,15 @@ export function computeCorporateTaxAmount(activeIncomeAfterSalary, fed, provObj,
   }
   const p = provObj[provinceCode];
   if (!p || !p.sbd || !p.general) throw new Error(`Corporate data missing for ${provinceCode}`);
-  const lim = Math.min(fed.sbd.limit, p.sbd.limit ?? fed.sbd.limit);
-  const sbdRate = fed.sbd.rate + p.sbd.rate;
-  const genRate = fed.general.rate + p.general.rate;
-  const lowSlice = Math.min(income, lim);
-  const highSlice = Math.max(0, income - lim);
-  return lowSlice * sbdRate + highSlice * genRate;
+  const federalLimit = fed.sbd.limit;
+  const provincialLimit = p.sbd.limit ?? federalLimit;
+  const federalTax =
+    Math.min(income, federalLimit) * fed.sbd.rate +
+    Math.max(0, income - federalLimit) * fed.general.rate;
+  const provincialTax =
+    Math.min(income, provincialLimit) * p.sbd.rate +
+    Math.max(0, income - provincialLimit) * p.general.rate;
+  return federalTax + provincialTax;
 }
 
 /** Display default: combined small-business rate (first dollar) for province. */
@@ -74,13 +80,27 @@ function roundMoney(x) {
   return Math.round(Number(x) || 0);
 }
 
-function personalNetTakeHome(input, taxYear) {
-  const r = computePersonalTax({ ...input, year: taxYear }, {});
+function personalNetTakeHome(input, taxYear, taxData, opts = {}) {
+  const taxOpts = {
+    taxData,
+    skipMarginalRateCalculation: true,
+  };
+  if (opts.roundToDollar === false) taxOpts.roundToDollar = false;
+  const r = computePersonalTax(
+    { ...input, year: taxYear },
+    taxOpts
+  );
   return r.totals.takeHomeAfterPayroll;
 }
 
-function personalIncomeTax(input, taxYear) {
-  const r = computePersonalTax({ ...input, year: taxYear }, {});
+function personalIncomeTax(input, taxYear, taxData) {
+  const r = computePersonalTax(
+    { ...input, year: taxYear },
+    {
+      taxData,
+      skipMarginalRateCalculation: true,
+    }
+  );
   return r.totals.totalIncomeTax;
 }
 
@@ -88,7 +108,7 @@ function personalIncomeTax(input, taxYear) {
  * Minimal gross dividend (non-eligible) such that net take-home >= need.
  * If impossible at maxDiv, returns best effort and flags.
  */
-function solveNonEligibleDividendWithdrawal({ province, taxYear, spendingNeed, maxGrossDividend }) {
+function solveNonEligibleDividendWithdrawal({ province, taxYear, taxData, spendingNeed, maxGrossDividend }) {
   const S = Math.max(0, spendingNeed);
   const rawMax = Number(maxGrossDividend);
   const maxD = Math.max(0, Number.isFinite(rawMax) ? rawMax : 0);
@@ -102,7 +122,8 @@ function solveNonEligibleDividendWithdrawal({ province, taxYear, spendingNeed, m
         nonEligibleDividends: d,
         rrspDeduction: 0,
       },
-      taxYear
+      taxYear,
+      taxData
     );
 
   const net0 = net(0);
@@ -116,7 +137,8 @@ function solveNonEligibleDividendWithdrawal({ province, taxYear, spendingNeed, m
       shortfall: 0,
       taxOnWithdrawal: personalIncomeTax(
         { province, nonEligibleDividends: 0, employmentIncome: 0, selfEmploymentIncome: 0, rrspDeduction: 0 },
-        taxYear
+        taxYear,
+        taxData
       ),
     };
   }
@@ -130,7 +152,8 @@ function solveNonEligibleDividendWithdrawal({ province, taxYear, spendingNeed, m
         selfEmploymentIncome: 0,
         rrspDeduction: 0,
       },
-      taxYear
+      taxYear,
+      taxData
     );
     return {
       grossDividend: maxD,
@@ -149,7 +172,8 @@ function solveNonEligibleDividendWithdrawal({ province, taxYear, spendingNeed, m
       shortfall: 0,
       taxOnWithdrawal: personalIncomeTax(
         { province, nonEligibleDividends: 0, employmentIncome: 0, selfEmploymentIncome: 0, rrspDeduction: 0 },
-        taxYear
+        taxYear,
+        taxData
       ),
     };
   }
@@ -171,7 +195,8 @@ function solveNonEligibleDividendWithdrawal({ province, taxYear, spendingNeed, m
       selfEmploymentIncome: 0,
       rrspDeduction: 0,
     },
-    taxYear
+    taxYear,
+    taxData
   );
 
   return {
@@ -183,9 +208,21 @@ function solveNonEligibleDividendWithdrawal({ province, taxYear, spendingNeed, m
   };
 }
 
-function solveSalaryWithdrawal({ province, taxYear, spendingNeed, maxSalary }) {
+function maximumAffordableSalary(grossCorpIncome, taxData) {
+  const G = Math.max(0, grossCorpIncome);
+  let lo = 0;
+  let hi = G;
+  for (let i = 0; i < 60; i++) {
+    const mid = (lo + hi) / 2;
+    if (mid + employerCppForT4Employment(mid, { taxData }) <= G) lo = mid;
+    else hi = mid;
+  }
+  return lo;
+}
+
+function solveSalaryWithdrawal({ province, taxYear, taxData, spendingNeed, grossCorpIncome }) {
   const S = Math.max(0, spendingNeed);
-  const maxSal = Math.max(0, maxSalary);
+  const maxSal = maximumAffordableSalary(grossCorpIncome, taxData);
 
   const net = (sal) =>
     personalNetTakeHome(
@@ -196,7 +233,8 @@ function solveSalaryWithdrawal({ province, taxYear, spendingNeed, maxSalary }) {
         nonEligibleDividends: 0,
         rrspDeduction: 0,
       },
-      taxYear
+      taxYear,
+      taxData
     );
 
   const net0 = net(0);
@@ -208,9 +246,11 @@ function solveSalaryWithdrawal({ province, taxYear, spendingNeed, maxSalary }) {
       netTakeHome: net0,
       feasible: true,
       shortfall: 0,
+      employerCpp: 0,
       taxOnWithdrawal: personalIncomeTax(
         { province, employmentIncome: 0, selfEmploymentIncome: 0, rrspDeduction: 0 },
-        taxYear
+        taxYear,
+        taxData
       ),
     };
   }
@@ -218,13 +258,15 @@ function solveSalaryWithdrawal({ province, taxYear, spendingNeed, maxSalary }) {
   if (netMax + 1e-6 < S) {
     const taxMax = personalIncomeTax(
       { province, employmentIncome: maxSal, selfEmploymentIncome: 0, rrspDeduction: 0 },
-      taxYear
+      taxYear,
+      taxData
     );
     return {
       salary: maxSal,
       netTakeHome: netMax,
       feasible: false,
       shortfall: S - netMax,
+      employerCpp: employerCppForT4Employment(maxSal, { taxData }),
       taxOnWithdrawal: taxMax,
     };
   }
@@ -235,9 +277,11 @@ function solveSalaryWithdrawal({ province, taxYear, spendingNeed, maxSalary }) {
       netTakeHome: net0,
       feasible: true,
       shortfall: 0,
+      employerCpp: 0,
       taxOnWithdrawal: personalIncomeTax(
         { province, employmentIncome: 0, selfEmploymentIncome: 0, rrspDeduction: 0 },
-        taxYear
+        taxYear,
+        taxData
       ),
     };
   }
@@ -252,7 +296,8 @@ function solveSalaryWithdrawal({ province, taxYear, spendingNeed, maxSalary }) {
   const salary = hi;
   const taxOnWithdrawal = personalIncomeTax(
     { province, employmentIncome: salary, selfEmploymentIncome: 0, rrspDeduction: 0 },
-    taxYear
+    taxYear,
+    taxData
   );
 
   return {
@@ -260,21 +305,44 @@ function solveSalaryWithdrawal({ province, taxYear, spendingNeed, maxSalary }) {
     netTakeHome: net(salary),
     feasible: true,
     shortfall: 0,
+    employerCpp: employerCppForT4Employment(salary, { taxData }),
     taxOnWithdrawal,
   };
 }
 
 /**
- * Blend: salary = k * W, non-eligible dividends = (1-k) * W; corporate tax on (G - salary).
- * Feasibility: cash available for dividends after salary + corp tax must cover (1-k)*W.
- * Search minimal W in [0, G] on a fine grid so behaviour stays stable when feasibility is non-monotone.
+ * Blend: salary = k * W, non-eligible dividends = (1-k) * W; corporate tax on
+ * (G - salary - employer CPP).
+ * Feasibility: cash after salary, employer CPP, and corporate tax must cover dividends.
+ *
+ * Corporate resource use is monotone for the supported 0..100% marginal
+ * corporate-tax rates, so its exact affordable endpoint can be bisected.
+ * Personal tax is searched differently: whole-dollar federal and provincial
+ * tax rounding creates small downward sawteeth, making a binary search on the
+ * rounded net unsafe. The unrounded result is monotone. The tax engine rounds
+ * each federal/provincial bracket line and each final jurisdiction total, with
+ * at most $0.50 error per rounding operation. The explicit bundle's bracket
+ * counts therefore provide a formal rounded-vs-smooth net bound. Roots at the
+ * target plus/minus that bound enclose a small cent-searched interval.
  */
-function solveBlendWithdrawal({ province, taxYear, spendingNeed, grossCorpIncome, fed, provinces, provinceCode, salaryFraction, corpOpts }) {
+function solveBlendWithdrawal({ province, taxYear, taxData, spendingNeed, grossCorpIncome, fed, provinces, provinceCode, salaryFraction, corpOpts }) {
+  const NET_TOLERANCE = 0.5;
+  const personalProvince = taxData.provinces[provinceCode];
+  const TAX_ROUNDING_NET_BOUND =
+    0.5 *
+    (
+      taxData.federal.brackets.length +
+      personalProvince.brackets.length +
+      2
+    );
+  const CENTS_PER_DOLLAR = 100;
+  const ROOT_ITERATIONS = 70;
+  const FLOAT_GUARD_DOLLARS = 0.02;
   const k = Math.min(1, Math.max(0, salaryFraction));
   const G = Math.max(0, grossCorpIncome);
   const S = Math.max(0, spendingNeed);
 
-  const netW = (W) => {
+  const netW = (W, roundToDollar = true) => {
     const sal = k * W;
     const div = (1 - k) * W;
     return personalNetTakeHome(
@@ -285,18 +353,59 @@ function solveBlendWithdrawal({ province, taxYear, spendingNeed, grossCorpIncome
         nonEligibleDividends: div,
         rrspDeduction: 0,
       },
-      taxYear
+      taxYear,
+      taxData,
+      { roundToDollar }
     );
   };
 
-  const evalState = (W) => {
+  const evalState = (W, includeNet = true) => {
     const sal = k * W;
     const div = (1 - k) * W;
-    const corpTI = Math.max(0, G - sal);
+    const employerCpp = employerCppForT4Employment(sal, { taxData });
+    const corpTI = Math.max(0, G - sal - employerCpp);
     const tc = computeCorporateTaxAmount(corpTI, fed, provinces, provinceCode, corpOpts);
-    const cashAfter = G - sal - tc;
-    const ok = sal <= G + 1e-6 && div <= cashAfter + 1e-2;
-    return { sal, div, tc, ok, net: netW(W) };
+    const cashAfter = G - sal - employerCpp - tc;
+    const retained = cashAfter - div;
+    const ok =
+      sal + employerCpp <= G &&
+      retained >= 0;
+    return {
+      W,
+      sal,
+      div,
+      employerCpp,
+      tc,
+      retained,
+      ok,
+      net: includeNet ? netW(W) : null,
+    };
+  };
+
+  const firstSmoothWAtOrAbove = (target, maxW) => {
+    if (netW(0, false) >= target) return 0;
+    if (netW(maxW, false) < target) return null;
+    let lo = 0;
+    let hi = maxW;
+    for (let i = 0; i < ROOT_ITERATIONS; i++) {
+      const mid = (lo + hi) / 2;
+      if (netW(mid, false) >= target) hi = mid;
+      else lo = mid;
+    }
+    return hi;
+  };
+
+  const forEachCent = (fromW, toW, visit) => {
+    const firstCent = Math.max(
+      0,
+      Math.floor((fromW - FLOAT_GUARD_DOLLARS) * CENTS_PER_DOLLAR)
+    );
+    const lastCent = Math.floor(
+      (toW + 1e-9) * CENTS_PER_DOLLAR
+    );
+    for (let cents = firstCent; cents <= lastCent; cents++) {
+      if (visit(cents / CENTS_PER_DOLLAR) === false) break;
+    }
   };
 
   if (S <= 0) {
@@ -308,15 +417,17 @@ function solveBlendWithdrawal({ province, taxYear, spendingNeed, grossCorpIncome
       netTakeHome: z.net,
       feasible: true,
       shortfall: 0,
+      employerCpp: z.employerCpp,
       corpTax: computeCorporateTaxAmount(G, fed, provinces, provinceCode, corpOpts),
       taxOnWithdrawal: personalIncomeTax(
         { province, employmentIncome: 0, selfEmploymentIncome: 0, nonEligibleDividends: 0, rrspDeduction: 0 },
-        taxYear
+        taxYear,
+        taxData
       ),
     };
   }
 
-  if (netW(0) >= S) {
+  if (netW(0) + NET_TOLERANCE >= S) {
     const tc = computeCorporateTaxAmount(G, fed, provinces, provinceCode, corpOpts);
     return {
       blendTotalW: 0,
@@ -325,27 +436,95 @@ function solveBlendWithdrawal({ province, taxYear, spendingNeed, grossCorpIncome
       netTakeHome: netW(0),
       feasible: true,
       shortfall: 0,
+      employerCpp: 0,
       corpTax: tc,
       taxOnWithdrawal: personalIncomeTax(
         { province, employmentIncome: 0, selfEmploymentIncome: 0, nonEligibleDividends: 0, rrspDeduction: 0 },
-        taxYear
+        taxYear,
+        taxData
       ),
     };
   }
 
-  const STEPS = 500;
-  let best = null;
-  for (let i = 0; i <= STEPS; i++) {
-    const W = (G * i) / STEPS;
-    const st = evalState(W);
-    if (!st.ok) continue;
-    if (st.net + 0.5 >= S && (best == null || W < best.W)) {
-      best = { W, ...st };
+  // Find the exact end of the affordable prefix, including the endpoint even
+  // when it is not an even cent. This prevents near-maximum false shortfalls.
+  let maxAffordableW = 0;
+  const stateAtG = evalState(G, false);
+  if (stateAtG.ok) {
+    maxAffordableW = G;
+  } else {
+    let lo = 0;
+    let hi = G;
+    for (let i = 0; i < ROOT_ITERATIONS; i++) {
+      const mid = (lo + hi) / 2;
+      if (evalState(mid, false).ok) lo = mid;
+      else hi = mid;
     }
+    maxAffordableW = lo;
+  }
+
+  const roundedTarget = S - NET_TOLERANCE;
+  const smoothLowerW =
+    firstSmoothWAtOrAbove(
+      roundedTarget - TAX_ROUNDING_NET_BOUND,
+      maxAffordableW
+    ) ?? maxAffordableW;
+  const smoothUpperW =
+    firstSmoothWAtOrAbove(
+      roundedTarget + TAX_ROUNDING_NET_BOUND,
+      maxAffordableW
+    ) ?? maxAffordableW;
+
+  let best = null;
+  forEachCent(
+    smoothLowerW,
+    Math.min(maxAffordableW, smoothUpperW + FLOAT_GUARD_DOLLARS),
+    (W) => {
+      const st = evalState(W);
+      if (st.ok && st.net + NET_TOLERANCE >= S) {
+        best = st;
+        return false;
+      }
+      return true;
+    }
+  );
+
+  // A non-cent feasibility endpoint can be the only affordable point meeting
+  // a near-maximum target.
+  if (!best) {
+    const endpoint = evalState(maxAffordableW);
+    if (endpoint.ok && endpoint.net + NET_TOLERANCE >= S) best = endpoint;
   }
 
   if (!best) {
-    const st = evalState(G);
+    // Rounded net can peak just before the endpoint. Any point whose smooth
+    // net is more than $2 below the endpoint cannot beat it: both rounded
+    // values are within $1 of their smooth values.
+    const endpointSmoothNet = netW(maxAffordableW, false);
+    const bestBandStart =
+      firstSmoothWAtOrAbove(
+        endpointSmoothNet - 2 * TAX_ROUNDING_NET_BOUND,
+        maxAffordableW
+      ) ?? 0;
+    let bestFeasible = evalState(maxAffordableW);
+    forEachCent(bestBandStart, maxAffordableW, (W) => {
+      const st = evalState(W);
+      if (
+        st.ok &&
+        (
+          st.net > bestFeasible.net + 1e-9 ||
+          (
+            Math.abs(st.net - bestFeasible.net) <= 1e-9 &&
+            st.W < bestFeasible.W
+          )
+        )
+      ) {
+        bestFeasible = st;
+      }
+      return true;
+    });
+
+    const st = bestFeasible;
     const taxOnWithdrawal = personalIncomeTax(
       {
         province,
@@ -354,15 +533,17 @@ function solveBlendWithdrawal({ province, taxYear, spendingNeed, grossCorpIncome
         selfEmploymentIncome: 0,
         rrspDeduction: 0,
       },
-      taxYear
+      taxYear,
+      taxData
     );
     return {
-      blendTotalW: G,
+      blendTotalW: st.W,
       salary: st.sal,
       grossDividend: st.div,
       netTakeHome: st.net,
       feasible: false,
       shortfall: Math.max(0, S - st.net),
+      employerCpp: st.employerCpp,
       corpTax: st.tc,
       taxOnWithdrawal,
     };
@@ -376,7 +557,8 @@ function solveBlendWithdrawal({ province, taxYear, spendingNeed, grossCorpIncome
       selfEmploymentIncome: 0,
       rrspDeduction: 0,
     },
-    taxYear
+    taxYear,
+    taxData
   );
 
   return {
@@ -386,6 +568,7 @@ function solveBlendWithdrawal({ province, taxYear, spendingNeed, grossCorpIncome
     netTakeHome: best.net,
     feasible: true,
     shortfall: 0,
+    employerCpp: best.employerCpp,
     corpTax: best.tc,
     taxOnWithdrawal,
   };
@@ -408,9 +591,9 @@ export async function runComparison(raw) {
   const taxYear = resolvePersonalTaxYear(raw.taxYear);
   const corpYear = resolveCorporateDataYear(raw.taxYear);
 
-  await loadTaxData(taxYear, { basePath: TAX_BASE });
-  const fedPersonal = getFederalData();
-  const rrspDollarMax = fedPersonal.rrspDollarMax ?? 32490;
+  const personalTaxData = await getTaxDataBundle(taxYear, { basePath: TAX_BASE });
+  const fedPersonal = personalTaxData.federal;
+  const rrspDollarMax = fedPersonal.rrspDollarMax ?? null;
 
   const { fed: fedCorp, provinces: provCorp } = await loadCorporateTaxTables(corpYear);
 
@@ -420,10 +603,10 @@ export async function runComparison(raw) {
 
   let rrspContribution = Math.max(0, Number(raw.rrspContribution) || 0);
   if (raw.autoRrsp !== false) {
-    rrspContribution = Math.min(room, G, rrspDollarMax);
+    // Cap at available room (may include carry-forward) and income — not a second annual-dollar max.
+    rrspContribution = Math.min(room, G);
   } else {
-    // Match CRA annual cap; manual entry cannot deduct more than the dollar max.
-    rrspContribution = Math.min(rrspContribution, room, G, rrspDollarMax);
+    rrspContribution = Math.min(rrspContribution, room, G);
   }
 
   const reinvestRefund = raw.reinvestRefund !== false;
@@ -437,7 +620,7 @@ export async function runComparison(raw) {
       employmentIncome: 0,
       rrspDeduction: rrspContribution,
     },
-    {}
+    { taxData: personalTaxData }
   );
 
   const taxWithout = computePersonalTax(
@@ -448,26 +631,32 @@ export async function runComparison(raw) {
       employmentIncome: 0,
       rrspDeduction: 0,
     },
-    {}
+    { taxData: personalTaxData }
   );
 
   const personalTaxWith = taxWith.totals.totalIncomeTax;
   const personalTaxWithout = taxWithout.totals.totalIncomeTax;
   const rrspRefund = Math.max(0, personalTaxWithout - personalTaxWith);
   const takeHomeWithRrsp = taxWith.totals.takeHomeAfterPayroll;
+  const takeHomeBeforeRrspTaxSaving = taxWithout.totals.takeHomeAfterPayroll;
 
-  // Ledger: cash after contributing RRSP (no timing of refund in take-home)
-  const walletAfterRrspAndTax = takeHomeWithRrsp - rrspContribution;
+  // Keep the incremental RRSP tax saving outside surplus cash so it can be
+  // allocated exactly once by the refund-reinvestment toggle.
+  const walletAfterRrspAndTax =
+    takeHomeBeforeRrspTaxSaving - rrspContribution;
   const nonRegSurplus = investSurplus ? Math.max(0, walletAfterRrspAndTax - S) : 0;
   const refundInvested = reinvestRefund ? rrspRefund : 0;
+  const refundAvailableForSpending = reinvestRefund ? 0 : rrspRefund;
+  const cashAvailableForSpending =
+    walletAfterRrspAndTax + refundAvailableForSpending;
 
   const personalInvested =
     rrspContribution + refundInvested + nonRegSurplus;
-  const personalLifestyleShortfall = Math.max(0, S - walletAfterRrspAndTax);
+  const personalLifestyleShortfall = Math.max(0, S - cashAvailableForSpending);
   const walletOk =
-    Number.isFinite(walletAfterRrspAndTax) &&
+    Number.isFinite(cashAvailableForSpending) &&
     Number.isFinite(S) &&
-    walletAfterRrspAndTax + 1e-6 >= S;
+    cashAvailableForSpending + 1e-6 >= S;
 
   let corpOverridePct =
     raw.corpRateOverride && String(raw.corpRateOverride).trim() !== ""
@@ -491,12 +680,14 @@ export async function runComparison(raw) {
     const sol = solveSalaryWithdrawal({
       province,
       taxYear,
+      taxData: personalTaxData,
       spendingNeed: S,
-      maxSalary: G,
+      grossCorpIncome: G,
     });
-    const corpTI = Math.max(0, G - sol.salary);
+    const employerCpp = sol.employerCpp;
+    const corpTI = Math.max(0, G - sol.salary - employerCpp);
     const tc = computeCorporateTaxAmount(corpTI, fedCorp, provCorp, province, corpOpts);
-    afterTaxCorp = G - sol.salary - tc;
+    afterTaxCorp = G - sol.salary - employerCpp - tc;
     corpTaxFull = tc;
     corpResult = {
       mode: "salary",
@@ -504,6 +695,7 @@ export async function runComparison(raw) {
       afterTaxCorporateIncome: afterTaxCorp,
       grossDividend: 0,
       salary: sol.salary,
+      employerCpp,
       personalTaxOnWithdrawal: sol.taxOnWithdrawal,
       corpCashForWithdrawal: sol.salary,
       retainedCorporate: raw.retainEarnings !== false ? Math.max(0, afterTaxCorp) : 0,
@@ -514,6 +706,7 @@ export async function runComparison(raw) {
     const sol = solveBlendWithdrawal({
       province,
       taxYear,
+      taxData: personalTaxData,
       spendingNeed: S,
       grossCorpIncome: G,
       fed: fedCorp,
@@ -523,15 +716,17 @@ export async function runComparison(raw) {
       corpOpts,
     });
     const sal = sol.salary;
-    const corpTI = Math.max(0, G - sal);
+    const employerCpp = sol.employerCpp;
+    const corpTI = Math.max(0, G - sal - employerCpp);
     const tc = sol.corpTax;
-    afterTaxCorp = G - sal - tc;
+    afterTaxCorp = G - sal - employerCpp - tc;
     corpResult = {
       mode: "blend",
       corporateTax: tc,
       afterTaxCorporateIncome: afterTaxCorp,
       grossDividend: sol.grossDividend,
       salary: sal,
+      employerCpp,
       personalTaxOnWithdrawal: sol.taxOnWithdrawal,
       corpCashForWithdrawal: sal + sol.grossDividend,
       retainedCorporate: raw.retainEarnings !== false ? Math.max(0, afterTaxCorp - sol.grossDividend) : 0,
@@ -543,6 +738,7 @@ export async function runComparison(raw) {
     const sol = solveNonEligibleDividendWithdrawal({
       province,
       taxYear,
+      taxData: personalTaxData,
       spendingNeed: S,
       maxGrossDividend: afterTaxCorp,
     });
@@ -552,6 +748,7 @@ export async function runComparison(raw) {
       afterTaxCorporateIncome: afterTaxCorp,
       grossDividend: sol.grossDividend,
       salary: 0,
+      employerCpp: 0,
       personalTaxOnWithdrawal: sol.taxOnWithdrawal,
       corpCashForWithdrawal: sol.grossDividend,
       retainedCorporate:
@@ -621,9 +818,12 @@ export async function runComparison(raw) {
       personalTaxWithoutRrsp: personalTaxWithout,
       rrspRefund,
       takeHomeAfterTax: takeHomeWithRrsp,
+      takeHomeBeforeRrspTaxSaving,
       spendingNeed: S,
       walletAfterRrspContribution: walletAfterRrspAndTax,
       refundReinvested: refundInvested,
+      refundAvailableForSpending,
+      cashAvailableForSpending,
       nonRegisteredSurplusInvested: nonRegSurplus,
       totalInvested: personalInvested,
       effectivePerDollarGross: effectivePersonalPerDollar,
@@ -637,6 +837,7 @@ export async function runComparison(raw) {
       withdrawalMode: corpResult.mode,
       grossDividendPaid: corpResult.grossDividend,
       salaryPaid: corpResult.salary,
+      employerCpp: corpResult.employerCpp,
       personalTaxOnWithdrawal: corpResult.personalTaxOnWithdrawal,
       corpCashUsedForWithdrawal: corpResult.corpCashForWithdrawal,
       retainedForInvestment: corpInvested,

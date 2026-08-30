@@ -10,7 +10,7 @@ import {
   computeRrspContributionRoom,
   getRrspDollarCap
 } from "../canada-income-tax/js/rrsp-room.js";
-import { loadTaxData, getFederalData } from "../canada-income-tax/js/tax.data.js";
+import { getTaxDataBundle } from "../canada-income-tax/js/tax.data.js";
 import { computePersonalTax } from "../canada-income-tax/js/tax.engine.js";
 
 function $(id) {
@@ -93,11 +93,12 @@ function clamp(n, lo, hi) {
 }
 
 let taxDataReady = false;
+let taxDataBundle = null;
 /** When true, RRSP total room is not overwritten by income/carry-forward changes. */
 let rrspRoomManualOverride = false;
 
 function getFederalRrspParams() {
-  const fed = getFederalData();
+  const fed = taxDataBundle?.federal;
   return {
     taxYear: fed?.year,
     rrspDollarMax: fed?.rrspDollarMax,
@@ -155,20 +156,23 @@ function updateRrspRoomHint() {
 }
 
 function deriveMarginalRateFromIncome(province, employmentIncome) {
-  const result = computePersonalTax({
-    year: 2025,
-    province,
-    employmentIncome,
-    selfEmploymentIncome: 0,
-    otherIncome: 0,
-    eligibleDividends: 0,
-    nonEligibleDividends: 0,
-    capitalGains: 0,
-    rrspDeduction: 0,
-    fhsaDeduction: 0,
-    estimatedDeductions: 0,
-    taxPaid: 0
-  });
+  const result = computePersonalTax(
+    {
+      year: 2025,
+      province,
+      employmentIncome,
+      selfEmploymentIncome: 0,
+      otherIncome: 0,
+      eligibleDividends: 0,
+      nonEligibleDividends: 0,
+      capitalGains: 0,
+      rrspDeduction: 0,
+      fhsaDeduction: 0,
+      estimatedDeductions: 0,
+      taxPaid: 0
+    },
+    { taxData: taxDataBundle }
+  );
   return (result?.totals?.marginalRate ?? 0) * 100;
 }
 
@@ -677,8 +681,9 @@ export function initTfsaRrspFhsaUI() {
 // Auto-init when loaded as module from the page
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
-    loadTaxData(2025, { basePath: "/calculators/canada-income-tax/data" })
-      .then(() => {
+    getTaxDataBundle(2025, { basePath: "/calculators/canada-income-tax/data" })
+      .then((bundle) => {
+        taxDataBundle = bundle;
         taxDataReady = true;
         initTfsaRrspFhsaUI();
       })
@@ -687,8 +692,9 @@ if (document.readyState === "loading") {
       });
   });
 } else {
-  loadTaxData(2025, { basePath: "/calculators/canada-income-tax/data" })
-    .then(() => {
+  getTaxDataBundle(2025, { basePath: "/calculators/canada-income-tax/data" })
+    .then((bundle) => {
+      taxDataBundle = bundle;
       taxDataReady = true;
       initTfsaRrspFhsaUI();
     })

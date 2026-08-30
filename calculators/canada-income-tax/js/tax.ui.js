@@ -4,10 +4,12 @@
  */
 
 import { computePersonalTax } from './tax.engine.js';
-import { loadTaxData, getFederalData, getProvincialData } from './tax.data.js';
+import { getTaxDataBundle, normalizeProvince } from './tax.data.js';
 import { formatCurrency, formatPercent, parseInput } from './format.js';
 
 let taxDataLoaded = false;
+let taxDataBundle = null;
+let taxDataRequestSeq = 0;
 let latestTotals = null;
 let latestSharePayload = null;
 
@@ -93,7 +95,7 @@ export async function initUI() {
 
   // Load tax data
   try {
-    await loadTaxData(2026);
+    taxDataBundle = await getTaxDataBundle(2026);
     taxDataLoaded = true;
   } catch (error) {
     console.error('Failed to load tax data:', error);
@@ -139,13 +141,17 @@ function attachEventListeners() {
   if (yearSelect) {
     yearSelect.addEventListener('change', async () => {
       const y = parseInt(yearSelect.value, 10) || 2026;
+      const requestSeq = ++taxDataRequestSeq;
       try {
         taxDataLoaded = false;
-        await loadTaxData(y);
+        const bundle = await getTaxDataBundle(y);
+        if (requestSeq !== taxDataRequestSeq) return;
+        taxDataBundle = bundle;
         taxDataLoaded = true;
         updateRRSPMaxValue();
         calculate();
       } catch (error) {
+        if (requestSeq !== taxDataRequestSeq) return;
         console.error('Failed to load tax data for year', y, error);
         showError('Failed to load tax data for the selected year. Please try again.');
       }
@@ -163,7 +169,9 @@ function attachEventListeners() {
  * Reset all input fields to default/empty values
  */
 function resetAllInputs() {
-  document.getElementById('year').value = '2026';
+  const yearSelect = document.getElementById('year');
+  const yearChanged = yearSelect?.value !== '2026';
+  if (yearSelect) yearSelect.value = '2026';
   document.getElementById('province').value = 'ON';
   document.getElementById('employmentIncome').value = '';
   document.getElementById('selfEmploymentIncome').value = '';
@@ -186,7 +194,11 @@ function resetAllInputs() {
   
   // Clear results and recalculate
   clearResults();
-  calculate();
+  if (yearChanged && yearSelect) {
+    yearSelect.dispatchEvent(new Event('change', { bubbles: true }));
+  } else {
+    calculate();
+  }
   
   // Clear breakdown sections
   document.getElementById('federalBrackets').innerHTML = '';
@@ -305,7 +317,10 @@ function calculate() {
 
     // Validate province exists in data
     try {
-      getProvincialData(inputs.province);
+      const code = normalizeProvince(inputs.province);
+      if (!code || !taxDataBundle?.provinces?.[code]) {
+        throw new Error(`Province "${inputs.province}" not found in tax data.`);
+      }
     } catch (error) {
       // Province not found in data
       provinceSelect.classList.add('is-invalid');
@@ -337,7 +352,7 @@ function calculate() {
       return;
     }
 
-    const result = computePersonalTax(inputs);
+    const result = computePersonalTax(inputs, { taxData: taxDataBundle });
 
     renderResults(result);
     renderBreakdown(result);
@@ -788,7 +803,7 @@ function updateRRSPMaxValue() {
     if (!taxDataLoaded) {
       return;
     }
-    const federalData = getFederalData();
+    const federalData = taxDataBundle?.federal;
     const rrspMaxEl = document.getElementById('rrsp-max-value');
     const rrspMaxText = document.getElementById('rrsp-max-text');
     const rrspYearEl = document.getElementById('rrsp-max-year');

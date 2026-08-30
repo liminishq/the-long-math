@@ -9,12 +9,10 @@
  * - Deep-freeze loaded data to prevent mutation bugs.
  */
 
-let federalData = null;
-let provincesData = null;     // canonical: keyed by 2-letter codes (ON, BC, ...)
-let payrollData = null;
-let dividendsData = null;
+let activeTaxData = null;
 
 const DEFAULT_BASE_PATH = "data";
+const TAX_DATA_BUNDLE_LOADS = new Map();
 
 // ---------- Province normalization ----------
 
@@ -66,6 +64,10 @@ function deepFreeze(obj) {
     if (val && typeof val === "object" && !Object.isFrozen(val)) deepFreeze(val);
   }
   return obj;
+}
+
+export function deepFreezeTaxData(value) {
+  return deepFreeze(value);
 }
 
 // ---------- Validation helpers ----------
@@ -268,15 +270,12 @@ function normalizeAndValidateDividends(data) {
 
 // ---------- Public API ----------
 
-/**
- * Load all tax data files for a given year, with validation and normalization.
- * @param {number} year
- * @param {Object} [opts]
- * @param {string} [opts.basePath] - path prefix, default "data" (browser fetch)
- * @param {string} [opts.fsDataRoot] - absolute directory containing `{year}/` JSON files (Node tests; uses fs reads)
- * @returns {Promise<Object>}
- */
-export async function loadTaxData(year, opts = {}) {
+function taxDataSourceIdentity(opts = {}) {
+  if (opts.fsDataRoot) return `fs:${String(opts.fsDataRoot)}`;
+  return `url:${String(opts.basePath || DEFAULT_BASE_PATH)}`;
+}
+
+async function loadTaxDataBundleUncached(taxYear, opts = {}) {
   const basePath = opts.basePath || DEFAULT_BASE_PATH;
 
   try {
@@ -288,7 +287,7 @@ export async function loadTaxData(year, opts = {}) {
     if (opts.fsDataRoot) {
       const fs = await import("node:fs/promises");
       const path = await import("node:path");
-      const dir = path.join(opts.fsDataRoot, String(year));
+      const dir = path.join(opts.fsDataRoot, String(taxYear));
       [federal, provincesRaw, payroll, dividendsRaw] = await Promise.all([
         fs.readFile(path.join(dir, "federal.json"), "utf8").then(JSON.parse),
         fs.readFile(path.join(dir, "provinces.json"), "utf8").then(JSON.parse),
@@ -297,10 +296,10 @@ export async function loadTaxData(year, opts = {}) {
       ]);
     } else {
       [federal, provincesRaw, payroll, dividendsRaw] = await Promise.all([
-        fetch(`${basePath}/${year}/federal.json`).then((r) => r.json()),
-        fetch(`${basePath}/${year}/provinces.json`).then((r) => r.json()),
-        fetch(`${basePath}/${year}/payroll.json`).then((r) => r.json()),
-        fetch(`${basePath}/${year}/dividends.json`).then((r) => r.json()),
+        fetch(`${basePath}/${taxYear}/federal.json`).then((r) => r.json()),
+        fetch(`${basePath}/${taxYear}/provinces.json`).then((r) => r.json()),
+        fetch(`${basePath}/${taxYear}/payroll.json`).then((r) => r.json()),
+        fetch(`${basePath}/${taxYear}/dividends.json`).then((r) => r.json()),
       ]);
     }
 
@@ -309,49 +308,85 @@ export async function loadTaxData(year, opts = {}) {
     validatePayroll(payroll);
     const dividendsNormalized = normalizeAndValidateDividends(dividendsRaw);
 
-    federalData = deepFreeze(federal);
-    provincesData = deepFreeze(provincesNormalized);
-    payrollData = deepFreeze(payroll);
-    dividendsData = deepFreeze(dividendsNormalized);
-
-    return {
-      federal: federalData,
-      provinces: provincesData,
-      payroll: payrollData,
-      dividends: dividendsData,
-    };
+    return deepFreeze({
+      year: taxYear,
+      federal,
+      provinces: provincesNormalized,
+      payroll,
+      dividends: dividendsNormalized,
+    });
   } catch (error) {
     console.error("Error loading tax data:", error);
-    throw new Error(`Failed to load+validate tax data for year ${year}: ${error.message}`);
+    throw new Error(`Failed to load+validate tax data for year ${taxYear}: ${error.message}`);
   }
 }
 
+/**
+ * Load and cache one immutable tax-data bundle without changing legacy active data.
+ * Cache identity includes the numeric year and the selected browser/fs data source.
+ * @param {number} year
+ * @param {Object} [opts]
+ * @param {string} [opts.basePath] - path prefix, default "data" (browser fetch)
+ * @param {string} [opts.fsDataRoot] - absolute directory containing `{year}/` JSON files (Node tests; uses fs reads)
+ * @returns {Promise<Object>}
+ */
+export function getTaxDataBundle(year, opts = {}) {
+  const taxYear = Number(year);
+  if (!Number.isInteger(taxYear)) {
+    return Promise.reject(new Error(`Tax data year must be an integer. Received "${year}".`));
+  }
+
+  const cacheKey = `${taxYear}|${taxDataSourceIdentity(opts)}`;
+  const cached = TAX_DATA_BUNDLE_LOADS.get(cacheKey);
+  if (cached) return cached;
+
+  let pending;
+  pending = loadTaxDataBundleUncached(taxYear, opts).catch((error) => {
+    if (TAX_DATA_BUNDLE_LOADS.get(cacheKey) === pending) {
+      TAX_DATA_BUNDLE_LOADS.delete(cacheKey);
+    }
+    throw error;
+  });
+  TAX_DATA_BUNDLE_LOADS.set(cacheKey, pending);
+  return pending;
+}
+
+/**
+ * Backward-compatible loader: activates the requested immutable bundle for getters.
+ * Concurrent calls retain legacy "last completed load wins" semantics.
+ */
+export async function loadTaxData(year, opts = {}) {
+  const bundle = await getTaxDataBundle(year, opts);
+  activeTaxData = bundle;
+  return bundle;
+}
+
 export function getFederalData() {
-  if (!federalData) throw new Error("Tax data not loaded. Call loadTaxData() first.");
-  return federalData;
+  if (!activeTaxData) throw new Error("Tax data not loaded. Call loadTaxData() first.");
+  return activeTaxData.federal;
 }
 
 export function getProvincesData() {
-  if (!provincesData) throw new Error("Tax data not loaded. Call loadTaxData() first.");
-  return provincesData;
+  if (!activeTaxData) throw new Error("Tax data not loaded. Call loadTaxData() first.");
+  return activeTaxData.provinces;
 }
 
 export function getProvincialData(province) {
-  if (!provincesData) throw new Error("Tax data not loaded. Call loadTaxData() first.");
+  if (!activeTaxData) throw new Error("Tax data not loaded. Call loadTaxData() first.");
   const code = normalizeProvinceKey(province);
   if (!code) throw new Error(`Unrecognized province "${province}"`);
-  if (!provincesData[code]) throw new Error(`Province ${code} not found in tax data`);
-  return provincesData[code];
+  if (!activeTaxData.provinces[code]) throw new Error(`Province ${code} not found in tax data`);
+  return activeTaxData.provinces[code];
 }
 
 export function getPayrollData() {
-  if (!payrollData) throw new Error("Tax data not loaded. Call loadTaxData() first.");
-  return payrollData;
+  if (!activeTaxData) throw new Error("Tax data not loaded. Call loadTaxData() first.");
+  return activeTaxData.payroll;
 }
 
 export function getDividendsData() {
-  if (!dividendsData) throw new Error("Tax data not loaded. Call loadTaxData() first.");
-  return dividendsData;
+  if (!activeTaxData) throw new Error("Tax data not loaded. Call loadTaxData() first.");
+  return activeTaxData.dividends;
 }
 
 // Optional export if you want to normalize in UI code too

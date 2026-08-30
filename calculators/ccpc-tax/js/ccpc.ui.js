@@ -5,11 +5,13 @@
 
 import { computeCCPCTax } from './ccpc.bridge.js';
 import { loadCorporateTaxData } from './corporate.data.js';
-import { loadTaxData } from '../../canada-income-tax/js/tax.data.js';
+import { getTaxDataBundle } from '../../canada-income-tax/js/tax.data.js';
 import { formatCurrency, formatPercent, parseInput } from './format.js';
 
 let corporateDataLoaded = false;
 let personalDataLoaded = false;
+let personalTaxData = null;
+let taxDataRequestSeq = 0;
 let latestInputs = null;
 let latestResult = null;
 
@@ -23,7 +25,7 @@ function setDefaultCorporateTaxYearStart(year) {
 }
 
 function loadPersonalTaxData(year) {
-  return loadTaxData(year, { basePath: PERSONAL_TAX_DATA_BASE });
+  return getTaxDataBundle(year, { basePath: PERSONAL_TAX_DATA_BASE });
 }
 
 // Province codes in alphabetical order
@@ -62,10 +64,11 @@ export async function initUI() {
 
   // Load tax data
   try {
-    await Promise.all([
+    const [, personalBundle] = await Promise.all([
       loadCorporateTaxData(2026),
       loadPersonalTaxData(2026)
     ]);
+    personalTaxData = personalBundle;
     corporateDataLoaded = true;
     personalDataLoaded = true;
   } catch (error) {
@@ -90,15 +93,22 @@ function attachEventListeners() {
   if (yearSelect) {
     yearSelect.addEventListener('change', async () => {
       const y = parseInt(yearSelect.value, 10) || 2026;
+      const requestSeq = ++taxDataRequestSeq;
       setDefaultCorporateTaxYearStart(y);
       try {
         corporateDataLoaded = false;
         personalDataLoaded = false;
-        await Promise.all([loadCorporateTaxData(y), loadPersonalTaxData(y)]);
+        const [, personalBundle] = await Promise.all([
+          loadCorporateTaxData(y),
+          loadPersonalTaxData(y)
+        ]);
+        if (requestSeq !== taxDataRequestSeq) return;
+        personalTaxData = personalBundle;
         corporateDataLoaded = true;
         personalDataLoaded = true;
         calculate();
       } catch (error) {
+        if (requestSeq !== taxDataRequestSeq) return;
         console.error('Failed to load tax data for year', y, error);
         showError('Failed to load tax data for the selected year. Please try again.');
       }
@@ -281,7 +291,7 @@ function calculate() {
       return;
     }
 
-    const result = computeCCPCTax(inputs);
+    const result = computeCCPCTax(inputs, { taxData: personalTaxData });
     latestInputs = inputs;
     latestResult = result;
 

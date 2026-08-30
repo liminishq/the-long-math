@@ -1,7 +1,7 @@
 /**
  * Pure tax calculation engine
  * No DOM dependencies - deterministic, unit-testable
- * Supports opts.dataOverride for testing (federal, provinces, payroll, dividends).
+ * Supports opts.taxData (preferred) and opts.dataOverride (compatibility alias).
  */
 
 import { getFederalData, getProvincesData, getProvincialData, getPayrollData, getDividendsData, normalizeProvince } from './tax.data.js';
@@ -21,21 +21,47 @@ export { MARGINAL_DELTA } from './marginal-tax.js';
 const DEFAULT_PROVINCIAL_STEPS = ['brackets', 'credits', 'surtax', 'minTax', 'dividendCredit', 'reduction', 'premiums'];
 
 /**
- * Build data context from opts.dataOverride or from loaded tax data.
+ * Build data context from an explicit bundle or from legacy loaded tax data.
  * If any required official value is missing, throws with a clear message.
  */
-function buildDataContext(opts = {}) {
-  const override = opts?.dataOverride;
-  if (override?.federal && override?.provinces && override?.payroll && override?.dividends) {
+function buildDataContext(opts = {}, expectedYear = null) {
+  const hasTaxData = Object.prototype.hasOwnProperty.call(opts || {}, 'taxData');
+  const hasDataOverride = Object.prototype.hasOwnProperty.call(opts || {}, 'dataOverride');
+  if (hasTaxData || hasDataOverride) {
+    const explicit = hasTaxData ? opts.taxData : opts.dataOverride;
+    const required = ['federal', 'provinces', 'payroll', 'dividends'];
+    const missing = required.filter((key) => !explicit?.[key]);
+    if (missing.length > 0) {
+      throw new Error(
+        `Explicit tax data bundle is incomplete; missing: ${missing.join(', ')}.`
+      );
+    }
+
+    const explicitYear = Number(
+      explicit.year ?? explicit.meta?.targetYear ?? explicit.federal?.year
+    );
+    const hasExpectedYear = expectedYear != null && expectedYear !== '';
+    const requestedYear = Number(expectedYear);
+    if (
+      Number.isFinite(explicitYear) &&
+      hasExpectedYear &&
+      Number.isFinite(requestedYear) &&
+      explicitYear !== requestedYear
+    ) {
+      throw new Error(
+        `Tax data year ${explicitYear} does not match calculation year ${requestedYear}.`
+      );
+    }
+
     return {
-      federal: override.federal,
-      provinces: override.provinces,
-      payroll: override.payroll,
-      dividends: override.dividends,
+      federal: explicit.federal,
+      provinces: explicit.provinces,
+      payroll: explicit.payroll,
+      dividends: explicit.dividends,
       getProvince: (province) => {
         const code = normalizeProvince(province);
-        if (!code || !override.provinces[code]) throw new Error(`Province "${province}" not found in data.`);
-        return override.provinces[code];
+        if (!code || !explicit.provinces[code]) throw new Error(`Province "${province}" not found in data.`);
+        return explicit.provinces[code];
       },
     };
   }
@@ -639,6 +665,91 @@ function num(input, field) {
   const v = input[field];
   if (v == null || v === '') return 0;
   const n = Number(v);
+/**
+ * Schedule 8-style CPP when income can include self-employment.
+ *
+ * The self-employed portion is the remaining employee-equivalent contribution
+ * after T4 employment has used the shared exemption and annual maxima. That
+ * portion is doubled for cash contributions. One half of its base CPP is
+ * creditable (line 31000); the other half of base CPP and both halves of first
+ * additional CPP and CPP2 are deductible through the Schedule 8 line 22200 result.
+ */
+function calculateCPPForIncomeSources(employmentIncome, selfEmploymentIncome, payroll) {
+  const employment = Math.max(0, Number(employmentIncome) || 0);
+  const selfEmployment = Math.max(0, Number(selfEmploymentIncome) || 0);
+  const employeeCalc = calculateCPP(employment, payroll);
+  if (!(selfEmployment > 0)) return employeeCalc;
+
+  const combinedEquivalent = calculateCPP(employment + selfEmployment, payroll);
+  const rawSelfBase = Math.max(
+    0,
+    combinedEquivalent.cppBaseCreditable - employeeCalc.cppBaseCreditable
+  );
+  const rawSelfFirstAdditional = Math.max(
+    0,
+    combinedEquivalent.cppFirstAdditionalDeductible -
+      employeeCalc.cppFirstAdditionalDeductible
+  );
+  const rawSelfCpp2 = Math.max(
+    0,
+    combinedEquivalent.cpp2Deductible - employeeCalc.cpp2Deductible
+  );
+  const roundCents = (amount) =>
+    Math.round(
+      (amount + Number.EPSILON * Math.max(1, Math.abs(amount))) * 100
+    ) / 100;
+  const selfCashContribution = roundCents(
+    2 * (rawSelfBase + rawSelfFirstAdditional + rawSelfCpp2)
+  );
+  const selfBase = roundCents(rawSelfBase);
+  const selfFirstAdditionalDeductible = roundCents(2 * rawSelfFirstAdditional);
+  const selfCpp2Deductible = roundCents(2 * rawSelfCpp2);
+  const selfEmploymentBaseDeductible = roundCents(
+    selfCashContribution -
+      selfBase -
+      selfFirstAdditionalDeductible -
+      selfCpp2Deductible
+  );
+  const selfEmployeeEquivalent = roundCents(selfCashContribution / 2);
+  const cppFirstAdditionalDeductible =
+    employeeCalc.cppFirstAdditionalDeductible + selfFirstAdditionalDeductible;
+  const cpp2Deductible = employeeCalc.cpp2Deductible + selfCpp2Deductible;
+  const cppDeductible =
+    cppFirstAdditionalDeductible +
+    cpp2Deductible +
+    selfEmploymentBaseDeductible;
+
+  return {
+    cpp: employeeCalc.cpp + selfCashContribution,
+    cpp1:
+      employeeCalc.cpp1 +
+      selfCashContribution -
+      selfCpp2Deductible,
+    cpp2: employeeCalc.cpp2 + selfCpp2Deductible,
+    cppBaseCreditable: employeeCalc.cppBaseCreditable + selfBase,
+    cppFirstAdditionalDeductible,
+    cpp2Deductible,
+    cppDeductible,
+    selfEmploymentBaseDeductible,
+    selfEmploymentCashContribution: selfCashContribution,
+    selfEmploymentEmployeeEquivalent: selfEmployeeEquivalent,
+    pensionableEarnings: combinedEquivalent.pensionableEarnings,
+    employment,
+    selfEmployment: {
+      baseCreditable: selfBase,
+      baseDeductible: selfEmploymentBaseDeductible,
+      firstAdditionalDeductible: selfFirstAdditionalDeductible,
+      cpp2Deductible: selfCpp2Deductible,
+      cashContribution: selfCashContribution,
+    },
+    inputs: {
+      ...combinedEquivalent.inputs,
+      employmentIncome: employment,
+      selfEmploymentIncome: selfEmployment,
+    },
+  };
+}
+
   return isNaN(n) ? 0 : n;
 }
 
@@ -776,7 +887,16 @@ function runFullCalculation(input, dataCtx, runOpts = {}) {
   const capitalGainsInclusionRate = 0.50;
   const taxableCapitalGains = capitalGains * capitalGainsInclusionRate;
 
-  const cppCalc = calculateCPP(employmentIncome, dataCtx.payroll);
+  // QPP/QPIP remain outside this engine's verified scope. Preserve the
+  // pre-existing Quebec employment path, but do not approximate QPP by
+  // charging doubled federal CPP on self-employment income.
+  const cppCalc = provinceCode === 'QC'
+    ? calculateCPP(employmentIncome, dataCtx.payroll)
+    : calculateCPPForIncomeSources(
+        employmentIncome,
+        selfEmploymentIncome,
+        dataCtx.payroll
+      );
   const eiCalc = calculateEI(employmentIncome, dataCtx.payroll);
   const cpp = cppCalc.cpp;
   const ei = eiCalc.ei;
@@ -894,7 +1014,16 @@ export function computePersonalTax(input, opts = {}) {
   const takeHomeAfterPayroll = totalIncome - totalBurden;
   const avgRate = totalIncome > 0 ? totalIncomeTax / totalIncome : 0;
 
-  const marginalRates = computeMarginalRatesByType(normalizedInput, dataCtx);
+  const marginalRates = opts.skipMarginalRateCalculation
+    ? {
+        employment: null,
+        eligibleDividends: null,
+        nonEligibleDividends: null,
+        otherIncome: null,
+        capitalGains: null,
+        combined: null
+      }
+    : computeMarginalRatesByType(normalizedInput, dataCtx);
   const marginalRate = marginalRates.combined;
 
   // Income tax balance only (excludes CPP/EI). See totalBurden for full statutory cash cost.
@@ -991,3 +1120,4 @@ export function computePersonalTax(input, opts = {}) {
     auditBreakdown,
   };
 }
+      selfEmploymentBaseDeductible: cppCalc.selfEmploymentBaseDeductible || 0,

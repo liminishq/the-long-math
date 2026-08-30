@@ -1,4 +1,4 @@
-import { loadTaxData } from "../canada-income-tax/js/tax.data.js";
+import { getTaxDataBundle } from "../canada-income-tax/js/tax.data.js";
 import { formatCurrency, formatPercent, parseInput } from "../canada-income-tax/js/format.js";
 import {
   SUPPORTED_TAX_YEARS,
@@ -91,7 +91,7 @@ import {
 
   async function ensureYear(year) {
     if (!yearData.has(year)) {
-      const data = await loadTaxData(year, { basePath: TAX_DATA_BASE_PATH });
+      const data = await getTaxDataBundle(year, { basePath: TAX_DATA_BASE_PATH });
       yearData.set(year, data);
     }
     return yearData.get(year);

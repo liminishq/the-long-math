@@ -19,6 +19,7 @@ import {
   latestOfficialTaxYear,
   provinceIndexationRules
 } from "./tax.indexation.js";
+import { deepFreezeTaxData } from "./tax.data.js";
 
 function assertFinite(n, label) {
   if (!Number.isFinite(n)) throw new Error(`${label} must be a finite number`);
@@ -54,11 +55,39 @@ function scaleIndexedNumber(value, factor) {
  * Apply path rules to a root object.
  * Supported path forms: "a.b", "arr[].field", nested combinations.
  */
-function applyRules(root, rules, factor) {
+function factorForRule(rule, fallbackFactor, projection = {}) {
+  const pauseFrom = Number(rule.pauseIndexationFromYear);
+  const pauseThrough = Number(rule.pauseIndexationThroughYear);
+  if (
+    !Number.isFinite(pauseFrom) ||
+    !Number.isFinite(pauseThrough) ||
+    !Number.isFinite(projection.baseYear) ||
+    !Number.isFinite(projection.targetYear) ||
+    !Number.isFinite(projection.annualRate)
+  ) {
+    return fallbackFactor;
+  }
+
+  let indexedYears = 0;
+  for (
+    let year = projection.baseYear + 1;
+    year <= projection.targetYear;
+    year++
+  ) {
+    if (year < pauseFrom || year > pauseThrough) indexedYears++;
+  }
+  return compoundFactor(projection.annualRate, indexedYears);
+}
+
+function applyRules(root, rules, factor, projection = {}) {
   for (const rule of rules) {
     if (rule.recompute) continue;
     if (rule.indexed !== true) continue;
-    applyPath(root, rule.path.split("."), factor);
+    applyPath(
+      root,
+      rule.path.split("."),
+      factorForRule(rule, factor, projection)
+    );
   }
 }
 
@@ -143,7 +172,8 @@ export function projectTaxData(baseData, opts = {}) {
   assertFinite(defaultProvincial, "defaultProvincialInflationRate");
 
   if (yearsAhead === 0) {
-    return {
+    return deepFreezeTaxData({
+      year: targetYear,
       federal: baseData.federal,
       provinces: baseData.provinces,
       payroll: baseData.payroll,
@@ -157,7 +187,7 @@ export function projectTaxData(baseData, opts = {}) {
         defaultProvincialInflationRate: defaultProvincial,
         provincialInflationRates: { ...(opts.provincialInflationRates || {}) }
       }
-    };
+    });
   }
 
   const fedFactor = compoundFactor(federalInflationRate, yearsAhead);
@@ -201,7 +231,11 @@ export function projectTaxData(baseData, opts = {}) {
     provincialRatesUsed[code] = provRate;
     const factor = compoundFactor(provRate, yearsAhead);
     const next = deepClone(prov);
-    applyRules(next, provinceIndexationRules(code), factor);
+    applyRules(next, provinceIndexationRules(code), factor, {
+      baseYear,
+      targetYear,
+      annualRate: provRate,
+    });
     if (next.credits?.basicPersonalAmount?.maximum != null) {
       next.credits.basicPersonalAmount.amount = next.credits.basicPersonalAmount.maximum;
     }
@@ -215,7 +249,8 @@ export function projectTaxData(baseData, opts = {}) {
     provinces[code] = next;
   }
 
-  return {
+  return deepFreezeTaxData({
+    year: targetYear,
     federal,
     provinces,
     payroll,
@@ -230,7 +265,7 @@ export function projectTaxData(baseData, opts = {}) {
       provincialInflationRates: provincialRatesUsed,
       federalFactor: fedFactor
     }
-  };
+  });
 }
 
 /**
@@ -253,8 +288,9 @@ export async function resolveTaxDataForYear(year, opts = {}) {
 
   if (isOfficialTaxYear(targetYear)) {
     const data = await opts.loadOfficialYear(targetYear);
-    return {
+    return deepFreezeTaxData({
       ...data,
+      year: targetYear,
       meta: {
         projected: false,
         source: "official",
@@ -264,7 +300,7 @@ export async function resolveTaxDataForYear(year, opts = {}) {
         federalInflationRate: Number(opts.federalInflationRate) || 0,
         officialYears: OFFICIAL_TAX_YEARS.slice()
       }
-    };
+    });
   }
 
   const baseYear =
@@ -284,14 +320,15 @@ export async function resolveTaxDataForYear(year, opts = {}) {
     provincialInflationRates: opts.provincialInflationRates
   });
 
-  return {
+  return deepFreezeTaxData({
     ...projected,
+    year: targetYear,
     meta: {
       ...projected.meta,
       source: "projected",
       officialYears: OFFICIAL_TAX_YEARS.slice()
     }
-  };
+  });
 }
 
 export {

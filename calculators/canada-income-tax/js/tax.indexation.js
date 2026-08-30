@@ -99,33 +99,59 @@ export const PROVINCE_INDEXATION_OVERRIDES = {
   BC: [
     {
       path: "brackets[].threshold",
-      indexed: false,
+      indexed: true,
       class: "special",
-      note: "BC Budget 2026 / gov.bc.ca: personal tax bracket indexation paused for 2027–2030. Projection from 2026 holds 2026 bracket thresholds fixed."
+      pauseIndexationFromYear: 2027,
+      pauseIndexationThroughYear: 2030,
+      note: "BC Budget 2026 / gov.bc.ca: personal tax bracket indexation paused for 2027–2030; the projection assumption resumes indexation in 2031."
     },
     {
       path: "credits.basicPersonalAmount.amount",
-      indexed: false,
+      indexed: true,
       class: "special",
-      note: "gov.bc.ca basic personal tax credits: Budget 2026 paused indexation of basic personal tax credits for 2027–2030."
+      pauseIndexationFromYear: 2027,
+      pauseIndexationThroughYear: 2030,
+      note: "gov.bc.ca basic personal tax credits: Budget 2026 paused indexation for 2027–2030; the projection assumption resumes indexation in 2031."
+    },
+    {
+      path: "credits.ageAmount.amount",
+      indexed: true,
+      class: "special",
+      pauseIndexationFromYear: 2027,
+      pauseIndexationThroughYear: 2030,
+      note: "gov.bc.ca basic personal tax credits: Budget 2026 paused indexation for 2027–2030; the projection assumption resumes indexation in 2031."
+    },
+    {
+      path: "credits.ageAmount.phaseOutStart",
+      indexed: true,
+      class: "special",
+      pauseIndexationFromYear: 2027,
+      pauseIndexationThroughYear: 2030,
+      note: "gov.bc.ca basic personal tax credits: Budget 2026 paused indexation for 2027–2030; the projection assumption resumes indexation in 2031."
     },
     {
       path: "taxReduction.baseAmount",
-      indexed: false,
+      indexed: true,
       class: "special",
-      note: "gov.bc.ca: B.C. tax reduction credit base held for 2026–2030; indexation paused 2027–2030."
+      pauseIndexationFromYear: 2027,
+      pauseIndexationThroughYear: 2030,
+      note: "gov.bc.ca: B.C. tax reduction credit base held for 2026–2030; the projection assumption resumes indexation in 2031."
     },
     {
       path: "taxReduction.netIncomeThreshold",
-      indexed: false,
+      indexed: true,
       class: "special",
-      note: "gov.bc.ca: B.C. tax reduction net-income threshold indexation paused for 2027–2030."
+      pauseIndexationFromYear: 2027,
+      pauseIndexationThroughYear: 2030,
+      note: "gov.bc.ca: B.C. tax reduction net-income threshold indexation paused for 2027–2030; the projection assumption resumes indexation in 2031."
     },
     {
       path: "taxReduction.maximumNetIncome",
-      indexed: false,
+      indexed: true,
       class: "special",
-      note: "gov.bc.ca: B.C. tax reduction maximum net income indexation paused for 2027–2030."
+      pauseIndexationFromYear: 2027,
+      pauseIndexationThroughYear: 2030,
+      note: "gov.bc.ca: B.C. tax reduction maximum net income indexation paused for 2027–2030; the projection assumption resumes indexation in 2031."
     }
   ],
   PE: [

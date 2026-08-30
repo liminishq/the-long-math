@@ -1,4 +1,4 @@
-import { loadTaxData } from "../canada-income-tax/js/tax.data.js";
+import { getTaxDataBundle } from "../canada-income-tax/js/tax.data.js";
 import { computePersonalTax } from "../canada-income-tax/js/tax.engine.js";
 import {
   OFFICIAL_TAX_YEARS,
@@ -100,7 +100,7 @@ async function loadOfficialYear(year, opts = {}) {
             delete loadOpts.basePath;
           }
         }
-        return loadTaxData(taxYear, loadOpts);
+        return getTaxDataBundle(taxYear, loadOpts);
       })()
     );
   }
@@ -827,10 +827,6 @@ async function computeDeductionTiming(rawInputs = {}, runtime = {}) {
     defaultProvincialInflationRate: inflationRate,
     provincialInflationRates: runtime.provincialInflationRates
   });
-
-  // loadTaxData mutates module globals to the last loaded year. Ensure current
-  // official data is active when no override is passed for current-year runs.
-  await loadOfficialYearBound(currentTaxYear);
 
   const currentDataOverride = {
     federal: currentResolved.federal,
