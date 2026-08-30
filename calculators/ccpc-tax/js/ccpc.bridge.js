@@ -39,6 +39,48 @@ function rrspContributionAsCurrentYearDeduction(source) {
   return Math.max(0, Number(source.rrspDeduction) || 0);
 }
 
+/**
+ * @param {Object} sh - shareholder input slice
+ * @returns {Object}
+ */
+function computeShareholderPersonalTax(sh, year, personalProv, personalTaxOpts) {
+  return computePersonalTax({
+    year,
+    province: personalProv,
+    employmentIncome: sh.salary || 0,
+    eligibleDividends: sh.eligibleDividends || 0,
+    nonEligibleDividends: sh.nonEligibleDividends || 0,
+    otherIncome: sh.otherIncome || 0,
+    capitalGains: sh.capitalGains || 0,
+    rrspDeduction: rrspContributionAsCurrentYearDeduction(sh),
+    fhsaDeduction: sh.fhsaDeduction || 0,
+    estimatedDeductions: sh.deductions || 0,
+    taxPaid: 0
+  }, personalTaxOpts);
+}
+
+/**
+ * Resolve 2–5 shareholders from input (array or legacy shareholder1/2).
+ * @param {Object} input
+ * @returns {Object[]|null}
+ */
+function normalizeShareholderInputs(input) {
+  if (Array.isArray(input.shareholders) && input.shareholders.length >= 2) {
+    return input.shareholders.slice(0, 5);
+  }
+  if (input.shareholder1 != null && input.shareholder2 != null) {
+    return [input.shareholder1, input.shareholder2];
+  }
+  return null;
+}
+
+function mapShareholderTotals(personalResult) {
+  return {
+    ...personalResult.totals,
+    breakdown: personalResult.breakdown
+  };
+}
+
 const FUNDING_EPS = 0.005;
 
 /**
@@ -99,18 +141,15 @@ export function computeCCPCTax(input, personalTaxOpts = {}) {
   const personalProv = input.personalProvince || province;
   const corporateOpts = { taxationYearStartDate: corporateTaxYearStart };
 
-  if (incomeSplitting && input.shareholder1 != null && input.shareholder2 != null) {
-    const sh1 = input.shareholder1;
-    const sh2 = input.shareholder2;
-    const salary1 = sh1.salary || 0;
-    const salary2 = sh2.salary || 0;
-    const elig1 = sh1.eligibleDividends || 0;
-    const elig2 = sh2.eligibleDividends || 0;
-    const nonElig1 = sh1.nonEligibleDividends || 0;
-    const nonElig2 = sh2.nonEligibleDividends || 0;
+  if (incomeSplitting) {
+    const shareholderInputs = normalizeShareholderInputs(input);
+    if (!shareholderInputs || shareholderInputs.length < 2) {
+      throw new Error('Income splitting requires at least two shareholders.');
+    }
 
+    const salaries = shareholderInputs.map((sh) => sh.salary || 0);
     const { salaryExpense, employerCppExpense } = sumCompensationCorporateDeductions(
-      [salary1, salary2],
+      salaries,
       personalTaxOpts
     );
     const corporateIncomeBeforeCompensation = Math.max(0, grossRevenue - expenses);
@@ -122,46 +161,25 @@ export function computeCCPCTax(input, personalTaxOpts = {}) {
     const corporate = calculateCorporateTax(corporateTaxableIncome, province, corporateOpts);
     const afterTaxCorporateCash = corporate.afterTaxCash;
 
-    const dividendDistributions = elig1 + nonElig1 + elig2 + nonElig2;
+    const dividendDistributions = shareholderInputs.reduce(
+      (sum, sh) => sum + (sh.eligibleDividends || 0) + (sh.nonEligibleDividends || 0),
+      0
+    );
     const retainedEarnings = Math.max(0, afterTaxCorporateCash - dividendDistributions);
 
-    const personal1 = computePersonalTax({
-      year,
-      province: personalProv,
-      employmentIncome: salary1,
-      eligibleDividends: elig1,
-      nonEligibleDividends: nonElig1,
-      otherIncome: sh1.otherIncome || 0,
-      capitalGains: sh1.capitalGains || 0,
-      rrspDeduction: rrspContributionAsCurrentYearDeduction(sh1),
-      fhsaDeduction: sh1.fhsaDeduction || 0,
-      estimatedDeductions: sh1.deductions || 0,
-      taxPaid: 0
-    }, personalTaxOpts);
+    const personalResults = shareholderInputs.map((sh) =>
+      computeShareholderPersonalTax(sh, year, personalProv, personalTaxOpts)
+    );
+    const shareholders = personalResults.map(mapShareholderTotals);
 
-    const personal2 = computePersonalTax({
-      year,
-      province: personalProv,
-      employmentIncome: salary2,
-      eligibleDividends: elig2,
-      nonEligibleDividends: nonElig2,
-      otherIncome: sh2.otherIncome || 0,
-      capitalGains: sh2.capitalGains || 0,
-      rrspDeduction: rrspContributionAsCurrentYearDeduction(sh2),
-      fhsaDeduction: sh2.fhsaDeduction || 0,
-      estimatedDeductions: sh2.deductions || 0,
-      taxPaid: 0
-    }, personalTaxOpts);
-
-    const totalPersonalTax = personal1.totals.totalIncomeTax + personal2.totals.totalIncomeTax;
+    const totalPersonalTax = shareholders.reduce((sum, sh) => sum + sh.totalIncomeTax, 0);
     const totalTaxBurden = corporate.totalCorporateTax + totalPersonalTax;
     const effectiveTaxRate = grossRevenue > 0 ? totalTaxBurden / grossRevenue : 0;
-    const netPersonalTakeHome = personal1.totals.takeHomeAfterPayroll + personal2.totals.takeHomeAfterPayroll;
-    const employeeCppEi =
-      (personal1.totals.cpp || 0) +
-      (personal1.totals.ei || 0) +
-      (personal2.totals.cpp || 0) +
-      (personal2.totals.ei || 0);
+    const netPersonalTakeHome = shareholders.reduce((sum, sh) => sum + sh.takeHomeAfterPayroll, 0);
+    const employeeCppEi = shareholders.reduce(
+      (sum, sh) => sum + (sh.cpp || 0) + (sh.ei || 0),
+      0
+    );
     const fundingNotes = compensationFundingNotes({
       salaryExpense,
       employerCppExpense,
@@ -172,6 +190,7 @@ export function computeCCPCTax(input, personalTaxOpts = {}) {
 
     return {
       incomeSplitting: true,
+      shareholderCount: shareholders.length,
       corporate: {
         ...corporate,
         grossRevenue,
@@ -183,14 +202,9 @@ export function computeCCPCTax(input, personalTaxOpts = {}) {
         distributions: dividendDistributions
       },
       personal: null,
-      personal1: {
-        ...personal1.totals,
-        breakdown: personal1.breakdown
-      },
-      personal2: {
-        ...personal2.totals,
-        breakdown: personal2.breakdown
-      },
+      shareholders,
+      personal1: shareholders[0] || null,
+      personal2: shareholders[1] || null,
       combined: {
         totalTaxBurden,
         employeeCppEi,

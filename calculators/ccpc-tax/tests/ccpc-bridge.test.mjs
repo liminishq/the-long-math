@@ -190,6 +190,31 @@ test('Income splitting: combined salaries and per-shareholder employer CPP reduc
   assert.equal(split.personal1.cpp + split.personal2.cpp, expectedEmployerCpp);
 });
 
+test('Income splitting: three shareholders via shareholders array', () => {
+  const salaries = [50_000, 40_000, 30_000];
+  const split = computeCCPCTax({
+    province: ON,
+    grossRevenue: 500_000,
+    expenses: 60_000,
+    incomeSplitting: true,
+    shareholders: [
+      { salary: salaries[0], eligibleDividends: 0, nonEligibleDividends: 0, otherIncome: 0, deductions: 0 },
+      { salary: salaries[1], eligibleDividends: 0, nonEligibleDividends: 0, otherIncome: 0, deductions: 0 },
+      { salary: salaries[2], eligibleDividends: 0, nonEligibleDividends: 0, otherIncome: 0, deductions: 0 }
+    ]
+  });
+  const expectedEmployerCpp = salaries.reduce((sum, s) => sum + employerCppForT4Employment(s), 0);
+  const pre = 500_000 - 60_000;
+  assert.equal(split.shareholderCount, 3);
+  assert.equal(split.shareholders.length, 3);
+  assert.equal(split.corporate.salaryExpense, salaries.reduce((a, b) => a + b, 0));
+  assert.equal(split.corporate.employerCppExpense, expectedEmployerCpp);
+  assert.equal(split.corporate.taxableIncome, Math.max(0, pre - 120_000 - expectedEmployerCpp));
+  assert.equal(split.personal1.cpp, employerCppForT4Employment(salaries[0]));
+  assert.equal(split.personal2.cpp, employerCppForT4Employment(salaries[1]));
+  assert.equal(split.shareholders[2].cpp, employerCppForT4Employment(salaries[2]));
+});
+
 test('Income splitting: shareholder personal tax matches canonical personal engine', async () => {
   await loadYear(2026);
 

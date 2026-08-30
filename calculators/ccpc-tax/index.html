@@ -38,8 +38,8 @@
       </div>
     </header>
 
-    <!-- MAIN GRID (2 columns) -->
-    <div class="grid">
+    <!-- MAIN GRID (inputs narrower, results wider) -->
+    <div class="grid ccpc-main-grid">
 
       <!-- INPUTS -->
       <section class="card">
@@ -94,11 +94,14 @@
             <input type="checkbox" id="incomeSplitting" aria-describedby="incomeSplittingDesc">
             <span class="toggle-switch"></span>
             <span class="toggle-copy">
-              <strong>Income splitting (two shareholders)</strong>
-              <span class="toggle-badge">Optional mode</span>
+              <span class="toggle-copy-title">
+                <strong>Income splitting</strong>
+                <span class="toggle-badge">Optional mode</span>
+              </span>
+              <span class="toggle-copy-sub">(two or more shareholders)</span>
             </span>
           </label>
-          <p id="incomeSplittingDesc" class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">When on, enter compensation and personal details for each shareholder separately. Corporate tax uses combined payments from the corporation to both shareholders.</p>
+          <p id="incomeSplittingDesc" class="helper toggle-desc">When on, enter compensation and personal details for each shareholder separately. Corporate tax uses combined payments from the corporation to all shareholders.</p>
         </div>
 
         <div id="singleShareholderBlock">
@@ -229,6 +232,157 @@
             <input type="text" inputmode="decimal" id="sh2Deductions" placeholder="0" value="">
             <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amounts that reduce taxable income. Do not enter tax credits such as medical expenses or charitable donations.</div>
           </div>
+
+          <div class="field add-shareholder-field" id="addShareholderAfter2" hidden>
+            <label for="addShareholderSelect2">Add another shareholder</label>
+            <select id="addShareholderSelect2" class="add-shareholder-select">
+              <option value="">—</option>
+              <option value="3">Add shareholder 3</option>
+              <option value="4">Add shareholder 4</option>
+              <option value="5">Add shareholder 5</option>
+            </select>
+          </div>
+
+          <div id="shPanel3" class="shareholder-input-panel" hidden>
+            <h3 class="shareholder-heading">Shareholder 3</h3>
+            <div class="field">
+              <label for="sh3Salary">Salary/Bonus Paid</label>
+              <input type="text" inputmode="decimal" id="sh3Salary" placeholder="0" value="">
+            </div>
+            <div class="field">
+              <label for="sh3EligibleDividends">Eligible Dividends Paid</label>
+              <input type="text" inputmode="decimal" id="sh3EligibleDividends" placeholder="0" value="">
+              <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Eligible vs non-eligible treatment is a user assumption. GRIP is not checked.</div>
+            </div>
+            <div class="field">
+              <label for="sh3NonEligibleDividends">Non-Eligible Dividends Paid</label>
+              <input type="text" inputmode="decimal" id="sh3NonEligibleDividends" placeholder="0" value="">
+            </div>
+            <div class="field">
+              <label for="sh3OtherIncome">Other Personal Income</label>
+              <input type="text" inputmode="decimal" id="sh3OtherIncome" placeholder="0" value="">
+              <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Personal income from sources other than the corporation</div>
+            </div>
+            <div class="field">
+              <label for="sh3CapitalGains">Capital Gains</label>
+              <input type="text" inputmode="decimal" id="sh3CapitalGains" placeholder="0" value="">
+              <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Realized capital gains (cash amount). 50% inclusion applied by the personal engine.</div>
+            </div>
+            <div class="field">
+              <label for="sh3RrspContribution">RRSP Contribution</label>
+              <input type="text" inputmode="decimal" id="sh3RrspContribution" placeholder="0" value="">
+              <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amount contributed this year. Treated as a current-year deduction; contribution room is not modeled.</div>
+            </div>
+            <div class="field">
+              <label for="sh3FhsaDeduction">FHSA Contribution (Deduction Claimed This Year)</label>
+              <input type="text" inputmode="decimal" id="sh3FhsaDeduction" placeholder="0" value="">
+              <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amount claimed this year. Contribution room is not modeled.</div>
+            </div>
+            <div class="field">
+              <label for="sh3Deductions">Other deductions from income</label>
+              <input type="text" inputmode="decimal" id="sh3Deductions" placeholder="0" value="">
+              <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amounts that reduce taxable income. Do not enter tax credits such as medical expenses or charitable donations.</div>
+            </div>
+            <div class="field add-shareholder-field" id="addShareholderAfter3" hidden>
+              <label for="addShareholderSelect3">Add another shareholder</label>
+              <select id="addShareholderSelect3" class="add-shareholder-select">
+                <option value="">—</option>
+                <option value="4">Add shareholder 4</option>
+                <option value="5">Add shareholder 5</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="shPanel4" class="shareholder-input-panel" hidden>
+            <h3 class="shareholder-heading">Shareholder 4</h3>
+            <div class="field">
+              <label for="sh4Salary">Salary/Bonus Paid</label>
+              <input type="text" inputmode="decimal" id="sh4Salary" placeholder="0" value="">
+            </div>
+            <div class="field">
+              <label for="sh4EligibleDividends">Eligible Dividends Paid</label>
+              <input type="text" inputmode="decimal" id="sh4EligibleDividends" placeholder="0" value="">
+              <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Eligible vs non-eligible treatment is a user assumption. GRIP is not checked.</div>
+            </div>
+            <div class="field">
+              <label for="sh4NonEligibleDividends">Non-Eligible Dividends Paid</label>
+              <input type="text" inputmode="decimal" id="sh4NonEligibleDividends" placeholder="0" value="">
+            </div>
+            <div class="field">
+              <label for="sh4OtherIncome">Other Personal Income</label>
+              <input type="text" inputmode="decimal" id="sh4OtherIncome" placeholder="0" value="">
+              <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Personal income from sources other than the corporation</div>
+            </div>
+            <div class="field">
+              <label for="sh4CapitalGains">Capital Gains</label>
+              <input type="text" inputmode="decimal" id="sh4CapitalGains" placeholder="0" value="">
+              <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Realized capital gains (cash amount). 50% inclusion applied by the personal engine.</div>
+            </div>
+            <div class="field">
+              <label for="sh4RrspContribution">RRSP Contribution</label>
+              <input type="text" inputmode="decimal" id="sh4RrspContribution" placeholder="0" value="">
+              <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amount contributed this year. Treated as a current-year deduction; contribution room is not modeled.</div>
+            </div>
+            <div class="field">
+              <label for="sh4FhsaDeduction">FHSA Contribution (Deduction Claimed This Year)</label>
+              <input type="text" inputmode="decimal" id="sh4FhsaDeduction" placeholder="0" value="">
+              <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amount claimed this year. Contribution room is not modeled.</div>
+            </div>
+            <div class="field">
+              <label for="sh4Deductions">Other deductions from income</label>
+              <input type="text" inputmode="decimal" id="sh4Deductions" placeholder="0" value="">
+              <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amounts that reduce taxable income. Do not enter tax credits such as medical expenses or charitable donations.</div>
+            </div>
+            <div class="field add-shareholder-field" id="addShareholderAfter4" hidden>
+              <label for="addShareholderSelect4">Add another shareholder</label>
+              <select id="addShareholderSelect4" class="add-shareholder-select">
+                <option value="">—</option>
+                <option value="5">Add shareholder 5</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="shPanel5" class="shareholder-input-panel" hidden>
+            <h3 class="shareholder-heading">Shareholder 5</h3>
+            <div class="field">
+              <label for="sh5Salary">Salary/Bonus Paid</label>
+              <input type="text" inputmode="decimal" id="sh5Salary" placeholder="0" value="">
+            </div>
+            <div class="field">
+              <label for="sh5EligibleDividends">Eligible Dividends Paid</label>
+              <input type="text" inputmode="decimal" id="sh5EligibleDividends" placeholder="0" value="">
+              <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Eligible vs non-eligible treatment is a user assumption. GRIP is not checked.</div>
+            </div>
+            <div class="field">
+              <label for="sh5NonEligibleDividends">Non-Eligible Dividends Paid</label>
+              <input type="text" inputmode="decimal" id="sh5NonEligibleDividends" placeholder="0" value="">
+            </div>
+            <div class="field">
+              <label for="sh5OtherIncome">Other Personal Income</label>
+              <input type="text" inputmode="decimal" id="sh5OtherIncome" placeholder="0" value="">
+              <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Personal income from sources other than the corporation</div>
+            </div>
+            <div class="field">
+              <label for="sh5CapitalGains">Capital Gains</label>
+              <input type="text" inputmode="decimal" id="sh5CapitalGains" placeholder="0" value="">
+              <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Realized capital gains (cash amount). 50% inclusion applied by the personal engine.</div>
+            </div>
+            <div class="field">
+              <label for="sh5RrspContribution">RRSP Contribution</label>
+              <input type="text" inputmode="decimal" id="sh5RrspContribution" placeholder="0" value="">
+              <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amount contributed this year. Treated as a current-year deduction; contribution room is not modeled.</div>
+            </div>
+            <div class="field">
+              <label for="sh5FhsaDeduction">FHSA Contribution (Deduction Claimed This Year)</label>
+              <input type="text" inputmode="decimal" id="sh5FhsaDeduction" placeholder="0" value="">
+              <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amount claimed this year. Contribution room is not modeled.</div>
+            </div>
+            <div class="field">
+              <label for="sh5Deductions">Other deductions from income</label>
+              <input type="text" inputmode="decimal" id="sh5Deductions" placeholder="0" value="">
+              <div class="helper" style="margin-top: 6px; font-size: 11px; color: var(--muted);">Amounts that reduce taxable income. Do not enter tax credits such as medical expenses or charitable donations.</div>
+            </div>
+          </div>
         </div>
 
         <div style="margin-top: 20px; padding: 14px; border: 1px solid rgba(217,180,106,.35); border-radius: 12px; background: linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,.04));">
@@ -251,111 +405,108 @@
 
         <div id="fundingAssumptionNote" style="display: none; margin: 0 0 16px; padding: 12px; border: 1px solid rgba(217,180,106,.35); border-radius: 10px; background: linear-gradient(180deg, rgba(217,180,106,.10), rgba(217,180,106,.04)); font-size: 12px; color: var(--muted);"></div>
 
-        <div id="singleResultBlock" class="results">
-          <div class="result">
-            <p class="k">Corporate Taxable Income</p>
-            <p class="v" id="corporateTaxableIncome">$–</p>
+        <div id="singleResultBlock" class="results-single-layout">
+          <div class="results results-detail">
+            <div class="result">
+              <p class="k">Corporate Taxable Income</p>
+              <p class="v" id="corporateTaxableIncome">$–</p>
+            </div>
+
+            <div class="result">
+              <p class="k">Corporate Tax</p>
+              <p class="v" id="corporateTax">$–</p>
+            </div>
+
+            <div class="result">
+              <p class="k">After-Tax Corporate Cash</p>
+              <p class="v" id="afterTaxCorporateCash">$–</p>
+            </div>
+
+            <div class="result">
+              <p class="k">Retained Earnings</p>
+              <p class="v" id="retainedEarnings">$–</p>
+            </div>
+
+            <div class="result result-subcard result-inline" id="employerCppRow" hidden>
+              <p class="k">Employer CPP</p>
+              <p class="v" id="employerCpp">$–</p>
+            </div>
+
+            <div class="result">
+              <p class="k">Personal Income Tax</p>
+              <p class="v" id="personalTax">$–</p>
+            </div>
+
+            <div class="result result-subcard result-inline" id="employeeCppEiRow" hidden>
+              <p class="k">Employee CPP and EI</p>
+              <p class="v" id="employeeCppEi">$–</p>
+            </div>
           </div>
 
-          <div class="result">
-            <p class="k">Corporate Tax</p>
-            <p class="v" id="corporateTax">$–</p>
-          </div>
+          <div class="results results-summary">
+            <div class="result prominent">
+              <p class="k">Effective overall income-tax rate</p>
+              <p class="v" id="effectiveTaxRate">–%</p>
+              <p class="helper summary-helper">Total income tax as a percentage of gross corporate revenue.</p>
+            </div>
 
-          <div class="result">
-            <p class="k">Employer CPP</p>
-            <p class="v" id="employerCpp">$–</p>
-          </div>
+            <div class="result prominent">
+              <p class="k">Total income tax (corporate + personal)</p>
+              <p class="v" id="totalTaxBurden">$–</p>
+              <p class="helper summary-helper">Income tax only. Does not include employee CPP/EI or employer CPP.</p>
+            </div>
 
-          <div class="result">
-            <p class="k">After-Tax Corporate Cash</p>
-            <p class="v" id="afterTaxCorporateCash">$–</p>
-          </div>
-
-          <div class="result">
-            <p class="k">Retained Earnings</p>
-            <p class="v" id="retainedEarnings">$–</p>
-          </div>
-
-          <div class="result">
-            <p class="k">Personal Income Tax</p>
-            <p class="v" id="personalTax">$–</p>
-          </div>
-
-          <div class="result">
-            <p class="k">Employee CPP and EI</p>
-            <p class="v" id="employeeCppEi">$–</p>
-          </div>
-
-          <div class="result">
-            <p class="k">Net Personal Take-Home</p>
-            <p class="v" id="netPersonalTakeHome">$–</p>
-          </div>
-
-          <div class="result prominent">
-            <p class="k">Total income tax (corporate + personal)</p>
-            <p class="v" id="totalTaxBurden">$–</p>
-            <p class="helper" style="margin: 6px 0 0; font-size: 11px; color: var(--muted);">Income tax only. Does not include employee CPP/EI or employer CPP.</p>
-          </div>
-
-          <div class="result prominent">
-            <p class="k">Effective overall income-tax rate</p>
-            <p class="v" id="effectiveTaxRate">–%</p>
-            <p class="helper" style="margin: 6px 0 0; font-size: 11px; color: var(--muted);">Total income tax as a percentage of gross corporate revenue.</p>
+            <div class="result prominent">
+              <p class="k">Total take-home</p>
+              <p class="v" id="summaryTotalTakeHome">$–</p>
+              <p class="helper summary-helper">Net personal take-home after income tax and employee CPP/EI.</p>
+            </div>
           </div>
         </div>
 
-        <div id="splitResultBlock" class="results results-split" style="display: none;">
-          <div class="result">
-            <p class="k">Corporate Taxable Income</p>
-            <p class="v" id="splitCorporateTaxableIncome">$–</p>
+        <div id="splitResultBlock" class="results-split-layout" style="display: none;">
+          <div class="results results-corporate">
+            <div class="result">
+              <p class="k">Corporate Taxable Income</p>
+              <p class="v" id="splitCorporateTaxableIncome">$–</p>
+            </div>
+            <div class="result">
+              <p class="k">Corporate Tax</p>
+              <p class="v" id="splitCorporateTax">$–</p>
+            </div>
+            <div class="result">
+              <p class="k">After-Tax Corporate Cash</p>
+              <p class="v" id="splitAfterTaxCorporateCash">$–</p>
+            </div>
+            <div class="result">
+              <p class="k">Retained Earnings</p>
+              <p class="v" id="splitRetainedEarnings">$–</p>
+            </div>
+            <div class="result result-subcard result-inline" id="splitEmployerCppRow" hidden>
+              <p class="k">Employer CPP</p>
+              <p class="v" id="splitEmployerCpp">$–</p>
+            </div>
           </div>
-          <div class="result">
-            <p class="k">Corporate Tax</p>
-            <p class="v" id="splitCorporateTax">$–</p>
+
+          <div class="results results-summary">
+            <div class="result prominent">
+              <p class="k">Effective overall income-tax rate</p>
+              <p class="v" id="splitEffectiveTaxRate">–%</p>
+              <p class="helper summary-helper">Total income tax as a percentage of gross corporate revenue.</p>
+            </div>
+            <div class="result prominent">
+              <p class="k">Total income tax (corporate + personal)</p>
+              <p class="v" id="splitTotalTaxBurden">$–</p>
+              <p class="helper summary-helper">Income tax only. Does not include employee CPP/EI or employer CPP.</p>
+            </div>
+            <div class="result prominent">
+              <p class="k">Total take-home</p>
+              <p class="v" id="splitSummaryTotalTakeHome">$–</p>
+              <p class="helper summary-helper">Combined net personal take-home after income tax and employee CPP/EI.</p>
+            </div>
           </div>
-          <div class="result">
-            <p class="k">Employer CPP</p>
-            <p class="v" id="splitEmployerCpp">$–</p>
-          </div>
-          <div class="result">
-            <p class="k">After-Tax Corporate Cash</p>
-            <p class="v" id="splitAfterTaxCorporateCash">$–</p>
-          </div>
-          <div class="result">
-            <p class="k">Retained Earnings</p>
-            <p class="v" id="splitRetainedEarnings">$–</p>
-          </div>
-          <div class="result shareholder-result">
-            <p class="k">Shareholder 1 — Personal Income Tax</p>
-            <p class="v" id="sh1PersonalTax">$–</p>
-          </div>
-          <div class="result shareholder-result">
-            <p class="k">Shareholder 1 — Net Take-Home</p>
-            <p class="v" id="sh1NetTakeHome">$–</p>
-          </div>
-          <div class="result shareholder-result">
-            <p class="k">Shareholder 2 — Personal Income Tax</p>
-            <p class="v" id="sh2PersonalTax">$–</p>
-          </div>
-          <div class="result shareholder-result">
-            <p class="k">Shareholder 2 — Net Take-Home</p>
-            <p class="v" id="sh2NetTakeHome">$–</p>
-          </div>
-          <div class="result">
-            <p class="k">Employee CPP and EI (both shareholders)</p>
-            <p class="v" id="splitEmployeeCppEi">$–</p>
-          </div>
-          <div class="result prominent">
-            <p class="k">Total income tax (corporate + personal)</p>
-            <p class="v" id="splitTotalTaxBurden">$–</p>
-            <p class="helper" style="margin: 6px 0 0; font-size: 11px; color: var(--muted);">Income tax only. Does not include employee CPP/EI or employer CPP.</p>
-          </div>
-          <div class="result prominent">
-            <p class="k">Effective overall income-tax rate</p>
-            <p class="v" id="splitEffectiveTaxRate">–%</p>
-            <p class="helper" style="margin: 6px 0 0; font-size: 11px; color: var(--muted);">Total income tax as a percentage of gross corporate revenue.</p>
-          </div>
+
+          <div id="splitShareholderResults" class="shareholder-results-stack" aria-live="polite"></div>
         </div>
 
         <section class="result-share-block" id="ccpc_share_block" aria-labelledby="ccpc-share-heading">
@@ -411,6 +562,7 @@
             <summary><strong>Personal Tax — Shareholder 2</strong></summary>
             <div id="personal2Breakdown" class="breakdown-content"></div>
           </details>
+          <div id="splitPersonalBreakdowns"></div>
         </div>
       </div>
     </section>
