@@ -104,6 +104,28 @@
   },
   {
     "type": "article",
+    "title": "Why Starting to Invest Early Matters",
+    "url": "/articles/investing-and-financial-literacy/why-start-investing-early/",
+    "desc": "See what a 10-year investing head start is worth, and how much more a later investor must contribute or earn to catch up.",
+    "keywords": [
+      "Why Start Investing Early? The Math of a 10-Year Head Start",
+      "Why Starting to Invest Early Matters",
+      "why start investing early",
+      "see",
+      "year",
+      "investing",
+      "head",
+      "start",
+      "worth",
+      "later",
+      "investor",
+      "contribute",
+      "earn",
+      "catch"
+    ]
+  },
+  {
+    "type": "article",
     "title": "Dollar Cost Averaging: What It Is, How It Works, and When It Makes Sense",
     "url": "/articles/investing-and-financial-literacy/dollar-cost-averaging/",
     "desc": "Learn what dollar cost averaging (DCA) is, how it works, and when it makes sense. Includes a clear lump sum vs. DCA comparison, the behavioral case for automatic investing, and common misunderstandings explained.",
@@ -1372,6 +1394,50 @@
       "assumptions",
       "simple",
       "investment",
+      "calculator"
+    ]
+  },
+  {
+    "type": "calculator",
+    "title": "Cost of Waiting to Invest Calculator",
+    "url": "/calculators/cost-of-waiting-to-invest/",
+    "desc": "See what a 10-year investing head start is worth. Compare early and late investors and calculate the return or monthly contribution needed to catch up.",
+    "keywords": [
+      "Cost of Waiting to Invest Calculator",
+      "cost of waiting to invest",
+      "see",
+      "year",
+      "investing",
+      "head",
+      "start",
+      "worth",
+      "compare",
+      "early",
+      "late",
+      "investors",
+      "calculate",
+      "return",
+      "monthly",
+      "contribution"
+    ]
+  },
+  {
+    "type": "calculator",
+    "title": "Cost of Waiting to Invest Calculator",
+    "url": "/calculators/cost-of-waiting-to-invest/methodology/",
+    "desc": "Inspect the formulas, assumptions, and solvers behind the Cost of Waiting to Invest Calculator.",
+    "keywords": [
+      "Inspect the Arithmetic: Cost of Waiting to Invest Calculator",
+      "Cost of Waiting to Invest Calculator",
+      "methodology",
+      "inspect",
+      "formulas",
+      "assumptions",
+      "solvers",
+      "behind",
+      "cost",
+      "waiting",
+      "invest",
       "calculator"
     ]
   },

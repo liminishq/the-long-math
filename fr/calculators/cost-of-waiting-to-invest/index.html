@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calculateur du coût de retarder ses investissements | The Long Math</title>
+  <meta name="description" content="Voyez ce que vaut une avance de 10 ans en placement. Comparez un départ plus tôt et un départ plus tard, puis calculez le rendement ou la cotisation mensuelle nécessaires pour rattraper." />
+  <link rel="canonical" href="https://www.thelongmath.com/fr/calculators/cost-of-waiting-to-invest/" />
+  <link rel="alternate" hreflang="en" href="https://www.thelongmath.com/calculators/cost-of-waiting-to-invest/" />
+  <link rel="alternate" hreflang="fr" href="https://www.thelongmath.com/fr/calculators/cost-of-waiting-to-invest/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.thelongmath.com/calculators/cost-of-waiting-to-invest/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Calculateur du coût de retarder ses investissements | The Long Math" />
+  <meta property="og:description" content="Voyez ce que vaut une avance en placement, et ce qu'il faudrait pour rattraper." />
+  <meta property="og:url" content="https://www.thelongmath.com/fr/calculators/cost-of-waiting-to-invest/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Calculateur du coût de retarder ses investissements" />
+  <meta name="twitter:description" content="Comparez un départ plus tôt et un départ plus tard, puis calculez le rendement ou la cotisation nécessaires pour rattraper." />
+
+  <script src="/assets/js/theme-init.40fc21015f.js"></script>
+  <script src="/assets/js/i18n.e9994b5f88.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.4bb62c4d1c.css" />
+  <link rel="stylesheet" href="/assets/css/calc-mobile.b65b13bb36.css" />
+  <link rel="stylesheet" href="/calculators/cost-of-waiting-to-invest/styles.css" />
+  <script defer src="/assets/js/site.9a3c008ae4.js"></script>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Calculateur du coût de retarder ses investissements",
+    "url": "https://www.thelongmath.com/fr/calculators/cost-of-waiting-to-invest/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "description": "Compare deux personnes avec des périodes de cotisation indépendantes, puis calcule le rendement ou la cotisation mensuelle nécessaires pour rattraper."
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://www.thelongmath.com/fr/" },
+      { "@type": "ListItem", "position": 2, "name": "Calculateurs", "item": "https://www.thelongmath.com/fr/calculators/" },
+      { "@type": "ListItem", "position": 3, "name": "Coût de retarder ses investissements", "item": "https://www.thelongmath.com/fr/calculators/cost-of-waiting-to-invest/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Pourquoi commencer à investir plus tôt a-t-il de l'importance?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Les cotisations plus précoces ont plus d'années pour se capitaliser. La croissance peut elle-même générer de la croissance, de sorte que le temps se trouve dans l'exposant de la formule."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quelqu'un qui commence plus tard peut-il rattraper?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Oui. Il peut falloir cotiser davantage, obtenir un rendement plus élevé, investir plus longtemps, ou combiner ces leviers."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Commencer plus tôt produit-il toujours plus d'argent?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Non. Le résultat dépend des rendements, des montants cotisés, des périodes de cotisation et de l'horizon. Ce calculateur rapporte le résultat réel selon les hypothèses saisies."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Qu'est-ce que le rendement d'équilibre?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "C'est le rendement annuel effectif commun auquel les deux stratégies produisent la même valeur à la retraite, selon les calendriers de cotisation et les montants mensuels saisis."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Ce calculateur tient-il compte de l'inflation?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Non. Les résultats sont en dollars nominaux et les cotisations restent constantes."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quel rendement le calculateur suppose-t-il?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Le rendement annuel effectif que vous saisissez. Le 8 % par défaut est une illustration, pas une prévision."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <main class="wrap" data-tlm-decimal-inputs>
+    <header class="cow-hero">
+      <nav aria-label="Fil d'Ariane">
+        <ol class="cow-breadcrumb">
+          <li><a href="/fr/">Accueil</a></li>
+          <li><a href="/fr/calculators/">Calculateurs</a></li>
+          <li aria-current="page">Coût de retarder ses investissements</li>
+        </ol>
+      </nav>
+      <p class="hero-kicker">Calculateur de la valeur du temps en placement</p>
+      <h1>Calculateur du coût de retarder ses investissements</h1>
+      <p class="lead">Voyez ce que vaut une avance en placement, et ce qu'il faudrait à quelqu'un qui commence plus tard pour rattraper.</p>
+      <p class="lead">Comparez une personne qui commence plus tôt avec une personne qui commence plus tard. Chacune a un âge de début et un âge de fin des cotisations; les deux soldes se capitalisent ensuite jusqu'au même âge de retraite.</p>
+      <p class="lead">Dans la croissance composée, le temps se trouve dans l'exposant. Donner plus d'années à l'argent pour se capitaliser peut avoir un effet disproportionné sur le résultat final.</p>
+      <p class="lead"><strong>Pas d'opinions. Pas d'hypothèses cachées. Juste de l'arithmétique.</strong></p>
+      <div class="hero-actions">
+        <a class="article-cta-btn" href="/fr/articles/investing-and-financial-literacy/why-start-investing-early/">
+          <span class="article-cta-btn__kicker">Article complémentaire</span>
+          <span class="article-cta-btn__label">Lire l'article sur commencer tôt</span>
+        </a>
+        <a class="inspect-arithmetic-btn" href="/fr/calculators/cost-of-waiting-to-invest/methodology/">Inspecter l'arithmétique</a>
+      </div>
+    </header>
+
+    <section class="calc-panel" aria-labelledby="inputs-heading">
+      <h2 id="inputs-heading" class="panel-heading">Entrées</h2>
+      <div class="input-groups">
+        <div class="input-group">
+          <h3 class="input-group-title">Personne qui commence plus tôt</h3>
+          <div class="field">
+            <label for="earlyStartAge">Commence à investir à</label>
+            <input id="earlyStartAge" type="number" inputmode="numeric" step="1" data-integer="true" value="25" />
+          </div>
+          <div class="field">
+            <label for="earlyStopAge">Cesse de cotiser à</label>
+            <input id="earlyStopAge" type="number" inputmode="numeric" step="1" data-integer="true" value="35" />
+            <p class="help-text">Le solde continue ensuite de se capitaliser jusqu'à la retraite, sans nouvelles cotisations.</p>
+          </div>
+          <div class="field">
+            <label for="earlyMonthlyContribution">Cotisation mensuelle</label>
+            <input id="earlyMonthlyContribution" type="text" inputmode="decimal" value="400" />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <h3 class="input-group-title">Personne qui commence plus tard</h3>
+          <div class="field">
+            <label for="laterStartAge">Commence à investir à</label>
+            <input id="laterStartAge" type="number" inputmode="numeric" step="1" data-integer="true" value="35" />
+          </div>
+          <div class="field">
+            <label for="laterStopAge">Cesse de cotiser à</label>
+            <input id="laterStopAge" type="number" inputmode="numeric" step="1" data-integer="true" value="65" />
+            <p class="help-text">Le solde continue ensuite de se capitaliser jusqu'à la retraite, sans nouvelles cotisations.</p>
+          </div>
+          <div class="field">
+            <label for="laterMonthlyContribution">Cotisation mensuelle</label>
+            <input id="laterMonthlyContribution" type="text" inputmode="decimal" value="400" readonly aria-readonly="true" aria-describedby="laterMatchHelp" />
+          </div>
+          <div class="field toggle-field">
+            <div class="toggle-row">
+              <input id="laterMatchEarlyContribution" type="checkbox" checked />
+              <label for="laterMatchEarlyContribution">Même cotisation mensuelle que la personne qui commence plus tôt</label>
+            </div>
+            <p id="laterMatchHelp" class="help-text">Décochez pour saisir un montant mensuel différent pour la personne qui commence plus tard.</p>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <h3 class="input-group-title">Hypothèses communes</h3>
+          <div class="field">
+            <label for="retirementAge">Âge de la retraite</label>
+            <input id="retirementAge" type="number" inputmode="numeric" step="1" data-integer="true" value="65" />
+          </div>
+          <div class="field">
+            <label for="annualReturn">Rendement annuel prévu</label>
+            <div class="inline">
+              <input id="annualReturn" type="text" inputmode="decimal" value="8" />
+              <span class="unit">%</span>
+            </div>
+            <p class="help-text">Saisi comme rendement annuel effectif et appliqué aux deux personnes dans la comparaison principale. Zéro et les valeurs négatives sont permis.</p>
+          </div>
+        </div>
+      </div>
+      <div id="validationBox" class="validation-box" hidden></div>
+    </section>
+
+    <div id="resultsStack" class="results-stack">
+      <section class="calc-panel" aria-labelledby="comparison-heading">
+        <h2 id="comparison-heading" class="panel-heading">Votre comparaison</h2>
+        <div class="compare-grid">
+          <article class="investor-card" aria-labelledby="early-card-heading">
+            <h3 id="early-card-heading">A commencé plus tôt</h3>
+            <p id="earlyPortfolio" class="hero-metric">– $</p>
+            <p class="hero-label">Portefeuille à la retraite</p>
+            <dl>
+              <div class="metric-row">
+                <dt>Total cotisé</dt>
+                <dd id="earlyContributed">– $</dd>
+              </div>
+              <div class="metric-row">
+                <dt>Croissance des placements</dt>
+                <dd id="earlyGrowth">– $</dd>
+              </div>
+              <div class="metric-row">
+                <dt>Période de cotisation</dt>
+                <dd id="earlyContributing">–</dd>
+              </div>
+              <div class="metric-row">
+                <dt>Capitalisation après l'arrêt des cotisations</dt>
+                <dd id="earlyCoast">–</dd>
+              </div>
+            </dl>
+          </article>
+
+          <article class="investor-card" aria-labelledby="later-card-heading">
+            <h3 id="later-card-heading">A commencé plus tard</h3>
+            <p id="laterPortfolio" class="hero-metric">– $</p>
+            <p class="hero-label">Portefeuille à la retraite</p>
+            <dl>
+              <div class="metric-row">
+                <dt>Total cotisé</dt>
+                <dd id="laterContributed">– $</dd>
+              </div>
+              <div class="metric-row">
+                <dt>Croissance des placements</dt>
+                <dd id="laterGrowth">– $</dd>
+              </div>
+              <div class="metric-row">
+                <dt>Période de cotisation</dt>
+                <dd id="laterContributing">–</dd>
+              </div>
+              <div class="metric-row">
+                <dt>Capitalisation après l'arrêt des cotisations</dt>
+                <dd id="laterCoast">–</dd>
+              </div>
+            </dl>
+          </article>
+        </div>
+        <p id="comparisonStatement" class="comparison-statement" aria-live="polite"></p>
+      </section>
+
+      <section class="result-share-block" aria-labelledby="share-heading">
+        <h3 id="share-heading" class="result-share-title">Partager le scénario</h3>
+        <p class="result-share-copy">Capturez cette comparaison en image partageable.</p>
+        <p class="result-share-helper">Comprend un lien reconstituable pour recharger les entrées dans ce calculateur.</p>
+        <div class="result-share-actions">
+          <button type="button" id="share_result_btn" class="result-share-btn-primary">Partager le scénario</button>
+          <button type="button" id="download_result_btn">Enregistrer ce calcul</button>
+          <button type="button" id="copy_result_link_btn">Copier le lien partageable</button>
+        </div>
+        <p class="result-share-status" id="result_share_status" aria-live="polite"></p>
+      </section>
+
+      <section class="calc-panel secondary-block" aria-labelledby="catchup-heading">
+        <h2 id="catchup-heading" class="panel-heading">Que faudrait-il pour rattraper?</h2>
+        <p id="catchupNote" class="support-copy" hidden></p>
+        <div class="catchup-grid">
+          <div class="catchup-card">
+            <h3>Rendement requis</h3>
+            <p id="requiredReturn" class="catchup-value">–</p>
+            <p id="requiredReturnSupport" class="support-copy"></p>
+          </div>
+          <div class="catchup-card">
+            <h3>Cotisation mensuelle requise</h3>
+            <p id="requiredContribution" class="catchup-value">–</p>
+            <p id="requiredContributionSupport" class="support-copy"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="calc-panel secondary-block" aria-labelledby="breakeven-heading">
+        <h2 id="breakeven-heading" class="panel-heading">Rendement d'équilibre</h2>
+        <div class="breakeven-card">
+          <p id="breakEvenValue" class="breakeven-value">–</p>
+          <p id="breakEvenSupport" class="support-copy"></p>
+        </div>
+      </section>
+
+      <section class="calc-panel secondary-block" aria-labelledby="continued-heading">
+        <h2 id="continued-heading" class="panel-heading">Et si la personne qui commence plus tôt continuait de cotiser?</h2>
+        <div class="continued-card">
+          <p id="continuedPortfolio" class="continued-value">–</p>
+          <p class="hero-label">Portefeuille final si les cotisations se poursuivent jusqu'à la retraite</p>
+          <dl>
+            <div class="metric-row">
+              <dt>Total cotisé</dt>
+              <dd id="continuedContributed">– $</dd>
+            </div>
+            <div class="metric-row">
+              <dt>Croissance des placements</dt>
+              <dd id="continuedGrowth">– $</dd>
+            </div>
+          </dl>
+          <p id="continuedSupport" class="support-copy"></p>
+        </div>
+      </section>
+
+      <section class="calc-panel" aria-labelledby="chart-heading">
+        <h2 id="chart-heading" class="panel-heading">Portefeuille dans le temps</h2>
+        <div class="chart-legend">
+          <span><i class="swatch swatch-early" aria-hidden="true"></i> Départ plus tôt</span>
+          <span><i class="swatch swatch-later" aria-hidden="true"></i> Départ plus tard</span>
+        </div>
+        <p id="chartFallback" class="sr-only" aria-live="polite"></p>
+        <div class="chart-wrap">
+          <canvas id="cowChart" role="img" aria-labelledby="chart-heading chartFallback"></canvas>
+        </div>
+      </section>
+    </div>
+
+    <section class="calc-panel detail-section" aria-labelledby="assumptions-heading">
+      <h2 id="assumptions-heading" class="panel-heading">Comment le calcul fonctionne</h2>
+      <p>Le rendement annuel saisi est un rendement annuel effectif. Il est converti en taux mensuel équivalent :</p>
+      <pre class="formula-box">r_m = (1 + r_a)^(1/12) − 1</pre>
+      <p>Les cotisations ont lieu à la fin de chaque mois. La valeur future d'une cotisation mensuelle constante P sur n mois est :</p>
+      <pre class="formula-box">VF = P × ((1 + r_m)^n − 1) / r_m
+Si r_m = 0 : VF = P × n</pre>
+      <p>Chaque personne verse une cotisation mensuelle choisie pendant une période définie, puis le solde se capitalise sans nouvelles cotisations jusqu'à la retraite. Les deux personnes peuvent utiliser des cotisations mensuelles différentes.</p>
+      <h3>Hypothèses</h3>
+      <ul class="assumptions-list">
+        <li>Les résultats sont en dollars nominaux.</li>
+        <li>L'inflation n'est pas incluse.</li>
+        <li>Les cotisations sont constantes et n'augmentent pas avec l'inflation.</li>
+        <li>Les cotisations ont lieu à la fin de chaque mois.</li>
+        <li>Le rendement annuel est saisi comme rendement annuel effectif et converti en taux mensuel équivalent. Il n'est pas simplement divisé par 12.</li>
+        <li>Les rendements sont supposés se capitaliser de façon régulière, à titre d'illustration.</li>
+        <li>Les impôts ne sont pas inclus.</li>
+        <li>Les frais de placement ne sont pas inclus.</li>
+        <li>Aucun retrait n'a lieu.</li>
+        <li>Les résultats sont des illustrations mathématiques, pas des prévisions.</li>
+      </ul>
+      <p class="help-text"><a href="/fr/calculators/cost-of-waiting-to-invest/methodology/">Page de méthodologie complète</a></p>
+    </section>
+
+    <aside class="article-calc-callout calc-article-callout" aria-labelledby="calc-article-callout-heading">
+  <h2 id="calc-article-callout-heading" class="article-calc-callout__heading">Vous voulez l'explication?</h2>
+  <p class="article-calc-callout__action">Lisez <a href="/fr/articles/investing-and-financial-literacy/why-start-investing-early/">Pourquoi commencer à investir tôt compte</a>.</p>
+</aside>
+
+      <section class="calc-panel detail-section" aria-labelledby="faq-heading">
+      <h2 id="faq-heading" class="panel-heading">FAQ</h2>
+      <details>
+        <summary>Pourquoi commencer à investir plus tôt a-t-il de l'importance?</summary>
+        <p>Les cotisations plus précoces ont plus d'années pour se capitaliser. La croissance peut elle-même générer de la croissance, de sorte que le temps se trouve dans l'exposant de la formule.</p>
+      </details>
+      <details>
+        <summary>Quelqu'un qui commence plus tard peut-il rattraper?</summary>
+        <p>Oui. Il peut falloir cotiser davantage, obtenir un rendement plus élevé, investir plus longtemps, ou combiner ces leviers.</p>
+      </details>
+      <details>
+        <summary>Commencer plus tôt produit-il toujours plus d'argent?</summary>
+        <p>Non. Le résultat dépend des rendements, des montants cotisés, des périodes de cotisation et de l'horizon. Ce calculateur rapporte le résultat réel selon les hypothèses saisies.</p>
+      </details>
+      <details>
+        <summary>Qu'est-ce que le rendement d'équilibre?</summary>
+        <p>C'est le rendement annuel effectif commun auquel les deux stratégies produisent la même valeur à la retraite, selon les calendriers de cotisation et les montants mensuels saisis.</p>
+      </details>
+      <details>
+        <summary>Ce calculateur tient-il compte de l'inflation?</summary>
+        <p>Non. Les résultats sont en dollars nominaux et les cotisations restent constantes.</p>
+      </details>
+      <details>
+        <summary>Quel rendement le calculateur suppose-t-il?</summary>
+        <p>Le rendement annuel effectif que vous saisissez. Le 8 % par défaut est une illustration, pas une prévision.</p>
+      </details>
+    </section>
+
+    <section class="card calc-related-bottom" aria-labelledby="related-heading">
+      <h2 id="related-heading" class="section-title">Calculateurs et articles connexes</h2>
+      <ul>
+        <li><a href="/fr/articles/investing-and-financial-literacy/why-start-investing-early/">Pourquoi commencer à investir tôt compte</a></li>
+        <li><a href="/fr/articles/investing-and-financial-literacy/compound-interest/">L'intérêt composé</a></li>
+        <li><a href="/fr/articles/investing-and-financial-literacy/what-is-investing/">Qu'est-ce qu'investir?</a></li>
+        <li><a href="/calculators/investment-simple/">Calculateur de placement simple</a></li>
+        <li><a href="/calculators/investment-calculator-inflation-adjusted/">Calculateur de placement ajusté à l'inflation</a></li>
+        <li><a href="/calculators/investment-return-to-reach-goal/">Rendement requis pour atteindre un objectif de placement</a></li>
+        <li><a href="/calculators/compound-multipliers/">Table des multiplicateurs d'intérêts composés</a></li>
+      </ul>
+    </section>
+
+    <div class="disclaimer">
+      <p><strong>Avis de non-responsabilité :</strong> L'ensemble du contenu de The Long Math — articles, textes, calculateurs, outils ou tout autre matériel — est fourni à des fins éducatives et d'information uniquement et ne constitue pas un conseil financier, fiscal, juridique ou en placement. Les résultats ou projections reposent sur des modèles simplifiés, des hypothèses et des données fournies par l'utilisateur et peuvent ne pas refléter la réalité. Il vous appartient d'évaluer l'exactitude et la pertinence des renseignements et de faire votre propre diligence raisonnable. Avant de prendre des décisions financières, consultez un professionnel qualifié.</p>
+    </div>
+  </main>
+
+  <div id="footerMount"></div>
+  <script src="/assets/js/calculator-share.7c41e5f4f7.js"></script>
+  <script type="module" src="/calculators/cost-of-waiting-to-invest/ui.js"></script>
+</body>
+</html>

@@ -24,7 +24,6 @@ const {
   articleDisplayName,
   CALCULATOR_PRIMARY_ARTICLE,
 } = require("./lib/article-calc-callout.js");
-
 const ROOT = path.resolve(__dirname, "..");
 const DIST = path.join(ROOT, "dist");
 const TEMPLATES_DIR = path.join(__dirname, "templates");
@@ -93,8 +92,16 @@ const ARTICLE_SLUGS = [
   "what-is-a-rrif",
   "what-is-investing",
   "what-is-the-stock-market",
+  "why-start-investing-early",
   "xeqt-and-chill-low-cost-etf-investing",
 ];
+
+/**
+ * Built locally for review, but not on hubs, sitemap, or search.
+ * Move into ARTICLE_SLUGS (and add hub cards) only when publishing.
+ */
+const UNPUBLISHED_ARTICLE_SLUGS = [];
+const BUILD_ARTICLE_SLUGS = ARTICLE_SLUGS.concat(UNPUBLISHED_ARTICLE_SLUGS);
 
 const ARTICLE_LANG_SLUGS = {
   "asset-location-canada": {
@@ -610,7 +617,7 @@ function build() {
     fs.writeFileSync(hubOut, nunjucks.render("pages/articles-hub.njk", hubCtx), "utf8");
     console.log("  " + hubOut);
 
-    for (const slug of ARTICLE_SLUGS) {
+    for (const slug of BUILD_ARTICLE_SLUGS) {
       const articleKey = kebabToCamel(slug);
       const enArt = dictEn.articles[articleKey];
       if (!enArt) {
@@ -708,6 +715,7 @@ function rewriteHtmlForFrStaticMirror(html) {
   );
   const hrefPairs = [
     ['href="/calculators/advisor-fee/', 'href="/fr/calculators/advisor-fee/'],
+    ['href="/calculators/cost-of-waiting-to-invest/', 'href="/fr/calculators/cost-of-waiting-to-invest/'],
     ['href="/articles/', 'href="/fr/articles/'],
     ['href="/about/', 'href="/fr/about/'],
     ['href="/essays/', 'href="/fr/essays/'],
@@ -741,6 +749,7 @@ function emitFrenchStaticMirrors() {
 function emitFrenchCalculatorStaticPages() {
   const rels = [
     path.join("fr", "calculators", "rrsp-deduction-timing"),
+    path.join("fr", "calculators", "cost-of-waiting-to-invest"),
   ];
   for (const rel of rels) {
     const src = path.join(ROOT, rel);
@@ -811,6 +820,8 @@ function syncFrenchStaticHtmlToSource() {
     path.join("fr", "calculators", "advisor-fee", "index.html"),
     path.join("fr", "calculators", "rrsp-deduction-timing", "index.html"),
     path.join("fr", "calculators", "rrsp-deduction-timing", "methodology", "index.html"),
+    path.join("fr", "calculators", "cost-of-waiting-to-invest", "index.html"),
+    path.join("fr", "calculators", "cost-of-waiting-to-invest", "methodology", "index.html"),
   ];
   for (const rel of files) {
     const src = path.join(DIST, rel);
@@ -886,7 +897,7 @@ function syncEnglishArticlesHtmlToSource() {
     fs.copyFileSync(hubSrc, path.join(destBase, "index.html"));
   }
 
-  for (const slug of ARTICLE_SLUGS) {
+  for (const slug of BUILD_ARTICLE_SLUGS) {
     const outputSlug = articleSlugForLang(slug, "en");
     const from = path.join(srcBase, outputSlug, "index.html");
     if (!fs.existsSync(from)) continue;
@@ -913,7 +924,7 @@ function syncFrenchArticlesHtmlToSource() {
     fs.copyFileSync(hubSrc, path.join(destBase, "index.html"));
   }
 
-  for (const slug of ARTICLE_SLUGS) {
+  for (const slug of BUILD_ARTICLE_SLUGS) {
     const outputSlug = articleSlugForLang(slug, "fr");
     const from = path.join(srcBase, outputSlug, "index.html");
     if (!fs.existsSync(from)) continue;

@@ -72,6 +72,7 @@ const CALCULATOR_PRIMARY_ARTICLE = {
   "active-vs-passive-break-even": "xeqt-and-chill-low-cost-etf-investing",
   "advisor-fee": "the-true-cost-of-financial-advisor-fees",
   "canada-income-tax": "capital-gains-vs-dividends-vs-interest-tax-canada",
+  "cost-of-waiting-to-invest": "why-start-investing-early",
   "future-buying-power": "inflation",
   "investment-calculator-inflation-adjusted": "real-returns-vs-nominal-returns",
   "investment-simple": "compound-interest",

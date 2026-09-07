@@ -51,6 +51,11 @@
       "desc": "Voyez comment l’argent croît dans le temps — en dollars nominaux ou en pouvoir d’achat réel après inflation.",
       "items": [
         {
+          "path": "/calculators/cost-of-waiting-to-invest/",
+          "title": "Calculateur du coût de retarder ses investissements",
+          "desc": "Voyez ce que vaut une avance en placement en comparant un arrêt anticipé des cotisations avec un départ plus tardif, y compris le rendement ou la cotisation mensuelle nécessaires pour rattraper."
+        },
+        {
           "path": "/calculators/investment-simple/",
           "title": "Calculateur de placement simple",
           "desc": "Estimations rapides de croissance composée avec cotisations récurrentes et ajustement d’inflation facultatif pour une première lecture."

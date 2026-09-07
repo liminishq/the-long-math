@@ -51,6 +51,11 @@
       "desc": "See how money grows over time — in nominal dollars or inflation-adjusted buying power.",
       "items": [
         {
+          "path": "/calculators/cost-of-waiting-to-invest/",
+          "title": "Cost of Waiting to Invest Calculator",
+          "desc": "See what an investing head start is worth by comparing an early-stop investor with a later-start investor, including the return or monthly contribution needed to catch up."
+        },
+        {
           "path": "/calculators/investment-simple/",
           "title": "Simple Investment Calculator",
           "desc": "Quick compound growth estimates with recurring contributions and optional inflation adjustment for a first-pass view."

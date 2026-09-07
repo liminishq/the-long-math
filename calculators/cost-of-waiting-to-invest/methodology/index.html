@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspect the Arithmetic: Cost of Waiting to Invest Calculator | The Long Math</title>
+  <meta name="description" content="Inspect the formulas, assumptions, and solvers behind the Cost of Waiting to Invest Calculator." />
+  <link rel="canonical" href="https://www.thelongmath.com/calculators/cost-of-waiting-to-invest/methodology/" />
+  <link rel="alternate" hreflang="en" href="https://www.thelongmath.com/calculators/cost-of-waiting-to-invest/methodology/" />
+  <link rel="alternate" hreflang="fr" href="https://www.thelongmath.com/fr/calculators/cost-of-waiting-to-invest/methodology/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.thelongmath.com/calculators/cost-of-waiting-to-invest/methodology/" />
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="/calculators/cost-of-waiting-to-invest/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main class="wrap">
+    <header class="cow-hero">
+      <p class="hero-kicker">Inspect the arithmetic</p>
+      <h1>Cost of Waiting to Invest Calculator</h1>
+      <p class="lead">This page documents the formulas, solvers, and assumptions used to compare an early-stop investor with a later-start investor.</p>
+      <p class="lead"><strong>No opinions. No hidden assumptions. Just arithmetic.</strong></p>
+      <p><a class="inspect-arithmetic-btn" href="/calculators/cost-of-waiting-to-invest/">Back to Calculator</a></p>
+    </header>
+
+    <article class="calc-panel methodology-content">
+      <section>
+        <h2>1. What the calculator answers</h2>
+        <p>The calculator compares two contribution calendars that share the same effective annual return and the same retirement age. Each investor can use a different monthly contribution:</p>
+        <ul>
+          <li><strong>Early investor:</strong> contributes from a start age to a stop age, then lets the balance compound with no further contributions.</li>
+          <li><strong>Later investor:</strong> starts later and contributes from a start age to a stop age, then lets the balance compound with no further contributions.</li>
+        </ul>
+        <p>It then solves two catch-up questions for the later investor, finds any shared break-even return, and shows the early investor's continued-contribution scenario.</p>
+      </section>
+
+      <section>
+        <h2>2. Rate convention</h2>
+        <p>The user-entered annual return <em>r<sub>a</sub></em> is an effective annual return. The equivalent monthly rate is:</p>
+        <pre class="formula-box">r_m = (1 + r_a)^(1/12) − 1</pre>
+        <p>The annual return is not divided by 12. Any effective annual return must be greater than −100%.</p>
+      </section>
+
+      <section>
+        <h2>3. Ordinary annuity</h2>
+        <p>Contributions occur at the end of each month. For a constant monthly contribution <em>P</em> over <em>n</em> months:</p>
+        <pre class="formula-box">FV = P × ((1 + r_m)^n − 1) / r_m
+If r_m = 0: FV = P × n</pre>
+        <p>The engine uses <code>expm1</code> and <code>log1p</code> for numerical stability near zero. Internals keep full precision; the page rounds only for display.</p>
+      </section>
+
+      <section>
+        <h2>4. Early and later investors</h2>
+        <pre class="formula-box">n_E = (early stop age − early start age) × 12
+n_C = (retirement age − early stop age) × 12
+n_L = (later stop age − later start age) × 12
+n_LC = (retirement age − later stop age) × 12
+
+FV_E,stop = ordinary annuity(P_E, r_m, n_E)
+FV_E = FV_E,stop × (1 + r_m)^n_C
+FV_L,stop = ordinary annuity(P_L, r_m, n_L)
+FV_L = FV_L,stop × (1 + r_m)^n_LC
+
+C_E = P_E × n_E
+C_L = P_L × n_L
+Investment growth = ending value − total contributed</pre>
+      </section>
+
+      <section>
+        <h2>5. Catch-up solvers</h2>
+        <p><strong>Required return:</strong> hold the later investor's contribution window, retirement age, and later monthly contribution <em>P<sub>L</sub></em> fixed. Solve <em>FV<sub>L</sub>(r) = FV<sub>E</sub></em> for the later investor's effective annual return. The solver is a monotonic bisection on <em>r &gt; −100%</em> and is allowed to return a negative rate.</p>
+        <p><strong>Required contribution:</strong> hold ages and the shared return fixed. Because ending value is linear in the later monthly contribution:</p>
+        <pre class="formula-box">P*_L = FV_E / (annuity factor(r_m, n_L) × (1 + r_m)^n_LC)</pre>
+      </section>
+
+      <section>
+        <h2>6. Break-even return</h2>
+        <p>The break-even return is the shared effective annual return at which <em>FV<sub>E</sub>(r) = FV<sub>L</sub>(r)</em> given each investor's contribution calendar and monthly amount. The engine scans a useful range (approximately −50% to +300%) for a sign change, then bisects.</p>
+        <p>If one cash-flow pattern strictly contains the other, or the two calendars are identical, there may be no meaningful finite root. The calculator reports that instead of inventing a number.</p>
+      </section>
+
+      <section>
+        <h2>7. Continued contributions</h2>
+        <pre class="formula-box">n_EC = (retirement age − early start age) × 12
+FV_EC = ordinary annuity(P_E, r_m, n_EC)</pre>
+        <p>This is a secondary illustration only. The primary chart shows the two core investors and uses the same projection functions as the headline results.</p>
+      </section>
+
+      <section>
+        <h2>8. Engine location</h2>
+        <p>All financial math lives in:</p>
+        <pre class="formula-box">calculators/cost-of-waiting-to-invest/engine.js</pre>
+        <p>The page UI reads engine results. It does not re-implement the formulas.</p>
+      </section>
+
+      <section>
+        <h2>9. Assumptions</h2>
+        <ul>
+          <li>Nominal dollars; inflation is not included.</li>
+          <li>Constant contributions; no indexation.</li>
+          <li>End-of-month contributions; no starting lump sum.</li>
+          <li>No taxes, fees, withdrawals, or account-type rules.</li>
+          <li>Results are illustrations, not forecasts.</li>
+        </ul>
+      </section>
+    </article>
+  </main>
+
+  <div id="footerMount"></div>
+</body>
+</html>

@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cost of Waiting to Invest Calculator | The Long Math</title>
+  <meta name="description" content="See what a 10-year investing head start is worth. Compare early and late investors and calculate the return or monthly contribution needed to catch up." />
+  <link rel="canonical" href="https://www.thelongmath.com/calculators/cost-of-waiting-to-invest/" />
+  <link rel="alternate" hreflang="en" href="https://www.thelongmath.com/calculators/cost-of-waiting-to-invest/" />
+  <link rel="alternate" hreflang="fr" href="https://www.thelongmath.com/fr/calculators/cost-of-waiting-to-invest/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.thelongmath.com/calculators/cost-of-waiting-to-invest/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Cost of Waiting to Invest Calculator | The Long Math" />
+  <meta property="og:description" content="See what an investing head start is worth, and what a later investor would need to do to catch up." />
+  <meta property="og:url" content="https://www.thelongmath.com/calculators/cost-of-waiting-to-invest/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Cost of Waiting to Invest Calculator" />
+  <meta name="twitter:description" content="Compare early and late investors and calculate the return or monthly contribution needed to catch up." />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="/assets/css/calc-mobile.css" />
+  <link rel="stylesheet" href="/calculators/cost-of-waiting-to-invest/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Cost of Waiting to Invest Calculator",
+    "url": "https://www.thelongmath.com/calculators/cost-of-waiting-to-invest/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "description": "Compare two investors with independent contribution windows, then calculate the return or monthly contribution needed to catch up."
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.thelongmath.com/" },
+      { "@type": "ListItem", "position": 2, "name": "Calculators", "item": "https://www.thelongmath.com/calculators/" },
+      { "@type": "ListItem", "position": 3, "name": "Cost of Waiting to Invest", "item": "https://www.thelongmath.com/calculators/cost-of-waiting-to-invest/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Why does starting to invest earlier matter?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Earlier contributions have more years to compound. Growth can itself generate additional growth, so time sits in the exponent of the compounding formula."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can someone who starts investing later catch up?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. They may need to contribute more, earn a higher return, invest longer, or use some combination of these."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does starting earlier always produce more money?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. The result depends on returns, contribution amounts, contribution periods, and time horizons. This calculator reports the actual outcome under the assumptions you enter."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the break-even return?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "It is the shared effective annual return at which the two strategies produce the same retirement value, given the contribution calendars and monthly amounts entered. The search is bounded at approximately −50% to +300%."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does this calculator account for inflation?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Results are nominal dollars and contributions remain constant."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What return does the calculator assume?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Whatever effective annual return you enter. The default 8% is an illustration, not a forecast."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <div id="site-header"></div>
+
+  <main class="wrap" data-tlm-decimal-inputs>
+    <header class="cow-hero">
+      <nav aria-label="Breadcrumb">
+        <ol class="cow-breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li><a href="/calculators/">Calculators</a></li>
+          <li aria-current="page">Cost of Waiting to Invest</li>
+        </ol>
+      </nav>
+      <p class="hero-kicker">Investing time-value calculator</p>
+      <h1>Cost of Waiting to Invest Calculator</h1>
+      <p class="lead">See what an investing head start is worth, and what a later investor would need to do to catch up.</p>
+      <p class="lead">Compare someone who starts investing earlier with someone who starts later. Each investor has a start age and a contribution-end age; both balances then compound until the same retirement age.</p>
+      <p class="lead">In compound growth, time sits in the exponent. Giving money more years to compound can have an outsized effect on the final result.</p>
+      <p class="lead"><strong>No opinions. No hidden assumptions. Just arithmetic.</strong></p>
+      <div class="hero-actions">
+        <a class="article-cta-btn" href="/articles/investing-and-financial-literacy/why-start-investing-early/">
+          <span class="article-cta-btn__kicker">Companion article</span>
+          <span class="article-cta-btn__label">Read the starting-early article</span>
+        </a>
+        <a class="inspect-arithmetic-btn" href="/calculators/cost-of-waiting-to-invest/methodology/">Inspect the Arithmetic</a>
+      </div>
+    </header>
+
+    <section class="calc-panel" aria-labelledby="inputs-heading">
+      <h2 id="inputs-heading" class="panel-heading">Inputs</h2>
+      <div class="input-groups">
+        <div class="input-group">
+          <h3 class="input-group-title">Early investor</h3>
+          <div class="field">
+            <label for="earlyStartAge">Starts investing at age</label>
+            <input id="earlyStartAge" type="number" inputmode="numeric" step="1" data-integer="true" value="25" />
+          </div>
+          <div class="field">
+            <label for="earlyStopAge">Contributes until age</label>
+            <input id="earlyStopAge" type="number" inputmode="numeric" step="1" data-integer="true" value="35" />
+            <p class="help-text">Then stops contributing and lets the balance compound until retirement.</p>
+          </div>
+          <div class="field">
+            <label for="earlyMonthlyContribution">Monthly contribution</label>
+            <input id="earlyMonthlyContribution" type="text" inputmode="decimal" value="400" />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <h3 class="input-group-title">Later investor</h3>
+          <div class="field">
+            <label for="laterStartAge">Starts investing at age</label>
+            <input id="laterStartAge" type="number" inputmode="numeric" step="1" data-integer="true" value="35" />
+          </div>
+          <div class="field">
+            <label for="laterStopAge">Contributes until age</label>
+            <input id="laterStopAge" type="number" inputmode="numeric" step="1" data-integer="true" value="65" />
+            <p class="help-text">Then stops contributing and lets the balance compound until retirement.</p>
+          </div>
+          <div class="field">
+            <label for="laterMonthlyContribution">Monthly contribution</label>
+            <input id="laterMonthlyContribution" type="text" inputmode="decimal" value="400" readonly aria-readonly="true" aria-describedby="laterMatchHelp" />
+          </div>
+          <div class="field toggle-field">
+            <div class="toggle-row">
+              <input id="laterMatchEarlyContribution" type="checkbox" checked />
+              <label for="laterMatchEarlyContribution">Same monthly contribution as the early investor</label>
+            </div>
+            <p id="laterMatchHelp" class="help-text">Uncheck to enter a different monthly amount for the later investor.</p>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <h3 class="input-group-title">Shared assumptions</h3>
+          <div class="field">
+            <label for="retirementAge">Retirement age</label>
+            <input id="retirementAge" type="number" inputmode="numeric" step="1" data-integer="true" value="65" />
+          </div>
+          <div class="field">
+            <label for="annualReturn">Expected annual return</label>
+            <div class="inline">
+              <input id="annualReturn" type="text" inputmode="decimal" value="8" />
+              <span class="unit">%</span>
+            </div>
+            <p class="help-text">Entered as an effective annual return and applied to both investors in the main comparison. Zero and negative values are allowed.</p>
+          </div>
+        </div>
+      </div>
+      <div id="validationBox" class="validation-box" hidden></div>
+    </section>
+
+    <div id="resultsStack" class="results-stack">
+      <section class="calc-panel" aria-labelledby="comparison-heading">
+        <h2 id="comparison-heading" class="panel-heading">Your comparison</h2>
+        <div class="compare-grid">
+          <article class="investor-card" aria-labelledby="early-card-heading">
+            <h3 id="early-card-heading">Started earlier</h3>
+            <p id="earlyPortfolio" class="hero-metric">$–</p>
+            <p class="hero-label">Portfolio at retirement</p>
+            <dl>
+              <div class="metric-row">
+                <dt>Total contributed</dt>
+                <dd id="earlyContributed">$–</dd>
+              </div>
+              <div class="metric-row">
+                <dt>Investment growth</dt>
+                <dd id="earlyGrowth">$–</dd>
+              </div>
+              <div class="metric-row">
+                <dt>Time contributing</dt>
+                <dd id="earlyContributing">–</dd>
+              </div>
+              <div class="metric-row">
+                <dt>Time compounding after contributions stopped</dt>
+                <dd id="earlyCoast">–</dd>
+              </div>
+            </dl>
+          </article>
+
+          <article class="investor-card" aria-labelledby="later-card-heading">
+            <h3 id="later-card-heading">Started later</h3>
+            <p id="laterPortfolio" class="hero-metric">$–</p>
+            <p class="hero-label">Portfolio at retirement</p>
+            <dl>
+              <div class="metric-row">
+                <dt>Total contributed</dt>
+                <dd id="laterContributed">$–</dd>
+              </div>
+              <div class="metric-row">
+                <dt>Investment growth</dt>
+                <dd id="laterGrowth">$–</dd>
+              </div>
+              <div class="metric-row">
+                <dt>Time contributing</dt>
+                <dd id="laterContributing">–</dd>
+              </div>
+              <div class="metric-row">
+                <dt>Time compounding after contributions stopped</dt>
+                <dd id="laterCoast">–</dd>
+              </div>
+            </dl>
+          </article>
+        </div>
+        <p id="comparisonStatement" class="comparison-statement" aria-live="polite"></p>
+      </section>
+
+      <section class="result-share-block" aria-labelledby="share-heading">
+        <h3 id="share-heading" class="result-share-title">Share scenario</h3>
+        <p class="result-share-copy">Snapshot this comparison as a shareable image.</p>
+        <p class="result-share-helper">Includes a restorable link so these inputs reload in the calculator.</p>
+        <div class="result-share-actions">
+          <button type="button" id="share_result_btn" class="result-share-btn-primary">Share scenario</button>
+          <button type="button" id="download_result_btn">Save this calculation</button>
+          <button type="button" id="copy_result_link_btn">Copy shareable link</button>
+        </div>
+        <p class="result-share-status" id="result_share_status" aria-live="polite"></p>
+      </section>
+
+      <section class="calc-panel secondary-block" aria-labelledby="catchup-heading">
+        <h2 id="catchup-heading" class="panel-heading">What would the later investor need to catch up?</h2>
+        <p id="catchupNote" class="support-copy" hidden></p>
+        <div class="catchup-grid">
+          <div class="catchup-card">
+            <h3>Required return</h3>
+            <p id="requiredReturn" class="catchup-value">–</p>
+            <p id="requiredReturnSupport" class="support-copy"></p>
+          </div>
+          <div class="catchup-card">
+            <h3>Required monthly contribution</h3>
+            <p id="requiredContribution" class="catchup-value">–</p>
+            <p id="requiredContributionSupport" class="support-copy"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="calc-panel secondary-block" aria-labelledby="breakeven-heading">
+        <h2 id="breakeven-heading" class="panel-heading">Break-even return</h2>
+        <div class="breakeven-card">
+          <p id="breakEvenValue" class="breakeven-value">–</p>
+          <p id="breakEvenSupport" class="support-copy"></p>
+        </div>
+      </section>
+
+      <section class="calc-panel secondary-block" aria-labelledby="continued-heading">
+        <h2 id="continued-heading" class="panel-heading">What if the early investor kept contributing?</h2>
+        <div class="continued-card">
+          <p id="continuedPortfolio" class="continued-value">–</p>
+          <p class="hero-label">Ending portfolio if contributions continue to retirement</p>
+          <dl>
+            <div class="metric-row">
+              <dt>Total contributed</dt>
+              <dd id="continuedContributed">$–</dd>
+            </div>
+            <div class="metric-row">
+              <dt>Investment growth</dt>
+              <dd id="continuedGrowth">$–</dd>
+            </div>
+          </dl>
+          <p id="continuedSupport" class="support-copy"></p>
+        </div>
+      </section>
+
+      <section class="calc-panel" aria-labelledby="chart-heading">
+        <h2 id="chart-heading" class="panel-heading">Portfolio over time</h2>
+        <div class="chart-legend">
+          <span><i class="swatch swatch-early" aria-hidden="true"></i> Started earlier</span>
+          <span><i class="swatch swatch-later" aria-hidden="true"></i> Started later</span>
+        </div>
+        <p id="chartFallback" class="sr-only" aria-live="polite"></p>
+        <div class="chart-wrap">
+          <canvas id="cowChart" role="img" aria-labelledby="chart-heading chartFallback"></canvas>
+        </div>
+      </section>
+    </div>
+
+    <section class="calc-panel detail-section" aria-labelledby="assumptions-heading">
+      <h2 id="assumptions-heading" class="panel-heading">How the calculation works</h2>
+      <p>The user-entered annual return is an effective annual return. It is converted to an equivalent monthly rate:</p>
+      <pre class="formula-box">r_m = (1 + r_a)^(1/12) − 1</pre>
+      <p>Contributions occur at the end of each month. The future value of a constant monthly contribution P over n months is:</p>
+      <pre class="formula-box">FV = P × ((1 + r_m)^n − 1) / r_m
+If r_m = 0: FV = P × n</pre>
+      <p>Each investor contributes a chosen monthly amount for a defined period, then the existing balance compounds with no further contributions until retirement. The two investors can use different monthly contributions.</p>
+      <h3>Assumptions</h3>
+      <ul class="assumptions-list">
+        <li>Results are in nominal dollars.</li>
+        <li>Inflation is not included.</li>
+        <li>Contributions are constant and do not increase with inflation.</li>
+        <li>Contributions occur at the end of each month.</li>
+        <li>The annual return is entered as an effective annual return and converted to an equivalent monthly rate. It is not simply divided by 12.</li>
+        <li>Returns are assumed to compound smoothly for illustration.</li>
+        <li>Taxes are not included.</li>
+        <li>Investment fees are not included.</li>
+        <li>No withdrawals occur.</li>
+        <li>Results are mathematical illustrations, not forecasts.</li>
+      </ul>
+      <p class="help-text"><a href="/calculators/cost-of-waiting-to-invest/methodology/">Full methodology page</a></p>
+    </section>
+
+    <aside class="article-calc-callout calc-article-callout" aria-labelledby="calc-article-callout-heading">
+  <h2 id="calc-article-callout-heading" class="article-calc-callout__heading">Want the walkthrough?</h2>
+  <p class="article-calc-callout__action">Read <a href="/articles/investing-and-financial-literacy/why-start-investing-early/">Why Starting to Invest Early Matters</a>.</p>
+</aside>
+
+      <section class="calc-panel detail-section" aria-labelledby="faq-heading">
+      <h2 id="faq-heading" class="panel-heading">FAQ</h2>
+      <details>
+        <summary>Why does starting to invest earlier matter?</summary>
+        <p>Earlier contributions have more years to compound. Growth can itself generate additional growth, so time sits in the exponent of the compounding formula.</p>
+      </details>
+      <details>
+        <summary>Can someone who starts investing later catch up?</summary>
+        <p>Yes. They may need to contribute more, earn a higher return, invest longer, or use some combination of these.</p>
+      </details>
+      <details>
+        <summary>Does starting earlier always produce more money?</summary>
+        <p>No. The result depends on returns, contribution amounts, contribution periods, and time horizons. This calculator reports the actual outcome under the assumptions you enter.</p>
+      </details>
+      <details>
+        <summary>What is the break-even return?</summary>
+        <p>It is the shared effective annual return at which the two strategies produce the same retirement value, given the contribution calendars and monthly amounts entered. The search is bounded at approximately −50% to +300%.</p>
+      </details>
+      <details>
+        <summary>Does this calculator account for inflation?</summary>
+        <p>No. Results are nominal dollars and contributions remain constant.</p>
+      </details>
+      <details>
+        <summary>What return does the calculator assume?</summary>
+        <p>Whatever effective annual return you enter. The default 8% is an illustration, not a forecast.</p>
+      </details>
+    </section>
+
+    <section class="card calc-related-bottom" aria-labelledby="related-heading">
+      <h2 id="related-heading" class="section-title">Related calculators and articles</h2>
+      <ul>
+        <li><a href="/articles/investing-and-financial-literacy/why-start-investing-early/">Why Starting to Invest Early Matters</a></li>
+        <li><a href="/articles/investing-and-financial-literacy/compound-interest/">Compound interest</a></li>
+        <li><a href="/articles/investing-and-financial-literacy/what-is-investing/">What is investing?</a></li>
+        <li><a href="/calculators/investment-simple/">Simple investment calculator</a></li>
+        <li><a href="/calculators/investment-calculator-inflation-adjusted/">Inflation-adjusted investment calculator</a></li>
+        <li><a href="/calculators/investment-return-to-reach-goal/">Investment return required to reach a goal</a></li>
+        <li><a href="/calculators/compound-multipliers/">Compound interest multipliers table</a></li>
+      </ul>
+    </section>
+
+    <div class="disclaimer">
+      <p><strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.</p>
+    </div>
+  </main>
+
+  <div id="footerMount"></div>
+  <script src="/assets/js/calculator-share.js"></script>
+  <script type="module" src="/calculators/cost-of-waiting-to-invest/ui.js"></script>
+</body>
+</html>

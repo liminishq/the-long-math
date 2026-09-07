@@ -55,6 +55,13 @@ function localizeRootHref(code, pathPrefix, rel) {
   if (path.startsWith("/calculators/advisor-fee/")) {
     return path + suffix;
   }
+  if (path === "/calculators/cost-of-waiting-to-invest" || path === "/calculators/cost-of-waiting-to-invest/") {
+    if (!suffix) return "/fr/calculators/cost-of-waiting-to-invest/";
+    return `/fr/calculators/cost-of-waiting-to-invest${suffix}`;
+  }
+  if (path.startsWith("/calculators/cost-of-waiting-to-invest/")) {
+    return "/fr" + path + suffix;
+  }
   if (path.startsWith("/calculators/")) {
     return path + suffix;
   }
@@ -112,6 +119,10 @@ function fixPrefixedFrenchInternalLinks(html) {
     if (first === "advisor-fee" && segments.length === 1) {
       if (!suf) return 'href="/fr/calculators/advisor-fee/"';
       return `href="/fr/calculators/advisor-fee${suf}"`;
+    }
+    if (first === "cost-of-waiting-to-invest") {
+      const normalized = slugPath.endsWith("/") ? slugPath : `${slugPath}/`;
+      return `href="/fr/calculators/${normalized}${suf}"`;
     }
 
     return `href="/calculators/${slugPath}${suf}"`;

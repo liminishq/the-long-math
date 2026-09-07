@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspecter l'arithmétique : Calculateur du coût de retarder ses investissements | The Long Math</title>
+  <meta name="description" content="Inspectez les formules, hypothèses et solveurs derrière le calculateur du coût de retarder ses investissements." />
+  <link rel="canonical" href="https://www.thelongmath.com/fr/calculators/cost-of-waiting-to-invest/methodology/" />
+  <link rel="alternate" hreflang="en" href="https://www.thelongmath.com/calculators/cost-of-waiting-to-invest/methodology/" />
+  <link rel="alternate" hreflang="fr" href="https://www.thelongmath.com/fr/calculators/cost-of-waiting-to-invest/methodology/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.thelongmath.com/calculators/cost-of-waiting-to-invest/methodology/" />
+  <script src="/assets/js/theme-init.40fc21015f.js"></script>
+  <script src="/assets/js/i18n.e9994b5f88.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.4bb62c4d1c.css" />
+  <link rel="stylesheet" href="/calculators/cost-of-waiting-to-invest/styles.css" />
+  <script defer src="/assets/js/site.9a3c008ae4.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main class="wrap">
+    <header class="cow-hero">
+      <p class="hero-kicker">Inspecter l'arithmétique</p>
+      <h1>Calculateur du coût de retarder ses investissements</h1>
+      <p class="lead">Cette page documente les formules, solveurs et hypothèses utilisés pour comparer un investisseur qui cesse de cotiser avec un investisseur qui commence plus tard.</p>
+      <p class="lead"><strong>Pas d'opinions. Pas d'hypothèses cachées. Juste de l'arithmétique.</strong></p>
+      <p><a class="inspect-arithmetic-btn" href="/fr/calculators/cost-of-waiting-to-invest/">Retour au calculateur</a></p>
+    </header>
+
+    <article class="calc-panel methodology-content">
+      <section>
+        <h2>1. Ce que le calculateur répond</h2>
+        <p>Le calculateur compare deux calendriers de cotisation qui partagent le même rendement annuel effectif et le même âge de retraite. Chaque personne peut utiliser une cotisation mensuelle différente :</p>
+        <ul>
+          <li><strong>Personne qui commence plus tôt :</strong> cotise d'un âge de début à un âge d'arrêt, puis laisse le solde se capitaliser sans nouvelles cotisations.</li>
+          <li><strong>Personne qui commence plus tard :</strong> commence plus tard et cotise d'un âge de début à un âge d'arrêt, puis laisse le solde se capitaliser sans nouvelles cotisations.</li>
+        </ul>
+        <p>Il résout ensuite deux questions de rattrapage, cherche un rendement d'équilibre commun et montre le scénario où la personne qui commence plus tôt continue de cotiser.</p>
+      </section>
+
+      <section>
+        <h2>2. Convention de taux</h2>
+        <p>Le rendement annuel saisi <em>r<sub>a</sub></em> est un rendement annuel effectif. Le taux mensuel équivalent est :</p>
+        <pre class="formula-box">r_m = (1 + r_a)^(1/12) − 1</pre>
+        <p>Le rendement annuel n'est pas divisé par 12. Tout rendement annuel effectif doit être supérieur à −100 %.</p>
+      </section>
+
+      <section>
+        <h2>3. Annuité ordinaire</h2>
+        <p>Les cotisations ont lieu à la fin de chaque mois. Pour une cotisation mensuelle constante <em>P</em> sur <em>n</em> mois :</p>
+        <pre class="formula-box">VF = P × ((1 + r_m)^n − 1) / r_m
+Si r_m = 0 : VF = P × n</pre>
+        <p>Le moteur utilise <code>expm1</code> et <code>log1p</code> pour la stabilité numérique près de zéro. Les calculs internes gardent toute leur précision; la page n'arrondit qu'à l'affichage.</p>
+      </section>
+
+      <section>
+        <h2>4. Les deux investisseurs</h2>
+        <pre class="formula-box">n_E = (âge d'arrêt plus tôt − âge de début plus tôt) × 12
+n_C = (âge de retraite − âge d'arrêt plus tôt) × 12
+n_L = (âge d'arrêt plus tard − âge de début plus tard) × 12
+n_LC = (âge de retraite − âge d'arrêt plus tard) × 12
+
+VF_E,arrêt = annuité ordinaire(P_E, r_m, n_E)
+VF_E = VF_E,arrêt × (1 + r_m)^n_C
+VF_L,arrêt = annuité ordinaire(P_L, r_m, n_L)
+VF_L = VF_L,arrêt × (1 + r_m)^n_LC</pre>
+      </section>
+
+      <section>
+        <h2>5. Solveurs de rattrapage</h2>
+        <p><strong>Rendement requis :</strong> on fixe la période de cotisation de la personne qui commence plus tard, l'âge de retraite et sa cotisation mensuelle <em>P<sub>L</sub></em>. On résout <em>VF<sub>L</sub>(r) = VF<sub>E</sub></em>. Le solveur est une bissection monotone pour <em>r &gt; −100 %</em> et peut renvoyer un taux négatif.</p>
+        <p><strong>Cotisation requise :</strong> on fixe les âges et le rendement commun. La valeur finale est linéaire par rapport à la cotisation mensuelle, donc la formule s'inverse directement.</p>
+      </section>
+
+      <section>
+        <h2>6. Rendement d'équilibre</h2>
+        <p>Le rendement d'équilibre est le rendement annuel effectif commun auquel <em>VF<sub>E</sub>(r) = VF<sub>L</sub>(r)</em> selon le calendrier et la cotisation mensuelle de chaque personne. Le moteur parcourt une plage utile (environ −50 % à +300 %) à la recherche d'un changement de signe, puis bissecte.</p>
+        <p>Si un calendrier contient strictement l'autre, ou si les deux calendriers sont identiques, il peut n'exister aucune racine finie utile. Le calculateur le dit plutôt que d'inventer un chiffre.</p>
+      </section>
+
+      <section>
+        <h2>7. Cotisations poursuivies</h2>
+        <p>Si la personne qui commence plus tôt continue de cotiser jusqu'à la retraite, le calculateur utilise la même annuité ordinaire sur toute la période. C'est un résultat secondaire. Le graphique principal n'affiche que les deux investisseurs du scénario de base et utilise les mêmes fonctions de projection que les résultats principaux.</p>
+      </section>
+
+      <section>
+        <h2>8. Emplacement du moteur</h2>
+        <pre class="formula-box">calculators/cost-of-waiting-to-invest/engine.js</pre>
+        <p>L'interface lit les résultats du moteur. Elle ne reproduit pas les formules.</p>
+      </section>
+
+      <section>
+        <h2>9. Hypothèses</h2>
+        <ul>
+          <li>Dollars nominaux; l'inflation n'est pas incluse.</li>
+          <li>Cotisations constantes; pas d'indexation.</li>
+          <li>Cotisations de fin de mois; pas de montant forfaitaire initial.</li>
+          <li>Ni impôts, ni frais, ni retraits, ni règles de comptes enregistrés.</li>
+          <li>Les résultats sont des illustrations, pas des prévisions.</li>
+        </ul>
+      </section>
+    </article>
+  </main>
+
+  <div id="footerMount"></div>
+</body>
+</html>

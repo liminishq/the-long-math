@@ -46,6 +46,7 @@ const SLUGS = [
   "what-is-a-rrif",
   "what-is-investing",
   "what-is-the-stock-market",
+  "why-start-investing-early",
   "xeqt-and-chill-low-cost-etf-investing",
 ];
 
