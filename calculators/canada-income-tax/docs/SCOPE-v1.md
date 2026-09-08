@@ -18,6 +18,7 @@ For in-scope inputs, unrounded arithmetic matches **hand-traced CRA federal and 
 | Ontario extras | Surtax, Ontario Tax Reduction (basic amount), Ontario Health Premium |
 | Provincial income-driven reductions | B.C. tax reduction; NL/NB/NS low-income tax reduction (**single-filer** path only) |
 | Payroll | CRA annual maximums; employment base CPP → line 30800 credit; first additional + CPP2 → line 22215 deduction; EI → credit only. Outside Quebec, self-employed CPP pays both halves and splits the base/enhanced amounts between lines 31000 and 22200. |
+| Income-tested benefits (separate layer) | Federal CGEB/GST/HST credit, basic CWB (standard Schedule 6 provinces), and CCB. Uses published parameters when available; otherwise **projected current-rules** (latest published params held constant — no invented indexation). Do **not** change `totalIncomeTax`. |
 
 ## Out of scope (v1) — document on methodology and UI
 
@@ -27,6 +28,7 @@ For in-scope inputs, unrounded arithmetic matches **hand-traced CRA federal and 
 - Working beneficiaries, CPT20/CPT30, partial-year Schedule 8 proration
 - AMT, most secondary credits (caregiver, medical, tuition, etc.)
 - OAS clawback, age amount, and pension income amount unless the caller supplies `oasBenefits`, `age`, and/or `eligiblePensionIncome` (optional retirement path used by the RRSP Withdrawal Calculator)
+- CWB for QC/AB/NU; CWB disability supplement; child disability benefit; shared-custody CCB splits; provincial/territorial income-tested benefits
 - Ontario Tax Reduction dependant amounts (engine models the basic personal amount only)
 - Spouse / eligible-dependant / child add-ons on Atlantic low-income tax reductions
 - Alberta supplemental tax credit

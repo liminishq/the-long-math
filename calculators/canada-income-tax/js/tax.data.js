@@ -182,6 +182,51 @@ function normalizeAndValidateProvinces(raw) {
   return out;
 }
 
+function validateBenefits(data, taxYear) {
+  assert(data && typeof data === "object", "benefits.json: must be an object");
+  assert(Number(data.year) === Number(taxYear), `benefits.json: year ${data.year} does not match tax year ${taxYear}`);
+  assert(data.gstHstCredit && typeof data.gstHstCredit === "object", "benefits.json: missing gstHstCredit");
+  assert(data.canadaWorkersBenefit && typeof data.canadaWorkersBenefit === "object", "benefits.json: missing canadaWorkersBenefit");
+  assert(data.canadaChildBenefit && typeof data.canadaChildBenefit === "object", "benefits.json: missing canadaChildBenefit");
+
+  const checkAvailableProgram = (prog, label, requiredKeys) => {
+    if (prog.available === false) return;
+    for (const key of requiredKeys) {
+      assert(isFiniteNumber(prog[key]) && prog[key] >= 0, `benefits.json: ${label}.${key} must be a non-negative number`);
+    }
+  };
+
+  checkAvailableProgram(data.gstHstCredit, "gstHstCredit", [
+    "adultAmount",
+    "childAmount",
+    "singleSupplementMax",
+    "singleSupplementPhaseInThreshold",
+    "singleSupplementPhaseInRate",
+    "phaseOutThreshold",
+    "phaseOutRate",
+  ]);
+  checkAvailableProgram(data.canadaWorkersBenefit, "canadaWorkersBenefit", [
+    "phaseInBase",
+    "phaseInRate",
+    "maxBasicSingle",
+    "maxBasicFamily",
+    "phaseOutStartSingle",
+    "phaseOutStartFamily",
+    "phaseOutRate",
+    "secondaryEarnerExemptionMax",
+  ]);
+  if (data.canadaChildBenefit.available !== false) {
+    assert(isFiniteNumber(data.canadaChildBenefit.maxUnder6) && data.canadaChildBenefit.maxUnder6 >= 0,
+      "benefits.json: canadaChildBenefit.maxUnder6 must be >= 0");
+    assert(isFiniteNumber(data.canadaChildBenefit.maxAge6to17) && data.canadaChildBenefit.maxAge6to17 >= 0,
+      "benefits.json: canadaChildBenefit.maxAge6to17 must be >= 0");
+    assert(isFiniteNumber(data.canadaChildBenefit.phaseOutStart) && data.canadaChildBenefit.phaseOutStart >= 0,
+      "benefits.json: canadaChildBenefit.phaseOutStart must be >= 0");
+    assert(data.canadaChildBenefit.phase1RatesByChildren && typeof data.canadaChildBenefit.phase1RatesByChildren === "object",
+      "benefits.json: canadaChildBenefit.phase1RatesByChildren required");
+  }
+}
+
 function validatePayroll(data) {
   assert(data && typeof data === "object", "payroll.json: must be an object");
   assert(data.cpp && typeof data.cpp === "object", "payroll.json: missing cpp");
@@ -283,23 +328,42 @@ async function loadTaxDataBundleUncached(taxYear, opts = {}) {
     let provincesRaw;
     let payroll;
     let dividendsRaw;
+    let benefitsRaw = null;
+
+    const readOptionalBenefits = async (readFn) => {
+      try {
+        return await readFn();
+      } catch (error) {
+        // Projection / incomplete year folders may omit benefits.json.
+        if (opts.requireBenefits) throw error;
+        return null;
+      }
+    };
 
     if (opts.fsDataRoot) {
       const fs = await import("node:fs/promises");
       const path = await import("node:path");
       const dir = path.join(opts.fsDataRoot, String(taxYear));
-      [federal, provincesRaw, payroll, dividendsRaw] = await Promise.all([
+      [federal, provincesRaw, payroll, dividendsRaw, benefitsRaw] = await Promise.all([
         fs.readFile(path.join(dir, "federal.json"), "utf8").then(JSON.parse),
         fs.readFile(path.join(dir, "provinces.json"), "utf8").then(JSON.parse),
         fs.readFile(path.join(dir, "payroll.json"), "utf8").then(JSON.parse),
         fs.readFile(path.join(dir, "dividends.json"), "utf8").then(JSON.parse),
+        readOptionalBenefits(() =>
+          fs.readFile(path.join(dir, "benefits.json"), "utf8").then(JSON.parse)
+        ),
       ]);
     } else {
-      [federal, provincesRaw, payroll, dividendsRaw] = await Promise.all([
+      [federal, provincesRaw, payroll, dividendsRaw, benefitsRaw] = await Promise.all([
         fetch(`${basePath}/${taxYear}/federal.json`).then((r) => r.json()),
         fetch(`${basePath}/${taxYear}/provinces.json`).then((r) => r.json()),
         fetch(`${basePath}/${taxYear}/payroll.json`).then((r) => r.json()),
         fetch(`${basePath}/${taxYear}/dividends.json`).then((r) => r.json()),
+        readOptionalBenefits(async () => {
+          const r = await fetch(`${basePath}/${taxYear}/benefits.json`);
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
+        }),
       ]);
     }
 
@@ -307,6 +371,34 @@ async function loadTaxDataBundleUncached(taxYear, opts = {}) {
     const provincesNormalized = normalizeAndValidateProvinces(provincesRaw);
     validatePayroll(payroll);
     const dividendsNormalized = normalizeAndValidateDividends(dividendsRaw);
+    if (benefitsRaw) validateBenefits(benefitsRaw, taxYear);
+
+    // Catalog of benefits.json by tax year (for projected current-rules fallback).
+    const benefitsByYear = {};
+    if (benefitsRaw) benefitsByYear[taxYear] = benefitsRaw;
+
+    const { OFFICIAL_TAX_YEARS } = await import('./tax.indexation.js');
+    const siblingYears = (OFFICIAL_TAX_YEARS || []).filter((y) => y !== taxYear);
+    await Promise.all(
+      siblingYears.map(async (y) => {
+        const sibling = await readOptionalBenefits(async () => {
+          if (opts.fsDataRoot) {
+            const fs = await import('node:fs/promises');
+            const path = await import('node:path');
+            return JSON.parse(
+              await fs.readFile(path.join(opts.fsDataRoot, String(y), 'benefits.json'), 'utf8')
+            );
+          }
+          const r = await fetch(`${basePath}/${y}/benefits.json`);
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
+        });
+        if (sibling) {
+          validateBenefits(sibling, y);
+          benefitsByYear[y] = sibling;
+        }
+      })
+    );
 
     return deepFreeze({
       year: taxYear,
@@ -314,6 +406,8 @@ async function loadTaxDataBundleUncached(taxYear, opts = {}) {
       provinces: provincesNormalized,
       payroll,
       dividends: dividendsNormalized,
+      benefits: benefitsRaw || null,
+      benefitsByYear,
     });
   } catch (error) {
     console.error("Error loading tax data:", error);
@@ -387,6 +481,16 @@ export function getPayrollData() {
 export function getDividendsData() {
   if (!activeTaxData) throw new Error("Tax data not loaded. Call loadTaxData() first.");
   return activeTaxData.dividends;
+}
+
+export function getBenefitsData() {
+  if (!activeTaxData) throw new Error("Tax data not loaded. Call loadTaxData() first.");
+  return activeTaxData.benefits || null;
+}
+
+export function getBenefitsByYear() {
+  if (!activeTaxData) throw new Error("Tax data not loaded. Call loadTaxData() first.");
+  return activeTaxData.benefitsByYear || null;
 }
 
 // Optional export if you want to normalize in UI code too

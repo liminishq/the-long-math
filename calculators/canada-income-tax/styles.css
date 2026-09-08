@@ -705,3 +705,10 @@ select.is-invalid{
     margin:12px 0;
   }
 }
+
+.result-divider {
+  height: 1px;
+  margin: 16px 0 8px;
+  background: var(--border);
+  grid-column: 1 / -1;
+}

@@ -31,12 +31,12 @@
     <div class="card">
       <h1>Canada Personal Income Tax Calculator</h1>
       <p class="calc-canada-scope">This tool is designed for Canadian tax and account rules.</p>
-      <p class="calc-version-meta">Version 1.1 · Last verified: May 2026</p>
+      <p class="calc-version-meta">Version 1.2 · Last verified: September 2026</p>
       <p class="lead">
         Calculate income tax by province and type of income. This calculator allows you to estimate federal and provincial income tax, calculate average and marginal income tax rates, estimate how much income tax you owe or your tax refund, see how deductions affect your taxable income and tax rate, and calculate your after-tax income (take-home pay).
       </p>
       <p class="lead" style="margin-top: 8px;">
-        It supports employment income, business income, dividends, capital gains, CPP and EI contributions, and common deductions. Enter your numbers to see how your income is taxed in Canada.
+        It supports employment income, business income, dividends, capital gains, CPP and EI contributions, and common deductions. Optional household inputs estimate major federal income-tested benefits (GST/HST credit / Canada Groceries and Essentials Benefit, Canada workers benefit, and Canada child benefit) so you can see how a deduction can change both tax and benefits.
       </p>
       <p class="long-math-tagline" style="margin-top: 12px; font-size: 13px; color: var(--muted);">
         <em>No opinions. No hidden assumptions. Just arithmetic.</em>
@@ -142,6 +142,42 @@
           <input type="text" id="estimatedDeductions" placeholder="0" value="" inputmode="decimal">
           <div class="helper" style="margin-top: 6px;">Optional: amounts that reduce taxable income (for example union dues, childcare, moving expenses, or employment expenses). Do not enter tax credits such as medical expenses or charitable donations.</div>
         </div>
+
+        <h2 class="section-title" style="margin-top: 28px;">Household information</h2>
+        <p class="helper" style="margin: 0 0 12px;">
+          Used only for federal income-tested benefits (GST/HST credit / Canada Groceries and Essentials Benefit, Canada workers benefit, Canada child benefit). Income tax above does not change when these fields are blank.
+        </p>
+
+        <div class="field">
+          <label for="maritalStatus">Marital status</label>
+          <select id="maritalStatus">
+            <option value="single" selected>Single (or separated / divorced / widowed for benefit purposes)</option>
+            <option value="married">Married or common-law</option>
+          </select>
+        </div>
+
+        <div class="field" id="spouseIncomeField" hidden>
+          <label for="spouseNetIncome">Spouse / common-law partner net income (line 23600)</label>
+          <input type="text" id="spouseNetIncome" placeholder="0" value="" inputmode="decimal">
+          <div class="field-help">Enter their net income for the same tax year. Leave blank if zero.</div>
+        </div>
+
+        <div class="field" id="spouseWorkingIncomeField" hidden>
+          <label for="spouseWorkingIncome">Spouse / common-law partner working income (optional)</label>
+          <input type="text" id="spouseWorkingIncome" placeholder="0" value="" inputmode="decimal">
+          <div class="field-help">Employment + self-employment working income for the Canada workers benefit. If blank, only your working income is used for CWB phase-in.</div>
+        </div>
+
+        <div class="field">
+          <label for="numberOfChildren">Number of eligible children</label>
+          <input type="number" id="numberOfChildren" min="0" max="12" step="1" value="0" inputmode="numeric">
+          <div class="field-help">Children under 19 for the GST/HST credit / CGEB; under 18 for the Canada child benefit. Shared custody is not modeled (enter children only if you would receive the full entitlement).</div>
+        </div>
+
+        <div id="childAgesContainer" hidden>
+          <p class="helper" style="margin: 0 0 8px;">Child ages at the start of the benefit payment period (affects Canada child benefit under-6 vs 6–17 rates).</p>
+          <div id="childAgeFields"></div>
+        </div>
       </section>
 
       <!-- RESULTS -->
@@ -211,6 +247,47 @@
           <div class="result">
             <p class="k">Marginal Tax Rate</p>
             <p class="v" id="marginalRate">–%</p>
+            <p class="subl">Income-tax marginal rate only (does not include income-tested benefits)</p>
+          </div>
+
+          <div class="result-divider" aria-hidden="true"></div>
+
+          <p class="helper" id="benefitsProjectionDisclosure" hidden style="margin: 0 0 10px;"></p>
+
+          <div class="result">
+            <p class="k">Income-tested benefits (estimated annual entitlement)</p>
+            <p class="v" id="incomeTestedBenefitsTotal">$–</p>
+            <p class="subl" id="benefitsTimingNote">Generated by this tax year’s income; CCB and GST/HST credit / CGEB are paid in the following July–June benefit year. CWB is a refundable credit for this tax year.</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Canada Groceries and Essentials Benefit (GST/HST credit)</p>
+            <p class="v" id="gstHstCreditAmount">$–</p>
+            <p class="subl" id="gstHstCreditPeriod"></p>
+          </div>
+
+          <div class="result">
+            <p class="k">Canada workers benefit (basic)</p>
+            <p class="v" id="cwbAmount">$–</p>
+            <p class="subl">Refundable tax credit (line 45300). Disability supplement not included. QC / AB / NU not modeled.</p>
+          </div>
+
+          <div class="result">
+            <p class="k">Canada child benefit</p>
+            <p class="v" id="ccbAmount">$–</p>
+            <p class="subl" id="ccbPeriod"></p>
+          </div>
+
+          <div class="result prominent">
+            <p class="k">After-tax income including estimated benefits</p>
+            <p class="v" id="disposableIncomeAfterBenefits">$–</p>
+            <p class="subl">After-tax income (income tax only) + estimated benefit entitlement. Not a cash flow for a single calendar year.</p>
+          </div>
+
+          <div class="result" id="marginalDeductionValueResult">
+            <p class="k">Effective marginal impact of a $1,000 income reduction</p>
+            <p class="v" id="marginalDeductionEffectiveValue">–%</p>
+            <p class="subl" id="marginalDeductionDetail">Income tax saved and additional benefits from lowering net income by $1,000 (e.g. RRSP/FHSA-style deduction), using the full tax + benefit engines.</p>
           </div>
         </div>
 
@@ -278,6 +355,11 @@
           <details class="method-item">
             <summary><strong>CPP and EI Calculations</strong></summary>
             <div id="payrollBreakdown" class="breakdown-content"></div>
+          </details>
+
+          <details class="method-item" open>
+            <summary><strong>Income-tested benefits</strong></summary>
+            <div id="benefitsBreakdown" class="breakdown-content"></div>
           </details>
         </div>
       </div>

@@ -17,7 +17,7 @@
         {
           "path": "/calculators/canada-income-tax/",
           "title": "Calculateur d’impôt sur le revenu des particuliers au Canada",
-          "desc": "Estime l’impôt sur le revenu des particuliers au Canada avec des ventilations transparentes. Affiche le calcul fédéral et provincial, les cotisations RPC/AE, les majorations de dividendes, l’inclusion des gains en capital et des sections « montrer le calcul » détaillées."
+          "desc": "Estime l’impôt sur le revenu des particuliers au Canada avec des ventilations transparentes. Affiche l’impôt fédéral et provincial, le RPC/AE, les dividendes, les gains en capital et, en option, les prestations fédérales assujetties au revenu (crédit pour TPS/TVH / ACEBN, allocation canadienne pour les travailleurs, allocation canadienne pour enfants)."
         },
         {
           "path": "/calculators/canada-income-tax-bracket/",

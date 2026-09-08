@@ -1,0 +1,83 @@
+{
+  "year": 2026,
+  "meta": {
+    "description": "Federal income-tested benefits and refundable credits whose entitlement is driven by this tax year's income.",
+    "accessed": "2026-09-08",
+    "sources": [
+      {
+        "id": "cra-indexation",
+        "title": "Indexation adjustment for personal income tax and benefit amounts",
+        "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/frequently-asked-questions-individuals/adjustment-personal-income-tax-benefit-amounts.html"
+      },
+      {
+        "id": "cra-schedule-6-2025",
+        "title": "5000-S6 Schedule 6 — Canada Workers Benefit (2025) — phase-in/out rates carried as structural rates pending 2026 Schedule 6 publication",
+        "url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/tax-packages-years/general-income-tax-benefit-package/5000-s6.html"
+      },
+      {
+        "id": "cra-cgeb-payment-amounts",
+        "title": "Payment amounts — Canada Groceries and Essentials Benefit",
+        "url": "https://www.canada.ca/en/revenue-agency/services/child-family-benefits/goods-services-tax-harmonized-sales-tax-gst-hst-credit/goods-services-tax-harmonized-sales-tax-gst-hst-credit-payment-amounts-tax-year-2016.html"
+      },
+      {
+        "id": "cra-ccb-how-much",
+        "title": "Canada child benefit — How much you can get",
+        "url": "https://www.canada.ca/en/revenue-agency/services/child-family-benefits/canada-child-benefit/how-much.html"
+      }
+    ]
+  },
+  "gstHstCredit": {
+    "available": false,
+    "allowsCurrentRulesProjection": true,
+    "programId": "cgeb",
+    "statutoryName": "Canada Groceries and Essentials Benefit",
+    "formerName": "GST/HST credit",
+    "classification": "income_tested_benefit",
+    "unavailableReason": "July 2027 to June 2028 payment amounts (2026 base year) were not yet published on the CRA payment-amounts page as of the data access date. The calculator applies the latest published CGEB parameters to 2026 income in projected current-rules mode (no indexation of unpublished amounts).",
+    "baseYear": 2026,
+    "paymentPeriodLabel": "July 2027 to June 2028",
+    "sources": ["cra-cgeb-payment-amounts", "cra-indexation"]
+  },
+  "canadaWorkersBenefit": {
+    "available": true,
+    "programId": "cwb",
+    "statutoryName": "Canada workers benefit",
+    "classification": "refundable_tax_credit",
+    "claimLine": 45300,
+    "timingNote": "Refundable tax credit for this tax year (line 45300). Dollar maxima and phase-out starts are from CRA indexation for 2026. Phase-in base ($3,000), phase-in rate (27%), and phase-out rate (15%) are the structural Schedule 6 rates published for 2025; the 2026 Schedule 6 PDF was not yet posted when this data file was authored.",
+    "scheduleForm": "5000-S6",
+    "excludedProvinces": ["QC", "AB", "NU"],
+    "excludedProvincesNote": "Quebec, Alberta, and Nunavut use province/territory-specific Schedule 6 parameters. Those jurisdictions are not modeled here.",
+    "disabilitySupplementModeled": false,
+    "disabilitySupplementNote": "CWB disability supplement is excluded. Eligibility requires Disability Tax Credit approval, which this calculator does not collect.",
+    "workingIncomeMinimumBasic": 3000,
+    "phaseInBase": 3000,
+    "phaseInRate": 0.27,
+    "maxBasicSingle": 1665,
+    "maxBasicFamily": 2869,
+    "phaseOutStartSingle": 27392,
+    "phaseOutStartFamily": 31251,
+    "phaseOutRate": 0.15,
+    "phaseOutEndSingle": 38492,
+    "phaseOutEndFamily": 50378,
+    "secondaryEarnerExemptionMax": 16714,
+    "sources": ["cra-indexation", "cra-schedule-6-2025"]
+  },
+  "canadaChildBenefit": {
+    "available": false,
+    "allowsCurrentRulesProjection": true,
+    "programId": "ccb",
+    "statutoryName": "Canada child benefit",
+    "classification": "income_tested_benefit",
+    "unavailableReason": "July 2027 to June 2028 CCB amounts (2026 base year) were not yet published on the CRA CCB payment-amounts / how-much pages as of the data access date. The calculator applies the latest published CCB parameters to 2026 income in projected current-rules mode (no indexation of unpublished amounts).",
+    "baseYear": 2026,
+    "paymentPeriodLabel": "July 2027 to June 2028",
+    "childDisabilityBenefitModeled": false,
+    "sharedCustodyModeled": false,
+    "sources": ["cra-ccb-how-much", "cra-indexation"]
+  },
+  "provincialPrograms": {
+    "available": false,
+    "note": "Provincial and territorial income-tested benefits are not modeled in this version."
+  }
+}

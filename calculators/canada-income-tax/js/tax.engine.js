@@ -4,7 +4,7 @@
  * Supports opts.taxData (preferred) and opts.dataOverride (compatibility alias).
  */
 
-import { getFederalData, getProvincesData, getProvincialData, getPayrollData, getDividendsData, normalizeProvince } from './tax.data.js';
+import { getFederalData, getProvincesData, getProvincialData, getPayrollData, getDividendsData, getBenefitsData, getBenefitsByYear, normalizeProvince } from './tax.data.js';
 import {
   MARGINAL_DELTA,
   combinedBracketMarginalRate,
@@ -19,8 +19,19 @@ import {
   addAgeAndPensionCredits,
   computeOasRecovery
 } from './tax.credits.js';
+import {
+  calculateIncomeTestedBenefits,
+  compareIncomeReduction as compareIncomeReductionCore,
+  calculateMarginalIncomeReductionValue as calculateMarginalIncomeReductionValueCore,
+} from './tax.benefits.js';
 
 export { MARGINAL_DELTA } from './marginal-tax.js';
+export { calculateIncomeTestedBenefits } from './tax.benefits.js';
+export {
+  resolveBenefitsDataForCalculation,
+  FUTURE_BENEFIT_PROJECTION_DISCLOSURE,
+  CURRENT_RULES_PROJECTION_METHOD,
+} from './tax.benefits.js';
 
 const DEFAULT_PROVINCIAL_STEPS = ['brackets', 'credits', 'surtax', 'minTax', 'dividendCredit', 'reduction', 'premiums'];
 
@@ -62,6 +73,8 @@ function buildDataContext(opts = {}, expectedYear = null) {
       provinces: explicit.provinces,
       payroll: explicit.payroll,
       dividends: explicit.dividends,
+      benefits: explicit.benefits || null,
+      benefitsByYear: explicit.benefitsByYear || null,
       getProvince: (province) => {
         const code = normalizeProvince(province);
         if (!code || !explicit.provinces[code]) throw new Error(`Province "${province}" not found in data.`);
@@ -74,6 +87,8 @@ function buildDataContext(opts = {}, expectedYear = null) {
     provinces: getProvincesData(),
     payroll: getPayrollData(),
     dividends: getDividendsData(),
+    benefits: getBenefitsData(),
+    benefitsByYear: getBenefitsByYear(),
     getProvince: (province) => getProvincialData(province),
   };
 }
@@ -811,6 +826,7 @@ function cloneInput(input) {
     age: input.age == null || input.age === '' ? null : num(input, 'age'),
     eligiblePensionIncome: num(input, 'eligiblePensionIncome'),
     oasBenefits: num(input, 'oasBenefits'),
+    household: input.household ? { ...input.household } : undefined,
   };
 }
 
@@ -1088,6 +1104,34 @@ export function computePersonalTax(input, opts = {}) {
   // Income tax balance only (excludes CPP/EI). See totalBurden for full statutory cash cost.
   const refundOrOwing = taxPaid - totalIncomeTax;
 
+  // Income-tested benefits / refundable credits — separate from income tax payable.
+  let benefits = null;
+  if (dataCtx.benefits && opts.skipBenefits !== true) {
+    const household = normalizedInput.household || {};
+    benefits = calculateIncomeTestedBenefits({
+      taxYear: year,
+      province,
+      individualNetIncome: netIncome,
+      household,
+      incomeComponents: {
+        employmentIncome,
+        selfEmploymentIncome,
+        spouseEmploymentIncome: household.spouseEmploymentIncome,
+        spouseSelfEmploymentIncome: household.spouseSelfEmploymentIncome,
+      },
+      benefitsData: dataCtx.benefits,
+      benefitsByYear: dataCtx.benefitsByYear || null,
+    });
+  }
+
+  const refundableTaxCredits = benefits?.totals?.refundableTaxCredits ?? 0;
+  const incomeTestedBenefitsOnly = benefits?.totals?.incomeTestedBenefits ?? 0;
+  const incomeTestedBenefitsTotal = benefits?.totals?.totalAnnualBenefits ?? 0;
+  const totalBenefitsAndRefundableCredits = incomeTestedBenefitsTotal;
+  const incomeTaxBeforeBenefits = totalIncomeTax;
+  const afterTaxIncomeBeforeBenefits = afterTaxIncome;
+  const disposableIncomeAfterBenefits = afterTaxIncome + incomeTestedBenefitsTotal;
+
   if (opts?.validationMode) {
     const CRA_TRACE_TOL = 2;
     const assertCraTrace = (actual, expected, label) => {
@@ -1162,14 +1206,22 @@ export function computePersonalTax(input, opts = {}) {
       cppCreditable,
       cppDeductible,
       totalIncomeTax,
+      incomeTaxBeforeBenefits,
       totalBurden,
       afterTaxIncome,
+      afterTaxIncomeBeforeBenefits,
       takeHomeAfterPayroll,
       avgRate,
       marginalRate,
       refundOrOwing,
       oasRecoveryTax,
       line23400,
+      refundableTaxCredits,
+      incomeTestedBenefits: incomeTestedBenefitsOnly,
+      incomeTestedBenefitsTotal,
+      totalBenefitsAndRefundableCredits,
+      disposableIncomeAfterBenefits,
+      estimatedBenefitEntitlement: incomeTestedBenefitsTotal,
     },
     breakdown: {
       federal: { ...federal, dtcApplied: federal.federalDividendCredits || 0 },
@@ -1179,7 +1231,29 @@ export function computePersonalTax(input, opts = {}) {
       payroll: { cpp: cppCalc, ei: eiCalc },
       oasRecovery: { amount: oasRecoveryTax },
       marginalRates,
+      benefits: benefits || null,
     },
+    benefits,
     auditBreakdown,
   };
+}
+
+/**
+ * Economic value of an income reduction (tax savings + benefit increase).
+ * Reusable by other calculators (e.g. RRSP deduction timing).
+ */
+export function compareIncomeReduction(args = {}) {
+  const taxData = args.taxData;
+  return compareIncomeReductionCore({
+    ...args,
+    taxData,
+    computePersonalTax,
+  });
+}
+
+export function calculateMarginalIncomeReductionValue(args = {}) {
+  return calculateMarginalIncomeReductionValueCore({
+    ...args,
+    computePersonalTax,
+  });
 }

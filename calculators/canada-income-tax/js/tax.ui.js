@@ -3,10 +3,11 @@
  * Handles DOM interactions, validation, and rendering
  */
 
-import { computePersonalTax } from './tax.engine.js';
+import { computePersonalTax, compareIncomeReduction } from './tax.engine.js';
 import { getTaxDataBundle, normalizeProvince } from './tax.data.js';
 import { formatCurrency, formatPercent, parseInput } from './format.js';
 
+const MARGINAL_DEDUCTION_PROBE = 1000;
 let taxDataLoaded = false;
 let taxDataBundle = null;
 let taxDataRequestSeq = 0;
@@ -106,6 +107,7 @@ export async function initUI() {
   // Attach event listeners
   attachEventListeners();
   wireShareButtons();
+  syncHouseholdDisclosure();
 
   // Initial calculation (will trigger after data loads)
   calculate();
@@ -163,6 +165,69 @@ function attachEventListeners() {
   if (resetButton) {
     resetButton.addEventListener('click', resetAllInputs);
   }
+
+  const maritalStatus = document.getElementById('maritalStatus');
+  if (maritalStatus) {
+    maritalStatus.addEventListener('change', () => {
+      syncHouseholdDisclosure();
+      calculate();
+    });
+  }
+
+  const numberOfChildren = document.getElementById('numberOfChildren');
+  if (numberOfChildren) {
+    numberOfChildren.addEventListener('input', () => {
+      syncHouseholdDisclosure();
+      calculate();
+    });
+    numberOfChildren.addEventListener('change', () => {
+      syncHouseholdDisclosure();
+      calculate();
+    });
+  }
+}
+
+/**
+ * Show/hide spouse and child-age fields based on household selections.
+ */
+function syncHouseholdDisclosure() {
+  const marital = document.getElementById('maritalStatus')?.value || 'single';
+  const isCouple = marital === 'married';
+  const spouseIncomeField = document.getElementById('spouseIncomeField');
+  const spouseWorkingIncomeField = document.getElementById('spouseWorkingIncomeField');
+  if (spouseIncomeField) spouseIncomeField.hidden = !isCouple;
+  if (spouseWorkingIncomeField) spouseWorkingIncomeField.hidden = !isCouple;
+
+  const n = Math.max(0, Math.min(12, parseInt(document.getElementById('numberOfChildren')?.value, 10) || 0));
+  const container = document.getElementById('childAgesContainer');
+  const fields = document.getElementById('childAgeFields');
+  if (!container || !fields) return;
+
+  if (n <= 0) {
+    container.hidden = true;
+    fields.innerHTML = '';
+    return;
+  }
+
+  container.hidden = false;
+  const existing = {};
+  fields.querySelectorAll('input[data-child-index]').forEach((input) => {
+    existing[input.getAttribute('data-child-index')] = input.value;
+  });
+  fields.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const wrap = document.createElement('div');
+    wrap.className = 'field';
+    const id = `childAge_${i}`;
+    wrap.innerHTML = `
+      <label for="${id}">Age of child ${i + 1}</label>
+      <input type="number" id="${id}" data-child-index="${i}" min="0" max="18" step="1" value="${existing[String(i)] ?? '0'}" inputmode="numeric">
+    `;
+    const input = wrap.querySelector('input');
+    input.addEventListener('input', calculate);
+    input.addEventListener('change', calculate);
+    fields.appendChild(wrap);
+  }
 }
 
 /**
@@ -183,6 +248,16 @@ function resetAllInputs() {
   document.getElementById('fhsaDeduction').value = '';
   document.getElementById('estimatedDeductions').value = '';
   document.getElementById('taxPaid').value = '';
+
+  const maritalStatus = document.getElementById('maritalStatus');
+  if (maritalStatus) maritalStatus.value = 'single';
+  const spouseNetIncome = document.getElementById('spouseNetIncome');
+  if (spouseNetIncome) spouseNetIncome.value = '';
+  const spouseWorkingIncome = document.getElementById('spouseWorkingIncome');
+  if (spouseWorkingIncome) spouseWorkingIncome.value = '';
+  const numberOfChildren = document.getElementById('numberOfChildren');
+  if (numberOfChildren) numberOfChildren.value = '0';
+  syncHouseholdDisclosure();
   
   // Remove validation state
   const provinceSelect = document.getElementById('province');
@@ -206,6 +281,8 @@ function resetAllInputs() {
   document.getElementById('dividendsBreakdown').innerHTML = '';
   document.getElementById('capitalGainsBreakdown').innerHTML = '';
   document.getElementById('payrollBreakdown').innerHTML = '';
+  const benefitsBreakdown = document.getElementById('benefitsBreakdown');
+  if (benefitsBreakdown) benefitsBreakdown.innerHTML = '';
 }
 
 /**
@@ -224,10 +301,29 @@ function getInputs() {
     rrspDeduction: document.getElementById('rrspDeduction').value,
     fhsaDeduction: document.getElementById('fhsaDeduction').value,
     estimatedDeductions: document.getElementById('estimatedDeductions').value,
-    taxPaid: document.getElementById('taxPaid').value
+    taxPaid: document.getElementById('taxPaid').value,
+    maritalStatus: document.getElementById('maritalStatus')?.value || 'single',
+    spouseNetIncome: document.getElementById('spouseNetIncome')?.value || '',
+    spouseWorkingIncome: document.getElementById('spouseWorkingIncome')?.value || '',
+    numberOfChildren: document.getElementById('numberOfChildren')?.value || '0',
   };
 
   const MAX_INPUT = 1e9;
+  const nChildren = Math.max(0, Math.min(12, parseInt(raw.numberOfChildren, 10) || 0));
+  const childAges = [];
+  for (let i = 0; i < nChildren; i++) {
+    const el = document.getElementById(`childAge_${i}`);
+    childAges.push(Math.max(0, Math.min(18, parseInt(el?.value, 10) || 0)));
+  }
+
+  const maritalStatus = raw.maritalStatus === 'married' ? 'married' : 'single';
+  const household = {
+    maritalStatus,
+    spouseNetIncome: maritalStatus === 'married' ? parseInput(raw.spouseNetIncome) : 0,
+    spouseEmploymentIncome: maritalStatus === 'married' ? parseInput(raw.spouseWorkingIncome) : 0,
+    numberOfChildren: nChildren,
+    childAges,
+  };
 
   const parsed = {
     year: parseInt(raw.year) || 2026,
@@ -241,7 +337,8 @@ function getInputs() {
     rrspDeduction: parseInput(raw.rrspDeduction),
     fhsaDeduction: parseInput(raw.fhsaDeduction),
     estimatedDeductions: parseInput(raw.estimatedDeductions),
-    taxPaid: parseInput(raw.taxPaid)
+    taxPaid: parseInput(raw.taxPaid),
+    household,
   };
 
   // Numeric range validation: clamp is not applied, but values beyond MAX_INPUT
@@ -266,6 +363,9 @@ function getInputs() {
       console.warn(`Value for ${field} exceeds maximum supported amount (${MAX_INPUT}). Raw:`, raw[field]);
     }
   });
+  if (household.spouseNetIncome > MAX_INPUT || household.spouseEmploymentIncome > MAX_INPUT) {
+    hasRangeError = true;
+  }
 
   return {
     ...parsed,
@@ -354,7 +454,20 @@ function calculate() {
 
     const result = computePersonalTax(inputs, { taxData: taxDataBundle });
 
-    renderResults(result);
+    let marginalDeduction = null;
+    try {
+      marginalDeduction = compareIncomeReduction({
+        baselineInput: inputs,
+        deductionAmount: MARGINAL_DEDUCTION_PROBE,
+        deductionField: 'rrspDeduction',
+        taxData: taxDataBundle,
+        household: inputs.household,
+      });
+    } catch (probeError) {
+      console.warn('Marginal deduction probe failed:', probeError);
+    }
+
+    renderResults(result, marginalDeduction);
     renderBreakdown(result);
   } catch (error) {
     console.error('Calculation error:', error);
@@ -365,8 +478,8 @@ function calculate() {
 /**
  * Render main results
  */
-function renderResults(result) {
-  const { totals } = result;
+function renderResults(result, marginalDeduction = null) {
+  const { totals, benefits } = result;
 
   if (!totals) {
     console.error('No totals in result:', result);
@@ -416,6 +529,83 @@ function renderResults(result) {
     refundOwingResult.className = 'result';
   }
 
+  const programs = benefits?.programs || {};
+  const setText = (id, text) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  };
+
+  const projectionEl = document.getElementById('benefitsProjectionDisclosure');
+  if (projectionEl) {
+    if (benefits?.metadata?.anyProjected) {
+      projectionEl.hidden = false;
+      projectionEl.textContent =
+        benefits.metadata.projectionDisclosure ||
+        'Future benefit estimate: Current CCB, CGEB and CWB rules and parameters are applied where future program parameters have not yet been published. Actual future benefits may differ.';
+    } else {
+      projectionEl.hidden = true;
+      projectionEl.textContent = '';
+    }
+  }
+
+  setText('incomeTestedBenefitsTotal', formatCurrency(totals.incomeTestedBenefitsTotal || 0));
+  setText(
+    'disposableIncomeAfterBenefits',
+    formatCurrency(totals.disposableIncomeAfterBenefits ?? totals.afterTaxIncome)
+  );
+
+  const formatProgramSublabel = (program, fallbackPeriod) => {
+    const parts = [];
+    if (program?.projected) {
+      parts.push(
+        `Projected current-rules estimate (basis tax year ${program.basisTaxYear}` +
+          (program.basisBenefitYear != null ? `, benefit base year ${program.basisBenefitYear}` : '') +
+          ')'
+      );
+    }
+    if (program?.paymentPeriodLabel) parts.push(program.paymentPeriodLabel);
+    else if (fallbackPeriod) parts.push(fallbackPeriod);
+    return parts.join(' · ');
+  };
+
+  const gst = programs.gstHstCredit;
+  if (gst?.available === false) {
+    setText('gstHstCreditAmount', 'Not available');
+    setText('gstHstCreditPeriod', gst.unavailableReason || 'Parameters not published for this tax year.');
+  } else {
+    setText('gstHstCreditAmount', formatCurrency(gst?.annualAmount || 0));
+    setText('gstHstCreditPeriod', formatProgramSublabel(gst));
+  }
+
+  const cwb = programs.canadaWorkersBenefit;
+  if (cwb?.available === false) {
+    setText('cwbAmount', 'Not available');
+  } else {
+    setText('cwbAmount', formatCurrency(cwb?.annualAmount || 0));
+  }
+
+  const ccb = programs.canadaChildBenefit;
+  if (ccb?.available === false) {
+    setText('ccbAmount', 'Not available');
+    setText('ccbPeriod', ccb.unavailableReason || 'Parameters not published for this tax year.');
+  } else {
+    setText('ccbAmount', formatCurrency(ccb?.annualAmount || 0));
+    setText('ccbPeriod', formatProgramSublabel(ccb));
+  }
+
+  if (marginalDeduction && Number.isFinite(marginalDeduction.effectiveValueRate)) {
+    setText('marginalDeductionEffectiveValue', formatPercent(marginalDeduction.effectiveValueRate));
+    setText(
+      'marginalDeductionDetail',
+      `Income tax saved ${formatCurrency(marginalDeduction.taxSavings)}; ` +
+      `additional benefits ${formatCurrency(marginalDeduction.additionalBenefits)}; ` +
+      `total economic value ${formatCurrency(marginalDeduction.totalEconomicValue)} ` +
+      `on a $${MARGINAL_DEDUCTION_PROBE.toLocaleString('en-CA')} net-income reduction.`
+    );
+  } else {
+    setText('marginalDeductionEffectiveValue', '–%');
+  }
+
   latestSharePayload = buildSharePayload();
 }
 
@@ -439,6 +629,89 @@ function renderBreakdown(result) {
 
   // Payroll
   renderPayroll(breakdown.payroll);
+
+  // Income-tested benefits
+  renderBenefits(result.benefits);
+}
+
+/**
+ * Render income-tested benefit arithmetic.
+ */
+function renderBenefits(benefits) {
+  const container = document.getElementById('benefitsBreakdown');
+  if (!container) return;
+  container.innerHTML = '';
+
+  if (!benefits) {
+    container.innerHTML = '<p>Benefit parameters were not loaded for this tax year.</p>';
+    return;
+  }
+
+  const intro = document.createElement('p');
+  intro.className = 'helper';
+  intro.textContent =
+    'Amounts below are estimated annual entitlements generated by this tax year’s income. ' +
+    'CCB and the GST/HST credit / Canada Groceries and Essentials Benefit are paid in the following July–June benefit year. ' +
+    'The Canada workers benefit is a refundable credit for this tax year. Income tax payable is unchanged by these lines.';
+  container.appendChild(intro);
+
+  if (benefits.metadata?.anyProjected && benefits.metadata?.projectionDisclosure) {
+    const proj = document.createElement('p');
+    proj.className = 'helper';
+    proj.style.fontWeight = '600';
+    proj.textContent = benefits.metadata.projectionDisclosure;
+    container.appendChild(proj);
+  }
+
+  const afni = benefits.incomeMeasures?.adjustedFamilyNetIncome;
+  if (afni != null) {
+    const afniEl = document.createElement('div');
+    afniEl.className = 'breakdown-line';
+    afniEl.innerHTML = `<strong>Adjusted family net income (as modeled):</strong> ${formatCurrency(afni)}`;
+    container.appendChild(afniEl);
+  }
+
+  const programs = benefits.programs || {};
+  for (const [key, program] of Object.entries(programs)) {
+    const section = document.createElement('div');
+    section.className = 'breakdown-section';
+    const title = program.statutoryName || key;
+    section.innerHTML = `<h4>${title}</h4>`;
+    if (program.available === false) {
+      const p = document.createElement('p');
+      p.textContent = program.unavailableReason || 'Not available for this tax year / jurisdiction.';
+      section.appendChild(p);
+    } else {
+      const list = document.createElement('ul');
+      (program.calculationSteps || []).forEach((step) => {
+        const li = document.createElement('li');
+        const amountPart = step.amount != null ? ` ${formatCurrency(step.amount)}` : '';
+        const detailPart = step.detail ? ` — ${step.detail}` : '';
+        li.textContent = `${step.label}:${amountPart}${detailPart}`;
+        list.appendChild(li);
+      });
+      section.appendChild(list);
+      const total = document.createElement('div');
+      total.className = 'breakdown-line total';
+      total.innerHTML = `<strong>Estimated annual entitlement:</strong> ${formatCurrency(program.annualAmount || 0)}`;
+      section.appendChild(total);
+    }
+    container.appendChild(section);
+  }
+
+  if (benefits.metadata?.excludedPrograms?.length) {
+    const excl = document.createElement('div');
+    excl.className = 'breakdown-section';
+    excl.innerHTML = '<h4>Explicitly not included</h4>';
+    const ul = document.createElement('ul');
+    benefits.metadata.excludedPrograms.forEach((item) => {
+      const li = document.createElement('li');
+      li.textContent = `${item.id}: ${item.reason}`;
+      ul.appendChild(li);
+    });
+    excl.appendChild(ul);
+    container.appendChild(excl);
+  }
 }
 
 /**
