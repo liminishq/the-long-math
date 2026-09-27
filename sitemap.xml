@@ -423,6 +423,18 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://www.thelongmath.com/calculators/rent-vs-buy/</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.thelongmath.com/calculators/rent-vs-buy/methodology/</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.thelongmath.com/calculators/flat-fee-or-hourly/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

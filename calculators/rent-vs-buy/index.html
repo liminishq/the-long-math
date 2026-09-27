@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rent vs. Buy Calculator | The Long Math</title>
+  <meta name="description" content="Compare the monthly cash required to rent or buy, project long-term net worth, and see when one strategy overtakes the other under explicit assumptions." />
+  <link rel="canonical" href="https://www.thelongmath.com/calculators/rent-vs-buy/" />
+  <meta name="keywords" content="rent vs buy calculator, rent or buy calculator Canada, renting vs buying a home, rent vs buy break-even, rent vs buy net worth" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  <link rel="stylesheet" href="/calculators/rent-vs-buy/styles.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What does this rent vs. buy calculator compare?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "It compares monthly cash required and projected net worth when renting versus buying a primary residence, under the same starting financial resources and ongoing financial capacity, allocated differently."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does this calculator tell me whether I should rent or buy?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. It reports arithmetic under your assumptions — for example which strategy produces the higher projected net worth and when crossovers occur. It does not recommend renting or buying."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long does the model run?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The model runs monthly for up to 60 years. You do not need to pick a terminal horizon for the headline result. A comparison year lets you inspect a specific point in time."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are selling costs included in home equity?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Primary net-worth comparisons use net realizable home equity: home value minus mortgage balance minus estimated selling costs, at every month in the model."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does mortgage principal count as a consumed housing cost?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. The full mortgage payment is used for cash-flow comparison, but principal increases homeowner equity. Interest and ownership expenses are the consumed parts of ownership cash flow."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is moving frequency modelled?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. V1 excludes moving frequency, repeated sales and purchases, and refinance cycles because a simplistic move-every-X-years assumption would distort the arithmetic."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap rvb-wrap">
+    <header class="rvb-page-header">
+      <h1>Rent vs. Buy Calculator</h1>
+      <p class="lead">
+        Compare monthly cash and projected net worth when renting versus buying — under the same starting resources, allocated differently.
+      </p>
+      <div class="intro-text">
+        <p>Neither strategy is assumed to win. Results are arithmetic under your assumptions, not advice.</p>
+      </div>
+      <div class="inspect-bar">
+        <a href="/calculators/rent-vs-buy/methodology/" class="inspect-arithmetic-btn" target="_blank" rel="noopener noreferrer">Inspect the Arithmetic</a>
+      </div>
+    </header>
+
+    <p id="calculation_error" class="error-banner hidden" role="alert"></p>
+
+    <!-- TOP: core inputs + sticky live summary -->
+    <div class="rvb-top">
+      <article class="panel rvb-core" aria-labelledby="core_heading">
+        <h2 id="core_heading" class="section-title">Core scenario</h2>
+
+        <h3 class="group-title">Starting position</h3>
+        <div class="field">
+          <label for="starting_capital">Starting capital</label>
+          <input id="starting_capital" type="number" inputmode="decimal" min="0" step="any" value="120000" />
+        </div>
+        <div id="capital_readout" class="capital-readout" aria-live="polite"></div>
+
+        <h3 class="group-title">Buying</h3>
+        <div class="field">
+          <label for="purchase_price">Home purchase price</label>
+          <input id="purchase_price" type="number" inputmode="decimal" min="0" step="any" value="500000" />
+        </div>
+        <div class="field">
+          <div class="toggle-wrapper">
+            <input id="down_use_pct" type="checkbox" />
+            <label for="down_use_pct">Enter down payment as %</label>
+          </div>
+        </div>
+        <div class="field" id="down_amount_wrap">
+          <label for="down_payment">Down payment</label>
+          <input id="down_payment" type="number" inputmode="decimal" min="0" step="any" value="100000" />
+        </div>
+        <div class="field hidden" id="down_pct_wrap">
+          <label for="down_pct">Down payment (%)</label>
+          <div class="inline">
+            <input id="down_pct" type="number" inputmode="decimal" min="0" max="100" step="any" value="20" />
+            <span class="unit">%</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="mortgage_rate">
+            Mortgage rate
+            <button type="button" class="rvb-info" popovertarget="tip_mortgage_rate" aria-label="More about the mortgage rate">ⓘ</button>
+          </label>
+          <div class="inline">
+            <input id="mortgage_rate" type="number" inputmode="decimal" min="0" step="any" value="5" />
+            <span class="unit">%</span>
+          </div>
+          <div id="tip_mortgage_rate" popover class="rvb-popover">
+            Annual rate, held constant through the mortgage in V1. Future renewals are not modelled separately. Canadian quoted rates use semi-annual compounding via the shared mortgage engine. Full detail is in Inspect the Arithmetic.
+          </div>
+        </div>
+        <div class="field">
+          <label for="amortization_years">Amortization (years)</label>
+          <input id="amortization_years" type="number" inputmode="decimal" min="0" max="40" step="any" value="25" />
+        </div>
+
+        <h3 class="group-title">Renting</h3>
+        <div class="field">
+          <label for="monthly_rent">Monthly rent</label>
+          <input id="monthly_rent" type="number" inputmode="decimal" min="0" step="any" value="2200" />
+        </div>
+
+        <h3 class="group-title">Growth assumptions</h3>
+        <div class="field" id="home_appr_nominal_wrap">
+          <label for="home_appreciation">Home appreciation</label>
+          <div class="inline">
+            <input id="home_appreciation" type="number" inputmode="decimal" step="any" value="3" />
+            <span class="unit">%</span>
+          </div>
+          <p class="help muted">Annual nominal. Switch to inflation-linked under Advanced assumptions.</p>
+        </div>
+        <div class="field hidden" id="home_appr_real_wrap">
+          <label for="real_home_appreciation">Real home appreciation above inflation</label>
+          <div class="inline">
+            <input id="real_home_appreciation" type="number" inputmode="decimal" step="any" value="1" />
+            <span class="unit">%</span>
+          </div>
+          <p class="help muted">Nominal = (1 + inflation) × (1 + real) − 1.</p>
+        </div>
+        <div class="field">
+          <label for="rent_growth">Rent growth</label>
+          <div class="inline">
+            <input id="rent_growth" type="number" inputmode="decimal" step="any" value="2" />
+            <span class="unit">%</span>
+          </div>
+          <details class="rvb-inline-details">
+            <summary>CMHC rental-market data</summary>
+            <p class="help muted">
+              Rent growth varies by location, rent-control rules and tenant turnover. Use a rate appropriate to the market you are modelling.
+              <a href="https://www.cmhc-schl.gc.ca/professionals/housing-markets-data-and-research/housing-data/data-tables/rental-market/rental-market-report-data-tables" target="_blank" rel="noopener noreferrer">CMHC Rental Market Survey data tables</a>
+              ·
+              <a href="https://www.cmhc-schl.gc.ca/professionals/housing-markets-data-and-research/market-reports/rental-market-reports-major-centres" target="_blank" rel="noopener noreferrer">CMHC Rental Market Report</a>
+            </p>
+          </details>
+        </div>
+        <div class="field">
+          <label for="investment_return">Investment return</label>
+          <div class="inline">
+            <input id="investment_return" type="number" inputmode="decimal" step="any" value="6" />
+            <span class="unit">%</span>
+          </div>
+          <p class="help muted">Annual nominal. No fees or tax drag.</p>
+        </div>
+        <div class="field">
+          <label for="inflation">Inflation</label>
+          <div class="inline">
+            <input id="inflation" type="number" inputmode="decimal" step="any" value="2" />
+            <span class="unit">%</span>
+          </div>
+          <p class="help muted">Annual rate.</p>
+        </div>
+      </article>
+
+      <aside class="panel rvb-summary-sticky" aria-labelledby="live_summary_heading">
+        <div class="summary-toolbar">
+          <h2 id="live_summary_heading" class="section-title">Live summary</h2>
+        </div>
+
+        <div class="summary-controls" id="summary_controls">
+          <div class="compare-at">
+            <label for="comparison_year">Compare at</label>
+            <div class="inline compare-at-inline">
+              <input id="comparison_year" type="number" inputmode="decimal" min="0" max="60" step="any" value="10" />
+              <span class="unit">years</span>
+            </div>
+          </div>
+          <div class="display-toggle" role="radiogroup" aria-label="Result dollar basis">
+            <label class="display-chip" for="display_real">
+              <input type="radio" name="display_basis" id="display_real" value="real" />
+              <span>Today’s dollars</span>
+            </label>
+            <label class="display-chip" for="display_nominal">
+              <input type="radio" name="display_basis" id="display_nominal" value="nominal" checked />
+              <span>Nominal dollars</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="summary-card summary-card--nw" id="card_nw">
+          <h3 class="summary-card-title">At year <span id="cmp_year_label">10</span></h3>
+          <p class="nw-verdict" id="nw_verdict">—</p>
+          <div class="nw-pair">
+            <div>
+              <div class="result-sub">Buying projected net worth</div>
+              <div class="result-value result-value--sm" id="nw_buy">$—</div>
+            </div>
+            <div>
+              <div class="result-sub">Renting projected net worth</div>
+              <div class="result-value result-value--sm" id="nw_rent">$—</div>
+            </div>
+          </div>
+          <p class="result-sub" id="nw_basis_label">Nominal dollars</p>
+        </div>
+
+        <div class="summary-card summary-card--cash" id="card_cash">
+          <h3 class="summary-card-title">Monthly cash required</h3>
+          <div class="cash-grid">
+            <div>
+              <div class="result-sub">Buying</div>
+              <div class="result-value" id="cash_buy">$—</div>
+            </div>
+            <div>
+              <div class="result-sub">Renting</div>
+              <div class="result-value" id="cash_rent">$—</div>
+            </div>
+          </div>
+          <div class="cash-diff" id="cash_diff_line"></div>
+          <p class="principal-callout" id="principal_line"></p>
+        </div>
+
+        <div class="summary-card summary-card--lead" id="card_lead">
+          <h3 class="summary-card-title">Net-worth lead over time</h3>
+          <div id="lead_timeline" class="lead-timeline" aria-live="polite"></div>
+          <p class="result-sub" id="lead_sentence"></p>
+          <p class="cf-switch-subtle" id="cf_switch_line"></p>
+        </div>
+
+        <p id="headline_text" class="sr-only">—</p>
+      </aside>
+    </div>
+
+    <!-- REFINEMENTS: full width, collapsed by default -->
+    <div class="rvb-refinements">
+      <details class="rvb-details" id="refine_ownership">
+        <summary>
+          <span class="refine-summary-main">
+            <span class="refine-summary-title">Refine ownership costs</span>
+            <span class="refine-summary-sub" id="ownership_summary">Tax · Upkeep · Insurance · Utilities · Sale %</span>
+          </span>
+          <span class="refine-badge hidden" id="ownership_badge" aria-live="polite"></span>
+        </summary>
+        <div class="refine-body">
+          <div class="field-row">
+            <div class="field">
+              <label for="property_tax">Annual property tax</label>
+              <input id="property_tax" type="number" inputmode="decimal" min="0" step="any" value="4000" />
+            </div>
+            <div class="field" id="property_tax_growth_field">
+              <div class="toggle-wrapper">
+                <input id="property_tax_use_inf" type="checkbox" checked />
+                <label for="property_tax_use_inf">Growth uses inflation</label>
+              </div>
+              <div class="field hidden" id="property_tax_growth_wrap" style="margin-top:8px;">
+                <label for="property_tax_growth">Property-tax growth</label>
+                <div class="inline">
+                  <input id="property_tax_growth" type="number" inputmode="decimal" step="any" value="2" />
+                  <span class="unit">%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="maintenance">Repairs, maintenance &amp; property upkeep</label>
+            <div class="inline">
+              <input id="maintenance" type="number" inputmode="decimal" min="0" step="any" value="5000" />
+              <span class="unit">$/year</span>
+            </div>
+            <p class="maint-estimate muted" id="maintenance_estimate"></p>
+            <button type="button" id="maintenance_helper_btn" class="rvb-action-btn">Use estimate</button>
+            <details class="rvb-inline-details">
+              <summary>How this works</summary>
+              <p class="help muted">The 1% figure is only a starting-dollar helper. After entry, this amount grows with general inflation — not with home-price appreciation.</p>
+            </details>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="home_insurance">Home insurance ($/year)</label>
+              <input id="home_insurance" type="number" inputmode="decimal" min="0" step="any" value="1500" />
+            </div>
+            <div class="field">
+              <label for="condo_fees">Condo / HOA ($/month)</label>
+              <input id="condo_fees" type="number" inputmode="decimal" min="0" step="any" value="0" />
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="owner_utilities">Owner utilities ($/month)</label>
+              <input id="owner_utilities" type="number" inputmode="decimal" min="0" step="any" value="250" />
+            </div>
+            <div class="field" id="owner_util_growth_field">
+              <div class="toggle-wrapper">
+                <input id="owner_util_use_inf" type="checkbox" checked />
+                <label for="owner_util_use_inf">Utility growth uses inflation</label>
+              </div>
+              <div class="field hidden" id="owner_util_growth_wrap" style="margin-top:8px;">
+                <label for="owner_util_growth">Utility-cost growth</label>
+                <div class="inline">
+                  <input id="owner_util_growth" type="number" inputmode="decimal" step="any" value="2" />
+                  <span class="unit">%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="closing_costs">Purchase / closing costs</label>
+            <input id="closing_costs" type="number" inputmode="decimal" min="0" step="any" value="5000" />
+            <p class="help muted">Legal fees, inspections, land-transfer taxes, and similar upfront buyer costs.</p>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="selling_cost_pct">Selling cost %</label>
+              <div class="inline">
+                <input id="selling_cost_pct" type="number" inputmode="decimal" min="0" step="any" value="5" />
+                <span class="unit">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label for="selling_cost_fixed">Fixed selling cost</label>
+              <input id="selling_cost_fixed" type="number" inputmode="decimal" min="0" step="any" value="0" />
+            </div>
+          </div>
+          <p class="help muted">Deducted from realizable equity throughout the model.</p>
+
+          <h4 class="group-title">Mortgage insurance</h4>
+          <div class="field">
+            <label for="insurance_mode">Mortgage insurance mode</label>
+            <select id="insurance_mode">
+              <option value="automatic_canadian" selected>Automatic Canadian (CMHC-style)</option>
+              <option value="none">None</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div id="insurance_not_required" class="insurance-status hidden" role="status"></div>
+          <div id="insurance_canadian_wrap" class="hidden">
+            <div class="field" id="insurance_province_wrap">
+              <label for="insurance_province">Province (premium sales tax)</label>
+              <select id="insurance_province">
+                <option value="none" selected>None / other</option>
+                <option value="ON">Ontario (8%)</option>
+                <option value="QC">Quebec (see note)</option>
+                <option value="SK">Saskatchewan (6%)</option>
+              </select>
+              <details class="rvb-inline-details">
+                <summary>About provincial premium tax</summary>
+                <p class="help muted">CMHC identifies Ontario, Quebec, and Saskatchewan as applying provincial sales tax to mortgage loan insurance premiums; that tax cannot be added to the loan and is treated as cash. Quebec’s rate is 9% through 2026-12-31 and 9.975% after that date (Revenu Québec).</p>
+              </details>
+            </div>
+            <div class="field hidden" id="thirty_year_eligibility_wrap">
+              <label for="thirty_year_eligibility">Eligible for 30-year insured amortization</label>
+              <select id="thirty_year_eligibility">
+                <option value="neither" selected>Neither</option>
+                <option value="first_time_homebuyer">First-time homebuyer</option>
+                <option value="newly_built_home">Buying a newly built home</option>
+              </select>
+              <p class="help muted">Standard insured maximum is 25 years. 30-year insured amortization (with surcharge) applies only under CMHC Home Start eligibility.</p>
+            </div>
+            <div class="field hidden" id="finance_premium_wrap">
+              <div class="toggle-wrapper">
+                <input id="finance_premium" type="checkbox" checked />
+                <label for="finance_premium">Add insurance premium to the mortgage</label>
+              </div>
+            </div>
+          </div>
+          <div id="insurance_custom_wrap" class="hidden">
+            <div class="field-row">
+              <div class="field">
+                <label for="custom_ins_upfront">Custom — upfront cash</label>
+                <input id="custom_ins_upfront" type="number" inputmode="decimal" min="0" step="any" value="0" />
+              </div>
+              <div class="field">
+                <label for="custom_ins_financed">Custom — financed</label>
+                <input id="custom_ins_financed" type="number" inputmode="decimal" min="0" step="any" value="0" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="custom_ins_monthly">Custom — monthly</label>
+                <input id="custom_ins_monthly" type="number" inputmode="decimal" min="0" step="any" value="0" />
+              </div>
+              <div class="field">
+                <label for="custom_ins_monthly_duration">Duration (months, optional)</label>
+                <input id="custom_ins_monthly_duration" type="number" inputmode="numeric" min="0" step="1" value="" placeholder="Until mortgage payoff" />
+              </div>
+            </div>
+            <p class="help muted">Blank duration = until mortgage payoff. Recurring insurance never continues after payoff.</p>
+          </div>
+          <div id="insurance_readout" class="capital-readout hidden" aria-live="polite"></div>
+
+          <h4 class="group-title">Other ownership expenses</h4>
+          <div id="owner_other_rows" class="other-expense-list"></div>
+          <button type="button" id="add_owner_expense" class="rvb-add-btn">+ Add ownership expense</button>
+        </div>
+      </details>
+
+      <details class="rvb-details" id="refine_rental">
+        <summary>
+          <span class="refine-summary-main">
+            <span class="refine-summary-title">Refine rental costs</span>
+            <span class="refine-summary-sub" id="rental_summary">Insurance · Utilities · Upfront</span>
+          </span>
+          <span class="refine-badge hidden" id="rental_badge" aria-live="polite"></span>
+        </summary>
+        <div class="refine-body">
+          <div class="field">
+            <label for="renter_upfront">Other upfront renter costs</label>
+            <input id="renter_upfront" type="number" inputmode="decimal" min="0" step="any" value="0" />
+            <details class="rvb-inline-details">
+              <summary>What to include</summary>
+              <p class="help muted">Optional one-time, non-refundable costs to begin renting. Do not include refundable deposits or prepaid rent that remains yours.</p>
+            </details>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="tenant_insurance">Tenant insurance ($/year)</label>
+              <input id="tenant_insurance" type="number" inputmode="decimal" min="0" step="any" value="300" />
+            </div>
+            <div class="field">
+              <label for="renter_utilities">Renter utilities ($/month)</label>
+              <input id="renter_utilities" type="number" inputmode="decimal" min="0" step="any" value="100" />
+            </div>
+          </div>
+          <div class="field">
+            <div class="toggle-wrapper">
+              <input id="renter_util_use_inf" type="checkbox" checked />
+              <label for="renter_util_use_inf">Renter utility growth uses inflation</label>
+            </div>
+          </div>
+          <div class="field hidden" id="renter_util_growth_wrap">
+            <label for="renter_util_growth">Renter utility-cost growth</label>
+            <div class="inline">
+              <input id="renter_util_growth" type="number" inputmode="decimal" step="any" value="2" />
+              <span class="unit">%</span>
+            </div>
+          </div>
+          <h4 class="group-title">Other renter expenses</h4>
+          <div id="renter_other_rows" class="other-expense-list"></div>
+          <button type="button" id="add_renter_expense" class="rvb-add-btn">+ Add renter expense</button>
+        </div>
+      </details>
+
+      <details class="rvb-details" id="refine_advanced">
+        <summary>
+          <span class="refine-summary-main">
+            <span class="refine-summary-title">Advanced assumptions</span>
+            <span class="refine-summary-sub">Appreciation mode, invest-the-difference</span>
+          </span>
+          <span class="refine-badge hidden" id="advanced_badge" aria-live="polite"></span>
+        </summary>
+        <div class="refine-body">
+          <div class="field">
+            <div class="display-mode-heading" id="home_appr_mode_heading">Home-price appreciation mode</div>
+            <div class="display-mode-options" role="radiogroup" aria-labelledby="home_appr_mode_heading">
+              <label class="display-mode-row" for="appr_nominal">
+                <input type="radio" name="appr_mode" id="appr_nominal" value="nominal" checked />
+                <span>Independent nominal appreciation</span>
+              </label>
+              <label class="display-mode-row" for="appr_real">
+                <input type="radio" name="appr_mode" id="appr_real" value="real_linked" />
+                <span>Linked to inflation (real appreciation)</span>
+              </label>
+            </div>
+          </div>
+          <div class="field">
+            <div class="toggle-wrapper">
+              <input id="invest_cf_diff" type="checkbox" checked />
+              <label for="invest_cf_diff">Invest monthly cash-flow savings</label>
+            </div>
+            <p class="help muted">When on, whichever strategy requires less cash that month invests the difference.</p>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <!-- DEEP RESULTS: full width -->
+    <section class="rvb-deep-results" aria-labelledby="deep_results_heading">
+      <h2 id="deep_results_heading" class="section-title">Projected net worth</h2>
+
+      <div class="chart-section panel">
+        <div class="chart-toolbar">
+          <div class="chart-range" role="group" aria-label="Chart time range">
+            <button type="button" class="range-btn" data-range="10">10 years</button>
+            <button type="button" class="range-btn" data-range="25">25 years</button>
+            <button type="button" class="range-btn" data-range="60">60 years</button>
+            <button type="button" class="range-btn range-btn--cmp" data-range="comparison" id="range_cmp_btn">Comparison year</button>
+          </div>
+          <p class="result-sub chart-basis-hint" id="chart_basis_hint">Showing nominal dollars</p>
+        </div>
+        <div class="chart-container chart-container--lg">
+          <canvas id="nw_chart" role="img" aria-labelledby="nw_chart_label"></canvas>
+        </div>
+        <p id="nw_chart_label" class="sr-only">Line chart of projected buyer and renter net worth over the selected horizon.</p>
+        <div class="chart-legend">
+          <div class="legend-item"><span class="legend-color" style="background:#2ECC71;"></span><span>Buying</span></div>
+          <div class="legend-item"><span class="legend-color" style="background:#3498DB;"></span><span>Renting</span></div>
+          <div class="legend-item"><span class="legend-color" style="background:#E67E22;"></span><span>Crossover</span></div>
+        </div>
+        <ul id="crossover_labels" class="crossover-label-list" aria-label="Crossover markers"></ul>
+      </div>
+
+      <div class="panel money-at-year" id="money_at_year">
+        <h2 class="section-title">Where the money is at year <span id="money_year_label">10</span></h2>
+        <p class="result-sub" id="money_basis_hint">Showing nominal dollars</p>
+        <div class="money-grid">
+          <div class="money-col money-card">
+            <h3>Buying</h3>
+            <dl class="money-dl" id="buyer_breakdown_dl"></dl>
+            <p class="money-total">Total projected net worth <strong id="buyer_total_nw">$—</strong></p>
+          </div>
+          <div class="money-col money-card">
+            <h3>Renting</h3>
+            <dl class="money-dl" id="renter_breakdown_dl"></dl>
+            <p class="money-total">Total projected net worth <strong id="renter_total_nw">$—</strong></p>
+          </div>
+        </div>
+        <p class="money-diff" id="money_diff_line"></p>
+
+        <details class="rvb-inline-details" id="invest_history_details">
+          <summary>Nominal investment-account history</summary>
+          <p class="result-sub" id="invest_decomp_note">
+            Starting capital, cumulative cash contributions, and investment earnings are historical nominal cash-accounting quantities. They reconcile to the nominal investment account and are shown separately from the selected-year balance sheet above.
+          </p>
+          <div class="money-grid" style="margin-top:12px;">
+            <div class="money-col money-card">
+              <h3>Buying</h3>
+              <dl class="money-dl" id="buyer_invest_history_dl"></dl>
+            </div>
+            <div class="money-col money-card">
+              <h3>Renting</h3>
+              <dl class="money-dl" id="renter_invest_history_dl"></dl>
+            </div>
+          </div>
+        </details>
+
+        <div class="selected-cash" id="selected_cash_block">
+          <h3 class="group-title" style="margin-top:18px;">
+            Monthly cash required at year <span id="cash_year_label">10</span>
+            <span class="result-sub" id="sel_cash_basis_hint" style="display:inline;margin-left:8px;font-weight:500;text-transform:none;letter-spacing:0;"></span>
+          </h3>
+          <div class="cash-grid">
+            <div>
+              <div class="result-sub">Buying</div>
+              <div class="result-value result-value--sm" id="sel_cash_buy">$—</div>
+            </div>
+            <div>
+              <div class="result-sub">Renting</div>
+              <div class="result-value result-value--sm" id="sel_cash_rent">$—</div>
+            </div>
+          </div>
+          <p class="cash-diff" id="sel_cash_diff_line"></p>
+          <p class="result-sub" id="sel_cash_advantage"></p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2 class="section-title">Standard snapshots</h2>
+        <p class="snapshot-legend muted">
+          Buyer net worth includes net realizable home equity after estimated selling costs, plus investments.
+        </p>
+        <p class="snapshot-legend muted">
+          Positive = buying ahead · Negative = renting ahead
+        </p>
+        <p class="snapshot-legend muted" id="payoff_help">
+          Mortgage payoff — final payment means the last mortgage payment occurs at that point; mortgage cash requirements fall the following month.
+        </p>
+        <div class="snapshot-scroll">
+          <table class="breakdown-table" id="snapshots_table">
+            <thead>
+              <tr>
+                <th>Point</th>
+                <th class="num">Buyer NW</th>
+                <th class="num">Renter NW</th>
+                <th class="num">Difference</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2 class="section-title">Break-even analysis</h2>
+        <p class="section-lede muted">At the selected comparison year, what rates make projected net worth approximately equal?</p>
+        <div class="be-grid">
+          <div class="be-card">
+            <h3 class="be-card-title" id="be_home_title">Break-even nominal home appreciation</h3>
+            <p class="be-card-value" id="be_home_value">—</p>
+            <p class="be-card-copy" id="be_home_line">—</p>
+          </div>
+          <div class="be-card">
+            <h3 class="be-card-title" id="be_invest_title">Break-even investment return</h3>
+            <p class="be-card-value" id="be_invest_value">—</p>
+            <p class="be-card-copy" id="be_invest_line">—</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div data-calculator-share-mount class="rvb-share-mount" aria-label="Share and export"></div>
+
+    <section class="newsletter-signup card" aria-labelledby="newsletter-calc-heading">
+      <h2 id="newsletter-calc-heading" class="newsletter-signup-heading">Want new calculators like this when they go live?</h2>
+      <p class="newsletter-signup-copy">Get one concise monthly email when The Long Math publishes new calculators, articles, and essays.</p>
+      <div class="newsletter-embed-wrap">
+        <iframe
+          src="https://subscribe-forms.beehiiv.com/bfdc64a5-2697-4bb0-bec5-5a557c9f274b"
+          class="beehiiv-embed"
+          data-test-id="beehiiv-embed"
+          frameborder="0"
+          scrolling="no"
+          style="width:100%;height:220px;border:none;"
+          title="Newsletter signup"
+        ></iframe>
+      </div>
+    </section>
+
+    <section class="related-calculators card">
+      <h2>Related calculators</h2>
+      <ul>
+        <li><a href="/calculators/mortgage-calculator/">Mortgage Calculator</a></li>
+        <li><a href="/calculators/pay-off-mortgage-vs-invest/">Pay Off Mortgage vs Invest</a></li>
+        <li><a href="/calculators/investment-simple/">Investment Growth Calculator</a></li>
+        <li><a href="/calculators/future-buying-power/">Future Buying Power</a></li>
+      </ul>
+    </section>
+
+    <p class="disclaimer muted" style="font-size:13px;margin:24px 0 40px;line-height:1.5;">
+      Educational arithmetic only. This calculator does not provide financial, tax, or legal advice, and does not recommend renting or buying. Assumptions are yours; results are projections under those assumptions, not forecasts.
+    </p>
+  </div>
+
+  <div id="site-footer"></div>
+
+  <script src="/calculators/mortgage-calculator/mortgage-engine.js"></script>
+  <script src="/assets/js/investment-growth.engine.js"></script>
+  <script src="/assets/js/mortgage-loan-insurance.canada.js"></script>
+  <script src="/calculators/rent-vs-buy/engine.js"></script>
+  <script src="/calculators/rent-vs-buy/ui.js"></script>
+</body>
+</html>

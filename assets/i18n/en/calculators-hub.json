@@ -156,6 +156,11 @@
           "path": "/calculators/pay-off-mortgage-vs-invest/",
           "title": "Pay Off Mortgage vs Invest",
           "desc": "Compare paying down a mortgage faster versus investing the same monthly cash under a strict cash-flow-neutral rule."
+        },
+        {
+          "path": "/calculators/rent-vs-buy/",
+          "title": "Rent vs. Buy Calculator",
+          "desc": "Compare monthly cash required to rent or buy, project long-term net worth, and see when one strategy overtakes the other under explicit assumptions."
         }
       ]
     },

@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspectable Arithmetic – Rent vs. Buy Calculator | The Long Math</title>
+  <meta name="description" content="Formulae, assumptions, and computational structure for the Rent vs. Buy calculator: equal starting resources, monthly cash-flow differences, net realizable equity, and 60-year crossover analysis." />
+  <link rel="canonical" href="https://www.thelongmath.com/calculators/rent-vs-buy/methodology/" />
+
+  <script src="/assets/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <script defer src="/assets/js/site.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <div class="wrap">
+    <div class="methodology-content">
+      <h1>Inspectable Arithmetic for the Rent vs. Buy Calculator</h1>
+      <p class="methodology-meta">Version 1.0<br>Last verified: September 2026</p>
+
+      <p>Transparent arithmetic is the operating system of this calculator.</p>
+      <p>This document publishes the formulae, computational structure, and assumptions used on the calculator page.</p>
+      <p>No opinions. No hidden assumptions. Just arithmetic.</p>
+      <p><a href="/calculators/rent-vs-buy/">← Back to the Rent vs. Buy Calculator</a></p>
+
+      <h2>Purpose</h2>
+      <p>
+        Compare renting versus buying a primary residence when both strategies begin with the same available starting financial resources and the same ongoing financial capacity, allocated differently. The model reports monthly cash requirements and projected net worth for up to 60 years, detects crossover points, and does not recommend renting or buying.
+      </p>
+
+      <h2>Core modelling principle</h2>
+      <ol>
+        <li>Both scenarios start with the same available financial resources.</li>
+        <li>Upfront capital required to buy but not required to rent remains available to the renter.</li>
+        <li>Closing costs consume buyer capital.</li>
+        <li>Each month, whichever strategy has lower total cash requirements may invest the difference when that option is enabled.</li>
+        <li>Mortgage principal increases homeowner equity.</li>
+        <li>The entire mortgage payment is used for cash-flow comparison, but principal is not treated as consumed economic cost.</li>
+        <li>Mortgage payments stop when the loan is repaid.</li>
+        <li>After mortgage payoff, lower homeowner cash requirements can result in homeowner investment contributions.</li>
+        <li>Homeowner realizable equity deducts mortgage debt and estimated selling costs.</li>
+        <li>Repairs, maintenance and property upkeep are entered as a dollar amount.</li>
+        <li>The optional 1%-of-starting-home-value maintenance helper only determines the starting dollar amount.</li>
+        <li>Maintenance thereafter grows with general inflation, not home appreciation.</li>
+        <li>Rent growth is independently specified.</li>
+        <li>Home appreciation may be independently nominal or linked to inflation using a real-appreciation assumption.</li>
+        <li>Investment returns are assumed constant for modelling purposes.</li>
+        <li>Home appreciation is assumed constant for modelling purposes.</li>
+        <li>Recurring expenses generally escalate according to the assumptions specified, using equivalent monthly growth from annual rates (not discrete once-a-year jumps).</li>
+        <li>Real-dollar results are nominal results discounted by general inflation.</li>
+        <li>The 60-year calculation is a mathematical projection, not a prediction.</li>
+        <li>Lifestyle, flexibility, personal preferences, housing stability, geographic risk and other nonfinancial factors are outside the calculator.</li>
+      </ol>
+
+      <h2>Shared engines</h2>
+      <ul>
+        <li><strong>MortgageEngine</strong> — Canadian mortgage payment and monthly rate: <code>i = (1 + r/2)<sup>1/6</sup> − 1</code> for monthly periods.</li>
+        <li><strong>InvestmentGrowthEngine</strong> — monthly geometric return <code>μ = (1 + R)<sup>1/12</sup> − 1</code>, end-of-month grow-then-contribute, and nominal→real conversion.</li>
+        <li><strong>CanadaMortgageLoanInsurance</strong> — CMHC-style homeowner premium schedule, purchase-price / down-payment / amortization eligibility, and provincial premium tax (cash only) for automatic Canadian mode.</li>
+      </ul>
+
+      <h2>Assumed mortgage interest rate</h2>
+      <p>
+        V1 applies the user-entered <strong>assumed mortgage interest rate</strong> throughout the modelled mortgage period. Future mortgage renewal rates are not modelled separately. The calculator does not forecast term renewals or rate paths.
+      </p>
+
+      <h2>Starting capital</h2>
+      <div class="formula-block">
+        BuyerDeployed = DownPayment + ClosingCosts + UpfrontInsuranceCash<br>
+        BuyerRemaining = StartingCapital − BuyerDeployed<br>
+        RenterStart = StartingCapital − RenterUpfront (V1: RenterUpfront = 0)
+      </div>
+      <p class="formula-meta">
+        Financed mortgage insurance is added to the mortgage principal and is <em>not</em> counted again as upfront cash. Provincial sales tax on Canadian premiums (where applicable) is cash-only and cannot be financed, per CMHC.
+      </p>
+
+      <h2>Mortgage</h2>
+      <p>Monthly payment and amortization use the shared MortgageEngine (same Canadian semi-annual conversion as the Mortgage Calculator). Balance is advanced monthly; the final payment is truncated so the balance reaches exactly zero. After payoff, mortgage payment = 0 for all later months.</p>
+
+      <h2>Canadian mortgage insurance (automatic mode)</h2>
+      <p>
+        Automatic Canadian mode applies current CMHC homeowner <em>eligibility</em> as well as the published premium schedule — it does not merely multiply LTV by a rate table.
+      </p>
+      <ul>
+        <li>Loan-to-value at or below 80%: insurance not required; premium $0.</li>
+        <li>Purchase price / lending value must be <strong>below $1,500,000</strong> for high-ratio insurance. At or above $1.5M with less than 20% down, the calculator flags the scenario rather than inventing an insured premium.</li>
+        <li>Minimum down payment (1–2 unit homeowner): 5% of the first $500,000 and 10% of the portion above $500,000 while price is below $1.5M.</li>
+        <li>Standard maximum insured amortization is 25 years. A 30-year insured amortization (CMHC Home Start) requires first-time homebuyer or newly built home eligibility; the 0.20 percentage-point surcharge applies only in that eligible case.</li>
+        <li>Premium may be financed into the mortgage; provincial sales tax on the premium (Ontario, Quebec, Saskatchewan as currently listed by CMHC) is paid in cash and is never financed.</li>
+      </ul>
+      <p>
+        Sources:
+        <a href="https://www.cmhc-schl.gc.ca/professionals/project-funding-and-mortgage-financing/mortgage-loan-insurance/mortgage-loan-insurance-homeownership-programs/premium-information-for-homeowner-and-small-rental-loans" target="_blank" rel="noopener noreferrer">CMHC premium information</a>,
+        <a href="https://www.cmhc-schl.gc.ca/professionals/project-funding-and-mortgage-financing/mortgage-loan-insurance/mortgage-loan-insurance-homeownership-programs/purchase" target="_blank" rel="noopener noreferrer">CMHC Purchase</a>,
+        <a href="https://www.cmhc-schl.gc.ca/professionals/project-funding-and-mortgage-financing/mortgage-loan-insurance/mortgage-loan-insurance-homeownership-programs/home-start" target="_blank" rel="noopener noreferrer">CMHC Home Start</a>.
+      </p>
+      <p>
+        Quebec’s tax on insurance premiums is maintained as a dated schedule: 9% through premiums paid on or before 2026-12-31, and 9.975% for premiums paid after that date
+        (<a href="https://www.revenuquebec.ca/en/press-room/tax-news/details/2026-04-09/harmonization-of-the-insurance-premiums-tax-rate-with-the-qst-rate/" target="_blank" rel="noopener noreferrer">Revenu Québec</a>).
+      </p>
+      <p>Custom mode allows upfront, financed, and recurring insurance amounts for non-Canadian structures (e.g. PMI). Automatic U.S. PMI/FHA/USDA logic is not included. Explicit <strong>None</strong> disables Canadian insurance entirely.</p>
+
+      <h2>Monthly cash requirements</h2>
+      <p><strong>Owner</strong> cash in month <em>m</em> includes: mortgage payment (if any), property tax, repairs/maintenance/upkeep, home insurance, condo/HOA/strata, owner utilities, other ownership expenses, and any recurring custom mortgage insurance.</p>
+      <p><strong>Renter</strong> cash includes: rent, tenant insurance, renter utilities, and other renter expenses.</p>
+      <div class="formula-block">D<sub>m</sub> = OwnerCash<sub>m</sub> − RenterCash<sub>m</sub></div>
+      <p class="formula-meta">If investing cash-flow savings is on: when D<sub>m</sub> &gt; 0 the renter invests D<sub>m</sub>; when D<sub>m</sub> &lt; 0 the buyer invests |D<sub>m</sub>|.</p>
+
+      <h3>Annual costs → monthly cash (long-run budget convention)</h3>
+      <p>
+        Annual inputs (property tax; repairs, maintenance &amp; property upkeep; homeowner insurance; tenant insurance; annual custom expenses) are long-run budget assumptions. Each month uses one-twelfth of the escalated annual amount:
+      </p>
+      <div class="formula-block">MonthlySlice<sub>m</sub> = Escalate(AnnualAmount, growth, m) / 12</div>
+      <p class="formula-meta">
+        The model does <em>not</em> dump an entire year’s maintenance or insurance into a single month. Escalation follows the equivalent monthly growth convention below — not a once-per-year step increase.
+      </p>
+      <p>
+        The optional “1% of starting home value” helper only sets the <em>initial</em> annual maintenance dollar amount. Thereafter maintenance grows with general inflation only and is not re-tied to future home market value.
+      </p>
+
+      <h2>Investment accounts</h2>
+      <p>Each strategy has its own investment account. Timing is end-of-month: opening balance grows by μ, then that month’s contribution (if any) is added — matching InvestmentGrowthEngine end-of-period contribution timing.</p>
+
+      <h2>Home value and equity</h2>
+      <div class="formula-block">
+        H<sub>m</sub> = H<sub>0</sub> · (1 + g<sub>month</sub>)<sup>m</sup><br>
+        GrossEquity<sub>m</sub> = H<sub>m</sub> − MortgageBalance<sub>m</sub><br>
+        SellingCosts<sub>m</sub> = H<sub>m</sub> · s<sub>%</sub> + s<sub>fixed</sub><br>
+        NetRealizableEquity<sub>m</sub> = H<sub>m</sub> − MortgageBalance<sub>m</sub> − SellingCosts<sub>m</sub>
+      </div>
+      <p>Primary net worth uses net realizable equity at every month, not only at year 60.</p>
+
+      <h2>Home appreciation modes</h2>
+      <p><strong>Independent nominal:</strong> user enters annual nominal appreciation g.</p>
+      <p><strong>Linked to inflation:</strong></p>
+      <div class="formula-block">g<sub>nominal</sub> = (1 + π) · (1 + g<sub>real</sub>) − 1</div>
+      <p class="formula-meta">Example: π = 2%, g<sub>real</sub> = 1% → g<sub>nominal</sub> = 3.02%, not 3.00%.</p>
+
+      <h2>Net worth</h2>
+      <div class="formula-block">
+        BuyerNW<sub>m</sub> = NetRealizableEquity<sub>m</sub> + BuyerInvestments<sub>m</sub><br>
+        RenterNW<sub>m</sub> = RenterInvestments<sub>m</sub><br>
+        Diff<sub>m</sub> = BuyerNW<sub>m</sub> − RenterNW<sub>m</sub>
+      </div>
+
+      <h2>Real (today’s) dollars</h2>
+      <div class="formula-block">Real(m) = Nominal(m) / (1 + π)<sup>m/12</sup></div>
+      <p class="formula-meta">The same factor is applied to both strategies at a given month, so converting both series to real dollars does not change crossover months.</p>
+
+      <h2>Crossover detection</h2>
+      <p>A crossover occurs when the sign of Diff<sub>m</sub> changes between consecutive months (near-zero treated as equality). Multiple crossovers are reported; the model does not force a single break-even.</p>
+
+      <h2>Expense escalation</h2>
+      <ul>
+        <li>General inflation by default: maintenance, home insurance, tenant insurance, condo fees, custom other costs.</li>
+        <li>Independent: rent growth; home appreciation.</li>
+        <li>Inflation-linked by default with override: property tax; owner utilities; renter utilities.</li>
+      </ul>
+
+      <h3>Annual growth → equivalent monthly growth</h3>
+      <p>
+        Annual growth assumptions (rent growth, general inflation on recurring expenses, property-tax growth, utility growth, and similar) are converted to an <em>equivalent smooth monthly</em> path for the monthly projection. The model does <em>not</em> wait exactly 12 months and then apply a discrete annual jump.
+      </p>
+      <div class="formula-block">
+        level(m) = startingLevel · (1 + annualGrowth)<sup>m/12</sup>
+      </div>
+      <p class="formula-meta">
+        After 12 months, level(12) = startingLevel · (1 + annualGrowth), matching the stated annual rate. Between anniversary months the level moves continuously on that geometric path. For annual dollar costs, the escalated annual amount is then divided by 12 for each month’s cash slice.
+      </p>
+
+      <h2>Break-even solvers (V1)</h2>
+      <p>
+        At the user-selected comparison year, the calculator searches for rates where projected buyer and renter net worth are approximately equal (within $1).
+      </p>
+      <p>
+        <strong>Home appreciation</strong> uses bracketed bisection over −20% to +30% per year. Existing QA found buyer-minus-renter net worth monotonic in appreciation over the tested range.
+      </p>
+      <p>
+        <strong>Investment return</strong> is searched from −50% to +40% annual nominal.
+        Buyer-minus-renter projected net worth can be <em>non-monotonic</em> in investment return (different contribution amounts and timing), so the calculator does <em>not</em> rely only on the endpoints.
+        It scans the interval in 0.10 percentage-point steps for sign changes (and limited near-tangent candidates), then numerically refines each candidate with the full monthly simulation.
+        Zero, one, or more break-even returns may exist inside the interval.
+      </p>
+      <p>
+        The break-even investment return is an assumed return at which the two strategies produce approximately equal projected net worth at the selected year.
+        Which strategy benefits more from a higher return depends on how much money each strategy has invested and when those contributions occur.
+      </p>
+
+      <h3>Investment earnings</h3>
+      <p>
+        Investment earnings are the portion of the investment account not explained by starting invested capital or cash contributions.
+        They may be positive or negative depending on the assumed investment return.
+      </p>
+      <div class="formula-block">
+        InvestmentEarnings = InvestmentAccount − StartingInvestedCapital − CumulativeCashContributions
+      </div>
+
+      <h3>Renter upfront costs</h3>
+      <p>
+        Optional one-time, non-refundable renter costs reduce the renter’s starting investable capital.
+        Refundable deposits or prepaid rent that remains an asset should not be entered here.
+      </p>
+      <div class="formula-block">
+        RenterStartingInvestable = StartingCapital − RenterUpfrontCosts
+      </div>
+
+      <h2>Explicitly excluded from V1</h2>
+      <ul>
+        <li>Moving frequency / moving costs / repeated sales and purchases</li>
+        <li>Mortgage renewal rate schedules</li>
+        <li>Investment MER, fees, and taxation; TFSA/RRSP/FHSA modelling</li>
+        <li>Mortgage-interest tax deductions</li>
+        <li>Automatic U.S. PMI/FHA/USDA</li>
+        <li>Automated Canadian land-transfer-tax or first-time buyer rebates</li>
+        <li>Stochastic returns / Monte Carlo / historical market simulations</li>
+        <li>Renovations undertaken primarily to increase home value</li>
+      </ul>
+
+      <h2>Rent-growth guidance sources</h2>
+      <ul>
+        <li><a href="https://www.cmhc-schl.gc.ca/professionals/housing-markets-data-and-research/housing-data/data-tables/rental-market/rental-market-report-data-tables" target="_blank" rel="noopener noreferrer">CMHC Rental Market Survey data tables</a></li>
+        <li><a href="https://www.cmhc-schl.gc.ca/professionals/housing-markets-data-and-research/market-reports/rental-market-reports-major-centres" target="_blank" rel="noopener noreferrer">CMHC Rental Market Report (major centres)</a></li>
+      </ul>
+      <p>These sources help users choose a rent-growth assumption. They are not forecasts embedded as defaults.</p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href="/calculators/mortgage-calculator/">Mortgage Calculator</a></li>
+        <li><a href="/calculators/pay-off-mortgage-vs-invest/">Pay Off Mortgage vs Invest</a></li>
+        <li><a href="/articles/investing-and-financial-literacy/how-does-a-mortgage-work-in-canada/">How Does a Mortgage Work in Canada?</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="site-footer"></div>
+</body>
+</html>

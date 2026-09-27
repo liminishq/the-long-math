@@ -1551,6 +1551,37 @@
   },
   {
     "type": "calculator",
+    "title": "Rent vs. Buy Calculator",
+    "url": "/calculators/rent-vs-buy/",
+    "desc": "Compare the monthly cash required to rent or buy, project long-term net worth, and see when one strategy overtakes the other under explicit assumptions.",
+    "keywords": [
+      "rent vs buy calculator",
+      "rent or buy calculator Canada",
+      "renting vs buying a home",
+      "rent vs buy break-even",
+      "renting vs owning",
+      "rent vs buy net worth",
+      "homeownership versus renting",
+      "monthly cash required",
+      "projected net worth"
+    ]
+  },
+  {
+    "type": "calculator",
+    "title": "Inspectable Arithmetic for the Rent vs. Buy Calculator",
+    "url": "/calculators/rent-vs-buy/methodology/",
+    "desc": "Formulae, assumptions, and computational structure for the Rent vs. Buy calculator: equal starting resources, monthly cash-flow differences, net realizable equity, and 60-year crossover analysis.",
+    "keywords": [
+      "rent vs buy methodology",
+      "inspectable arithmetic",
+      "net realizable equity",
+      "crossover",
+      "CMHC",
+      "mortgage insurance"
+    ]
+  },
+  {
+    "type": "calculator",
     "title": "Inspectable Arithmetic for the Pay Off Mortgage vs Invest Calculator (Cash-Flow Neutral)",
     "url": "/calculators/pay-off-mortgage-vs-invest/methodology/",
     "desc": "Formulae, computational structure, and assumptions for the Pay Off Mortgage vs Invest calculator, including monthly extra cash and lump-sum-at-start modes.",

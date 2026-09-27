@@ -156,6 +156,11 @@
           "path": "/calculators/pay-off-mortgage-vs-invest/",
           "title": "Rembourser l’hypothèque ou investir",
           "desc": "Compare un remboursement hypothécaire accéléré à l’investissement du même flux monétaire mensuel selon une règle stricte de neutralité de trésorerie."
+        },
+        {
+          "path": "/calculators/rent-vs-buy/",
+          "title": "Calculateur louer ou acheter",
+          "desc": "Compare les liquidités mensuelles requises pour louer ou acheter, projette la valeur nette à long terme et indique quand une stratégie dépasse l’autre selon des hypothèses explicites."
         }
       ]
     },
