@@ -1607,7 +1607,13 @@
 
     // Fast path: main projection + home-appreciation break-even. Investment-return
     // root scan is deferred so typing stays responsive.
-    var result = window.RentVsBuyEngine.calculate(inputs, { skipInvestmentBreakEven: true });
+    var result;
+    try {
+      result = window.RentVsBuyEngine.calculate(inputs, { skipInvestmentBreakEven: true });
+    } catch (e) {
+      showError((e && e.message) || "Calculation error.");
+      return;
+    }
     updateInsuranceUi(result);
     if (!result.error) {
       updateCapitalReadout(inputs, result.insurance && result.insurance.detail);

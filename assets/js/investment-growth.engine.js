@@ -29,6 +29,48 @@
     return (1 + rNom) / (1 + inflation) - 1;
   }
 
+  /**
+   * Geometric monthly return from an annual effective/nominal return decimal.
+   * Same conversion used by Long Math monthly investment loops.
+   */
+  function monthlyGeometricReturn(annualReturn) {
+    var r = Number(annualReturn);
+    if (!Number.isFinite(r)) return NaN;
+    if (r <= -1) return NaN;
+    if (Math.abs(r) < 1e-15) return 0;
+    return Math.pow(1 + r, 1 / 12) - 1;
+  }
+
+  /**
+   * Convert a nominal future dollar amount at month m to today's dollars.
+   * Real(m) = Nominal(m) / (1 + inflation)^(m/12)
+   */
+  function nominalToReal(nominalAmount, inflationAnnual, months) {
+    var nom = Number(nominalAmount);
+    var inf = Number(inflationAnnual);
+    var m = Number(months);
+    if (!Number.isFinite(nom)) return NaN;
+    if (!Number.isFinite(inf) || inf <= -1) return NaN;
+    if (!Number.isFinite(m) || m < 0) return NaN;
+    if (Math.abs(inf) < 1e-15 || m === 0) return nom;
+    return nom / Math.pow(1 + inf, m / 12);
+  }
+
+  /**
+   * One end-of-month investment step: grow opening balance, then add contribution.
+   * Matches InvestmentGrowthEngine end-of-period contribution timing.
+   */
+  function applyEndOfMonthGrowthAndContribution(openingBalance, monthlyReturn, contribution) {
+    var bal = Number(openingBalance);
+    var mu = Number(monthlyReturn);
+    var contrib = Number(contribution);
+    if (!Number.isFinite(bal)) bal = 0;
+    if (!Number.isFinite(mu)) mu = 0;
+    if (!Number.isFinite(contrib)) contrib = 0;
+    var grown = bal * (1 + mu);
+    return grown + contrib;
+  }
+
   function normalizePeriodsPerYear(value) {
     var ppy = Math.round(Number(value));
     if (!Number.isFinite(ppy) || ppy < 1) return 12;
@@ -561,6 +603,9 @@
     simulateInvestment: simulateInvestment,
     solveRequiredNominalReturn: solveRequiredNominalReturn,
     calculateRealReturn: calculateRealReturn,
+    monthlyGeometricReturn: monthlyGeometricReturn,
+    nominalToReal: nominalToReal,
+    applyEndOfMonthGrowthAndContribution: applyEndOfMonthGrowthAndContribution,
     contributionTimes: contributionTimes,
     SP500_NOMINAL_ANNUAL_RETURN_50Y: SP500_NOMINAL_ANNUAL_RETURN_50Y,
     SP500_REAL_ANNUAL_RETURN_50Y: SP500_REAL_ANNUAL_RETURN_50Y,
