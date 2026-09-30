@@ -317,10 +317,14 @@ test("markup: comparison year and real/nominal live in summary controls", () => 
   assert.ok(cmpIdx > coreEnd);
 });
 
-test("markup: net-worth card precedes monthly cash card", () => {
-  const nwIdx = html.indexOf('id="card_nw"');
+test("markup: current monthly cash precedes compare-at; net-worth follows", () => {
   const cashIdx = html.indexOf('id="card_cash"');
-  assert.ok(nwIdx > 0 && cashIdx > nwIdx);
+  const summaryIdx = html.indexOf('id="summary_controls"');
+  const nwIdx = html.indexOf('id="card_nw"');
+  assert.ok(cashIdx > 0 && summaryIdx > cashIdx && nwIdx > summaryIdx);
+  assert.match(html, /Monthly cash required today/);
+  assert.match(html, /Projected monthly cash at year/);
+  assert.doesNotMatch(html, /<h3 class="summary-card-title">Monthly cash required<\/h3>/);
 });
 
 test("markup: refinement details start collapsed; no duplicate snapshot composition", () => {

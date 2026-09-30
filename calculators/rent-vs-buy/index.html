@@ -211,6 +211,22 @@
           <h2 id="live_summary_heading" class="section-title">Live summary</h2>
         </div>
 
+        <div class="summary-card summary-card--cash" id="card_cash">
+          <h3 class="summary-card-title">Monthly cash required today</h3>
+          <div class="cash-grid">
+            <div>
+              <div class="result-sub">Buying</div>
+              <div class="result-value" id="cash_buy">$—</div>
+            </div>
+            <div>
+              <div class="result-sub">Renting</div>
+              <div class="result-value" id="cash_rent">$—</div>
+            </div>
+          </div>
+          <div class="cash-diff" id="cash_diff_line"></div>
+          <p class="principal-callout" id="principal_line"></p>
+        </div>
+
         <div class="summary-controls" id="summary_controls">
           <div class="compare-at">
             <label for="comparison_year">Compare at</label>
@@ -245,22 +261,6 @@
             </div>
           </div>
           <p class="result-sub" id="nw_basis_label">Nominal dollars</p>
-        </div>
-
-        <div class="summary-card summary-card--cash" id="card_cash">
-          <h3 class="summary-card-title">Monthly cash required</h3>
-          <div class="cash-grid">
-            <div>
-              <div class="result-sub">Buying</div>
-              <div class="result-value" id="cash_buy">$—</div>
-            </div>
-            <div>
-              <div class="result-sub">Renting</div>
-              <div class="result-value" id="cash_rent">$—</div>
-            </div>
-          </div>
-          <div class="cash-diff" id="cash_diff_line"></div>
-          <p class="principal-callout" id="principal_line"></p>
         </div>
 
         <div class="summary-card summary-card--lead" id="card_lead">
@@ -582,7 +582,7 @@
 
         <div class="selected-cash" id="selected_cash_block">
           <h3 class="group-title" style="margin-top:18px;">
-            Monthly cash required at year <span id="cash_year_label">10</span>
+            Projected monthly cash at year <span id="cash_year_label">10</span>
             <span class="result-sub" id="sel_cash_basis_hint" style="display:inline;margin-left:8px;font-weight:500;text-transform:none;letter-spacing:0;"></span>
           </h3>
           <div class="cash-grid">
