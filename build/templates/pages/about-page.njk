@@ -6,6 +6,16 @@
         <h1>{{ aboutPage.h1 }}</h1>
       </header>
 
+      {% if aboutPage.whyTitle and aboutPage.whyParagraphs %}
+      <h2>{{ aboutPage.whyTitle }}</h2>
+      {% for p in aboutPage.whyParagraphs %}
+      <p>{{ p | safe }}</p>
+      {% endfor %}
+
+      <hr>
+
+      {% endif %}
+
       <h2>{{ aboutPage.whatTitle }}</h2>
       {% for p in aboutPage.whatParagraphs %}
       <p>{{ p | safe }}</p>
@@ -13,12 +23,15 @@
 
       <hr>
 
+      {% if aboutPage.whereTitle and aboutPage.whereParagraphs %}
       <h2>{{ aboutPage.whereTitle }}</h2>
       {% for p in aboutPage.whereParagraphs %}
       <p>{{ p | safe }}</p>
       {% endfor %}
 
       <hr>
+
+      {% endif %}
 
       <h2>{{ aboutPage.whoTitle }}</h2>
       {% for p in aboutPage.whoParagraphs %}
