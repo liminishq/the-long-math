@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bond Yield vs. Bond Return: They Are Not the Same Thing | The Long Math</title>
+  <meta name="description" content="Bond yield and bond return are not the same thing. Learn the difference between coupon rate, current yield, yield to maturity and total return, and why bond prices fall when yields rise." />
+  <link rel="canonical" href="https://www.thelongmath.com/articles/investing-and-financial-literacy/bond-yield-vs-return/" />
+  
+  <link rel="alternate" hreflang="en" href="https://www.thelongmath.com/articles/investing-and-financial-literacy/bond-yield-vs-return/" />
+  
+  <link rel="alternate" hreflang="fr" href="https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/bond-yield-vs-return/" />
+  
+  <link rel="alternate" hreflang="x-default" href="https://www.thelongmath.com/articles/investing-and-financial-literacy/bond-yield-vs-return/" />
+  
+
+  <script src="/assets/js/theme-init.40fc21015f.js"></script>
+  <script src="/assets/js/i18n.e9994b5f88.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.5e4b64579a.css">
+  <script defer src="/assets/js/site.9a3c008ae4.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+  
+<style>
+    .article-content { max-width: 980px; margin: 0 auto; line-height: 1.7; font-size: 1.05rem; }
+    .article-content h2 { margin: 0 0 0.75em; }
+    .article-content h3 { margin: 1.25em 0 0.5em; }
+    .article-content ul, .article-content ol { margin: 1em 0; padding-left: 2em; }
+    .article-content li { margin: 0.5em 0; }
+    .article-content p { margin: 0.9em 0; }
+    .article-byline { font-size: 13px; color: var(--muted); margin: 0.35em 0 0; font-weight: 400; }
+    .section-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      margin: 18px 0;
+      background: var(--card-bg, var(--surface, #fff));
+      box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+    }
+    .section-card.intro-card { margin-top: 14px; }
+    .formula-scroll { overflow-x: auto; max-width: 100%; margin: 0.5em 0; }
+    .lm-formula {
+      display: inline-block;
+      padding: 10px 14px;
+      border: 1px solid var(--accent, #d6b36a);
+      border-radius: 12px;
+      background: rgba(0,0,0,0.12);
+      color: var(--text, #ffffff);
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+    }
+    .table-scroll { overflow-x: auto; max-width: 100%; margin: 1em 0 0.4em; }
+    .article-content table.highlight-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0;
+      font-size: 0.95em;
+    }
+    .highlight-table caption {
+      caption-side: bottom;
+      text-align: left;
+      font-size: 0.9rem;
+      color: var(--muted);
+      padding-top: 0.65em;
+    }
+    .highlight-table th, .highlight-table td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .highlight-table th { background: var(--card-bg, rgba(0,0,0,0.03)); font-weight: 600; }
+    .highlight-table .num { text-align: right; white-space: nowrap; }
+    .related-articles h2 { font-size: 18px; margin: 0 0 10px; }
+    .related-articles ul { list-style: none; padding-left: 0; margin: 0; }
+    .related-articles li { margin: 12px 0; }
+    .related-articles a { color: var(--accent); text-decoration: none; }
+    .related-articles a:hover { text-decoration: underline; }
+    .faq-item { border-bottom: 1px solid var(--border); padding: 0; }
+    .faq-item:last-of-type { border-bottom: none; }
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 14px 0;
+      font-size: 1em;
+      font-weight: 600;
+      color: var(--text, inherit);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      line-height: 1.4;
+    }
+    .faq-question:hover { color: var(--accent); }
+    .faq-icon { flex-shrink: 0; font-size: 1.2em; transition: transform 0.25s ease; color: var(--accent); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; padding: 0; line-height: 1.7; }
+    .faq-item.open .faq-answer { max-height: 800px; padding-bottom: 14px; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+  </style>
+
+
+  <meta name="article:modified" content="October 2026" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Bond Yield vs. Bond Return: They Are Not the Same Thing | The Long Math" />
+  <meta property="og:description" content="Bond yield and bond return are not the same thing. Learn the difference between coupon rate, current yield, yield to maturity and total return, and why bond prices fall when yields rise." />
+  <meta property="og:url" content="https://www.thelongmath.com/articles/investing-and-financial-literacy/bond-yield-vs-return/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Bond Yield vs. Bond Return: They Are Not the Same Thing | The Long Math" />
+  <meta name="twitter:description" content="Bond yield and bond return are not the same thing. Learn the difference between coupon rate, current yield, yield to maturity and total return, and why bond prices fall when yields rise." />
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.thelongmath.com/"},{"@type":"ListItem","position":2,"name":"Investment and Financial Literacy","item":"https://www.thelongmath.com/articles/investing-and-financial-literacy/"},{"@type":"ListItem","position":3,"name":"Bond Yield vs. Bond Return: They Are Not the Same Thing","item":"https://www.thelongmath.com/articles/investing-and-financial-literacy/bond-yield-vs-return/"}]}</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Bond Yield vs. Bond Return: They Are Not the Same Thing","description":"Bond yield and bond return are not the same thing. Learn the difference between coupon rate, current yield, yield to maturity and total return, and why bond prices fall when yields rise.","author":{"@type":"Person","name":"Phil Evans"},"publisher":{"@type":"Organization","name":"The Long Math","logo":{"@type":"ImageObject","url":"https://www.thelongmath.com/assets/logo.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.thelongmath.com/articles/investing-and-financial-literacy/bond-yield-vs-return/"},"datePublished":"2026-10-14","dateModified":"2026-10-14"}</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between bond yield and bond return?","acceptedAnswer":{"@type":"Answer","text":"Yield describes what a bond offers at today’s price. Return describes what happened to you over the period you held it. The bond’s price connects the two."}},{"@type":"Question","name":"Can a bond yielding 4% lose money?","acceptedAnswer":{"@type":"Answer","text":"Yes. In the example, a 5-year bond bought at $1,000 still pays $40. One year later, if comparable yields have risen to 6%, the price falls to about $931. You collected $40 and lost about $69 in market value, for a return of about −2.9%, which rounds to −3%."}},{"@type":"Question","name":"Why do bond prices fall when yields rise?","acceptedAnswer":{"@type":"Answer","text":"Newly issued bonds of the same risk and maturity pay more. No one will pay $1,000 for a $40 coupon when $1,000 buys more income elsewhere. The existing bond’s price falls until its coupons plus the repayment of face value match what the new bonds offer."}},{"@type":"Question","name":"Is yield to maturity the return you will earn?","acceptedAnswer":{"@type":"Answer","text":"No. Yield to maturity condenses a bond’s price and promised cash flows into one annual rate. It is not a forecast. The result can differ if the issuer defaults, you sell early, you reinvest coupons at different rates, the bond is called, taxes and fees apply, or a foreign bond’s value changes in Canadian dollars."}},{"@type":"Question","name":"Does a bond ETF pay back a set amount at maturity?","acceptedAnswer":{"@type":"Answer","text":"A broad bond ETF generally does not. As bonds in the fund mature or leave the index, the fund replaces them. There is no single maturity date and no single repayment. Target-maturity ETFs are an exception. A quoted distribution yield or average yield to maturity is not next year’s total return."}}]}</script>
+
+
+</head>
+<body>
+  
+  <div id="site-header"></div>
+  <div class="wrap">
+    
+<article class="article-content">
+      <header>
+        <h1>Bond Yield vs. Bond Return: They Are Not the Same Thing</h1>
+        <p class="article-byline">By Phil Evans</p>
+        <p class="reading-time">11-minute read</p>
+        <p class="last-updated">Last updated October 2026</p>
+      </header>
+
+      <section class="section-card intro-card">
+        <p>A bond yielding 4% can lose money over the next year. It can also return nearly 8%.</p>
+        <p>Yield describes what a bond offers at today’s price. Return describes what happened to you over the period you held it. The bond’s price connects the two.</p>
+        <p>This article uses the same $1,000 bond from <a href="/articles/investing-and-financial-literacy/what-is-a-bond/">What Is a Bond?</a>. We keep the bond and change only its market price and market yield.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="simple-bond">Start With a Simple Bond</h2>
+        <p>The bond has:</p>
+        <ul>
+          <li>Face value: $1,000</li>
+          <li>Coupon rate: 4%</li>
+          <li>Annual interest payment: $40</li>
+          <li>Five years until maturity</li>
+        </ul>
+        <p>For simplicity, this bond pays its coupon once a year. Many real bonds pay twice a year. The concepts stay the same.</p>
+        <p>Buy it at $1,000 and you collect $40 a year. At maturity you get your $1,000 back, assuming the issuer pays everything it promised. That looks like a 4% return. But the bond has several different “yields,” and none of them is automatically the return you earn.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="coupon-rate">Coupon Rate Is Not the Bond’s Market Yield</h2>
+        <p>The coupon rate is set when the bond is issued. It is the annual coupon divided by face value.</p>
+        <p class="formula-scroll"><span class="lm-formula">$40 ÷ $1,000 = 4%</span></p>
+        <p>The $40 never changes. Once the bond trades in the market, its price moves above or below $1,000, but the coupon stays fixed. That gap between a fixed payment and a moving price is where yield comes from.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="current-yield">Current Yield</h2>
+        <p>Current yield is the annual coupon divided by the bond’s current price.</p>
+        <p>Say the price of the bond falls to $900. The bond still pays $40.</p>
+        <p>See <a href="/articles/investing-and-financial-literacy/what-is-a-bond/">What Is a Bond?</a> for reasons why the bond price may rise or fall.</p>
+        <p class="formula-scroll"><span class="lm-formula">$40 ÷ $900 = 4.44%</span></p>
+        <p>If the bond price increases to $1,100:</p>
+        <p class="formula-scroll"><span class="lm-formula">$40 ÷ $1,100 = 3.64%</span></p>
+        <p>Same bond. Same $40 coupon. Different price, different yield.</p>
+        <p>When a bond’s price falls, its yield rises. When its price rises, its yield falls.</p>
+        <p>Current yield is easy to calculate, but it ignores something. It says nothing about the gain or loss between what you pay and what you get back at maturity.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="yield-to-maturity">Yield to Maturity</h2>
+        <p>Assume yields have risen and bond prices have fallen. You can now buy the original $1,000 bond at a discounted price of $900. You still collect the $40 annual coupon, and at maturity you receive the bond’s $1,000 face value. You paid $900 for that repayment, so you gain $100 on top of the coupons.</p>
+        <p>Yield to maturity (YTM) captures both the coupons and that gain or loss at maturity. It also accounts for when each payment arrives.</p>
+        <div class="table-scroll">
+          <table class="highlight-table">
+            <caption>Cash flows if you buy the bond for $900 and hold it to maturity.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Time</th>
+                <th scope="col" class="num">Cash flow</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Today</th>
+                <td class="num">−$900</td>
+              </tr>
+              <tr>
+                <th scope="row">Year 1</th>
+                <td class="num">+$40</td>
+              </tr>
+              <tr>
+                <th scope="row">Year 2</th>
+                <td class="num">+$40</td>
+              </tr>
+              <tr>
+                <th scope="row">Year 3</th>
+                <td class="num">+$40</td>
+              </tr>
+              <tr>
+                <th scope="row">Year 4</th>
+                <td class="num">+$40</td>
+              </tr>
+              <tr>
+                <th scope="row">Year 5</th>
+                <td class="num">+$1,040</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The current yield is 4.44%. The YTM is about 6.4% a year, because you also collect the move from $900 up to $1,000.</p>
+        <p>The reverse happens above face value. Buy the same bond at $1,100 and the YTM is only about 1.9%. You still collect $40 a year, but you get back $100 less than you paid.</p>
+        <p>These examples assume one coupon a year, matching our simplified bond. Many Canadian bonds pay semi-annually, so a standard bond calculator may give slightly different figures.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="four-yields">Four Numbers People Call “Yield”</h2>
+        <p>When you see the word yield, check which one is being quoted.</p>
+        <div class="table-scroll">
+          <table class="highlight-table">
+            <caption>Four measures that get called yield, and what each one actually measures.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Measure</th>
+                <th scope="col">What it tells you</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Coupon rate</th>
+                <td>Annual coupon as a percentage of face value</td>
+              </tr>
+              <tr>
+                <th scope="row">Current yield</th>
+                <td>Annual coupon as a percentage of today’s price</td>
+              </tr>
+              <tr>
+                <th scope="row">Yield to maturity</th>
+                <td>Annualized rate implied by today’s price and the bond’s promised cash flows</td>
+              </tr>
+              <tr>
+                <th scope="row">Distribution yield</th>
+                <td>Used for bond funds. Relates recent distributions to the fund’s price</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>For a single bond, YTM is the most complete of these. It is still not necessarily the return you will earn.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="bond-return">What Is Bond Return?</h2>
+        <p>Return looks backward over a specific holding period.</p>
+        <p class="formula-scroll"><span class="lm-formula">Total return = (income + ending price − starting price) ÷ starting price</span></p>
+        <p>For bonds, it helps to keep income and price change separate. They can push in opposite directions.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="negative-return">A 4% Yield Can Produce a Negative Return</h2>
+        <p>Buy the original 5-year bond for $1,000.</p>
+        <p>One year later, the bond has four years remaining. In this scenario, assume yields on comparable bonds have risen from 4% to 6%.</p>
+        <p>Your bond still pays only $40 a year, so no one will pay $1,000 for it. At a 6% market yield, its price falls to about $931.</p>
+        <p>You collected $40 in interest and lost about $69 in market value.</p>
+        <p class="formula-scroll"><span class="lm-formula">($40 + $931 − $1,000) ÷ $1,000 = −2.9%</span></p>
+        <p>Round that to −3%. You started the year holding a bond yielding about 4% and finished it down about 3%. There is no contradiction. The price drop was larger than the coupon.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="falling-yields">Falling Yields Produce the Opposite Result</h2>
+        <p>Now suppose yields fall. One year after purchase, the bond again has four years remaining, but comparable bonds yield 3%.</p>
+        <p>Your $40 coupon now beats what new bonds pay. The price rises to about $1,037.</p>
+        <p class="formula-scroll"><span class="lm-formula">($40 + $1,037 − $1,000) ÷ $1,000 = 7.7%</span></p>
+        <p>The bond started the year yielding about 4% and returned about 7.7%. You collected $40 in interest and about $37 in price gain.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="prices-opposite-yields">Why Prices Move Opposite to Yields</h2>
+        <p>Suppose newly issued bonds of the same risk and maturity pay more than your bond. No one will pay $1,000 for your $40 coupon when $1,000 buys more income elsewhere.</p>
+        <p>Your bond has to get cheaper. Once the price falls far enough, the $40 coupons plus the $1,000 repayment give a buyer a return that matches the new bonds.</p>
+        <p>The reverse also holds. When market yields fall, your fixed payments look better, and buyers will pay more for them.</p>
+        <ul>
+          <li>Market yields rise → existing bond prices fall</li>
+          <li>Market yields fall → existing bond prices rise</li>
+        </ul>
+      </section>
+
+      <section class="section-card">
+        <h2 id="maturity-matters">Maturity Matters</h2>
+        <p>Consider two bonds with similar coupons. Bond A matures next year. Bond B matures in 20 years.</p>
+        <p>If yields rise, Bond A holds you to its old coupon for a short time. Then you get your principal back and reinvest at the new, higher rates. Bond B keeps paying a below-market coupon for two decades. Its price has to fall much further.</p>
+        <p>All else equal, longer-term bonds react more to changes in interest rates. The standard measure of this sensitivity is duration. Roughly speaking, a bond with a modified duration of 7 should fall about 7% if its yield rises by one percentage point. That is an approximation, not an exact rule. It explains why two bond funds can react very differently to the same rate change.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="hold-to-maturity">What If You Hold the Bond Until Maturity?</h2>
+        <p>Suppose the bond falls to about $931 after yields rise to 6%. Sell then, and the loss is locked in.</p>
+        <p>Keep it, and nothing about the promised payments changes. You still collect $40 a year and $1,000 at maturity, assuming no default. As maturity approaches, the price generally moves back toward $1,000. This is called pull to par.</p>
+        <p>Two separate numbers describe what happens.</p>
+        <p><strong>Looking forward from $931,</strong> the remaining cash flows imply a YTM of about 6%. You own the same bond a new buyer would, so you have the same forward YTM they do. That is why the price fell that far. It had to match what new bonds offer.</p>
+        <p><strong>Looking back from $1,000,</strong> your original cash flows were −$1,000 today, $40 a year, and $1,000 at maturity. If the issuer pays everything it promised, the yield on that stream is 4% a year. That is the yield you bought at. It depends only on those contractual cash flows. The interim market price does not enter into it.</p>
+        <p>These are two different calculations. The 6% starts from the $931 market value. The 4% starts from your $1,000 purchase.</p>
+        <p>The price drop is where the loss shows up. A new $1,000 bond at 6% pays $60 a year. Yours pays $40. That $20 shortfall over four years, discounted at 6%, is worth about $69. That is the $69 the price fell.</p>
+        <p>Holding to maturity means you never have to sell at the low. It does not reverse that loss. Assuming no default, your original cash flows still produce the 4% you bought at. Your realized compound return can differ somewhat, depending on what you earn when you reinvest the coupons.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="ytm-not-a-guarantee">Yield to Maturity Is Not a Guarantee</h2>
+        <p>YTM condenses a bond’s price and promised cash flows into one annual rate. It is not a forecast of your return. Outcomes differ for several reasons:</p>
+        <ul>
+          <li><strong>Default.</strong> The issuer may miss some or all payments.</li>
+          <li><strong>Selling early.</strong> The price you get may be higher or lower than you expected.</li>
+          <li><strong>Reinvestment.</strong> Coupons you receive may be reinvested at different rates than the bond’s original yield.</li>
+          <li><strong>Callable bonds.</strong> The issuer may repay early, which changes the cash flows.</li>
+          <li><strong>Taxes and fees.</strong> What you keep may differ from the quoted yield. See <a href="/articles/investing-and-financial-literacy/capital-gains-vs-dividends-vs-interest-tax-canada/">interest vs. capital gains</a> for how Canadian tax treatment works.</li>
+          <li><strong>Currency.</strong> A foreign bond can gain or lose value in Canadian dollars even when the bond itself performs as expected.</li>
+        </ul>
+      </section>
+
+      <section class="section-card">
+        <h2 id="bond-etfs">What About Bond ETFs?</h2>
+        <p>An individual bond has a maturity date. A broad bond ETF generally does not. As bonds in the fund mature or leave the index, the fund replaces them. (Target-maturity ETFs are an exception.)</p>
+        <p>So “I’ll hold the ETF until maturity and get my $1,000 back” does not work. There is no single maturity date and no single repayment.</p>
+        <p>A bond ETF may show a distribution yield, a trailing yield, an average YTM, or other measures. These describe the fund’s current income or expected cash flows. None of them is next year’s total return. That depends on both the income the bonds produce and the change in their market value.</p>
+        <p>A bond ETF yielding 4% can have a negative year. It can also return well above 4% if falling yields push prices up.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="hurt-today-help-later">Rising Yields Hurt Today and Help Later</h2>
+        <p>Rising yields have two effects on a bond portfolio.</p>
+        <p>First, existing bond prices fall. That is an immediate loss.</p>
+        <p>Second, the portfolio can reinvest coupons and maturing principal at the new, higher yields. That improves future returns.</p>
+        <p>Falling yields work in reverse. Existing bonds gain value now, but new money earns less.</p>
+        <p>This matters most for bond funds and ETFs, which keep replacing maturing bonds instead of reaching one final maturity date.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="starting-point">Yield Is the Starting Point. Return Is the Outcome.</h2>
+        <p>Two questions keep the concepts apart.</p>
+        <p><strong>Yield asks:</strong> Given this bond’s price and cash flows today, what annual rate does it offer?</p>
+        <p><strong>Return asks:</strong> Given what I paid, the income I received, and what the bond was worth later, how much did I make or lose?</p>
+        <p>That is why a bond yielding 4% can return about −3%, +4%, or +8% over a particular year. The missing piece is price. And because prices and yields move in opposite directions, that relationship is the core of bond arithmetic.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="key-takeaways">Key Takeaways</h2>
+        <ul>
+          <li>Coupon rate, current yield, and yield to maturity are different measurements.</li>
+          <li>A quoted yield is not necessarily the return you will earn over your holding period.</li>
+          <li>Total return is interest income plus the change in the bond’s price.</li>
+          <li>When market yields rise, existing bond prices generally fall. When yields fall, prices generally rise.</li>
+          <li>Longer-duration bonds move more when yields change.</li>
+          <li>Holding an individual bond to maturity, selling early, and owning a bond ETF are three different experiences.</li>
+          <li>Yield describes the investment at today’s price. Return describes what actually happened.</li>
+        </ul>
+      </section>
+
+      <section class="newsletter-signup card" aria-labelledby="newsletter-article-heading">
+<h2 id="newsletter-article-heading" class="newsletter-signup-heading">Get the new work without checking back</h2>
+<p class="newsletter-signup-copy">One concise monthly email with new calculators, articles, and essays from The Long Math, plus a short note on why each one matters.</p>
+<p class="newsletter-signup-meta">Free. Unsubscribe anytime.</p>
+<div class="newsletter-embed-wrap">
+<iframe
+  src="https://subscribe-forms.beehiiv.com/bfdc64a5-2697-4bb0-bec5-5a557c9f274b"
+  class="beehiiv-embed"
+  data-test-id="beehiiv-embed"
+  frameborder="0"
+  scrolling="no"
+  style="width: 330px; height: 53px; margin: 0; border-radius: 0; background-color: transparent; box-shadow: 0 0 #0000; max-width: 100%;"
+  title="Newsletter signup"
+></iframe>
+
+</div>
+
+</section>
+
+
+      <section class="section-card">
+        <h2 id="faq">Frequently asked questions</h2>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            What is the difference between bond yield and bond return?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Yield describes what a bond offers at today’s price. Return describes what happened to you over the period you held it. The bond’s price connects the two.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Can a bond yielding 4% lose money?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Yes. In the example, a 5-year bond bought at $1,000 still pays $40. One year later, if comparable yields have risen to 6%, the price falls to about $931. You collected $40 and lost about $69 in market value, for a return of about −2.9%, which rounds to −3%.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Why do bond prices fall when yields rise?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Newly issued bonds of the same risk and maturity pay more. No one will pay $1,000 for a $40 coupon when $1,000 buys more income elsewhere. The existing bond’s price falls until its coupons plus the repayment of face value match what the new bonds offer.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Is yield to maturity the return you will earn?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>No. Yield to maturity condenses a bond’s price and promised cash flows into one annual rate. It is not a forecast. The result can differ if the issuer defaults, you sell early, you reinvest coupons at different rates, the bond is called, taxes and fees apply, or a foreign bond’s value changes in Canadian dollars.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Does a bond ETF pay back a set amount at maturity?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>A broad bond ETF generally does not. As bonds in the fund mature or leave the index, the fund replaces them. There is no single maturity date and no single repayment. Target-maturity ETFs are an exception. A quoted distribution yield or average yield to maturity is not next year’s total return.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card related-articles">
+        <h2>Related articles</h2>
+        <ul>
+          <li><a href="/articles/investing-and-financial-literacy/what-is-a-bond/">What Is a Bond?</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/capital-gains-vs-dividends-vs-interest-tax-canada/">Capital Gains vs Dividends vs Interest: Which Is Taxed Best in Canada?</a></li>
+        </ul>
+      </section>
+    </article>
+<div class="disclaimer"><p>
+        <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
+      </p></div>
+
+  </div>
+  
+  <div id="footerMount"></div>
+</body>
+</html>

@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Qu’est-ce qu’une obligation? Comment fonctionnent les obligations, en termes simples | The Long Math</title>
+  <meta name="description" content="Qu’est-ce qu’une obligation? Valeur nominale, coupons, échéance et prix du marché : pourquoi le prix change, et comment un investisseur gagne ou perd de l’argent." />
+  <link rel="canonical" href="https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/what-is-a-bond/" />
+  
+  <link rel="alternate" hreflang="en" href="https://www.thelongmath.com/articles/investing-and-financial-literacy/what-is-a-bond/" />
+  
+  <link rel="alternate" hreflang="fr" href="https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/what-is-a-bond/" />
+  
+  <link rel="alternate" hreflang="x-default" href="https://www.thelongmath.com/articles/investing-and-financial-literacy/what-is-a-bond/" />
+  
+
+  <script src="/assets/js/theme-init.40fc21015f.js"></script>
+  <script src="/assets/js/i18n.e9994b5f88.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.5e4b64579a.css">
+  <script defer src="/assets/js/site.9a3c008ae4.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+  
+<style>
+    .article-content { max-width: 980px; margin: 0 auto; line-height: 1.7; font-size: 1.05rem; }
+    .article-content h2 { margin: 0 0 0.75em; }
+    .article-content h3 { margin: 1.25em 0 0.5em; }
+    .article-content ul, .article-content ol { margin: 1em 0; padding-left: 2em; }
+    .article-content li { margin: 0.5em 0; }
+    .article-content p { margin: 0.9em 0; }
+    .article-byline { font-size: 13px; color: var(--muted); margin: 0.35em 0 0; font-weight: 400; }
+    .section-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      margin: 18px 0;
+      background: var(--card-bg, var(--surface, #fff));
+      box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+    }
+    .section-card.intro-card { margin-top: 14px; }
+    .lm-formula {
+      display: inline-block;
+      padding: 10px 14px;
+      border: 1px solid var(--accent, #d6b36a);
+      border-radius: 12px;
+      background: rgba(0,0,0,0.12);
+      color: var(--text, #ffffff);
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      margin: 0.4em 0;
+    }
+    .article-content blockquote {
+      margin: 1em 0;
+      padding: 0.15em 0 0.15em 1em;
+      border-left: 3px solid var(--accent, #d6b36a);
+    }
+    .article-content blockquote p { margin: 0.4em 0; font-weight: 600; }
+    .table-scroll { overflow-x: auto; margin: 1em 0 0.4em; }
+    .article-content table.highlight-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0;
+      font-size: 0.95em;
+    }
+    .highlight-table caption {
+      caption-side: bottom;
+      text-align: left;
+      font-size: 0.9rem;
+      color: var(--muted);
+      padding-top: 0.65em;
+    }
+    .highlight-table th, .highlight-table td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .highlight-table th { background: var(--card-bg, rgba(0,0,0,0.03)); font-weight: 600; }
+    .bond-timeline { margin: 1.5em 0 0.25em; max-width: 100%; }
+    .bond-timeline-title { font-weight: 600; margin: 0 0 0.85em; }
+    .article-content .bond-timeline-list {
+      list-style: none;
+      margin: 0;
+      padding: 0.15em 0 0;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .article-content .bond-timeline-list li {
+      position: relative;
+      min-width: 0;
+      margin: 0;
+      padding: 0 0 1.15em 1.55em;
+      border-left: 2px solid var(--accent, #d6b36a);
+    }
+    .article-content .bond-timeline-list li:last-child {
+      border-left-color: transparent;
+      padding-bottom: 0;
+    }
+    .bond-timeline-list li::before {
+      content: "";
+      position: absolute;
+      left: -7px;
+      top: 0.2em;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent, #d6b36a);
+    }
+    .bond-timeline-time {
+      margin: 0;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .bond-timeline-label { margin: 0.12em 0 0; font-weight: 600; color: var(--text); }
+    .bond-timeline-amount {
+      margin: 0.15em 0 0;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .bond-timeline-outflow {
+      display: inline-block;
+      padding: 0.02em 0.45em;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--accentSoft);
+    }
+    .bond-timeline-note {
+      margin: 0.35em 0 0;
+      font-size: 0.85rem;
+      line-height: 1.35;
+      color: var(--muted);
+    }
+    .bond-timeline-caption { margin: 0.95em 0 0; font-size: 0.95rem; color: var(--muted); }
+    @media (min-width: 720px) {
+      .article-content .bond-timeline-list {
+        flex-direction: row;
+        align-items: flex-start;
+        padding-top: 10px;
+      }
+      .article-content .bond-timeline-list::before {
+        content: "";
+        position: absolute;
+        top: 5px;
+        left: calc(100% / 12);
+        right: calc(100% / 12);
+        height: 2px;
+        background: var(--accent, #d6b36a);
+      }
+      .article-content .bond-timeline-list li {
+        flex: 1 1 0;
+        border-left: none;
+        padding: 1.15rem 0.35rem 0;
+        text-align: center;
+      }
+      .article-content .bond-timeline-list li:last-child { border-left: none; }
+      .bond-timeline-list li::before {
+        left: 50%;
+        top: -10px;
+        transform: translateX(-50%);
+      }
+    }
+    .related-articles h2 { font-size: 18px; margin: 0 0 10px; }
+    .related-articles ul { list-style: none; padding-left: 0; margin: 0; }
+    .related-articles li { margin: 12px 0; }
+    .related-articles a { color: var(--accent); text-decoration: none; }
+    .related-articles a:hover { text-decoration: underline; }
+    .faq-item { border-bottom: 1px solid var(--border); padding: 0; }
+    .faq-item:last-of-type { border-bottom: none; }
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 14px 0;
+      font-size: 1em;
+      font-weight: 600;
+      color: var(--text, inherit);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      line-height: 1.4;
+    }
+    .faq-question:hover { color: var(--accent); }
+    .faq-icon { flex-shrink: 0; font-size: 1.2em; transition: transform 0.25s ease; color: var(--accent); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; padding: 0; line-height: 1.7; }
+    .faq-item.open .faq-answer { max-height: 800px; padding-bottom: 14px; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+  </style>
+
+
+  <meta name="article:modified" content="octobre 2026" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Qu’est-ce qu’une obligation? Comment fonctionnent les obligations, en termes simples | The Long Math" />
+  <meta property="og:description" content="Qu’est-ce qu’une obligation? Valeur nominale, coupons, échéance et prix du marché : pourquoi le prix change, et comment un investisseur gagne ou perd de l’argent." />
+  <meta property="og:url" content="https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/what-is-a-bond/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Qu’est-ce qu’une obligation? Comment fonctionnent les obligations, en termes simples | The Long Math" />
+  <meta name="twitter:description" content="Qu’est-ce qu’une obligation? Valeur nominale, coupons, échéance et prix du marché : pourquoi le prix change, et comment un investisseur gagne ou perd de l’argent." />
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Accueil","item":"https://www.thelongmath.com/fr/"},{"@type":"ListItem","position":2,"name":"Investissement et culture financière","item":"https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/"},{"@type":"ListItem","position":3,"name":"Qu’est-ce qu’une obligation?","item":"https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/what-is-a-bond/"}]}</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Qu’est-ce qu’une obligation? Comment fonctionnent les obligations, en termes simples","description":"Qu’est-ce qu’une obligation? Valeur nominale, coupons, échéance et prix du marché : pourquoi le prix change, et comment un investisseur gagne ou perd de l’argent.","author":{"@type":"Person","name":"Phil Evans"},"publisher":{"@type":"Organization","name":"The Long Math","logo":{"@type":"ImageObject","url":"https://www.thelongmath.com/assets/logo.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/what-is-a-bond/"},"datePublished":"2026-10-13","dateModified":"2026-10-13"}</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Peut-on perdre de l’argent avec une obligation?","acceptedAnswer":{"@type":"Answer","text":"Oui. Vous pouvez perdre de l’argent si l’émetteur fait défaut, ou si vous vendez avant l’échéance à un prix inférieur à celui que vous avez payé. L’inflation peut aussi réduire le pouvoir d’achat de ce que vous recevez, même lorsque chaque versement arrive comme promis."}},{"@type":"Question","name":"Pourquoi le prix des obligations baisse-t-il quand les taux d’intérêt montent?","acceptedAnswer":{"@type":"Answer","text":"Les nouvelles obligations commencent à payer le taux plus élevé, donc les obligations plus anciennes, au coupon plus bas, deviennent moins attrayantes. Leur prix baisse jusqu’à ce que les versements qui restent soient concurrentiels avec ce qu’offrent les nouvelles obligations."}},{"@type":"Question","name":"Quelle est la différence entre une obligation et une action?","acceptedAnswer":{"@type":"Answer","text":"Une action est une part de propriété dans une entreprise. Une obligation est un prêt à l’émetteur. Les détenteurs d’obligations sont des créanciers et se classent en général devant les actionnaires si l’entreprise fait faillite, mais ils ne participent pas à la croissance de l’entreprise comme le font les actionnaires. Dans une faillite, la Loi sur la faillite et l’insolvabilité reporte les réclamations relatives à des capitaux propres jusqu’à ce que les réclamations qui n’en sont pas aient été satisfaites. Une action est un intérêt relatif à des capitaux propres au sens de cette loi."}},{"@type":"Question","name":"Quelle est la différence entre une obligation et un fonds d’obligations?","acceptedAnswer":{"@type":"Answer","text":"Une obligation individuelle a une date d’échéance à laquelle sa valeur nominale doit être remboursée. Un fonds d’obligations détient de nombreuses obligations, les remplace à mesure qu’elles arrivent à échéance, et n’a normalement pas de date d’échéance finale."}},{"@type":"Question","name":"Que signifie revenu fixe?","acceptedAnswer":{"@type":"Answer","text":"Le revenu fixe est une vaste catégorie de placements qui versent habituellement des montants prévus, comme des intérêts plus le remboursement de la valeur nominale à l’échéance. Les obligations en sont l’exemple le mieux connu, et les CPG en sont un autre. Les versements sont fixés d’avance, mais les obligations et les autres placements à revenu fixe négociés sur le marché peuvent quand même changer de prix."}}]}</script>
+
+
+</head>
+<body>
+  
+  <div id="site-header"></div>
+  <div class="wrap">
+    
+<article class="article-content">
+      <header>
+        <h1>Qu’est-ce qu’une obligation? Comment fonctionnent les obligations, en termes simples</h1>
+        <p class="article-byline">Par Phil Evans</p>
+        <p class="reading-time">Lecture de 12 minutes</p>
+        <p class="last-updated">Dernière mise à jour : octobre 2026</p>
+      </header>
+
+      <section class="section-card intro-card">
+        <p>Une obligation est un prêt à un gouvernement, à une entreprise ou à une autre organisation. Dans une obligation typique, l’emprunteur vous verse des intérêts selon un calendrier et rembourse la valeur nominale à une date fixée. Les obligations peuvent s’acheter et se vendre avant cette date, de sorte que le prix peut changer même lorsque les versements promis restent fixes.</p>
+        <p>Les obligations sont l’exemple le mieux connu du revenu fixe, un groupe de placements construit autour de versements prévus (les CPG en sont un autre). L’article sur les <a href="/fr/articles/investing-and-financial-literacy/asset-classes-for-investing/">classes d’actifs</a> montre où elles se situent dans un portefeuille.</p>
+        <p>Les obligations semblent compliquées parce que plusieurs chiffres leur sont attachés (valeur nominale, taux du coupon, échéance, prix du marché, taux de rendement), et ces chiffres ne bougent pas ensemble. La mécanique est plus simple que le vocabulaire le laisse croire. Cet article suit une obligation, de l’achat à l’échéance, avec une arithmétique claire. Il modélise une obligation conventionnelle à taux fixe et laisse de côté les variantes plus spécialisées.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="how-a-bond-works">Comment fonctionne une obligation?</h2>
+        <p>Supposons qu’une entreprise veuille emprunter pour cinq ans. Au lieu d’emprunter le tout à une banque, elle vend des obligations à des investisseurs. L’emprunteur s’appelle l’émetteur. Ce peut être un gouvernement, une entreprise ou une autre organisation. Acheter l’obligation fait de vous un prêteur plutôt qu’un propriétaire, ce qui est la différence essentielle avec une action (voir <a href="/fr/articles/investing-and-financial-literacy/what-is-a-stock/">Qu’est-ce qu’une action?</a>).</p>
+        <p>Vous achetez une de ces obligations aux conditions suivantes :</p>
+        <ul>
+          <li>Valeur nominale : 1 000 $</li>
+          <li>Taux du coupon : 4 %</li>
+          <li>Échéance : 5 ans</li>
+        </ul>
+        <p>Un coupon de 4 % sur une obligation de 1 000 $ signifie 1 000 $ × 4 % = 40 $ par année. À la fin de la cinquième année, l’entreprise rembourse les 1 000 $.</p>
+        <p>Pour garder l’arithmétique simple, cet exemple verse le coupon une fois par année. Beaucoup d’obligations canadiennes conventionnelles versent la moitié du coupon annuel tous les six mois. Les <a href="https://www.canada.ca/fr/ministere-finances/programmes/politique-secteur-financier/titres/guide-technique-titres/calcul-prix-rendement-obligations-bons-tresors.html">obligations du gouvernement du Canada émises sur le marché intérieur</a> paient la moitié de leur taux d’intérêt nominal, multipliée par le principal, tous les six mois. Le total annuel est le même.</p>
+        <div class="table-scroll">
+          <table class="highlight-table">
+            <caption>Flux de trésorerie de l’obligation de l’exemple si l’émetteur effectue chaque versement promis.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Année</th>
+                <th scope="col">Intérêt</th>
+                <th scope="col">Principal remboursé</th>
+                <th scope="col">Total reçu</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>40 $</td>
+                <td>0 $</td>
+                <td>40 $</td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td>40 $</td>
+                <td>0 $</td>
+                <td>40 $</td>
+              </tr>
+              <tr>
+                <th scope="row">3</th>
+                <td>40 $</td>
+                <td>0 $</td>
+                <td>40 $</td>
+              </tr>
+              <tr>
+                <th scope="row">4</th>
+                <td>40 $</td>
+                <td>0 $</td>
+                <td>40 $</td>
+              </tr>
+              <tr>
+                <th scope="row">5</th>
+                <td>40 $</td>
+                <td>1 000 $</td>
+                <td>1 040 $</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Sur cinq ans, vous recevez 200 $ d’intérêt plus vos 1 000 $, en supposant que l’émetteur effectue chaque versement promis.</p>
+
+        <figure class="bond-timeline" aria-labelledby="bond-timeline-title">
+          <p id="bond-timeline-title" class="bond-timeline-title">Chronologie des flux de trésorerie sur cinq ans</p>
+          <ol class="bond-timeline-list">
+            <li>
+              <p class="bond-timeline-time">An 0</p>
+              <p class="bond-timeline-label">Achat</p>
+              <p class="bond-timeline-amount bond-timeline-outflow">−1 000 $</p>
+            </li>
+            <li>
+              <p class="bond-timeline-time">An 1</p>
+              <p class="bond-timeline-label">Coupon</p>
+              <p class="bond-timeline-amount">+40 $</p>
+            </li>
+            <li>
+              <p class="bond-timeline-time">An 2</p>
+              <p class="bond-timeline-label">Coupon</p>
+              <p class="bond-timeline-amount">+40 $</p>
+            </li>
+            <li>
+              <p class="bond-timeline-time">An 3</p>
+              <p class="bond-timeline-label">Coupon</p>
+              <p class="bond-timeline-amount">+40 $</p>
+            </li>
+            <li>
+              <p class="bond-timeline-time">An 4</p>
+              <p class="bond-timeline-label">Coupon</p>
+              <p class="bond-timeline-amount">+40 $</p>
+            </li>
+            <li>
+              <p class="bond-timeline-time">An 5</p>
+              <p class="bond-timeline-label">Échéance</p>
+              <p class="bond-timeline-amount">+1 040 $</p>
+              <p class="bond-timeline-note">40 $ de coupon final + 1 000 $ de valeur nominale remboursée</p>
+            </li>
+          </ol>
+          <figcaption id="bond-timeline-caption" class="bond-timeline-caption">Flux de trésorerie du point de vue de l’investisseur : 1 000 $ payés aujourd’hui, 40 $ reçus à la fin de chaque année, et 1 040 $ reçus à l’échéance de la cinquième année.</figcaption>
+        </figure>
+      </section>
+
+      <section class="section-card">
+        <h2 id="bond-terms">Que signifient la valeur nominale, le taux du coupon, l’échéance et le prix du marché?</h2>
+
+        <h3>Valeur nominale</h3>
+        <p>La valeur nominale (aussi appelée valeur au pair ou principal) est le montant que l’émetteur promet de rembourser à l’échéance. Dans notre exemple, c’est 1 000 $. Ce n’est pas nécessairement ce que vous payez pour l’obligation.</p>
+
+        <h3>Taux du coupon</h3>
+        <p>Le taux du coupon fixe les versements d’intérêt, calculés sur la valeur nominale. Il est fixé à l’émission d’une obligation conventionnelle. Si les taux d’intérêt du marché montent ensuite, votre versement reste à 40 $, parce que c’est ce que dit le contrat.</p>
+
+        <h3>Date d’échéance</h3>
+        <p>La date d’échéance est le moment où l’obligation arrive à terme et où la valeur nominale est remboursée. Elle peut être à des mois ou à des décennies. Le temps qui reste compte, parce qu’une obligation qui verrouille ses versements pendant 20 ans se comporte très différemment d’une obligation qui arrive à échéance l’an prochain.</p>
+
+        <h3>Prix du marché</h3>
+        <p>Le prix du marché est ce que quelqu’un paiera pour l’obligation aujourd’hui. Il peut être de 1 000 $, de 960 $, de 1 040 $, ou de tout autre montant fixé par le marché. C’est l’idée centrale de l’article :</p>
+        <blockquote>
+          <p>Les versements promis d’une obligation peuvent rester les mêmes pendant que son prix de marché change.</p>
+        </blockquote>
+      </section>
+
+      <section class="section-card">
+        <h2 id="why-prices-change">Pourquoi le prix des obligations change-t-il?</h2>
+        <p>Parce que les taux d’intérêt changent, et qu’une obligation déjà émise doit rester concurrentielle par rapport à ce que les investisseurs peuvent acheter ailleurs.</p>
+        <p>Supposons que vous détenez l’obligation à 4 %, et que de nouvelles obligations de qualité et d’échéance semblables paient maintenant 5 %. Personne ne paiera 1 000 $ pour votre obligation de 40 $ par année quand 1 000 $ achètent 50 $ par année ailleurs. Le prix de votre obligation doit baisser jusqu’à ce que l’acheter soit aussi intéressant qu’acheter une obligation neuve. Si les nouvelles obligations paient plutôt 3 %, votre versement de 40 $ paraît généreux, et les acheteurs paieront plus de 1 000 $.</p>
+        <p>Cela donne la relation centrale du placement en obligations :</p>
+        <p>Quand les taux de rendement du marché montent, le prix des obligations existantes baisse en général.</p>
+        <p>Quand les taux de rendement du marché baissent, le prix des obligations existantes monte en général.</p>
+        <p>Ici, le taux de rendement désigne le taux que les investisseurs exigent actuellement d’obligations de risque et d’échéance semblables. L’article compagnon, dont le lien est plus bas, explique en quoi le taux de rendement diffère du rendement obtenu.</p>
+
+        <h3 id="one-year-example">Un exemple sur un an</h3>
+        <p>Prenez une obligation à qui il reste un an. Elle versera 40 $ d’intérêt plus 1 000 $ de principal, soit 1 040 $ au total. Si les investisseurs exigent 5 %, le prix est ce 1 040 $ futur actualisé sur un an :</p>
+        <p><span class="lm-formula">1 040 $ ÷ 1,05 = 990,48 $</span></p>
+        <p>Si le taux exigé tombe à 3 % :</p>
+        <p><span class="lm-formula">1 040 $ ÷ 1,03 = 1 009,71 $</span></p>
+        <p>L’obligation elle-même n’a pas changé. Elle promet toujours 1 040 $ dans un an. Ce qui a changé, c’est le prix que les investisseurs paieraient pour cette promesse. Les obligations à qui il reste plus d’années ont plus de versements à actualiser, mais la logique est la même.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="coupon-vs-return">Le taux du coupon est-il le même que le rendement?</h2>
+        <p>Non, et cette distinction piège beaucoup de nouveaux investisseurs.</p>
+        <p>Le taux du coupon est 40 $ ÷ 1 000 $ de valeur nominale = 4 %. Supposons maintenant que trois investisseurs détiennent cette obligation, et que chacun a payé un prix différent :</p>
+        <div class="table-scroll">
+          <table class="highlight-table">
+            <caption>La même obligation, achetée à trois prix. Les versements ne changent pas avec le prix payé.</caption>
+            <thead>
+              <tr>
+                <th scope="col">L’investisseur paie</th>
+                <th scope="col">Reçoit chaque année</th>
+                <th scope="col">Reçoit à l’échéance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">900 $</th>
+                <td>40 $</td>
+                <td>1 000 $</td>
+              </tr>
+              <tr>
+                <th scope="row">1 000 $</th>
+                <td>40 $</td>
+                <td>1 000 $</td>
+              </tr>
+              <tr>
+                <th scope="row">1 100 $</th>
+                <td>40 $</td>
+                <td>1 000 $</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>L’obligation et ses versements sont identiques, mais les résultats ne le sont pas. Si chaque investisseur conserve l’obligation jusqu’à l’échéance, celui qui a payé 900 $ gagne le plus et celui qui a payé 1 100 $ gagne le moins. Le coupon, le taux de rendement et le rendement obtenu sont trois idées distinctes, et l’article <a href="/fr/articles/investing-and-financial-literacy/bond-yield-vs-return/">Taux de rendement et rendement d’une obligation : ce n’est pas la même chose</a> les démêle.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="how-you-make-money">Comment gagne-t-on de l’argent avec une obligation?</h2>
+        <p>Il y a deux sources :</p>
+        <h3>Les versements d’intérêt</h3>
+        <p>Les coupons, 40 $ par année dans notre exemple.</p>
+        <h3>Les variations de prix</h3>
+        <p>Si vous vendez avant l’échéance, vous pouvez recevoir plus ou moins que ce que vous avez payé. Achetez à 950 $ et vendez à 980 $, et vous gagnez 30 $. Vendez plutôt à 900 $, et vous perdez 50 $.</p>
+        <p>Votre résultat dépend des deux, donc le coupon seul donne un portrait incomplet.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="hold-to-maturity">Que se passe-t-il si vous conservez une obligation jusqu’à l’échéance?</h2>
+        <p>Conserver une obligation individuelle jusqu’à l’échéance change l’importance d’une baisse de prix. Supposons que vous achetez une obligation gouvernementale d’une valeur nominale de 1 000 $ pour 1 000 $, et que son prix de marché tombe ensuite à 920 $. Si vous devez vendre aujourd’hui, vous encaissez cette perte. Si vous conservez l’obligation et que l’émetteur paie comme promis, la baisse de prix ne change pas ce que le contrat vous verse : chaque coupon prévu, puis la pleine valeur nominale de 1 000 $ à l’échéance.</p>
+        <p>Conserver jusqu’à l’échéance n’élimine pas le risque. L’émetteur peut faire défaut, l’inflation peut éroder la valeur de vos versements, et vous pourriez avoir besoin de l’argent plus tôt. Ce que cela fait, c’est séparer deux événements différents : une baisse du prix de marché et un défaut de paiement.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="are-bonds-safe">Les obligations sont-elles sûres?</h2>
+        <p>Cela dépend de l’obligation. Une obligation à court terme du gouvernement du Canada et une obligation à long terme d’une entreprise très endettée sont toutes deux des « obligations », mais elles ne sont pas équivalentes sur le plan économique. Plusieurs risques comptent, et voici les principaux :</p>
+        <ul>
+          <li><strong>Risque de crédit :</strong> l’émetteur ne paie pas l’intérêt ou le principal. Les investisseurs exigent des taux de rendement plus élevés des émetteurs jugés plus risqués.</li>
+          <li><strong>Risque de taux :</strong> les prix baissent quand les taux du marché montent, et l’effet est plus grand pour les obligations à échéance plus longue. L’arithmétique est dans l’<a href="/fr/articles/investing-and-financial-literacy/bond-yield-vs-return/">article sur le taux de rendement et le rendement</a>.</li>
+          <li><strong>Risque d’inflation :</strong> un versement fixe de 40 $ par année achète moins chaque année à mesure que les prix montent, même si chaque paiement arrive à temps. Voir l’<a href="/fr/articles/investing-and-financial-literacy/inflation/">inflation</a> et les <a href="/fr/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/">rendements réels</a>.</li>
+          <li><strong>Risque de liquidité :</strong> certaines obligations sont difficiles à vendre rapidement à un prix juste.</li>
+          <li><strong>Risque de réinvestissement :</strong> si les taux baissent, vous devrez peut-être réinvestir vos coupons à des taux plus bas.</li>
+          <li><strong>Risque de change :</strong> une obligation en devise étrangère peut gagner ou perdre de la valeur en dollars canadiens quand le taux de change bouge.</li>
+        </ul>
+      </section>
+
+      <section class="section-card">
+        <h2 id="bonds-or-bond-fund">Faut-il détenir des obligations individuelles ou un fonds d’obligations?</h2>
+        <p>Beaucoup d’investisseurs détiennent des obligations par l’intermédiaire de fonds communs de placement ou de FNB. Un fonds d’obligations détient habituellement de nombreuses obligations, parfois des centaines ou des milliers, et remplace celles qui arrivent à échéance. Le fonds lui-même n’a normalement pas une seule date d’échéance.</p>
+        <p>Cela change l’idée de « conserver jusqu’à l’échéance ». Elle s’applique naturellement à une obligation, mais fonctionne autrement pour un fonds qui n’arrive jamais à échéance, parce que le prix du fonds continue de refléter les taux d’intérêt courants.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="why-own-bonds">Pourquoi les investisseurs détiennent-ils des obligations?</h2>
+        <p>Les obligations peuvent fournir un revenu d’intérêt. Les obligations de grande qualité peuvent aussi se comporter différemment des actions dans certaines conditions de marché, ce qui peut réduire les oscillations d’un portefeuille diversifié. Et parce que leurs versements sont prévus, les obligations peuvent aider à faire correspondre les placements à des dépenses futures connues.</p>
+        <p>Les obligations peuvent quand même faire perdre de l’argent, parce que les prix bougent, que les émetteurs peuvent faire défaut et que l’inflation compte. La question utile n’est jamais seulement « est-ce une obligation? ». C’est : quelle obligation, de qui, qui paie quoi, sur quelle période, à quel prix?</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="bottom-line">L’essentiel</h2>
+        <p>Une obligation est un flux négociable de trésorerie future. Vous payez un prix aujourd’hui pour une série contractuelle de coupons et pour le remboursement de la valeur nominale à l’échéance. Le marché décide ensuite ce que ce flux vaut, et cette valeur se déplace quand les taux d’intérêt, les attentes d’inflation, le risque de crédit et le temps jusqu’à l’échéance changent.</p>
+        <p>C’est pourquoi le revenu qu’une obligation verse et le rendement qu’un investisseur obtient peuvent différer, ce qui est le sujet de Taux de rendement et rendement d’une obligation : ce n’est pas la même chose.</p>
+      </section>
+
+      <section class="newsletter-signup card" aria-labelledby="newsletter-article-heading">
+<h2 id="newsletter-article-heading" class="newsletter-signup-heading">Get the new work without checking back</h2>
+<p class="newsletter-signup-copy">One concise monthly email with new calculators, articles, and essays from The Long Math, plus a short note on why each one matters.</p>
+<p class="newsletter-signup-meta">Free. Unsubscribe anytime.</p>
+<div class="newsletter-embed-wrap">
+<iframe
+  src="https://subscribe-forms.beehiiv.com/bfdc64a5-2697-4bb0-bec5-5a557c9f274b"
+  class="beehiiv-embed"
+  data-test-id="beehiiv-embed"
+  frameborder="0"
+  scrolling="no"
+  style="width: 330px; height: 53px; margin: 0; border-radius: 0; background-color: transparent; box-shadow: 0 0 #0000; max-width: 100%;"
+  title="Newsletter signup"
+></iframe>
+
+</div>
+
+</section>
+
+
+      <section class="section-card">
+        <h2 id="faq">Foire aux questions</h2>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Peut-on perdre de l’argent avec une obligation?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Oui. Vous pouvez perdre de l’argent si l’émetteur fait défaut, ou si vous vendez avant l’échéance à un prix inférieur à celui que vous avez payé. L’inflation peut aussi réduire le pouvoir d’achat de ce que vous recevez, même lorsque chaque versement arrive comme promis.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Pourquoi le prix des obligations baisse-t-il quand les taux d’intérêt montent?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Les nouvelles obligations commencent à payer le taux plus élevé, donc les obligations plus anciennes, au coupon plus bas, deviennent moins attrayantes. Leur prix baisse jusqu’à ce que les versements qui restent soient concurrentiels avec ce qu’offrent les nouvelles obligations.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Quelle est la différence entre une obligation et une action?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Une action est une part de propriété dans une entreprise. Une obligation est un prêt à l’émetteur. Les détenteurs d’obligations sont des créanciers et se classent en général devant les actionnaires si l’entreprise fait faillite, mais ils ne participent pas à la croissance de l’entreprise comme le font les actionnaires. Dans une faillite, la <a href="https://laws-lois.justice.gc.ca/fra/lois/b-3/section-140.1.html">Loi sur la faillite et l’insolvabilité</a> reporte les réclamations relatives à des capitaux propres jusqu’à ce que les réclamations qui n’en sont pas aient été satisfaites. Une action est un intérêt relatif à des capitaux propres au sens de cette loi.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Quelle est la différence entre une obligation et un fonds d’obligations?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Une obligation individuelle a une date d’échéance à laquelle sa valeur nominale doit être remboursée. Un fonds d’obligations détient de nombreuses obligations, les remplace à mesure qu’elles arrivent à échéance, et n’a normalement pas de date d’échéance finale.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Que signifie revenu fixe?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Le revenu fixe est une vaste catégorie de placements qui versent habituellement des montants prévus, comme des intérêts plus le remboursement de la valeur nominale à l’échéance. Les obligations en sont l’exemple le mieux connu, et les CPG en sont un autre. Les versements sont fixés d’avance, mais les obligations et les autres placements à revenu fixe négociés sur le marché peuvent quand même changer de prix.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card related-articles">
+        <h2>Articles connexes</h2>
+        <ul>
+          <li><a href="/fr/articles/investing-and-financial-literacy/what-is-a-stock/">Qu’est-ce qu’une action?</a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/asset-classes-for-investing/">Les classes d’actifs</a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/inflation/">Inflation : les maths qui rétrécissent l’argent de demain</a></li>
+          <li><a href="/fr/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/">Rendements réels vs rendements nominaux</a></li>
+        </ul>
+      </section>
+    </article>
+<div class="disclaimer"><p>
+        <strong>Avertissement :</strong> Tout le contenu de The Long Math — articles, essais, calculateurs, outils ou tout autre matériel — est fourni à des fins éducatives et informatives uniquement et ne constitue pas un conseil financier, fiscal, juridique ou en placement. Les résultats ou projections reposent sur des modèles simplifiés, des hypothèses et des données fournies par l'utilisateur et peuvent ne pas refléter la réalité. Vous êtes responsable d'évaluer l'exactitude et la pertinence des renseignements et de faire votre propre diligence raisonnable. Avant toute décision financière, consultez un professionnel qualifié.
+      </p></div>
+
+  </div>
+  
+  <div id="footerMount"></div>
+</body>
+</html>

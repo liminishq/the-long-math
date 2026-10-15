@@ -39,6 +39,8 @@ const SLUGS = [
   "the-true-cost-of-financial-advisor-fees",
   "tfsa-withdrawal-rules-over-contribution-penalties",
   "what-is-a-stock",
+  "what-is-a-bond",
+  "bond-yield-vs-return",
   "what-is-a-tfsa",
   "what-is-an-fhsa",
   "what-is-an-resp",

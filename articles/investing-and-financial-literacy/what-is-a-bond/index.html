@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What Is a Bond? How Bonds Work in Simple Terms | The Long Math</title>
+  <meta name="description" content="What is a bond? Learn how face value, coupon payments, maturity and market price work, why bond prices change, and how investors make or lose money." />
+  <link rel="canonical" href="https://www.thelongmath.com/articles/investing-and-financial-literacy/what-is-a-bond/" />
+  
+  <link rel="alternate" hreflang="en" href="https://www.thelongmath.com/articles/investing-and-financial-literacy/what-is-a-bond/" />
+  
+  <link rel="alternate" hreflang="fr" href="https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/what-is-a-bond/" />
+  
+  <link rel="alternate" hreflang="x-default" href="https://www.thelongmath.com/articles/investing-and-financial-literacy/what-is-a-bond/" />
+  
+
+  <script src="/assets/js/theme-init.40fc21015f.js"></script>
+  <script src="/assets/js/i18n.e9994b5f88.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.5e4b64579a.css">
+  <script defer src="/assets/js/site.9a3c008ae4.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+  
+<style>
+    .article-content { max-width: 980px; margin: 0 auto; line-height: 1.7; font-size: 1.05rem; }
+    .article-content h2 { margin: 0 0 0.75em; }
+    .article-content h3 { margin: 1.25em 0 0.5em; }
+    .article-content ul, .article-content ol { margin: 1em 0; padding-left: 2em; }
+    .article-content li { margin: 0.5em 0; }
+    .article-content p { margin: 0.9em 0; }
+    .article-byline { font-size: 13px; color: var(--muted); margin: 0.35em 0 0; font-weight: 400; }
+    .section-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      margin: 18px 0;
+      background: var(--card-bg, var(--surface, #fff));
+      box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+    }
+    .section-card.intro-card { margin-top: 14px; }
+    .lm-formula {
+      display: inline-block;
+      padding: 10px 14px;
+      border: 1px solid var(--accent, #d6b36a);
+      border-radius: 12px;
+      background: rgba(0,0,0,0.12);
+      color: var(--text, #ffffff);
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      margin: 0.4em 0;
+    }
+    .article-content blockquote {
+      margin: 1em 0;
+      padding: 0.15em 0 0.15em 1em;
+      border-left: 3px solid var(--accent, #d6b36a);
+    }
+    .article-content blockquote p { margin: 0.4em 0; font-weight: 600; }
+    .table-scroll { overflow-x: auto; margin: 1em 0 0.4em; }
+    .article-content table.highlight-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0;
+      font-size: 0.95em;
+    }
+    .highlight-table caption {
+      caption-side: bottom;
+      text-align: left;
+      font-size: 0.9rem;
+      color: var(--muted);
+      padding-top: 0.65em;
+    }
+    .highlight-table th, .highlight-table td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .highlight-table th { background: var(--card-bg, rgba(0,0,0,0.03)); font-weight: 600; }
+    .bond-timeline { margin: 1.5em 0 0.25em; max-width: 100%; }
+    .bond-timeline-title { font-weight: 600; margin: 0 0 0.85em; }
+    .article-content .bond-timeline-list {
+      list-style: none;
+      margin: 0;
+      padding: 0.15em 0 0;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .article-content .bond-timeline-list li {
+      position: relative;
+      min-width: 0;
+      margin: 0;
+      padding: 0 0 1.15em 1.55em;
+      border-left: 2px solid var(--accent, #d6b36a);
+    }
+    .article-content .bond-timeline-list li:last-child {
+      border-left-color: transparent;
+      padding-bottom: 0;
+    }
+    .bond-timeline-list li::before {
+      content: "";
+      position: absolute;
+      left: -7px;
+      top: 0.2em;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent, #d6b36a);
+    }
+    .bond-timeline-time {
+      margin: 0;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .bond-timeline-label { margin: 0.12em 0 0; font-weight: 600; color: var(--text); }
+    .bond-timeline-amount {
+      margin: 0.15em 0 0;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .bond-timeline-outflow {
+      display: inline-block;
+      padding: 0.02em 0.45em;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--accentSoft);
+    }
+    .bond-timeline-note {
+      margin: 0.35em 0 0;
+      font-size: 0.85rem;
+      line-height: 1.35;
+      color: var(--muted);
+    }
+    .bond-timeline-caption { margin: 0.95em 0 0; font-size: 0.95rem; color: var(--muted); }
+    @media (min-width: 720px) {
+      .article-content .bond-timeline-list {
+        flex-direction: row;
+        align-items: flex-start;
+        padding-top: 10px;
+      }
+      .article-content .bond-timeline-list::before {
+        content: "";
+        position: absolute;
+        top: 5px;
+        left: calc(100% / 12);
+        right: calc(100% / 12);
+        height: 2px;
+        background: var(--accent, #d6b36a);
+      }
+      .article-content .bond-timeline-list li {
+        flex: 1 1 0;
+        border-left: none;
+        padding: 1.15rem 0.35rem 0;
+        text-align: center;
+      }
+      .article-content .bond-timeline-list li:last-child { border-left: none; }
+      .bond-timeline-list li::before {
+        left: 50%;
+        top: -10px;
+        transform: translateX(-50%);
+      }
+    }
+    .related-articles h2 { font-size: 18px; margin: 0 0 10px; }
+    .related-articles ul { list-style: none; padding-left: 0; margin: 0; }
+    .related-articles li { margin: 12px 0; }
+    .related-articles a { color: var(--accent); text-decoration: none; }
+    .related-articles a:hover { text-decoration: underline; }
+    .faq-item { border-bottom: 1px solid var(--border); padding: 0; }
+    .faq-item:last-of-type { border-bottom: none; }
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 14px 0;
+      font-size: 1em;
+      font-weight: 600;
+      color: var(--text, inherit);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      line-height: 1.4;
+    }
+    .faq-question:hover { color: var(--accent); }
+    .faq-icon { flex-shrink: 0; font-size: 1.2em; transition: transform 0.25s ease; color: var(--accent); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; padding: 0; line-height: 1.7; }
+    .faq-item.open .faq-answer { max-height: 800px; padding-bottom: 14px; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+  </style>
+
+
+  <meta name="article:modified" content="October 2026" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="What Is a Bond? How Bonds Work in Simple Terms | The Long Math" />
+  <meta property="og:description" content="What is a bond? Learn how face value, coupon payments, maturity and market price work, why bond prices change, and how investors make or lose money." />
+  <meta property="og:url" content="https://www.thelongmath.com/articles/investing-and-financial-literacy/what-is-a-bond/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="What Is a Bond? How Bonds Work in Simple Terms | The Long Math" />
+  <meta name="twitter:description" content="What is a bond? Learn how face value, coupon payments, maturity and market price work, why bond prices change, and how investors make or lose money." />
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.thelongmath.com/"},{"@type":"ListItem","position":2,"name":"Investment and Financial Literacy","item":"https://www.thelongmath.com/articles/investing-and-financial-literacy/"},{"@type":"ListItem","position":3,"name":"What Is a Bond? How Bonds Work in Simple Terms","item":"https://www.thelongmath.com/articles/investing-and-financial-literacy/what-is-a-bond/"}]}</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"What Is a Bond? How Bonds Work in Simple Terms","description":"What is a bond? Learn how face value, coupon payments, maturity and market price work, why bond prices change, and how investors make or lose money.","author":{"@type":"Person","name":"Phil Evans"},"publisher":{"@type":"Organization","name":"The Long Math","logo":{"@type":"ImageObject","url":"https://www.thelongmath.com/assets/logo.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.thelongmath.com/articles/investing-and-financial-literacy/what-is-a-bond/"},"datePublished":"2026-10-13","dateModified":"2026-10-13"}</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can you lose money on a bond?","acceptedAnswer":{"@type":"Answer","text":"Yes. You can lose money if the issuer defaults, or if you sell before maturity at a lower price than you paid. Inflation can also reduce the purchasing power of what you receive, even when every payment arrives as promised."}},{"@type":"Question","name":"Why do bond prices fall when interest rates rise?","acceptedAnswer":{"@type":"Answer","text":"New bonds start paying the higher rate, so older bonds with lower coupons become less attractive. Their prices drop until their remaining payments are competitive with what new bonds offer."}},{"@type":"Question","name":"What is the difference between a bond and a stock?","acceptedAnswer":{"@type":"Answer","text":"A stock is ownership in a company. A bond is a loan to the issuer. Bondholders are creditors and generally rank ahead of shareholders if the company fails, but they don’t share in the company’s growth the way shareholders do. In a bankruptcy, the Bankruptcy and Insolvency Act postpones equity claims until claims that are not equity claims have been satisfied. A share is an equity interest under that Act."}},{"@type":"Question","name":"What is the difference between a bond and a bond fund?","acceptedAnswer":{"@type":"Answer","text":"An individual bond has a maturity date when its face value is scheduled to be repaid. A bond fund holds many bonds, keeps replacing them as they mature, and normally has no final maturity date."}},{"@type":"Question","name":"What does fixed income mean?","acceptedAnswer":{"@type":"Answer","text":"Fixed income is a broad category of investments that typically pay scheduled amounts, such as interest plus the repayment of face value at maturity. Bonds are the best-known example, and GICs are another. The payments are set in advance, but bonds and other market-traded fixed-income investments can still change in price."}}]}</script>
+
+
+</head>
+<body>
+  
+  <div id="site-header"></div>
+  <div class="wrap">
+    
+<article class="article-content">
+      <header>
+        <h1>What Is a Bond? How Bonds Work in Simple Terms</h1>
+        <p class="article-byline">By Phil Evans</p>
+        <p class="reading-time">10-minute read</p>
+        <p class="last-updated">Last updated October 2026</p>
+      </header>
+
+      <section class="section-card intro-card">
+        <p>A bond is a loan to a government, company or other organization. In a typical bond, the borrower pays you interest on a schedule and repays the bond’s face value on a set date. Bonds can be bought and sold before that date, so a bond’s price can change even when its promised payments are fixed.</p>
+        <p>Bonds are the best-known example of fixed income, a group of investments built around scheduled payments (GICs are another). The <a href="/articles/investing-and-financial-literacy/asset-classes-for-investing/">Asset Classes explainer</a> shows where they fit in a portfolio.</p>
+        <p>Bonds seem confusing because several numbers are attached to them (face value, coupon rate, maturity, market price, yield), and those numbers do not move together. The mechanics are simpler than the vocabulary suggests. This article follows one bond from purchase to maturity using plain arithmetic. It models a conventional fixed-rate bond and leaves more specialized variations aside.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="how-a-bond-works">How does a bond work?</h2>
+        <p>Suppose a company wants to borrow money for five years. Instead of borrowing all of it from a bank, it sells bonds to investors. The borrower is called the issuer, and it can be a government, a company or another organization. Buying the bond makes you a lender rather than an owner, which is the key difference from a stock (see <a href="/articles/investing-and-financial-literacy/what-is-a-stock/">What Is a Stock?</a>).</p>
+        <p>You buy one of these bonds with the following terms:</p>
+        <ul>
+          <li>Face value: $1,000</li>
+          <li>Coupon rate: 4%</li>
+          <li>Maturity: 5 years</li>
+        </ul>
+        <p>A 4% coupon on a $1,000 bond means $1,000 × 4% = $40 per year. At the end of year five, the company repays the $1,000.</p>
+        <p>To keep the arithmetic clean, this example pays once per year. Many conventional Canadian bonds pay half the annual coupon every six months. <a href="https://www.canada.ca/en/department-finance/programs/financial-sector-policy/securities/securities-technical-guide/market-debt-instruments.html">Government of Canada marketable bonds</a> pay a fixed rate of interest semi-annually. The yearly total is the same.</p>
+        <div class="table-scroll">
+          <table class="highlight-table">
+            <caption>Cash flows on the example bond if the issuer makes every promised payment.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Year</th>
+                <th scope="col">Interest</th>
+                <th scope="col">Principal repaid</th>
+                <th scope="col">Total received</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>$40</td>
+                <td>$0</td>
+                <td>$40</td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td>$40</td>
+                <td>$0</td>
+                <td>$40</td>
+              </tr>
+              <tr>
+                <th scope="row">3</th>
+                <td>$40</td>
+                <td>$0</td>
+                <td>$40</td>
+              </tr>
+              <tr>
+                <th scope="row">4</th>
+                <td>$40</td>
+                <td>$0</td>
+                <td>$40</td>
+              </tr>
+              <tr>
+                <th scope="row">5</th>
+                <td>$40</td>
+                <td>$1,000</td>
+                <td>$1,040</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Over five years you receive $200 of interest plus your $1,000 back, assuming the issuer makes every promised payment.</p>
+
+        <figure class="bond-timeline" aria-labelledby="bond-timeline-title">
+          <p id="bond-timeline-title" class="bond-timeline-title">Five-year cash-flow timeline</p>
+          <ol class="bond-timeline-list">
+            <li>
+              <p class="bond-timeline-time">Yr 0</p>
+              <p class="bond-timeline-label">Purchase</p>
+              <p class="bond-timeline-amount bond-timeline-outflow">−$1,000</p>
+            </li>
+            <li>
+              <p class="bond-timeline-time">Yr 1</p>
+              <p class="bond-timeline-label">Coupon</p>
+              <p class="bond-timeline-amount">+$40</p>
+            </li>
+            <li>
+              <p class="bond-timeline-time">Yr 2</p>
+              <p class="bond-timeline-label">Coupon</p>
+              <p class="bond-timeline-amount">+$40</p>
+            </li>
+            <li>
+              <p class="bond-timeline-time">Yr 3</p>
+              <p class="bond-timeline-label">Coupon</p>
+              <p class="bond-timeline-amount">+$40</p>
+            </li>
+            <li>
+              <p class="bond-timeline-time">Yr 4</p>
+              <p class="bond-timeline-label">Coupon</p>
+              <p class="bond-timeline-amount">+$40</p>
+            </li>
+            <li>
+              <p class="bond-timeline-time">Yr 5</p>
+              <p class="bond-timeline-label">Maturity</p>
+              <p class="bond-timeline-amount">+$1,040</p>
+              <p class="bond-timeline-note">$40 final coupon + $1,000 face value repaid</p>
+            </li>
+          </ol>
+          <figcaption id="bond-timeline-caption" class="bond-timeline-caption">Cash flows from the investor’s perspective: $1,000 paid today, $40 received at the end of each year, and $1,040 received at maturity in year five.</figcaption>
+        </figure>
+      </section>
+
+      <section class="section-card">
+        <h2 id="bond-terms">What do face value, coupon rate, maturity and market price mean?</h2>
+
+        <h3>Face value</h3>
+        <p>Face value (also called par value or principal) is the amount the issuer promises to repay at maturity. In our example, that is $1,000. It is not necessarily what you pay for the bond.</p>
+
+        <h3>Coupon rate</h3>
+        <p>Coupon rate sets the interest payments, calculated on the face value. It is fixed when a conventional bond is issued. If market interest rates later rise, your payment stays at $40, because that is what the contract says.</p>
+
+        <h3>Maturity date</h3>
+        <p>Maturity date is when the bond comes due and the face value is repaid. It can be months or decades away. The time remaining matters, because a bond that locks in its payments for 20 years behaves very differently from one that matures next year.</p>
+
+        <h3>Market price</h3>
+        <p>Market price is what someone will pay for the bond today. It can be $1,000, $960, $1,040, or any other number the market sets. This is the central idea of the article:</p>
+        <blockquote>
+          <p>A bond’s promised payments can stay the same while its market price changes.</p>
+        </blockquote>
+      </section>
+
+      <section class="section-card">
+        <h2 id="why-prices-change">Why do bond prices change?</h2>
+        <p>Because interest rates change, and an existing bond has to stay competitive with whatever else investors can buy.</p>
+        <p>Say you own the 4% bond, and new bonds of similar quality and maturity now pay 5%. No one will pay $1,000 for your $40-a-year bond when $1,000 buys $50 a year elsewhere. The price of your bond must fall until buying it is as attractive as buying a new one. If new bonds instead pay 3%, your $40 payment looks generous, and buyers will pay more than $1,000 for it.</p>
+        <p>That gives the core relationship in bond investing:</p>
+        <p>When market yields rise, existing bond prices generally fall.</p>
+        <p>When market yields fall, existing bond prices generally rise.</p>
+        <p>Here, yield means the market rate investors currently demand from bonds with similar risk and maturity. The companion article, linked below, explains how yield differs from return.</p>
+
+        <h3 id="one-year-example">A one-year example</h3>
+        <p>Take a bond with one year left. It will pay $40 of interest plus $1,000 of principal, a total of $1,040. If investors require 5%, the price is that future $1,040 discounted back one year:</p>
+        <p><span class="lm-formula">$1,040 ÷ 1.05 = $990.48</span></p>
+        <p>If the required yield falls to 3%:</p>
+        <p><span class="lm-formula">$1,040 ÷ 1.03 = $1,009.71</span></p>
+        <p>The bond itself never changed. It still promises $1,040 in one year. What changed was the price investors would pay for that promise. Bonds with more years remaining have more payments to discount, but the logic is the same.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="coupon-vs-return">Is the coupon rate the same as the return?</h2>
+        <p>No, and this distinction trips up many new investors.</p>
+        <p>The coupon rate is $40 ÷ $1,000 face value = 4%. Now suppose three investors own this bond, and each paid a different price:</p>
+        <div class="table-scroll">
+          <table class="highlight-table">
+            <caption>Same bond, three purchase prices. Payments do not change with the price paid.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Investor pays</th>
+                <th scope="col">Receives each year</th>
+                <th scope="col">Receives at maturity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">$900</th>
+                <td>$40</td>
+                <td>$1,000</td>
+              </tr>
+              <tr>
+                <th scope="row">$1,000</th>
+                <td>$40</td>
+                <td>$1,000</td>
+              </tr>
+              <tr>
+                <th scope="row">$1,100</th>
+                <td>$40</td>
+                <td>$1,000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The bond and its payments are identical, but the outcomes are not. Assuming each investor holds to maturity, the one who paid $900 earns the most and the one who paid $1,100 earns the least. Coupon, yield and return are three separate ideas, and <a href="/articles/investing-and-financial-literacy/bond-yield-vs-return/">Bond Yield vs. Bond Return: They Are Not the Same Thing</a> untangles them.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="how-you-make-money">How do you make money from a bond?</h2>
+        <p>There are two sources:</p>
+        <h3>Interest payments</h3>
+        <p>The coupons, $40 per year in our example.</p>
+        <h3>Price changes</h3>
+        <p>If you sell before maturity, you may receive more or less than you paid. Buy at $950 and sell at $980, and you gain $30. Sell at $900 instead, and you lose $50.</p>
+        <p>Your result depends on both, so the coupon alone gives an incomplete picture.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="hold-to-maturity">What happens if you hold a bond to maturity?</h2>
+        <p>Holding an individual bond to maturity changes how much a price drop matters. Suppose you buy a government bond with a $1,000 face value for $1,000, and its market price later falls to $920. If you must sell today, you take that loss. If you hold on and the issuer pays as promised, the decline in price does not change what the contract pays you: every scheduled coupon, then the full $1,000 face value at maturity.</p>
+        <p>Holding to maturity does not remove risk, though. The issuer could default, inflation could erode the value of your payments, and you might need the money early. What it does is separate two different events: a decline in market price and a failure to pay.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="are-bonds-safe">Are bonds safe?</h2>
+        <p>It depends on the bond. A short-term Government of Canada bond and a long-term bond from a heavily indebted company are both “bonds,” but they are not economically equivalent. Several risks matter, and these are the main ones:</p>
+        <ul>
+          <li><strong>Credit risk:</strong> the issuer fails to pay interest or principal. Investors demand higher yields from issuers seen as riskier.</li>
+          <li><strong>Interest-rate risk:</strong> prices fall when market rates rise, and the effect is larger for bonds with longer maturities. The arithmetic is in the <a href="/articles/investing-and-financial-literacy/bond-yield-vs-return/">yield vs. return article</a>.</li>
+          <li><strong>Inflation risk:</strong> a fixed $40 per year buys less each year as prices rise, even if every payment arrives on time. See <a href="/articles/investing-and-financial-literacy/inflation/">inflation</a> and <a href="/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/">real returns</a>.</li>
+          <li><strong>Liquidity risk:</strong> some bonds are hard to sell quickly at a fair price.</li>
+          <li><strong>Reinvestment risk:</strong> if rates fall, you may have to reinvest your coupons at lower rates.</li>
+          <li><strong>Currency risk:</strong> a bond in a foreign currency can gain or lose value in Canadian dollars as exchange rates move.</li>
+        </ul>
+      </section>
+
+      <section class="section-card">
+        <h2 id="bonds-or-bond-fund">Should you own individual bonds or a bond fund?</h2>
+        <p>Many investors own bonds through mutual funds or ETFs. A bond fund typically holds many bonds, sometimes hundreds or thousands, and keeps replacing those that mature. The fund itself normally has no single maturity date.</p>
+        <p>That changes the “hold to maturity” idea. It applies naturally to one bond but works differently for a fund that never matures, because the fund’s price keeps reflecting current interest rates.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="why-own-bonds">Why do investors own bonds?</h2>
+        <p>Bonds can provide interest income. High-quality bonds can also behave differently from stocks in some market conditions, which may reduce the swings in a diversified portfolio. And because their payments are scheduled, bonds can help match investments to known future spending.</p>
+        <p>Bonds can still lose money, because prices move, issuers can default, and inflation matters. The useful question is never just “is it a bond?” It is: what bond, from whom, paying what, over what period, at what price?</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="bottom-line">The bottom line</h2>
+        <p>A bond is a tradable stream of future cash flows. You pay a price today for a contractual series of coupon payments and the repayment of the bond’s face value at maturity. The market then decides what that stream is worth, and its value shifts as interest rates, inflation expectations, credit risk and time to maturity change.</p>
+        <p>That is why the income a bond pays and the return an investor earns can differ, which is the subject of Bond Yield vs. Bond Return: They Are Not the Same Thing.</p>
+      </section>
+
+      <section class="newsletter-signup card" aria-labelledby="newsletter-article-heading">
+<h2 id="newsletter-article-heading" class="newsletter-signup-heading">Get the new work without checking back</h2>
+<p class="newsletter-signup-copy">One concise monthly email with new calculators, articles, and essays from The Long Math, plus a short note on why each one matters.</p>
+<p class="newsletter-signup-meta">Free. Unsubscribe anytime.</p>
+<div class="newsletter-embed-wrap">
+<iframe
+  src="https://subscribe-forms.beehiiv.com/bfdc64a5-2697-4bb0-bec5-5a557c9f274b"
+  class="beehiiv-embed"
+  data-test-id="beehiiv-embed"
+  frameborder="0"
+  scrolling="no"
+  style="width: 330px; height: 53px; margin: 0; border-radius: 0; background-color: transparent; box-shadow: 0 0 #0000; max-width: 100%;"
+  title="Newsletter signup"
+></iframe>
+
+</div>
+
+</section>
+
+
+      <section class="section-card">
+        <h2 id="faq">Frequently asked questions</h2>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Can you lose money on a bond?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Yes. You can lose money if the issuer defaults, or if you sell before maturity at a lower price than you paid. Inflation can also reduce the purchasing power of what you receive, even when every payment arrives as promised.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Why do bond prices fall when interest rates rise?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>New bonds start paying the higher rate, so older bonds with lower coupons become less attractive. Their prices drop until their remaining payments are competitive with what new bonds offer.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            What is the difference between a bond and a stock?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>A stock is ownership in a company. A bond is a loan to the issuer. Bondholders are creditors and generally rank ahead of shareholders if the company fails, but they don’t share in the company’s growth the way shareholders do. In a bankruptcy, the <a href="https://laws-lois.justice.gc.ca/eng/acts/b-3/section-140.1.html">Bankruptcy and Insolvency Act</a> postpones equity claims until claims that are not equity claims have been satisfied. A share is an equity interest under that Act.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            What is the difference between a bond and a bond fund?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>An individual bond has a maturity date when its face value is scheduled to be repaid. A bond fund holds many bonds, keeps replacing them as they mature, and normally has no final maturity date.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            What does fixed income mean?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Fixed income is a broad category of investments that typically pay scheduled amounts, such as interest plus the repayment of face value at maturity. Bonds are the best-known example, and GICs are another. The payments are set in advance, but bonds and other market-traded fixed-income investments can still change in price.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card related-articles">
+        <h2>Related articles</h2>
+        <ul>
+          <li><a href="/articles/investing-and-financial-literacy/what-is-a-stock/">What Is a Stock?</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/asset-classes-for-investing/">Asset Classes for Investing</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/inflation/">Inflation: The Math That Makes Future Money Smaller</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/real-returns-vs-nominal-returns/">Real Returns vs. Nominal Returns</a></li>
+        </ul>
+      </section>
+    </article>
+<div class="disclaimer"><p>
+        <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
+      </p></div>
+
+  </div>
+  
+  <div id="footerMount"></div>
+</body>
+</html>

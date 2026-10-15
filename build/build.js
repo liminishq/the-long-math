@@ -85,6 +85,8 @@ const ARTICLE_SLUGS = [
   "when-paying-for-financial-advice-makes-sense",
   "tfsa-withdrawal-rules-over-contribution-penalties",
   "what-is-a-stock",
+  "what-is-a-bond",
+  "bond-yield-vs-return",
   "what-is-a-tfsa",
   "what-is-an-fhsa",
   "what-is-an-resp",
