@@ -1,41 +1,47 @@
 {
   "title": "À propos – The Long Math",
-  "description": "Ce qu’est The Long Math : calculateurs financiers interactifs, hypothèses explicites, arithmétique vérifiable et outils pédagogiques — et l’histoire du site.",
+  "description": "Pourquoi The Long Math a été créé : éducation financière canadienne, calculateurs interactifs, hypothèses transparentes et arithmétique que les lecteurs peuvent vérifier eux-mêmes.",
   "h1": "À propos",
-  "whatTitle": "De quoi il s’agit",
+  "whyTitle": "Pourquoi j’ai créé ce site",
+  "whyParagraphs": [
+    "Je m’appelle Phil, je suis médecin urgentologue canadien. Voici pourquoi j’ai créé ce site.",
+    "Ma première rencontre avec un conseiller financier a eu lieu le matin qui a suivi un quart de nuit à l’urgence. J’en avais déjà lu assez pour savoir que les ratios des frais de gestion pouvaient coûter aux investisseurs une part significative de leurs rendements à long terme; je suis donc arrivé à cette rencontre avec une décision déjà prise : je n’achèterais pas de fonds communs de placement. Deux conseillers m’attendaient au lieu du seul conseiller avec qui j’avais rendez-vous, et une heure plus tard, je suis sorti après avoir acheté deux fonds communs sans jamais avoir compris le modèle de frais qui les accompagnait.",
+    "Je savais que j’avais fait une erreur avant même d’avoir quitté le hall de la banque. Je me suis retourné, décidé à tout annuler, et j’ai vu le conseiller déjà en train d’accueillir son prochain rendez-vous et de le faire entrer dans son bureau. Après avoir travaillé toute la nuit, je n’allais pas attendre une autre heure simplement pour dire que j’avais changé d’avis.",
+    "Alors je suis rentré chez moi et j’ai dormi.",
+    "Je me suis réveillé toujours mal à l’aise avec les placements que j’avais accepté d’acheter, mais pas encore assez confiant dans ma propre compréhension pour revenir sur cette décision. Il m’a fallu près de deux ans d’autoformation, de doutes et de cotisations automatiques maintenues dans ces fonds avant de finalement m’en éloigner.",
+    "J’ai compris que je n’avais pas besoin de plus d’opinions ou d’être rassuré davantage. J’avais besoin de calculs que je pouvais vérifier moi-même. Tout a commencé avec des feuilles de calcul Excel pour modéliser les rendements de placement, les impôts et les projections de retraite sur plusieurs années. Avec le temps, ces feuilles de calcul sont devenues plus sophistiquées, les questions sont devenues plus ambitieuses et elles ont fini par former la base de The Long Math.",
+    "Chaque calculateur, article et explication ici existe pour que les gens puissent faire les calculs eux-mêmes avant de prendre une décision financière importante, qu’ils soient déjà devant cette décision ou qu’ils essaient simplement de comprendre le sujet à l’avance.",
+    "Pas d’opinions. Pas d’hypothèses cachées. Juste l’arithmétique."
+  ],
+  "whatTitle": "Ce qu’est ce site",
   "whatParagraphs": [
-    "The Long Math, c’est une collection grandissante de calculateurs financiers interactifs, d’outils et d’explications qui visent à rendre les arbitrages à long terme <strong>visibles</strong>.",
-    "Les outils modélisent la façon dont les frais, les impôts, la capitalisation, les incitatifs et les horizons temporels interagissent sur des décennies. Chaque entrée est explicite. Chaque hypothèse est énoncée. L’arithmétique derrière chaque résultat peut être inspectée directement.",
-    "Les outils et articles actuels couvrent les frais de conseil, l’impôt sur le revenu et sur les gains en capital, la capitalisation, l’inflation, les hypothèques et la stratégie de comptes canadiens (CELI, REER, CELIAPP). Le site s’enrichit activement — structures fiscales des sociétés, analyse d’investissement plus poussée et contenu ciblé les professionnels incorporés.",
-    "En parallèle des calculateurs et des articles, une section d’essais distincte — <em>Au-delà des chiffres</em> — explore les décisions personnelles et de carrière qui se rattachent à l’arithmétique : le coût financier de la formation professionnelle, les flux de trésorerie à long terme et des arbitrages rarement quantifiés.",
-    "On évoque souvent les décisions financières par des récits — conseils reçus, expertise rassurante, promesses de résultats. Ce site aborde les mêmes décisions par l’arithmétique. <strong>Les chiffres ne disent pas quoi faire. Ils montrent ce qui se passe réellement.</strong>"
+    "The Long Math est un site canadien d’éducation financière construit autour de calculateurs interactifs, d’hypothèses transparentes et d’explications qui montrent l’arithmétique derrière les résultats. Son objectif est de rendre les arbitrages financiers à long terme plus visibles.",
+    "La plupart des décisions financières se prennent une seule fois, mais restent avec nous pendant des décennies. Des frais de placement légèrement plus élevés, une stratégie fiscale différente, une cotisation retardée ou un paiement hypothécaire plus important peuvent sembler insignifiants aujourd’hui tout en produisant des résultats très différents des années plus tard. Le but de ces outils est de rendre ces conséquences à long terme visibles avant que la décision soit prise.",
+    "La collection actuelle comprend des calculateurs et des articles couvrant les frais de placement, l’impôt sur le revenu des particuliers et des sociétés, les gains en capital, la capitalisation, l’inflation, les hypothèques, les retraits à la retraite, les notions fondamentales de l’investissement et les comptes enregistrés canadiens, dont le CELI, le REER et le CELIAPP. Une section grandissante explore aussi les décisions fiscales et financières auxquelles font face les Canadiens qui exercent par l’intermédiaire d’une société privée sous contrôle canadien (SPCC) ou d’une société professionnelle.",
+    "Aux côtés des calculateurs et des articles se trouve une section d’essais distincte appelée <em>Au-delà des chiffres</em>. Ces essais examinent de plus grandes décisions financières et professionnelles au moyen de la même lentille quantitative, notamment la formation professionnelle, les revenus de carrière, la retraite et les arbitrages qui sont souvent discutés mais rarement mesurés.",
+    "La plupart des décisions financières sont expliquées par des histoires, des opinions, la sagesse conventionnelle ou des appels à l’expertise. The Long Math commence par les hypothèses et l’arithmétique, puis vous laisse prendre la décision."
   ],
-  "whereTitle": "D’où ça vient",
-  "whereParagraphs": [
-    "The Long Math a été créé par Phil, médecin urgentologue canadien, qui s’est de plus en plus heurté à des récits financiers opaques, à des hypothèses cachées et à des projections boîte noire.",
-    "Au début de sa carrière, il a pris des décisions financières à partir de récits plutôt que de chiffres — et a payé pendant deux ans les frais d’un conseiller et des fonds communs coûteux. Ce fut le déclencheur. S’en est suivie une longue autoformation qui a dépassé largement la structure des honoraires : fiscalité personnelle et des sociétés, investissement fiscalement efficace, allocation d’actifs, analyse immobilière et boursière, et structures financières propres aux professionnels incorporés au Canada.",
-    "Plusieurs de ces outils ont d’abord été créés dans Excel, pour un usage personnel, afin de modéliser de vraies décisions avec de l’argent réel. Le site est venu ensuite pour les rendre accessibles. L’ensemble des calculateurs ne cesse de croître — bien au-delà de la portée initiale — à mesure que de nouveaux sujets s’ajoutent et que les existants s’approfondissent."
-  ],
-  "whoTitle": "À qui c’est destiné",
+  "whoTitle": "À qui s’adresse ce site",
   "whoParagraphs": [
-    "Le contenu pédagogique s’adresse à toute personne qui a de l’épargne à gérer. L’arithmétique ne tient pas compte de votre profession.",
-    "Cela dit, certaines des décisions financières les plus lourdes — et les moins discutées — concernent les revenus élevés. Au Canada, plusieurs exercent par l’intermédiaire d’une société privée sous contrôle canadien (SPCC) ou d’une société professionnelle. Le report d’impôt, le fractionnement du revenu et les implications pour l’investissement sont majeurs, et ils reçoivent rarement un traitement quantitatif clair ailleurs.",
-    "Les professionnels qui utilisent souvent ces structures comprennent notamment les médecins, chirurgiens, dentistes, avocats, comptables (CPA), vétérinaires, chiropraticiens, pharmaciens, optométristes, psychologues et physiothérapeutes. Ce qu’ils ont souvent en commun : un revenu élevé, un début tardif de gains sérieux et une formation professionnelle avec presque aucune littératie financière.",
-    "Ce site ne présuppose rien et explique les mathématiques depuis le début."
+    "Chaque décision financière a un coût. Parfois, ce coût vient d’une mauvaise décision. Parfois, il vient du fait d’avoir trop attendu avant de prendre la bonne. Ma propre hésitation m’a coûté près de deux ans de sous-performance et de frais avant de finalement en comprendre assez pour agir.",
+    "Ce site explique les concepts sous-jacents, puis montre l’arithmétique derrière les coûts de la façon la plus transparente possible.",
+    "Certaines des décisions financières les plus importantes et les moins bien comprises concernent les Canadiens qui exercent par l’intermédiaire d’une société professionnelle ou d’une société privée sous contrôle canadien. Médecins, dentistes, avocats, comptables, vétérinaires, pharmaciens, optométristes, psychologues, chiropraticiens, physiothérapeutes et de nombreux autres professionnels incorporés commencent souvent à toucher des revenus substantiels des années plus tard que leurs pairs tout en recevant peu ou pas de formation financière formelle. Plusieurs des calculateurs ici ont été construits avec ces situations en tête.",
+    "L’arithmétique, toutefois, ne tient pas compte de votre profession ni de combien d’argent vous gagnez. Que vous investissiez vos premiers cent dollars ou que vous gériez vous-même un portefeuille de plusieurs millions de dollars, les mêmes principes mathématiques s’appliquent. Le site ne suppose aucune connaissance financière préalable et explique chaque sujet à partir de zéro."
   ],
   "howTitle": "Comment les outils sont construits",
   "howListItems": [
-    "<strong>Les entrées sont explicites et contrôlées par l’utilisateur.</strong> Pas de valeurs par défaut cachées.",
-    "<strong>Les hypothèses sont énoncées clairement.</strong> Le désaccord devient inspectable.",
-    "<strong>Les sorties découlent directement des entrées.</strong> Pas de boîtes noires.",
-    "<strong>Compréhensible avant spectaculaire.</strong> Chaque dépendance est visible."
+    "Chaque entrée importante est visible et contrôlée par l’utilisateur.",
+    "Chaque hypothèse est énoncée clairement.",
+    "Chaque résultat découle directement des mathématiques.",
+    "Chaque calcul est conçu pour être compréhensible et pour aider à éclairer la prise de décision."
   ],
   "notTitle": "Ce que ce site n’est pas",
   "notParagraphs": [
-    "Ce site ne fournit <strong>pas</strong> de conseil ni de recommandations financières. Les outils ne disent pas quoi faire, n’optimisent pas des résultats précis et n’orientent pas vers des produits ou stratégies particuliers. Ils montrent comment les entrées se rattachent aux sorties.",
-    "Les conseillers financiers ne sont pas la cible ici. Plusieurs sont connus personnellement par la personne derrière ce site — ce sont des gens bien qui font un travail légitime. Mais l’économie de la tarification de ce travail dans ce secteur mérite un examen. La plupart des conseillers facturent un pourcentage des actifs sous gestion. La rémunération suit donc votre patrimoine, et non la complexité ou le volume de travail. Imaginez un dentiste qui facturerait un pourcentage de votre patrimoine net pour un plombage. Le service est le même quel que soit le contenu de votre compte d’investissement.",
-    "Un conseil professionnel a une valeur réelle, mais la structure de rémunération mérite d’être scrutée. Un bon comptable, fiscaliste, courtier immobilier, avocat ou conseiller à honoraires fixes peut largement mériter ses honoraires. La bonne question n’est pas toujours de payer ou non de l’aide — parfois il le faut absolument. C’est plutôt si la structure d’honoraires correspond à ce qui est réellement livré.",
-    "Cette question — et ce qu’une structure de frais non examinée coûte discrètement sur des décennies — fait l’objet d’outils et d’articles dédiés ailleurs sur ce site."
+    "The Long Math ne fournit pas de conseils financiers, fiscaux, juridiques ou en placement. Les calculateurs ne recommandent pas de produits, ne vous disent pas quoi faire et n’optimisent pas vos décisions financières. Leur but est de montrer comment différentes hypothèses produisent différents résultats afin que vous puissiez mieux comprendre les arbitrages en jeu.",
+    "Plusieurs calculateurs et articles examinent les frais de placement, en particulier les modèles de frais en pourcentage des actifs sous gestion. Cette attention ne doit pas être confondue avec une critique des conseillers financiers eux-mêmes. Plusieurs conseillers sont des gens que je connais personnellement, et ce sont de bonnes personnes qui font un travail légitime.",
+    "Ce ne sont pas les personnes, mais plutôt l’économie de la façon dont leur travail est habituellement tarifé, qui mérite un examen. La plupart des conseillers facturent un pourcentage des actifs sous gestion; les frais augmentent donc avec votre patrimoine plutôt qu’avec la complexité ou le volume du travail effectué. Un bon comptable, fiscaliste, avocat, courtier immobilier ou conseiller financier à honoraires fixes peut facilement fournir une valeur qui dépasse ses honoraires, et de nombreux conseillers financiers traditionnels font de même. La question de savoir si un service professionnel en vaut la peine dépend de la mesure dans laquelle son prix reflète la valeur et le travail fournis.",
+    "Cette question, et l’arithmétique qui la sous-tend, est explorée dans les calculateurs et les articles de ce site.",
+    "J’ai créé la ressource que j’aurais voulu avoir pendant ces deux années où je savais que quelque chose n’allait pas, sans encore pouvoir expliquer exactement pourquoi. Si elle aide quelqu’un d’autre à comprendre l’arithmétique avant de prendre une décision financière coûteuse, alors elle a fait exactement ce pour quoi je l’ai créée."
   ],
   "mottoLines": [
     "<strong>Pas d’opinions.</strong>",
