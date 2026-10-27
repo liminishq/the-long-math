@@ -78,6 +78,7 @@ const ARTICLE_SLUGS = [
   "rrsp-meltdown",
   "rrsp-deduction-timing",
   "rrsp-vs-tfsa-vs-fhsa",
+  "spending-the-rrsp-refund",
   "safe-withdrawal-rate",
   "sequence-of-returns-risk",
   "should-you-break-your-mortgage-for-a-lower-rate",

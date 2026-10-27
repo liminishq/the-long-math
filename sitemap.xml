@@ -136,6 +136,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.thelongmath.com/articles/investing-and-financial-literacy/spending-the-rrsp-refund/</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.thelongmath.com/articles/investing-and-financial-literacy/asset-location-canada/</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
@@ -748,6 +754,12 @@
   <url>
     <loc>https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/rrsp-deduction-timing/</loc>
     <lastmod>2026-06-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/spending-the-rrsp-refund/</loc>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

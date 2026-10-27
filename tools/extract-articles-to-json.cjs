@@ -34,6 +34,7 @@ const SLUGS = [
   "rrsp-meltdown",
   "rrsp-deduction-timing",
   "rrsp-vs-tfsa-vs-fhsa",
+  "spending-the-rrsp-refund",
   "sequence-of-returns-risk",
   "should-you-break-your-mortgage-for-a-lower-rate",
   "the-true-cost-of-financial-advisor-fees",

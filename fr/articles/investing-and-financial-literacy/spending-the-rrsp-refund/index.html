@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dépenser le remboursement REER : pourquoi cela change l&#39;arithmétique REER vs CELI – The Long Math</title>
+  <meta name="description" content="Un remboursement REER change la comparaison REER et CELI. Comparez le fait de dépenser les économies d&#39;impôt, de les investir ou de les utiliser pour rembourser une dette." />
+  <link rel="canonical" href="https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/spending-the-rrsp-refund/" />
+  
+  <link rel="alternate" hreflang="en" href="https://www.thelongmath.com/articles/investing-and-financial-literacy/spending-the-rrsp-refund/" />
+  
+  <link rel="alternate" hreflang="fr" href="https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/spending-the-rrsp-refund/" />
+  
+  <link rel="alternate" hreflang="x-default" href="https://www.thelongmath.com/articles/investing-and-financial-literacy/spending-the-rrsp-refund/" />
+  
+
+  <script src="/assets/js/theme-init.40fc21015f.js"></script>
+  <script src="/assets/js/i18n.e9994b5f88.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.5e4b64579a.css">
+  <script defer src="/assets/js/site.9a3c008ae4.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4KPJPTHY30', { 'anonymize_ip': true });
+  </script>
+  
+<style>
+    .article-content { max-width: 980px; margin: 0 auto; line-height: 1.7; }
+    .article-content h2 { margin: 0 0 0.75em; }
+    .article-content h3 { margin: 1.25em 0 0.5em; }
+    .article-content ul, .article-content ol { margin: 1em 0; padding-left: 2em; }
+    .article-content li { margin: 0.5em 0; }
+    .article-content p { margin: 0.9em 0; }
+    .article-content table { width: 100%; border-collapse: collapse; margin: 0; font-size: 0.95em; }
+    .article-content th, .article-content td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+    .article-content th { background: var(--card-bg, rgba(0, 0, 0, 0.03)); font-weight: 600; }
+    .section-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      margin: 18px 0;
+      background: var(--card-bg, var(--surface, #fff));
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
+    }
+    .section-card.intro-card { margin-top: 14px; }
+    .related-articles h2, .related-articles h3 { font-size: 18px; margin: 0 0 10px; }
+    .related-articles ul { list-style: none; padding-left: 0; margin: 0; }
+    .related-articles li { margin: 12px 0; }
+    .related-articles a { color: var(--accent); text-decoration: none; }
+    .related-articles a:hover { text-decoration: underline; }
+    .faq-accordion { margin: 0; }
+    .faq-accordion details { border: 1px solid var(--border); border-radius: 10px; margin: 10px 0; overflow: hidden; }
+    .faq-accordion details[open] { border-color: var(--accent, #d6b36a); }
+    .faq-accordion summary { padding: 14px 18px; font-weight: 700; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .faq-accordion summary::-webkit-details-marker { display: none; }
+    .faq-accordion summary::after { content: "+"; font-size: 1.2em; color: var(--accent); flex-shrink: 0; }
+    .faq-accordion details[open] summary::after { content: "\2212"; }
+    .faq-accordion .faq-answer { padding: 0 18px 16px; }
+    .faq-accordion .faq-answer p { margin: 0 0 0.9em 0; }
+    .faq-accordion .faq-answer p:last-child { margin-bottom: 0; }
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1em 0; max-width: 100%; }
+    .highlight-table { width: 100%; border-collapse: collapse; margin: 0; font-size: 0.95em; }
+    .highlight-table th, .highlight-table td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+    .highlight-table th { background: var(--card-bg, rgba(0, 0, 0, 0.03)); font-weight: 600; }
+    .highlight-table .num { white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .math-block { background: var(--card-bg, rgba(0,0,0,0.03)); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; margin: 1em 0; line-height: 1.9; overflow-x: auto; max-width: 100%; }
+    .math-block strong { white-space: nowrap; }
+    .table-note { margin: 0.35em 0 0.2em; font-size: 0.92em; }
+    .article-sources { margin-top: 1.5em; font-size: 0.95em; }
+    @media (max-width: 640px) {
+      .section-card { padding: 14px; }
+      .highlight-table { font-size: 0.82em; }
+      .highlight-table th, .highlight-table td { padding: 8px 7px; }
+      .article-content h1 { overflow-wrap: break-word; }
+    }
+  </style>
+
+
+  <meta name="article:modified" content="octobre 2026" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Dépenser le remboursement REER : pourquoi cela change l&#39;arithmétique REER vs CELI – The Long Math" />
+  <meta property="og:description" content="Un remboursement REER change la comparaison REER et CELI. Comparez le fait de dépenser les économies d&#39;impôt, de les investir ou de les utiliser pour rembourser une dette." />
+  <meta property="og:url" content="https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/spending-the-rrsp-refund/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Dépenser le remboursement REER : pourquoi cela change l&#39;arithmétique REER vs CELI – The Long Math" />
+  <meta name="twitter:description" content="Un remboursement REER change la comparaison REER et CELI. Comparez le fait de dépenser les économies d&#39;impôt, de les investir ou de les utiliser pour rembourser une dette." />
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Accueil","item":"https://www.thelongmath.com/fr/"},{"@type":"ListItem","position":2,"name":"Investissement et culture financière","item":"https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/"},{"@type":"ListItem","position":3,"name":"Dépenser le remboursement REER : pourquoi cela change l'arithmétique REER vs CELI","item":"https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/spending-the-rrsp-refund/"}]}</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Dépenser le remboursement REER : pourquoi cela change l'arithmétique REER vs CELI","description":"Un remboursement REER change la comparaison REER et CELI. Comparez le fait de dépenser les économies d'impôt, de les investir ou de les utiliser pour rembourser une dette.","author":{"@type":"Person","name":"Phil Evans"},"publisher":{"@type":"Organization","name":"The Long Math","logo":{"@type":"ImageObject","url":"https://www.thelongmath.com/assets/logo.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.thelongmath.com/fr/articles/investing-and-financial-literacy/spending-the-rrsp-refund/"},"datePublished":"2026-10-27","dateModified":"2026-10-27"}</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Un REER ou un CELI est-il meilleur si je dépense le remboursement?","acceptedAnswer":{"@type":"Answer","text":"Avec la même cotisation nominale de 10 000 $, le CELI arrive en avant dans l'exemple ci-dessus (38 697 $ vs 23 218 $), parce que l'investisseur CELI garde le montant entier investi. Mais ce n'est pas une comparaison à coût égal. Le coût net de l'investisseur REER n'était que de 6 000 $ après avoir dépensé les 4 000 $ d'économies d'impôt, et un CELI de 6 000 $ croît aussi jusqu'à 23 218 $ sous les mêmes hypothèses."}},{"@type":"Question","name":"Le REER et le CELI sont-ils vraiment égaux si mon taux d'imposition reste le même?","acceptedAnswer":{"@type":"Answer","text":"Oui, dans le modèle simplifié, lorsque les stratégies sont comparées sur une base équivalente et que les économies d'impôt REER sont investies sans frottement fiscal supplémentaire. Dans l'exemple ci-dessus, investir le remboursement dans un CELI produit le même résultat après impôt."}},{"@type":"Question","name":"Quand le REER bat-il le CELI?","acceptedAnswer":{"@type":"Answer","text":"La stratégie REER devient plus attrayante lorsque le taux d'imposition sur les retraits REER est inférieur au taux auquel la déduction a été réclamée, et lorsque le remboursement d'impôt est réinvesti. Dans notre exemple, un taux de retrait de 30 % a produit 42 567 $ pour la stratégie de 10 000 $ au REER plus remboursement investi, contre 38 697 $ pour le CELI."}},{"@type":"Question","name":"Rembourser une dette avec le remboursement compte-t-il comme le dépenser?","acceptedAnswer":{"@type":"Answer","text":"Pas au sens économique. Rembourser un solde de carte de crédit à 20 % avec 4 000 $ retire un passif coûteux, ce qui est un résultat différent de consommer l'argent."}},{"@type":"Question","name":"Dois-je investir le remboursement dans un CELI?","acceptedAnswer":{"@type":"Answer","text":"Non. Un REER, un CELIAPP (si vous y êtes admissible) ou un compte non enregistré peuvent aussi être utilisés. Le CELI est l'exemple le plus propre parce que, en supposant des droits de cotisation suffisants, le remboursement croît sans créer une nouvelle obligation fiscale."}}]}</script>
+
+
+</head>
+<body>
+  
+  <div id="site-header"></div>
+  <div class="wrap">
+    
+<article class="article-content">
+<header>
+<h1>Dépenser le remboursement REER : pourquoi cela change l'arithmétique REER vs CELI</h1>
+<p class="reading-time">Lecture de 15 minutes</p>
+<p class="last-updated">Mis à jour en octobre 2026</p>
+</header>
+<p>Beaucoup de comparaisons REER et CELI ne considèrent que les droits de cotisation et les taux d'imposition. Le remboursement REER fait aussi partie de l'arithmétique. Deux personnes peuvent faire la même cotisation REER et arriver à la retraite avec des résultats très différents, simplement parce que l'une investit les économies d'impôt et l'autre les dépense.</p>
+<p>Cet article examine les deux cas, ainsi que le CELI, sous des hypothèses identiques.</p>
+<section class="section-card intro-card" id="quick-answer">
+<h2>En bref</h2>
+<p>Il y a deux grandes différences dans le fonctionnement d'un <a href="/fr/articles/investing-and-financial-literacy/what-is-an-rrsp/">REER</a> et d'un <a href="/fr/articles/investing-and-financial-literacy/what-is-a-tfsa/">CELI</a> :</p>
+<p>D'abord, dans un REER, vos placements peuvent croître libres d'impôt, mais l'impôt est payé sur les retraits. Dans un CELI, la croissance et les retraits sont généralement libres d'impôt.</p>
+<p>Ensuite, une cotisation REER crée une déduction fiscale. Une cotisation CELI n'en crée pas. Une comparaison REER et CELI est donc incomplète si elle ne tient pas compte de ce qui arrive aux économies d'impôt.</p>
+<p>Par exemple, une cotisation REER de 10 000 $ faite par quelqu'un à un taux marginal de 40 % crée environ 4 000 $ d'économies d'impôt. Vous avez alors un choix :</p>
+<ul>
+<li><strong>Investir les 4 000 $ d'économies d'impôt :</strong> vous avez maintenant 14 000 $ investis pour l'avenir (10 000 $ dans le REER, plus 4 000 $ disponibles pour investir dans un CELI, un compte non enregistré ou ailleurs une fois le remboursement reçu).</li>
+<li><strong>Dépenser les 4 000 $ d'économies d'impôt :</strong> vous avez toujours 10 000 $ investis dans le REER, mais les économies d'impôt sont devenues une dépense actuelle plutôt qu'une épargne supplémentaire à long terme.</li>
+</ul>
+<p>Cette différence compte, parce que les 4 000 $ investis peuvent se capitaliser pendant des décennies, alors que les 4 000 $ dépensés ne le peuvent pas.</p>
+<p>Alors, qu'est-ce qui arrive en avant? Cela dépend en partie de vos taux marginaux d'imposition au moment de la cotisation et au moment du retrait, mais cela dépend aussi fortement de ce que vous faites des économies d'impôt. Investir le remboursement garde cet argent au travail pour votre avenir. Le dépenser convertit les économies d'impôt en consommation actuelle. Une comparaison rigoureuse REER et CELI doit aussi maintenir le coût net constant, parce qu'une cotisation REER de 10 000 $ et une cotisation CELI de 10 000 $ ne vous coûtent pas le même montant d'argent disponible après impôt, et elle doit tenir compte de l'impôt sur les retraits REER qu'un CELI n'a pas. Les sections ci-dessous construisent cette comparaison étape par étape, en commençant par la question plus simple : avez-vous investi les économies d'impôt REER, ou les avez-vous dépensées?</p>
+</section>
+<section class="section-card" id="le-remboursement-reer-fait-partie-de-la-decision">
+<h2>Le remboursement REER fait partie de la décision de placement</h2>
+<p>Supposons que vous avez 10 000 $ à investir. Une cotisation CELI de 10 000 $ et une cotisation REER de 10 000 $ semblent égales, mais elles ne sont pas égales en coût. À un taux marginal d'imposition de 40 %, la déduction REER réduit votre impôt d'environ 4 000 $ (10 000 $ &times; 40 % = 4 000 $). La voie REER vous laisse donc avec 10 000 $ investis plus 4 000 $ d'économies d'impôt. La voie CELI vous laisse avec 10 000 $ investis et aucune déduction.</p>
+<p>Ce qui arrive aux 4 000 $ détermine ce que vous comparez vraiment.</p>
+<p>Il y a deux façons liées de faire cette comparaison. L'une consiste à comparer la même cotisation nominale, dans cet exemple, 10 000 $ dans l'un ou l'autre compte. L'autre consiste à comparer le même coût net aujourd'hui, c'est-à-dire l'argent disponible auquel l'investisseur renonce réellement. Les deux sont utiles, mais ce n'est pas la même question.</p>
+<p>Une réserve : les vrais calculs d'impôt sont progressifs. Une grande déduction peut traverser plusieurs tranches, de sorte que toute la cotisation n'économise pas nécessairement l'impôt à un seul taux. Le 40 % uniforme utilisé ici est une simplification délibérée qui garde l'arithmétique visible. Vous pouvez voir le remboursement à votre niveau de revenu avec le <a href="/calculators/rrsp-contribution-room-tax-refund/">calculateur d'espace de cotisation REER et de remboursement d'impôt</a>.</p>
+</section>
+<section class="section-card" id="trois-strategies-memes-hypotheses">
+<h2>Trois stratégies, mêmes hypothèses</h2>
+<p>Chaque scénario de cet article utilise un rendement annuel de 7 % sur 20 ans. Le facteur de croissance est 1,07<sup>20</sup> &asymp; 3,8697, donc 10 000 $ deviennent 38 697 $.</p>
+<p>Pour simplifier, les exemples supposent que les économies d'impôt sont investies en même temps que la cotisation initiale. Un remboursement reçu et investi plus tard aurait un peu moins de temps pour se capitaliser. Ils supposent aussi que vos taux marginaux au moment de la cotisation et au moment du retrait sont identiques. En réalité, ce n'est souvent pas le cas.</p>
+<p><strong>Scénario 1 : 10 000 $ cotisés au CELI.</strong> Le retrait est libre d'impôt. Valeur finale après impôt : 38 697 $. (10 000 $ &times; 1,07<sup>20</sup> &asymp; 38 697 $)</p>
+<p><strong>Scénario 2 : 10 000 $ cotisés au REER, remboursement dépensé.</strong> Le REER croît jusqu'à 38 697 $. Un impôt de 40 % au retrait laisse 38 697 $ &times; 60 % = 23 218 $. Cela semble bien pire que le CELI, et pour le patrimoine de retraite, ça l'est. Mais cela ne signifie pas que le REER a détruit 15 479 $ de valeur. L'investisseur REER a simplement dépensé 4 000 $ vingt ans plus tôt, et l'investisseur CELI ne l'a pas fait.</p>
+<p>Il y a une autre façon de considérer le même résultat. Une fois les 4 000 $ d'économies d'impôt dépensés, le coût net de l'investisseur n'était que :</p>
+<p>10 000 $ &minus; 4 000 $ = 6 000 $</p>
+<p>Un CELI de 6 000 $ investi sous les mêmes hypothèses croît jusqu'à :</p>
+<p>6 000 $ &times; 3,8697 = 23 218 $</p>
+<p>Exactement la même chose que le REER après impôt.</p>
+<p>Dépenser le remboursement ne rend donc pas le REER lui-même mathématiquement pire. L'investisseur a simplement épargné 6 000 $ après impôt et consommé les 4 000 $ restants.</p>
+<p><strong>Scénario 3 : 10 000 $ cotisés au REER, remboursement investi.</strong> Supposons que le remboursement de 4 000 $ va dans un CELI, avec suffisamment de droits de cotisation CELI, de sorte qu'il n'ajoute aucune obligation fiscale future.</p>
+<ul>
+<li>REER après un impôt de 40 % au retrait : 38 697 $ &times; 60 % = 23 218 $</li>
+<li>Remboursement investi : 4 000 $ &times; 3,8697 = 15 479 $, libre d'impôt</li>
+<li>Total : 23 218 $ + 15 479 $ = 38 697 $</li>
+</ul>
+<div class="table-wrap" role="region" aria-label="Comparaison des stratégies : coût net, consommation actuelle et valeur après impôt après 20 ans">
+<table class="highlight-table">
+<thead>
+<tr>
+<th scope="col">Stratégie</th>
+<th scope="col">Coût net aujourd'hui</th>
+<th scope="col">Consommation actuelle</th>
+<th scope="col">Valeur après impôt après 20 ans</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10 000 $ au CELI</td>
+<td class="num">10 000 $</td>
+<td class="num">0 $</td>
+<td class="num">38 697 $</td>
+</tr>
+<tr>
+<td>10 000 $ au REER, remboursement dépensé</td>
+<td class="num">6 000 $</td>
+<td class="num">4 000 $</td>
+<td class="num">23 218 $</td>
+</tr>
+<tr>
+<td>6 000 $ au CELI</td>
+<td class="num">6 000 $</td>
+<td class="num">0 $</td>
+<td class="num">23 218 $</td>
+</tr>
+<tr>
+<td>10 000 $ au REER + 4 000 $ investis dans un CELI</td>
+<td class="num">10 000 $</td>
+<td class="num">0 $</td>
+<td class="num">38 697 $</td>
+</tr>
+<tr>
+<td>16 667 $ de REER entièrement majoré<sup>*</sup></td>
+<td class="num">10 000 $</td>
+<td class="num">0 $</td>
+<td class="num">38 697 $</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="table-note"><sup>*</sup>Le REER entièrement majoré est expliqué plus bas.</p>
+<p>Le remboursement est la pièce qui complète la comparaison.</p>
+</section>
+<section class="section-card" id="pourquoi-larithmetique-fonctionne">
+<h2>Pourquoi l'arithmétique fonctionne</h2>
+<p>Soit C la cotisation REER, t<sub>1</sub> le taux d'imposition au moment de la cotisation, t<sub>2</sub> le taux d'imposition au moment du retrait, et G le multiplicateur de croissance. Si le remboursement est investi dans un CELI, le résultat après impôt est :</p>
+<p class="math-block"><strong>C &times; G &times; (1 &minus; t<sub>2</sub>) + C &times; t<sub>1</sub> &times; G</strong></p>
+<p>En factorisant C &times; G, on obtient :</p>
+<p class="math-block"><strong>C &times; G &times; [(1 &minus; t<sub>2</sub>) + t<sub>1</sub>]</strong></p>
+<p>Lorsque t<sub>1</sub> = t<sub>2</sub>, le crochet égale (1 &minus; t) + t = 1, et le résultat est simplement C &times; G. C'est exactement ce que produit le CELI. Avec des taux d'imposition égaux, payer l'impôt avant que l'argent croisse ou après qu'il ait crû donne la même réponse lorsque les économies d'impôt REER sont aussi investies sans frottement fiscal supplémentaire, comme dans l'exemple CELI ici.</p>
+<p>Si le remboursement est plutôt investi dans un <a href="/fr/articles/investing-and-financial-literacy/what-is-a-non-registered-account/">compte non enregistré</a>, l'impôt sur le revenu de placement peut empêcher les résultats d'être exactement égaux.</p>
+<p>L'arithmétique plus large du choix de compte apparaît dans notre <a href="/fr/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/">comparaison REER, CELI et CELIAPP</a>.</p>
+</section>
+<section class="section-card" id="et-si-le-taux-dimpot-a-la-retraite-differe">
+<h2>Et si votre taux d'imposition à la retraite diffère?</h2>
+<p>Gardez un taux de cotisation de 40 % et ne changez que le taux de retrait. Le REER croît toujours jusqu'à 38 697 $, et le remboursement investi croît toujours jusqu'à 15 479 $.</p>
+<div class="table-wrap" role="region" aria-label="Valeur après impôt lorsque le taux d'imposition au retrait diffère du taux de cotisation de 40 pour cent">
+<table class="highlight-table">
+<thead>
+<tr>
+<th scope="col">Taux d'imposition au retrait</th>
+<th scope="col">CELI</th>
+<th scope="col">REER + remboursement investi dans un CELI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="num">30 %</td>
+<td class="num">38 697 $</td>
+<td class="num">42 567 $</td>
+</tr>
+<tr>
+<td class="num">40 %</td>
+<td class="num">38 697 $</td>
+<td class="num">38 697 $</td>
+</tr>
+<tr>
+<td class="num">50 %</td>
+<td class="num">38 697 $</td>
+<td class="num">34 827 $</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>À 30 %, le REER vaut 38 697 $ &times; 70 % = 27 088 $, et l'ajout de 15 479 $ donne 42 567 $. À 50 %, le REER vaut 38 697 $ &times; 50 % = 19 348 $, et l'ajout de 15 479 $ donne 34 827 $. La stratégie REER plus remboursement investi gagne lorsque la déduction est réclamée à un taux plus élevé que celui auquel le retrait est imposé, et le CELI gagne lorsque c'est l'inverse.</p>
+<p>Un REER entièrement majoré au même coût net de 10 000 $ produit des résultats un peu différents, parce que tout l'argent reste dans le REER et est éventuellement imposé au taux de retrait. À des taux d'imposition au retrait de 30 %, 40 % et 50 %, ses valeurs finales après impôt seraient d'environ 45 146 $, 38 697 $ et 32 247 $, respectivement.</p>
+<p>La question centrale devient donc : le taux d'imposition sur cet argent REER à la retraite sera-t-il inférieur, semblable ou supérieur au taux économisé lorsque la déduction a été réclamée? D'autres facteurs comptent aussi, y compris les prestations indexées sur le revenu, les <a href="/fr/articles/investing-and-financial-literacy/what-is-a-rrif/">retraits d'un FERR</a>, la liquidité, la planification successorale et les droits de cotisation, mais ceci est l'arithmétique fiscale centrale.</p>
+</section>
+<section class="section-card" id="depenser-le-remboursement-ne-rend-pas-le-reer-mauvais">
+<h2>Dépenser le remboursement ne rend pas le REER « mauvais »</h2>
+<p>Quelqu'un qui cotise 10 000 $ et dépense le remboursement de 4 000 $ pour des vacances se retrouve avec un REER après impôt plus petit que le portefeuille CELI de notre exemple. Ce résultat n'est pas automatiquement une erreur. Cette personne a reçu 4 000 $ d'argent à dépenser vingt ans plus tôt, et l'argent d'aujourd'hui a une valeur réelle.</p>
+<p>La conclusion plus étroite est celle-ci : si l'objectif est de maximiser le patrimoine investi à long terme, dépenser le remboursement affaiblit la stratégie REER, parce qu'une partie de l'avantage fiscal n'est jamais investie.</p>
+</section>
+<section class="section-card" id="rembourser-une-dette-nest-pas-la-meme-chose-que-depenser">
+<h2>Rembourser une dette n'est pas la même chose que dépenser</h2>
+<p>Le remboursement a plus de deux destinations possibles. Il peut être consommé, investi, conservé en argent comptant, utilisé pour un autre objectif financier ou utilisé pour rembourser une dette. Mettre 4 000 $ contre une carte de crédit à 20 % ne place pas d'argent dans un compte de placement, mais retire un passif qui coûterait autrement des intérêts chaque année. L'avantage de rembourser une hypothèque ou une autre dette dépend du taux d'intérêt et du fait que ces intérêts sont déductibles ou non. Cette comparaison est développée dans <a href="/fr/articles/investing-and-financial-literacy/pay-off-your-mortgage-faster-or-invest/">Rembourser son hypothèque plus vite ou investir?</a> et dans le <a href="/calculators/pay-off-mortgage-vs-invest/">calculateur Rembourser l'hypothèque ou investir</a>.</p>
+</section>
+<section class="section-card" id="que-signifie-reinvestir-le-remboursement">
+<h2>Que signifie « réinvestir le remboursement »?</h2>
+<p>Le remboursement peut être investi dans un CELI, un REER, d'autres comptes enregistrés (<a href="/fr/articles/investing-and-financial-literacy/what-is-an-fhsa/">CELIAPP</a>, <a href="/fr/articles/investing-and-financial-literacy/what-is-an-resp/">REEE</a>, REEI) si vous y êtes admissible, ou un compte non enregistré. Cet article utilise le CELI parce que, en supposant des droits de cotisation suffisants, le remboursement peut alors croître sans créer une autre facture fiscale future.</p>
+<p>Remettre le remboursement dans le REER fonctionne aussi, mais chaque nouvelle cotisation crée une nouvelle déduction. À un taux de 40 %, 10 000 $ génèrent 4 000 $, qui génèrent 1 600 $, puis 640 $, et ainsi de suite. Le raccourci est une majoration. Si vous êtes prêt à renoncer à 10 000 $ d'argent disponible après impôt à un taux marginal de 40 %, la cotisation REER entièrement majorée est :</p>
+<p>10 000 $ &divide; (1 &minus; 0,40) = 16 667 $</p>
+<p>La réduction d'impôt est 16 667 $ &times; 40 % = 6 667 $, donc le coût net est 16 667 $ &minus; 6 667 $ = 10 000 $. Après 20 ans, le REER vaut 16 667 $ &times; 3,8697 = 64 495 $, et après un impôt de 40 % il vaut 38 697 $. Cela correspond au résultat du CELI, ce qui en fait une autre comparaison propre à coût égal.</p>
+<p>En pratique, l'investisseur doit avoir suffisamment de droits de cotisation REER. Quelqu'un qui ne commence qu'avec 10 000 $ d'argent comptant aurait aussi besoin d'un moyen de financer les 6 667 $ additionnels avant l'arrivée des économies d'impôt, par exemple d'autres liquidités disponibles ou une réduction des retenues sur la paie.</p>
+</section>
+<section class="section-card" id="pourquoi-10000-dans-chaque-compte-induit-en-erreur">
+<h2>Pourquoi « 10 000 $ dans chaque compte » induit en erreur</h2>
+<p>Les comparaisons qui placent 10 000 $ dans un REER et 10 000 $ dans un CELI, imposent le REER au retrait et déclarent le CELI gagnant ignorent la déduction. L'erreur inverse apparaît aussi : traiter le remboursement comme un bonus gratuit. Ignorer le remboursement fait paraître le REER artificiellement mauvais, et le traiter comme de l'argent gratuit le fait paraître artificiellement bon. La comparaison utile inclut les deux côtés, conformément à la <a href="https://www.canada.ca/fr/agence-revenu/services/impot/particuliers/sujets/reer-regimes-connexes/regime-enregistre-epargne-retraite-reer.html">façon dont l'ARC décrit le REER</a> : cotisations déductibles, croissance à l'abri de l'impôt, retraits imposables.</p>
+<p>Le mot « remboursement » peut aussi induire en erreur. Le vrai avantage est une réduction de l'impôt sur le revenu. Il peut arriver comme un remboursement plus grand en avril, ou comme un salaire net plus élevé au cours de l'année si les retenues sur la paie sont ajustées. La question est la même dans les deux cas : qu'arrive-t-il aux économies d'impôt?</p>
+</section>
+<section class="section-card" id="le-probleme-comportemental">
+<h2>Le problème comportemental</h2>
+<p>Une cotisation CELI n'a pas de remboursement attaché, donc rien n'arrive plus tard qui puisse devenir de l'argent à dépenser. Avec un REER, l'avantage fiscal est séparé de la cotisation par des semaines ou des mois. Une personne peut cotiser 10 000 $, avoir l'impression que le montant entier a été épargné, recevoir 4 000 $ en retour, les dépenser, et se créditer quand même de tout l'avantage REER. Elle a épargné 10 000 $, mais une partie de l'avantage fiscal est devenue de la consommation actuelle.</p>
+<p>Sur des décennies, la différence se capitalise. Dans notre exemple, le remboursement de 4 000 $ croît jusqu'à 15 479 $ sur 20 ans et à plus de 30 000 $ sur 30 ans à 7 % (4 000 $ &times; 7,6123 = 30 449 $).</p>
+<p>Comme décision ponctuelle, dépenser le remboursement de 4 000 $ produit le coût d'opportunité montré ci-dessus. Mais l'effet plus grand vient lorsque le même choix est répété année après année. Supposons qu'un investisseur fait chaque année une cotisation REER qui génère environ 4 000 $ d'économies d'impôt (par exemple, une cotisation de 10 000 $ à un taux marginal de 40 %) et investit chaque remboursement à la fin de cette année à 7 %. Ces placements annuels croîtraient jusqu'à environ 164 000 $ après 20 ans ou 378 000 $ après 30 ans. Contrairement aux exemples ponctuels ci-dessus, qui supposent que les économies d'impôt sont investies en même temps que la cotisation, cet exemple récurrent suppose que chaque remboursement est investi en fin d'année, une approximation plus conservatrice du moment où les remboursements arrivent réellement. Les mêmes dépôts de fin d'année peuvent être projetés avec le <a href="/calculators/investment-simple/">calculateur de placement simple</a>.</p>
+</section>
+<section class="section-card" id="une-meilleure-question-reer-vs-celi">
+<h2>Une meilleure question REER vs CELI</h2>
+<p>« Lequel me donne le plus gros remboursement? » et « Quel compte a le plus gros solde? » sont deux questions incomplètes. Une meilleure question est :</p>
+<p><strong>Pour le même coût net aujourd'hui (le montant d'argent disponible auquel je renonce réellement), combien de patrimoine après impôt chaque stratégie produira-t-elle éventuellement?</strong></p>
+<p>Cette question force la déduction dans le calcul, ainsi que les différences entre retraits imposables et retraits libres d'impôt des CELI et des REER. Si le taux d'imposition est le même à l'entrée et à la sortie, le REER et le CELI sont équivalents dans le modèle simplifié lorsque les économies d'impôt restent investies sans frottement fiscal supplémentaire. Si le taux est plus bas au retrait (comme cela peut se produire lorsque des gens effectuent des retraits pendant la retraite), la stratégie REER gagne un avantage. Si le taux est plus élevé au retrait, le CELI gagne un avantage. Dépenser les économies est un quatrième choix : prendre une partie de l'avantage maintenant au lieu de la capitaliser.</p>
+</section>
+<section class="section-card" id="larithmetique">
+<h2>L'arithmétique</h2>
+<p>Hypothèses tout au long : cotisation de 10 000 $, taux marginal de 40 % au moment de la cotisation, 20 ans, rendement annuel de 7 %, taux marginal de 40 % au moment du retrait.</p>
+<div class="table-wrap" role="region" aria-label="Ce qui est maintenu constant dans chaque comparaison REER et CELI, et le résultat après impôt">
+<table class="highlight-table">
+<thead>
+<tr>
+<th scope="col">Comparaison</th>
+<th scope="col">Ce qui est maintenu constant</th>
+<th scope="col">Résultat après impôt</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10 000 $ au CELI vs 10 000 $ au REER, remboursement dépensé</td>
+<td>Cotisation nominale (10 000 $)</td>
+<td class="num">38 697 $ vs 23 218 $</td>
+</tr>
+<tr>
+<td>6 000 $ au CELI vs 10 000 $ au REER, remboursement dépensé</td>
+<td>Coût net (6 000 $)</td>
+<td class="num">23 218 $ vs 23 218 $</td>
+</tr>
+<tr>
+<td>10 000 $ au CELI vs 10 000 $ au REER + 4 000 $ de remboursement investis dans un CELI</td>
+<td>Coût net (10 000 $)</td>
+<td class="num">38 697 $ vs 38 697 $</td>
+</tr>
+<tr>
+<td>10 000 $ au CELI vs 16 667 $ de REER entièrement majoré</td>
+<td>Coût net (10 000 $)</td>
+<td class="num">38 697 $ vs 38 697 $</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Une comparaison REER et CELI significative exige de décider ce qui arrive aux économies d'impôt REER et d'être clair sur le fait que l'on compare la même cotisation ou le même coût net.</p>
+<p>Dépenser les économies d'impôt, les investir et les utiliser pour rembourser une dette sont des stratégies financières différentes, et le compte n'est qu'une partie de l'équation.</p>
+</section>
+<section class="newsletter-signup card" aria-labelledby="newsletter-article-heading">
+<h2 id="newsletter-article-heading" class="newsletter-signup-heading">Get the new work without checking back</h2>
+<p class="newsletter-signup-copy">One concise monthly email with new calculators, articles, and essays from The Long Math, plus a short note on why each one matters.</p>
+<p class="newsletter-signup-meta">Free. Unsubscribe anytime.</p>
+<div class="newsletter-embed-wrap">
+<iframe
+  src="https://subscribe-forms.beehiiv.com/bfdc64a5-2697-4bb0-bec5-5a557c9f274b"
+  class="beehiiv-embed"
+  data-test-id="beehiiv-embed"
+  frameborder="0"
+  scrolling="no"
+  style="width: 330px; height: 53px; margin: 0; border-radius: 0; background-color: transparent; box-shadow: 0 0 #0000; max-width: 100%;"
+  title="Newsletter signup"
+></iframe>
+
+</div>
+
+</section>
+
+
+      <section class="section-card">
+<h2 id="faq">Foire aux questions</h2>
+<div class="faq-accordion">
+<details>
+<summary>Un REER ou un CELI est-il meilleur si je dépense le remboursement?</summary>
+<div class="faq-answer"><p>Avec la même cotisation nominale de 10 000 $, le CELI arrive en avant dans l'exemple ci-dessus (38 697 $ vs 23 218 $), parce que l'investisseur CELI garde le montant entier investi. Mais ce n'est pas une comparaison à coût égal. Le coût net de l'investisseur REER n'était que de 6 000 $ après avoir dépensé les 4 000 $ d'économies d'impôt, et un CELI de 6 000 $ croît aussi jusqu'à 23 218 $ sous les mêmes hypothèses.</p></div>
+</details>
+<details>
+<summary>Le REER et le CELI sont-ils vraiment égaux si mon taux d'imposition reste le même?</summary>
+<div class="faq-answer"><p>Oui, dans le modèle simplifié, lorsque les stratégies sont comparées sur une base équivalente et que les économies d'impôt REER sont investies sans frottement fiscal supplémentaire. Dans l'exemple ci-dessus, investir le remboursement dans un CELI produit le même résultat après impôt.</p></div>
+</details>
+<details>
+<summary>Quand le REER bat-il le CELI?</summary>
+<div class="faq-answer"><p>La stratégie REER devient plus attrayante lorsque le taux d'imposition sur les retraits REER est inférieur au taux auquel la déduction a été réclamée, et lorsque le remboursement d'impôt est réinvesti. Dans notre exemple, un taux de retrait de 30 % a produit 42 567 $ pour la stratégie de 10 000 $ au REER plus remboursement investi, contre 38 697 $ pour le CELI.</p></div>
+</details>
+<details>
+<summary>Rembourser une dette avec le remboursement compte-t-il comme le dépenser?</summary>
+<div class="faq-answer"><p>Pas au sens économique. Rembourser un solde de carte de crédit à 20 % avec 4 000 $ retire un passif coûteux, ce qui est un résultat différent de consommer l'argent.</p></div>
+</details>
+<details>
+<summary>Dois-je investir le remboursement dans un CELI?</summary>
+<div class="faq-answer"><p>Non. Un REER, un <a href="/fr/articles/investing-and-financial-literacy/what-is-an-fhsa/">CELIAPP</a> (si vous y êtes admissible) ou un compte non enregistré peuvent aussi être utilisés. Le CELI est l'exemple le plus propre parce que, en supposant des droits de cotisation suffisants, le remboursement croît sans créer une nouvelle obligation fiscale.</p></div>
+</details>
+</div>
+</section>
+<section class="section-card related-articles">
+<h2>Articles et calculateurs connexes</h2>
+<h3>Articles connexes</h3>
+<ul>
+<li><a href="/fr/articles/investing-and-financial-literacy/rrsp-vs-tfsa-vs-fhsa/">REER, CELI et CELIAPP au Canada : quel compte est le meilleur?</a></li>
+<li><a href="/fr/articles/investing-and-financial-literacy/rrsp-deduction-timing/">Calendrier de la déduction REER : réclamer maintenant ou plus tard?</a></li>
+<li><a href="/fr/articles/investing-and-financial-literacy/what-is-an-rrsp/">Qu'est-ce qu'un REER? Régime enregistré d'épargne-retraite expliqué (Canada)</a></li>
+<li><a href="/fr/articles/investing-and-financial-literacy/what-is-a-tfsa/">Qu'est-ce qu'un CELI? Compte d'épargne libre d'impôt expliqué (Canada)</a></li>
+<li><a href="/fr/articles/investing-and-financial-literacy/pay-off-your-mortgage-faster-or-invest/">Rembourser son hypothèque plus vite ou investir?</a></li>
+</ul>
+<h3>Calculateurs connexes</h3>
+<ul>
+<li><a href="/calculators/rrsp-contribution-room-tax-refund/">Calculateur d'espace de cotisation REER et de remboursement d'impôt</a></li>
+<li><a href="/calculators/tfsa-rrsp-fhsa/">Calculateur CELI vs REER vs CELIAPP (Canada)</a></li>
+<li><a href="/calculators/investment-simple/">Calculateur de placement simple</a></li>
+<li><a href="/calculators/pay-off-mortgage-vs-invest/">Rembourser l'hypothèque ou investir</a></li>
+</ul>
+</section>
+<p class="article-sources"><strong>Sources :</strong> Agence du revenu du Canada, pages des programmes <a href="https://www.canada.ca/fr/agence-revenu/services/impot/particuliers/sujets/reer-regimes-connexes/regime-enregistre-epargne-retraite-reer.html">REER</a> et <a href="https://www.canada.ca/fr/agence-revenu/services/impot/particuliers/sujets/compte-epargne-libre-impot/quest-ce-celi.html">CELI</a> (règles de déduction, de retrait et de croissance libre d'impôt).</p>
+</article>
+<div class="disclaimer"><p><strong>Avis de non-responsabilité :</strong> L'ensemble du contenu de The Long Math — articles, textes, calculateurs, outils ou tout autre matériel — est fourni à des fins éducatives et d'information uniquement et ne constitue pas un conseil financier, fiscal, juridique ou en placement. Les résultats ou projections reposent sur des modèles simplifiés, des hypothèses et des données fournies par l'utilisateur et peuvent ne pas refléter la réalité. Les résultats fiscaux dépendent de la situation personnelle, de la province de résidence, du revenu, des droits de cotisation disponibles, du revenu futur, des prestations gouvernementales et d'autres facteurs. Il vous appartient d'évaluer l'exactitude et la pertinence des renseignements et de faire votre propre diligence raisonnable. Avant de prendre des décisions financières, consultez un professionnel qualifié.</p></div>
+
+  </div>
+  
+  <div id="footerMount"></div>
+</body>
+</html>
