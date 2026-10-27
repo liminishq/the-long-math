@@ -55,6 +55,15 @@ function mergeArticlePayload(enA, locA) {
     }
     if (Array.isArray(v)) {
       if (v.length > 0) out[k] = v;
+      // A translated article body with an explicit empty FAQ should not inherit
+      // the English FAQ schema. The visible page has no matching questions.
+      else if (
+        k === "faq" &&
+        typeof locA.wrapMainHtml === "string" &&
+        locA.wrapMainHtml.trim()
+      ) {
+        out[k] = [];
+      }
       continue;
     }
     if (typeof v === "object") {

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>What Is a Stock? Definition, How Stocks Work, and How They Make Money | The Long Math</title>
-  <meta name="description" content="What is a stock? Learn how stocks work, what a share represents, how stocks make money, and why stock prices move — explained with simple arithmetic." />
+  <title>What Is a Stock? How Stocks Work and Make Money | The Long Math</title>
+  <meta name="description" content="What is a stock? Learn how stocks work, what a share represents, how stocks make money, and why prices move, explained with simple arithmetic." />
   <link rel="canonical" href="https://www.thelongmath.com/articles/investing-and-financial-literacy/what-is-a-stock/" />
   
   <link rel="alternate" hreflang="en" href="https://www.thelongmath.com/articles/investing-and-financial-literacy/what-is-a-stock/" />
@@ -16,8 +16,8 @@
 
   <script src="/assets/js/theme-init.40fc21015f.js"></script>
   <script src="/assets/js/i18n.e9994b5f88.js"></script>
-  <link rel="stylesheet" href="/assets/css/styles.4bb62c4d1c.css">
-  <script defer src="/assets/js/site.4fbf708cdd.js"></script>
+  <link rel="stylesheet" href="/assets/css/styles.5e4b64579a.css">
+  <script defer src="/assets/js/site.9a3c008ae4.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-4KPJPTHY30"></script>
   <script>
   window.dataLayer = window.dataLayer || [];
@@ -33,18 +33,6 @@
     .article-content ul, .article-content ol { margin: 1em 0; padding-left: 2em; }
     .article-content li { margin: 0.5em 0; }
     .article-content p { margin: 0.9em 0; }
-    .article-content pre {
-      margin: 1em 0;
-      padding: 16px 18px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow-x: auto;
-      background: var(--surface);
-      font-size: 1.125rem;
-      line-height: 1.6;
-      letter-spacing: 0.02em;
-    }
-    .article-content code { font-size: inherit; font-weight: 500; }
     .section-card {
       border: 1px solid var(--border);
       border-radius: 18px;
@@ -54,13 +42,6 @@
       box-shadow: 0 10px 24px rgba(0,0,0,0.04);
     }
     .section-card.intro-card { margin-top: 14px; }
-    .related-articles h2 { font-size: 18px; margin: 0 0 10px; }
-    .related-articles ul { list-style: none; padding-left: 0; margin: 0; }
-    .related-articles li { margin: 12px 0; }
-    .related-articles a { color: var(--accent); text-decoration: none; }
-    .related-articles a:hover { text-decoration: underline; }
-    
-    /* Display formula styling (non-interactive, distinct from links) */
     .lm-formula {
       display: inline-block;
       padding: 10px 14px;
@@ -70,22 +51,54 @@
       color: var(--text, #ffffff);
       font-weight: 600;
       letter-spacing: 0.2px;
+      margin: 0.35em 0;
     }
+    .related-articles h2 { font-size: 18px; margin: 0 0 10px; }
+    .related-articles ul { list-style: none; padding-left: 0; margin: 0; }
+    .related-articles li { margin: 12px 0; }
+    .related-articles a { color: var(--accent); text-decoration: none; }
+    .related-articles a:hover { text-decoration: underline; }
+    .faq-item { border-bottom: 1px solid var(--border); padding: 0; }
+    .faq-item:last-of-type { border-bottom: none; }
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 14px 0;
+      font-size: 1em;
+      font-weight: 600;
+      color: var(--text, inherit);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      line-height: 1.4;
+    }
+    .faq-question:hover { color: var(--accent); }
+    .faq-icon { flex-shrink: 0; font-size: 1.2em; transition: transform 0.25s ease; color: var(--accent); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; padding: 0; line-height: 1.7; }
+    .faq-item.open .faq-answer { max-height: 800px; padding-bottom: 14px; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
   </style>
 
-  <meta name="article:modified" content="March 2026" />
+
+  <meta name="article:modified" content="October 2026" />
 
   <meta property="og:type" content="article" />
-  <meta property="og:title" content="What Is a Stock? Definition, How Stocks Work, and How They Make Money | The Long Math" />
-  <meta property="og:description" content="What is a stock? Learn how stocks work, what a share represents, how stocks make money, and why stock prices move — explained with simple arithmetic." />
+  <meta property="og:title" content="What Is a Stock? How Stocks Work and Make Money | The Long Math" />
+  <meta property="og:description" content="What is a stock? Learn how stocks work, what a share represents, how stocks make money, and why prices move, explained with simple arithmetic." />
   <meta property="og:url" content="https://www.thelongmath.com/articles/investing-and-financial-literacy/what-is-a-stock/" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="What Is a Stock? Definition, How Stocks Work, and How They Make Money | The Long Math" />
-  <meta name="twitter:description" content="What is a stock? Learn how stocks work, what a share represents, how stocks make money, and why stock prices move — explained with simple arithmetic." />
+  <meta name="twitter:title" content="What Is a Stock? How Stocks Work and Make Money | The Long Math" />
+  <meta name="twitter:description" content="What is a stock? Learn how stocks work, what a share represents, how stocks make money, and why prices move, explained with simple arithmetic." />
 
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.thelongmath.com/"},{"@type":"ListItem","position":2,"name":"Investment and Financial Literacy","item":"https://www.thelongmath.com/articles/investing-and-financial-literacy/"},{"@type":"ListItem","position":3,"name":"What Is a Stock? (In Simple Terms)","item":"https://www.thelongmath.com/articles/investing-and-financial-literacy/what-is-a-stock/"}]}</script>
 
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"What Is a Stock? (In Simple Terms)","description":"What is a stock? Learn how stocks work, what a share represents, how stocks make money, and why stock prices move — explained with simple arithmetic.","author":{"@type":"Person","name":"Phil Evans"},"publisher":{"@type":"Organization","name":"The Long Math","logo":{"@type":"ImageObject","url":"https://www.thelongmath.com/assets/logo.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.thelongmath.com/articles/investing-and-financial-literacy/what-is-a-stock/"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"What Is a Stock? (In Simple Terms)","description":"What is a stock? Learn how stocks work, what a share represents, how stocks make money, and why prices move, explained with simple arithmetic.","author":{"@type":"Person","name":"Phil Evans"},"publisher":{"@type":"Organization","name":"The Long Math","logo":{"@type":"ImageObject","url":"https://www.thelongmath.com/assets/logo.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.thelongmath.com/articles/investing-and-financial-literacy/what-is-a-stock/"}}</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between a stock and a share?","acceptedAnswer":{"@type":"Answer","text":"A stock is ownership in a company in general, and a share is one unit of that ownership. In everyday use the terms are interchangeable."}},{"@type":"Question","name":"Do I actually own part of a company when I buy its stock?","acceptedAnswer":{"@type":"Answer","text":"Yes. You own a percentage equal to your shares divided by total shares outstanding, and that percentage changes if the company issues or repurchases shares. For most investors it is tiny, so the claim on profits and the vote are small, but they are proportional to the shares you hold."}},{"@type":"Question","name":"Can I lose more than I invest in a stock?","acceptedAnswer":{"@type":"Answer","text":"When you buy shares with your own cash, the most you can lose is the amount you paid. Borrowing to invest (margin) or short selling can produce losses larger than the amount you put in."}},{"@type":"Question","name":"Do all stocks pay dividends?","acceptedAnswer":{"@type":"Answer","text":"No. Many companies keep their profits and reinvest them in the business. A company that pays no dividend can still deliver returns through price appreciation."}},{"@type":"Question","name":"How much money do I need to buy a stock?","acceptedAnswer":{"@type":"Answer","text":"At minimum, the price of one share. Some brokerages also offer fractional shares, which let you buy a portion of a share, though availability varies by brokerage."}}]}</script>
 
 
 </head>
@@ -97,129 +110,91 @@
 <article class="article-content">
       <header>
         <h1>What Is a Stock? (In Simple Terms)</h1>
-
-        <p class="reading-time">4-minute read</p>
-
-        <p class="last-updated">Last updated March 2026</p>
-
-
-        
-
-        
-
+        <p class="reading-time">7-minute read</p>
+        <p class="last-updated">Last updated October 2026</p>
       </header>
 
       <section class="section-card intro-card">
         <p>A stock is partial ownership in a company.</p>
-        <p>When you buy a stock, you are buying a small piece of a real business. That ownership gives you a proportional claim on the company's assets and future profits.</p>
-        <p>If you plan to invest, you should understand exactly what you own.</p>
-        <p>If you buy 100 shares of a company with 1,000,000 shares outstanding, you own 0.01% of the business — whether the stock price rises or falls tomorrow.</p>
-        <p><strong>No opinions.  No hidden assumptions.  Just arithmetic.</strong></p>
+        <p>When you buy a stock, you buy a small piece of a real business. That piece gives you a claim on what remains after the company pays its debts and, in most cases, a vote on certain company decisions. If you plan to invest, you should understand what you own.</p>
+        <p>This article follows one example throughout. Suppose a company has 1,000,000 identical common shares outstanding, and you own 100 of them:</p>
+        <p><span class="lm-formula">100 / 1,000,000 = 0.01%</span></p>
+        <p>You own 0.01% of the business whether the share price rises or falls tomorrow. That percentage stays the same when the share price changes, although it can rise or fall if the company repurchases or issues shares.</p>
+        <p><strong>No opinions. No hidden assumptions. Just arithmetic.</strong></p>
       </section>
 
       <section class="section-card">
-        <h2>What Does Owning a Stock Mean?</h2>
-        <p>If a company has 1,000,000 shares outstanding and you own 1,000 shares:</p>
-        <p><div class="lm-formula">1,000 / 1,000,000 = 0.1%</div></p>
-        <p>You own 0.1% of the business.</p>
-        <p>That percentage represents a proportional claim on:</p>
+        <h2 id="owning-a-stock">What Does Owning a Stock Mean?</h2>
+        <p>Ownership comes with three features, each tied to the shares you hold:</p>
         <ul>
-          <li>Company assets</li>
-          <li>Company earnings</li>
-          <li>Future growth</li>
+          <li><strong>A residual claim on assets.</strong> Creditors are paid before shareholders. If a company were wound up, lenders and other creditors would be paid first, and shareholders would share whatever remained in proportion to their shares.</li>
+          <li><strong>An economic interest in profits.</strong> Shareholders benefit from a company’s profits, but those profits are not automatically paid to them. A company can reinvest its earnings, pay dividends, reduce debt, or repurchase shares, and each choice can affect the value of the shareholders’ investment.</li>
+          <li><strong>Voting rights.</strong> Most common shares carry one vote per share on matters such as electing the board of directors. Some companies issue multiple classes of shares with different voting rights.</li>
         </ul>
-        <p>Ownership is not symbolic.<br>
-        It is mathematical.</p>
+        <p>This article describes common shares. Preferred shares can differ in their priority in a liquidation and in their voting rights.</p>
+        <p>With 0.01% of the company, your claim and your vote are both small, but both are real and proportional to your shares.</p>
+        <p><strong>Stocks versus bonds.</strong> When you buy a stock, you purchase an ownership interest in a business. When you buy a <a href="/articles/investing-and-financial-literacy/what-is-a-bond/">corporate bond</a>, you lend money to the business.</p>
       </section>
 
       <section class="section-card">
-        <h2>What Is a Share of Stock?</h2>
-        <p>A share is a unit of ownership in a company.</p>
-        <p>Companies divide ownership into shares so they can:</p>
+        <h2 id="share-of-stock">What Is a Share of Stock?</h2>
+        <p>A share is one unit of ownership in a company. Companies divide ownership into shares to raise capital, to transfer ownership efficiently, and to create liquidity through public markets.</p>
+        <p><strong>Stock versus share.</strong> In everyday use the two words describe nearly the same thing. “Stock” refers to ownership in a company in general, and a “share” is one unit of that ownership. “I own 100 shares of the company” and “I own stock in the company” describe the same position.</p>
+        <p><strong>Price and market capitalization.</strong> A stock’s price is set by trades between buyers and sellers. Multiplying that price by the number of shares outstanding gives the company’s market capitalization, the total market value of its outstanding shares:</p>
+        <p><span class="lm-formula">$100 × 1,000,000 shares = $100,000,000</span></p>
+        <p>Your 100 shares are worth 100 × $100 = $10,000, which is 0.01% of $100,000,000.</p>
+        <p><strong>Where your money goes.</strong> When you buy shares on an exchange, your payment goes to the seller. The company receives money only when it issues new shares, for example in an initial public offering (IPO).</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="how-stocks-make-money">How Do Stocks Make Money?</h2>
+        <p>Stocks generate returns in two ways: price appreciation and dividends. Total return is the sum of the two.</p>
+
+        <h3 id="price-appreciation">1. Price Appreciation</h3>
+        <p>Suppose you buy 100 shares at $100 and later sell them at $110:</p>
+        <p><span class="lm-formula">$110 − $100 = $10 per share</span></p>
+        <p><span class="lm-formula">$10 × 100 = $1,000</span></p>
+        <p>That $1,000 is a capital gain. The gain is realized only when you sell. Until then it is an unrealized gain, a change in the value of what you hold.</p>
+
+        <h3 id="dividends">2. Dividends</h3>
+        <p>Some companies pay a portion of their profits to shareholders as dividends. If a company pays $2 per share annually and you own 100 shares:</p>
+        <p><span class="lm-formula">100 × $2 = $200</span></p>
+        <p>You receive $200 in cash and still own the shares. Many companies pay no dividend and instead reinvest their profits in the business.</p>
+        <p><strong>Total return.</strong> Suppose your $100 share rises to $110 and pays a $2 dividend during the year:</p>
+        <p><span class="lm-formula">($110 − $100 + $2) / $100 = 12%</span></p>
+        <p>Your total return is $12 per share, or 12%, before taxes and fees. For your 100 shares, that is $1,000 in price gain plus $200 in dividends, or $1,200 on $10,000.</p>
+      </section>
+
+      <section class="section-card">
+        <h2 id="dividends-and-price">How Dividends Affect Stock Price</h2>
+        <p>Dividends do not create new value. They redistribute existing value.</p>
+        <p>Returning to the original $100 share price, consider the dividend in isolation. To isolate the effect of the dividend, assume the share price would otherwise stay the same, and ignore taxes and transaction costs. Using the running example, before the dividend:</p>
         <ul>
-          <li>Raise capital</li>
-          <li>Transfer ownership efficiently</li>
-          <li>Create liquidity through public markets</li>
+          <li>Market capitalization: $100,000,000</li>
+          <li>Shares outstanding: 1,000,000</li>
+          <li>Share price: $100</li>
         </ul>
-        <p>The number of shares outstanding determines how ownership is divided.</p>
-        <p>If total company value is: $100,000,000</p>
-        <p>And there are: 1,000,000 shares</p>
-        <p><div class="lm-formula">$100,000,000 / 1,000,000 = $100 per share</div></p>
-        <p>Stock price reflects total company value divided by total shares outstanding.</p>
-        <p>This is how stocks work at the most basic level.</p>
-      </section>
-
-      <section class="section-card">
-        <h2>How Do Stocks Make Money?</h2>
-        <p>Stocks generate returns in two ways:</p>
+        <p>The company declares a $2-per-share dividend:</p>
+        <p><span class="lm-formula">$2 × 1,000,000 = $2,000,000</span></p>
+        <p>Theoretical market capitalization once the shares trade ex-dividend:</p>
+        <p><span class="lm-formula">$100,000,000 − $2,000,000 = $98,000,000</span></p>
+        <p>Theoretical share price once the shares trade ex-dividend:</p>
+        <p><span class="lm-formula">$98,000,000 / 1,000,000 = $98</span></p>
+        <p>Your position after the dividend:</p>
         <ul>
-          <li>Price appreciation</li>
-          <li>Dividends</li>
+          <li>Shares: 100 × $98 = $9,800</li>
+          <li>Cash received: 100 × $2 = $200</li>
+          <li>Total: $9,800 + $200 = $10,000</li>
         </ul>
-        <p>All stock returns ultimately reduce to those two sources.</p>
-        <h3>1. Price Appreciation</h3>
-        <p>If you buy at $50 and sell at $70:</p>
-        <p><div class="lm-formula">$70 - $50 = $20</div></p>
-        <p>That $20 difference is a capital gain.</p>
-        <p>Stock prices rise when investors believe the company's future earnings will increase.</p>
-        <p>Prices move because expectations change.</p>
-        <p>The mechanism is supply and demand.<br>
-        The driver is expected future cash flow.</p>
-        <p>Markets do not price the past.<br>
-        They price the future.</p>
-        <h3>2. Dividends</h3>
-        <p>Some companies distribute a portion of their profits directly to shareholders called dividends.</p>
-        <p>If a company pays $2 per share annually and you own 100 shares:</p>
-        <p><div class="lm-formula">100 × 2 = $200</div></p>
-        <p>You receive $200 in cash.<br>
-        You still own the shares.</p>
-        <p>Dividends are direct cash returns from company profits.</p>
+        <p>Under these assumptions your total is the same as before. A dividend is part of your ownership value returned to you in cash, which is why it shows up as a $2 drop in the share price.</p>
+        <p>This is the theoretical adjustment, not a promise about real prices. The price adjusts on the ex-dividend date, the first day the shares trade without the right to the upcoming dividend, and other news moves the price at the same time, so a real stock rarely falls by exactly the dividend. Taxes also matter, because how a dividend is taxed depends on the type of account holding the shares.</p>
       </section>
 
       <section class="section-card">
-        <h2>How Dividends Affect Stock Price</h2>
-        <p>Dividends do not create new value.<br>
-        They redistribute existing value.</p>
-        <p>Using the earlier example:</p>
-        <p>Company value: $100,000,000<br>
-        Shares outstanding: 1,000,000<br>
-        Share price: $100</p>
-        <p>If the company pays $2 per share:</p>
-        <p><div class="lm-formula">2 × 1,000,000 = $2,000,000</div></p>
-        <p>The company distributes $2,000,000 in cash.</p>
-        <p>New company value:</p>
-        <p><div class="lm-formula">$100,000,000 - $2,000,000 = $98,000,000</div></p>
-        <p>New share price:</p>
-        <p><div class="lm-formula">$98,000,000 / 1,000,000 = $98</div></p>
-        <p>After the dividend:</p>
-        <ul>
-          <li>You own shares worth approximately $98 each</li>
-          <li>You received $2 per share in cash</li>
-        </ul>
-        <p>Total economic value remains unchanged.</p>
-        <p>Dividends are not extra money.<br>
-        They are part of your ownership being returned to you.</p>
-      </section>
-
-      <section class="section-card">
-        <h2>The Difference Between a Company and Its Stock Price</h2>
-        <p>A company produces goods or services.</p>
-        <p>A stock price reflects what investors believe that company is worth today based on current assets and debts, and expected future profits.</p>
-        <p>Stock prices reflect:</p>
-        <ul>
-          <li>Expected future earnings</li>
-          <li>An adjustment factor for what those future earnings are worth today</li>
-          <li>Continuous updating as new information arrives</li>
-        </ul>
-        <p>The business may be stable.<br>
-        The stock price may not be.</p>
-        <p>Business performance and market valuation are related — but not identical.</p>
-      </section>
-
-      <section class="section-card">
-        <h2>Why Do Stock Prices Go Up and Down?</h2>
-        <p>Stock prices change when expectations change.</p>
-        <p>Common drivers include:</p>
+        <h2 id="why-prices-move">Why Do Stock Prices Go Up and Down?</h2>
+        <p>A stock’s price reflects what investors are willing to pay for a company’s expected future financial performance, informed by what is known about the business today. Expectations about profits, growth, risk, and interest rates all influence it.</p>
+        <p>Interest rates matter because future profits are worth less in today’s dollars when rates are higher and more when rates are lower. Converting future money into today’s dollars is called discounting.</p>
+        <p>As new information arrives, investors update their expectations and the price moves. Common drivers include:</p>
         <ul>
           <li>Earnings reports</li>
           <li>Interest rate changes</li>
@@ -227,81 +202,35 @@
           <li>Industry developments</li>
           <li>Investor sentiment</li>
         </ul>
-        <p>Stock prices reflect what investors think the company will earn in the future, translated into today’s dollars.</p>
-        <p>Markets continuously update those expectations.</p>
+        <p>Prices respond to changes in expectations. A company can report lower profits and see its price rise if the results beat what investors feared, or report strong profits and see its price fall if investors expected more. A good business is not automatically a good investment at every price.</p>
       </section>
 
       <section class="section-card">
-        <h2>Are Stocks Risky?</h2>
-        <p>Stocks are not guaranteed.<br>
-        Prices fluctuate daily.<br>
-        Short-term volatility can be significant.</p>
-        <p>A stock can decline 30–50% in a single year and still represent ownership in a viable business.</p>
-        <p>Long-term returns depend on:</p>
-        <ul>
-          <li>Earnings growth</li>
-          <li>Reinvestment of profits</li>
-          <li>Competitive advantage</li>
-          <li>Time</li>
-        </ul>
-        <p>Over long periods, compounding becomes the dominant force.</p>
-        <p>Time reduces the impact of short-term noise.</p>
+        <h2 id="are-stocks-risky">Are Stocks Risky?</h2>
+        <p>Yes. Stock returns are not guaranteed, and prices fluctuate daily. A stock can fall 30% to 50% in a single year while the company remains a viable business.</p>
+        <p>An individual company’s stock can lose most or all of its value, including when the business fails. Investors can reduce company-specific risk by spreading their money across many businesses. Broadly diversified exchange-traded funds (ETFs) are one way to do this, although they still rise and fall with the overall stock market.</p>
+        <p>Losses and recoveries are not symmetrical. A fall from $100 to $50 is a 50% loss, and recovering requires a 100% gain:</p>
+        <p><span class="lm-formula">$50 × 2 = $100</span></p>
       </section>
 
       <section class="section-card">
-        <h2>Stocks as an Asset Class</h2>
-        <p>Stocks are one of several major asset classes.</p>
-        <p>Other asset classes include:</p>
-        <ul>
-          <li>Bonds</li>
-          <li>Real estate</li>
-          <li>Cash</li>
-          <li>Commodities</li>
-        </ul>
-        <p>Each asset class behaves differently in terms of risk and return.</p>
-        <p>Historically, stocks have produced higher long-term returns than cash or bonds — with greater volatility.</p>
-        <p>Higher expected return is compensation for bearing risk.</p>
+        <h2 id="asset-class">Stocks as an Asset Class</h2>
+        <p>Stocks are one of several major asset classes, alongside bonds, real estate, cash, and commodities. Each behaves differently in terms of risk and return.</p>
+        <p>Historically, broad stock markets have generally rewarded long-term investors. The <a href="https://www.ubs.com/global/en/media/display-page-ndp/en-20260303-global-investment-returns-yearbook-2026.html">UBS Global Investment Returns Yearbook 2026</a> found that equities outperformed bonds and bills in every country with a continuous record back to 1900. That evidence concerns broad equity markets rather than individual stocks, and even long holding periods do not guarantee positive returns. Investors generally require a higher expected return as compensation for bearing more risk, a relationship known as the risk premium, although realized returns in any given period can differ from expectations.</p>
       </section>
 
       <section class="section-card">
-        <h2>What Is the Stock Market?</h2>
-        <p>Stocks are bought and sold on exchanges.<br>
-        These exchanges form the stock market.<br>
-        The stock market does not create value.</p>
-        <p>It is the marketplace where buyers and sellers transfer ownership at agreed-upon prices.</p>
-        <p>The company creates value.<br>
-        The market assigns a price.</p>
+        <h2 id="stock-market">What Is the Stock Market?</h2>
+        <p>Stocks are bought and sold on exchanges, and together these exchanges form the stock market. It is the marketplace where buyers and sellers transfer ownership at agreed prices. The company creates value, and the market assigns a price.</p>
+        <p>In Canada, many large companies trade on the Toronto Stock Exchange (TSX), with prices quoted in Canadian dollars. Shares of U.S. companies trade on U.S. exchanges such as the NYSE and Nasdaq, with prices quoted in U.S. dollars. You can hold stocks in a <a href="/articles/investing-and-financial-literacy/what-is-a-tfsa/">TFSA</a>, an <a href="/articles/investing-and-financial-literacy/what-is-an-rrsp/">RRSP</a>, an <a href="/articles/investing-and-financial-literacy/what-is-an-fhsa/">FHSA</a>, or a non-registered account. The account type affects how gains and dividends are taxed, and foreign investments may also be subject to <a href="https://www.canada.ca/en/revenue-agency/services/tax/technical-information/income-tax/income-tax-folios-index/series-5-international-residency/folio-2-foreign-tax-credits-deductions/income-tax-folio-s5-f2-c1-foreign-tax-credit.html">withholding taxes</a>.</p>
       </section>
 
       <section class="section-card">
-        <h2>Summary: What Is a Stock?</h2>
-        <p>A stock is partial ownership in a company.</p>
-        <p>It gives you:</p>
-        <ul>
-          <li>A proportional claim on assets</li>
-          <li>A proportional claim on profits</li>
-          <li>Exposure to future growth</li>
-        </ul>
-        <p>Stocks generate returns through:</p>
-        <ul>
-          <li>Price appreciation</li>
-          <li>Dividends</li>
-        </ul>
-        <p>The arithmetic is simple.<br>
-        The results follow the arithmetic.</p>
+        <h2 id="summary">Summary: What Is a Stock?</h2>
+        <p>A stock is partial ownership in a company. It gives you a residual claim on assets, an economic interest in profits, and in most cases a vote on certain company decisions. Returns come from price appreciation and dividends, and prices move with expectations about the future. Individual stocks can lose most or all of their value, so spreading investments across many businesses reduces company-specific risk.</p>
       </section>
 
-      <section class="section-card related-articles">
-        <h2>Related Articles to Consider Reading Next:</h2>
-        <ul>
-          <li><a href="/articles/investing-and-financial-literacy/what-is-investing/">What Is Investing?</a></li>
-          <li><a href="/articles/investing-and-financial-literacy/what-is-the-stock-market/">What Is the Stock Market?</a></li>
-          <li><a href="/articles/investing-and-financial-literacy/asset-classes-for-investing/">Asset Classes for Investing</a></li>
-          <li><a href="/articles/investing-and-financial-literacy/compound-interest/">Compound Interest</a></li>
-          <li><a href="/articles/investing-and-financial-literacy/inflation/">Inflation: The Math That Makes Future Money Smaller</a></li>
-        </ul>
-      </section>
-    <section class="newsletter-signup card" aria-labelledby="newsletter-article-heading">
+      <section class="newsletter-signup card" aria-labelledby="newsletter-article-heading">
 <h2 id="newsletter-article-heading" class="newsletter-signup-heading">Get the new work without checking back</h2>
 <p class="newsletter-signup-copy">One concise monthly email with new calculators, articles, and essays from The Long Math, plus a short note on why each one matters.</p>
 <p class="newsletter-signup-meta">Free. Unsubscribe anytime.</p>
@@ -320,7 +249,72 @@
 
 </section>
 
-</article>
+
+      <section class="section-card">
+        <h2 id="faq">Frequently Asked Questions</h2>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            What is the difference between a stock and a share?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>A stock is ownership in a company in general, and a share is one unit of that ownership. In everyday use the terms are interchangeable.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Do I actually own part of a company when I buy its stock?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Yes. You own a percentage equal to your shares divided by total shares outstanding, and that percentage changes if the company issues or repurchases shares. For most investors it is tiny, so the claim on profits and the vote are small, but they are proportional to the shares you hold.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Can I lose more than I invest in a stock?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>When you buy shares with your own cash, the most you can lose is the amount you paid. Borrowing to invest (margin) or short selling can produce losses larger than the amount you put in.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Do all stocks pay dividends?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>No. Many companies keep their profits and reinvest them in the business. A company that pays no dividend can still deliver returns through price appreciation.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            How much money do I need to buy a stock?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>At minimum, the price of one share. Some brokerages also offer fractional shares, which let you buy a portion of a share, though availability varies by brokerage.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card related-articles">
+        <h2>Related Articles to Consider Reading Next</h2>
+        <ul>
+          <li><a href="/articles/investing-and-financial-literacy/what-is-investing/">What Is Investing?</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/what-is-the-stock-market/">What Is the Stock Market?</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/asset-classes-for-investing/">Asset Classes for Investing</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/compound-interest/">Compound Interest</a></li>
+          <li><a href="/articles/investing-and-financial-literacy/inflation/">Inflation: The Math That Makes Future Money Smaller</a></li>
+        </ul>
+      </section>
+    </article>
 <div class="disclaimer"><p>
         <strong>Disclaimer:</strong> All content on The Long Math — including articles, essays, calculators, tools, or any other material — is provided solely for educational and informational purposes and does not constitute financial, tax, legal, or investment advice. Any results or projections are based on simplified models, assumptions, and user-supplied inputs and may not reflect real-world outcomes. You are responsible for evaluating the accuracy and applicability of the information provided and for conducting your own due diligence. Before making financial decisions, consult a qualified professional.
       </p></div>
