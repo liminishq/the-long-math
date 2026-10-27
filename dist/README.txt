@@ -184,7 +184,7 @@ The site is designed for long-term SEO durability through utility-driven search 
 
 Founder
 
-Phil Evans
+Phil
 Ontario, Canada
 
 “As a high-income professional with no formal training in the financial industry, I found the system lacked transparency for end users. It was structured around narratives rather than numbers. I ran the math myself. The math didn’t justify the structure. I built tools to cut through the narrative and make decisions based on objective data.”

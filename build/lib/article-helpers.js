@@ -173,7 +173,7 @@ function buildArticleSchema(article, canonical) {
     "@type": "Article",
     headline: m.headline || m.ogTitle || "",
     description: m.description || "",
-    author: { "@type": "Person", name: "Phil Evans" },
+    author: { "@type": "Person", name: "Phil" },
     publisher: {
       "@type": "Organization",
       name: "The Long Math",
