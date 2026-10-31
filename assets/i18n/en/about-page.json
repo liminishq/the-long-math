@@ -1,41 +1,47 @@
 {
   "title": "About – The Long Math",
-  "description": "What The Long Math is: interactive financial calculators, stated assumptions, inspectable arithmetic, and educational tools — plus the story behind the site.",
+  "description": "Why The Long Math was built: Canadian financial education, interactive calculators, transparent assumptions, and arithmetic readers can verify for themselves.",
   "h1": "About",
+  "whyTitle": "Why I Built This",
+  "whyParagraphs": [
+    "I’m Phil, a Canadian emergency physician. Here’s why I built this site.",
+    "My first meeting with a financial advisor happened the morning after a night shift in the emergency department. I’d already read enough to know that management expense ratios could cost investors a meaningful portion of their long-term returns, so I walked into the meeting with one thing already decided: I wasn’t buying mutual funds. Two advisors were waiting instead of the one I had been scheduled to meet, and an hour later I walked out having purchased two mutual funds without ever understanding the fee model behind them.",
+    "I knew I’d made a mistake before I’d even left the lobby of the bank. I turned around, resolved to cancel everything, and saw the advisor already greeting his next appointment and bringing him into his office. After working all night, I wasn’t about to wait another hour just to say I’d changed my mind.",
+    "So I went home and slept.",
+    "I woke up still uncomfortable with the investments I’d agreed to purchase, but not yet confident enough in my own understanding to undo the decision. It took nearly two years of self-study, self-doubt, and continuing automatic contributions into those funds before I finally walked away.",
+    "I realized that I didn’t need more opinions or more reassurance. I needed calculations I could verify for myself. It started with building spreadsheets in Excel to model investment returns, taxes, and retirement projections years into the future. Over time those spreadsheets became more sophisticated, the questions became more ambitious, and eventually they became the foundation for The Long Math.",
+    "Every calculator, article, and explanation here exists so people can work through the arithmetic themselves before making an important financial decision, whether they’re already facing one or simply trying to understand the subject beforehand.",
+    "No opinions. No hidden assumptions. Just arithmetic."
+  ],
   "whatTitle": "What this site is",
   "whatParagraphs": [
-    "The Long Math is a growing collection of interactive financial calculators, tools, and explanations designed to make long-term financial trade-offs <strong>visible</strong>.",
-    "The tools model how fees, taxes, compounding, incentives, and time horizons interact over decades. Every input is explicit. Every assumption is stated. The arithmetic behind each result can be inspected directly.",
-    "The current tools and articles cover advisor fees, income and capital gains tax, compounding, inflation, mortgages, and Canadian account strategy (TFSA, RRSP, FHSA). The site is actively expanding — into corporate tax structures, deeper investment analysis, and content specific to incorporated professionals.",
-    "Alongside the calculators and articles, a separate essay section — <em>Beyond the Numbers</em> — explores the personal and career decisions that connect to the arithmetic: the financial cost of professional training, long-term career cashflows, and trade-offs that rarely get quantified.",
-    "Most financial decisions are discussed through narratives — conventional guidance, reassurances of expertise, promises of outcomes. This site approaches those same decisions through arithmetic. <strong>The math doesn't tell you what to do. It shows you what's actually happening.</strong>"
+    "The Long Math is a Canadian financial education website built around interactive calculators, transparent assumptions, and explanations that show the arithmetic behind the results. Its purpose is to make long-term financial trade-offs easier to see.",
+    "Most financial decisions are made once but live with us for decades. A slightly higher investment fee, a different tax strategy, a delayed contribution, or a larger mortgage payment can seem insignificant today while producing very different outcomes years later. The purpose of these tools is to make those long-term consequences visible before the decision is made.",
+    "The current collection includes calculators and articles covering investment fees, personal and corporate income tax, capital gains, compounding, inflation, mortgages, retirement withdrawals, investment fundamentals, and Canadian registered accounts including the TFSA, RRSP, and FHSA. A growing section also explores the tax and financial decisions faced by Canadians who operate through a Canadian-controlled private corporation (CCPC) or professional corporation.",
+    "Alongside the calculators and articles is a separate essay section called <em>Beyond the Numbers</em>. These essays examine larger financial and career decisions through the same quantitative lens, including professional education, career earnings, retirement, and trade-offs that are often discussed but rarely measured.",
+    "Most financial decisions are explained through stories, opinions, conventional wisdom, or appeals to expertise. The Long Math starts with the assumptions and the arithmetic, then leaves the decision to you."
   ],
-  "whereTitle": "Where this came from",
-  "whereParagraphs": [
-    "The Long Math was built by Phil, a Canadian emergency physician who became increasingly frustrated by opaque financial narratives, hidden assumptions, and black-box projections.",
-    "Early in his career, he made financial decisions based on narratives rather than numbers — and spent two years paying for it through advisor fees and expensive mutual funds. That was the catalyst. What followed was a years-long self-education that went well beyond advisor fee structures: personal and corporate taxation, tax-efficient investing, asset allocation, real estate analysis, stock analysis, and the specific financial structures available to incorporated professionals in Canada.",
-    "Many of these tools were built originally in Excel, for personal use, to model real decisions with real money. The website came later, as a way to make them accessible. The calculator set continues to expand — now well beyond the original scope — as new topics are added and existing ones go deeper."
-  ],
-  "whoTitle": "Who this is for",
+  "whoTitle": "Who this site is for",
   "whoParagraphs": [
-    "The educational content is for anyone with savings to manage. The arithmetic doesn't care about your profession.",
-    "That said, some of the most consequential — and least-discussed — financial decisions belong to high-income professionals. In Canada, many operate through a Canadian-Controlled Private Corporation (CCPC) or professional corporation (PC). The tax deferral, income-splitting, and investment implications of those structures are significant, and they rarely receive clear, quantitative treatment anywhere.",
-    "Professionals who commonly use these structures include physicians, surgeons, dentists, lawyers, accountants (CPAs), veterinarians, chiropractors, pharmacists, optometrists, psychologists, and physiotherapists. What they tend to share is a high income, a late start to serious earning, and a professional education that offered virtually no financial training.",
-    "This site assumes nothing and explains the math from the ground up."
+    "Every financial decision has a cost. Sometimes that cost comes from making the wrong decision. Sometimes it comes from waiting too long to make the right one. My own hesitation cost me nearly two years of underperformance and fees before I finally understood enough to act.",
+    "This site explains the underlying concepts, then shows the arithmetic behind the costs as transparently as possible.",
+    "Some of the most significant and least understood financial decisions are faced by Canadians who operate through a professional corporation or Canadian-controlled private corporation. Physicians, dentists, lawyers, accountants, veterinarians, pharmacists, optometrists, psychologists, chiropractors, physiotherapists, and many other incorporated professionals often begin earning substantial incomes years later than their peers while receiving little or no formal financial education. Many of the calculators here were built with those situations in mind.",
+    "The arithmetic, however, doesn’t care what profession you’re in or how much money you make. Whether you’re investing your first hundred dollars or managing a multi-million-dollar portfolio on your own, the same mathematical principles apply. The site assumes no prior financial knowledge and explains each topic from the ground up."
   ],
   "howTitle": "How the tools are built",
   "howListItems": [
-    "<strong>Inputs are explicit and user-controlled.</strong> No hidden defaults.",
-    "<strong>Assumptions are stated plainly.</strong> Disagreement becomes inspectable.",
-    "<strong>Outputs follow directly from inputs.</strong> No black boxes.",
-    "<strong>Understandable over impressive.</strong> Every dependency is visible."
+    "Every important input is visible and user-controlled.",
+    "Every assumption is stated clearly.",
+    "Every result follows directly from the mathematics.",
+    "Every calculation is designed to be understandable and to help inform decision-making."
   ],
   "notTitle": "What this site is not",
   "notParagraphs": [
-    "This site does <strong>not</strong> provide financial advice or recommendations. The tools do not tell you what to do, optimize for specific outcomes, or steer decisions toward particular products or strategies. They show how inputs relate to outputs.",
-    "Financial advisors are not the target here. Several are known personally to the person behind this site — they are good people doing legitimate work. But the economics of how that work is typically priced in that industry deserves scrutiny. Most advisors charge a percentage of assets under management. That means the fee scales with your wealth, not with the complexity or volume of work performed. Imagine a dentist who charged a percentage of your net worth to perform a filling. The service is the same regardless of what's in your investment account.",
-    "Professional advice has genuine value, but the fee structure is worth scrutinizing. A good accountant, tax specialist, realtor, lawyer, or flat-fee advisor can more than earn their fee. The question worth asking is not whether to pay for professional help — sometimes you absolutely should. It's whether the fee structure matches what's actually being delivered.",
-    "That question — and what an unexamined fee structure quietly costs over decades — is the subject of dedicated tools and articles elsewhere on this site."
+    "The Long Math does not provide financial, tax, legal, or investment advice. The calculators do not recommend products, tell you what to do, or optimize your financial decisions. Their purpose is to show how different assumptions produce different outcomes so you can better understand the trade-offs involved.",
+    "Several calculators and articles examine investment fees, particularly percentage-based assets under management (AUM) fee models. That focus should not be mistaken for criticism of financial advisors themselves. Several advisors are people I know personally, and they are good people doing legitimate work.",
+    "It is not the people, but rather the economics of how their work is typically priced, that deserves scrutiny. Most advisors charge a percentage of assets under management, so the fee scales with your wealth rather than with the complexity or volume of the work being performed. A good accountant, tax specialist, lawyer, realtor, or flat-fee financial advisor can easily provide value that exceeds their fee, and many traditional financial advisors do the same. Whether any professional service is worthwhile depends on whether its pricing reflects the value and work being delivered.",
+    "That question, and the arithmetic behind it, is explored throughout the calculators and articles on this site.",
+    "I built the resource I wish I’d had during those two years when I knew something was wrong but couldn’t yet explain exactly why. If it helps someone else understand the arithmetic before making an expensive financial decision, then it has done exactly what I built it to do."
   ],
   "mottoLines": [
     "<strong>No opinions.</strong>",
